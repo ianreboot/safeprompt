@@ -120,24 +120,22 @@ export default function Dashboard() {
 
   async function fetchApiKey(userId: string) {
     try {
-      const response = await fetch('/api/user/api-key', {
-        headers: {
-          'Authorization': `Bearer ${userId}`
-        }
-      })
+      // Fetch directly from Supabase instead of API route
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('api_key, created_at')
+        .eq('id', userId)
+        .single()
 
-      if (response.ok) {
-        const data = await response.json()
-        if (data.api_key) {
-          setApiKey({
-            key: data.api_key,
-            key_hint: data.api_key.slice(-4),
-            created_at: new Date().toISOString(),
-            is_active: true,
-            last_used_at: null,
-            total_requests: 0
-          })
-        }
+      if (data?.api_key) {
+        setApiKey({
+          key: data.api_key,
+          key_hint: data.api_key.slice(-4),
+          created_at: data.created_at || new Date().toISOString(),
+          is_active: true,
+          last_used_at: null,
+          total_requests: 0
+        })
       }
     } catch (error) {
       console.error('Error fetching API key:', error)
@@ -235,16 +233,23 @@ export default function Dashboard() {
     if (!confirm('This will invalidate your current API key. Continue?')) return
 
     try {
-      const response = await fetch('/api/user/api-key', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user.id}`
-        }
-      })
+      // Generate new key directly via Supabase
+      const newApiKey = `sp_live_${Math.random().toString(36).substring(2, 34)}`
 
-      if (response.ok) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          api_key: newApiKey,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+
+      if (!error) {
         await fetchApiKey(user.id)
         alert('New API key generated!')
+      } else {
+        console.error('Error regenerating key:', error)
+        alert('Failed to regenerate API key.')
       }
     } catch (error) {
       console.error('Error regenerating key:', error)
