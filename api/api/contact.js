@@ -1,37 +1,43 @@
-import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
+const { Resend } = require('resend');
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+module.exports = async (req, res) => {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-export async function POST(request: Request) {
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
-    const { name, email, subject, message } = await request.json()
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const { name, email, subject, message } = req.body;
 
     // Validate input
     if (!name || !email || !subject || !message) {
-      return NextResponse.json(
-        { error: 'All fields are required' },
-        { status: 400 }
-      )
+      return res.status(400).json({ error: 'All fields are required' });
     }
 
     // Email validation regex
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Please provide a valid email address' },
-        { status: 400 }
-      )
+      return res.status(400).json({ error: 'Please provide a valid email address' });
     }
 
     // Sanitize input to prevent injection
-    const sanitize = (str: string) => {
-      return str.replace(/[<>]/g, '').slice(0, 1000)
-    }
+    const sanitize = (str) => {
+      return str.replace(/[<>]/g, '').slice(0, 1000);
+    };
 
-    const sanitizedName = sanitize(name)
-    const sanitizedMessage = sanitize(message)
-    const sanitizedSubject = sanitize(subject)
+    const sanitizedName = sanitize(name);
+    const sanitizedMessage = sanitize(message);
+    const sanitizedSubject = sanitize(subject);
 
     // Create email HTML
     const emailHtml = `
@@ -55,7 +61,7 @@ export async function POST(request: Request) {
           This email was sent from the SafePrompt contact form.
         </p>
       </div>
-    `
+    `;
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({
@@ -64,14 +70,11 @@ export async function POST(request: Request) {
       replyTo: email,
       subject: `[SafePrompt Contact] ${sanitizedSubject} - from ${sanitizedName}`,
       html: emailHtml,
-    })
+    });
 
     if (error) {
-      console.error('Resend error:', error)
-      return NextResponse.json(
-        { error: 'Failed to send message. Please try again later.' },
-        { status: 500 }
-      )
+      console.error('Resend error:', error);
+      return res.status(500).json({ error: 'Failed to send message. Please try again later.' });
     }
 
     // Send auto-reply to user
@@ -103,21 +106,18 @@ export async function POST(request: Request) {
           This is an automated response. Please do not reply to this email.
         </p>
       </div>
-    `
+    `;
 
     await resend.emails.send({
       from: 'SafePrompt <noreply@safeprompt.dev>',
       to: email,
       subject: 'We received your message - SafePrompt',
       html: autoReplyHtml,
-    })
+    });
 
-    return NextResponse.json({ success: true })
+    return res.status(200).json({ success: true });
   } catch (error) {
-    console.error('Contact form error:', error)
-    return NextResponse.json(
-      { error: 'An unexpected error occurred. Please try again.' },
-      { status: 500 }
-    )
+    console.error('Contact form error:', error);
+    return res.status(500).json({ error: 'An unexpected error occurred. Please try again.' });
   }
-}
+};

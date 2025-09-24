@@ -9,14 +9,17 @@
     "export": "next export"
   },
   "dependencies": {
+    "@next/swc-linux-x64-gnu": "^15.5.4",
+    "@stripe/stripe-js": "^2.2.0",
+    "@supabase/supabase-js": "^2.39.3",
+    "clsx": "^2.1.0",
+    "framer-motion": "^10.16.16",
+    "lucide-react": "^0.544.0",
     "next": "^14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "framer-motion": "^10.16.16",
-    "@stripe/stripe-js": "^2.2.0",
-    "@supabase/supabase-js": "^2.39.3",
     "react-type-animation": "^3.2.0",
-    "clsx": "^2.1.0"
+    "resend": "^6.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",
