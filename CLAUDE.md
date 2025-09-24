@@ -73,18 +73,30 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - [x] Subscription management endpoints
 - [x] Waitlist approval workflow
 - [x] User lifecycle testing suite
+- [x] Resend email integration (welcome emails, payment failures)
+- [x] Dashboard backend API for real user API keys
+- [x] Terms of Service and Privacy Policy pages
+- [x] Removed non-existent NPM package references
 
 ### Pending Configuration
-- [ ] Create Stripe products and update price IDs
-- [ ] Configure Resend for email notifications
-- [ ] Deploy new API endpoints to production
-- [ ] Run database migration scripts in Supabase
+- [ ] Create live Stripe products (currently in test mode)
+- [ ] Deploy website updates to production
+- [ ] Test complete user journey with real payment
 
-### Ready for Beta
+### Ready for Beta Testing
 - All core systems operational
 - Dashboard provides self-service API key management
-- Payment flow automated via Stripe webhook
-- Clear documentation and onboarding flow
+- Payment flow automated via Stripe webhook (test mode)
+- Email notifications working via Resend
+- Clear documentation and API examples
+- Terms and Privacy pages live
+
+### Latest Updates (January 24, 2025)
+- Fixed NPM package references - now using direct API calls
+- Implemented Resend email sending for all notifications
+- Connected dashboard backend to show real user API keys
+- Added Terms of Service and Privacy Policy pages
+- System ready for beta testing with Stripe in test mode
 
 ### Database Architecture (UPDATED January 2025)
 
