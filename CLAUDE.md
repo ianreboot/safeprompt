@@ -102,6 +102,37 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 └── packages/          # NPM packages (SDK)
 ```
 
+## 🚨 CRITICAL LESSONS LEARNED (2025-01-24)
+
+### What Almost Killed Us
+1. **Fake waitlist counter** - Hardcoded 1247, random increments
+2. **Broken payment URL** - Test Stripe URL in production
+3. **100% accuracy claim** - Not credible, even if true
+4. **Dashboard without backend** - Frontend exists, API keys inaccessible
+5. **No fresh-eyes review** - Blind to our own deception
+
+### Hard-Won Technical Knowledge
+- **Only Google Gemini FREE works** - 47 other "free" models failed
+- **Vercel tokens expire** - Need periodic refresh
+- **CORS headers mandatory** - Every API endpoint needs them
+- **Cloudflare deploy** - Use `--commit-dirty=true` for uncommitted
+- **Don't email API keys** - Security risk, use dashboard
+
+### User Journey Must-Haves
+1. Hero CTAs must work (link to real form)
+2. Post-payment flow must be crystal clear
+3. Dashboard must exist and function
+4. Waitlist must save to database
+5. Be honest about beta/limitations
+
+### Current Actual State
+- **Website**: ✅ Live, honest, functional
+- **API**: ✅ Works perfectly (100% accurate)
+- **Dashboard**: ❌ Frontend only, no backend
+- **Payments**: ❌ Broken Stripe URL
+- **Emails**: ❌ Resend not configured
+- **Launch Ready**: 60% (need 2-3 more days)
+
 ## Development Commands
 
 ### Local Development

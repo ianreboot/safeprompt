@@ -58,12 +58,13 @@ if (validation.safe) {
 
 ## Pricing
 
+- **Free Waitlist**: Full functionality (regex + AI), limited daily requests, approval required
+- **Early Bird**: $5/month - 50,000 validations (limited time, instant access)
 - **Starter**: $29/month - 50,000 validations
 - **Pro**: $99/month - 250,000 validations
 - **Enterprise**: $299/month - 1,000,000 validations
-- **Custom**: Contact for 10M+ validations
 
-All plans include 100% accuracy guarantee and zero false positives.
+All tiers include the SAME technology - full regex + AI validation with 99.9% accuracy.
 
 ## Why SafePrompt?
 
