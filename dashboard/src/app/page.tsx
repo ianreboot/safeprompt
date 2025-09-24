@@ -49,21 +49,36 @@ export default function Dashboard() {
 
   async function fetchApiKey(userId: string) {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('api_key, created_at, is_active')
-        .eq('id', userId)
-        .single()
+      // Use the new API endpoint
+      const response = await fetch('/api/user/api-key', {
+        headers: {
+          'Authorization': `Bearer ${userId}`
+        }
+      })
 
-      if (data && data.api_key) {
-        // Format data to match expected structure
-        setApiKey({
-          key: data.api_key,
-          key_hint: data.api_key.slice(-4),
-          created_at: data.created_at,
-          is_active: data.is_active,
-          last_used_at: null // Will be tracked in api_logs
-        })
+      if (response.ok) {
+        const data = await response.json()
+
+        if (data.api_key) {
+          setApiKey({
+            key: data.api_key,
+            key_hint: data.api_key.slice(-4),
+            created_at: new Date().toISOString(),
+            is_active: true,
+            last_used_at: null
+          })
+
+          // Update usage if included in response
+          if (data.usage) {
+            const percentage = Math.round((data.usage.current / data.usage.limit) * 100)
+            setUsage({
+              current: data.usage.current,
+              limit: data.usage.limit,
+              percentage,
+              tier: data.subscription_status || 'free'
+            })
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching API key:', error)
@@ -124,26 +139,21 @@ export default function Dashboard() {
     if (!confirm('This will invalidate your current API key. Continue?')) return
 
     try {
-      // Generate new API key
-      const newApiKey = `sp_live_${Math.random().toString(36).substring(2, 34)}`
+      // Use the API endpoint to generate new key
+      const response = await fetch('/api/user/api-key', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${user.id}`
+        }
+      })
 
-      // Update profile with new API key
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({
-          api_key: newApiKey,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id)
-        .select('api_key, created_at, is_active')
-        .single()
-
-      if (error) {
-        console.error('Error regenerating key:', error)
-        alert('Failed to regenerate API key. Please try again.')
-      } else {
+      if (response.ok) {
+        const data = await response.json()
         await fetchApiKey(user.id)
         alert('New API key generated! Please update your applications.')
+      } else {
+        console.error('Error regenerating key')
+        alert('Failed to regenerate API key. Please try again.')
       }
     } catch (error) {
       console.error('Error regenerating key:', error)

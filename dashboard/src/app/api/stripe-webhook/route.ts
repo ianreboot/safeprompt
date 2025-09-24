@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
+import { Resend } from 'resend'
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -12,6 +13,9 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY!)
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
@@ -93,7 +97,34 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       })
       .eq('id', user.id)
 
-    // TODO: Send welcome email with password reset link
+    // Send welcome email
+    await resend.emails.send({
+      from: 'SafePrompt <noreply@safeprompt.dev>',
+      to: customerEmail,
+      subject: 'Welcome to SafePrompt - Access Your Dashboard',
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Welcome to SafePrompt!</h2>
+          <p>Thank you for signing up. Your account has been created successfully.</p>
+
+          <h3>Next Steps:</h3>
+          <ol>
+            <li>Visit your dashboard at <a href="https://dashboard.safeprompt.dev">dashboard.safeprompt.dev</a></li>
+            <li>Log in with your email: ${customerEmail}</li>
+            <li>Access your API key from the dashboard</li>
+            <li>Start protecting your AI applications!</li>
+          </ol>
+
+          <p style="background: #f4f4f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <strong>Important:</strong> For security reasons, your API key is only visible in the dashboard. Never share your API key or commit it to version control.
+          </p>
+
+          <p>If you have any questions, reply to this email or visit our documentation.</p>
+
+          <p>Best regards,<br>The SafePrompt Team</p>
+        </div>
+      `
+    })
   }
 }
 
@@ -190,6 +221,32 @@ async function handlePaymentFailure(invoice: Stripe.Invoice) {
       })
       .eq('id', profile.id)
 
-    // TODO: Send payment failure email
+    // Send payment failure email
+    await resend.emails.send({
+      from: 'SafePrompt <noreply@safeprompt.dev>',
+      to: profile.email,
+      subject: 'Payment Failed - Action Required',
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>Payment Failed</h2>
+          <p>We were unable to process your payment for SafePrompt.</p>
+
+          <p style="background: #fef2f2; border: 1px solid #dc2626; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <strong>Action Required:</strong> Please update your payment method within 7 days to avoid service interruption.
+          </p>
+
+          <p>To update your payment method:</p>
+          <ol>
+            <li>Log in to your <a href="https://dashboard.safeprompt.dev">dashboard</a></li>
+            <li>Go to the Billing section</li>
+            <li>Update your payment information</li>
+          </ol>
+
+          <p>If you believe this is an error or need assistance, please contact us immediately.</p>
+
+          <p>Best regards,<br>The SafePrompt Team</p>
+        </div>
+      `
+    })
   }
 }

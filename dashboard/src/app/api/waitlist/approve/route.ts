@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { Resend } from 'resend'
 
 // Initialize Supabase with service role
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
+
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY!)
 
 // POST - Approve waitlist entry and create user account
 export async function POST(req: NextRequest) {
@@ -83,23 +87,41 @@ export async function POST(req: NextRequest) {
 
     // Send welcome email if requested
     if (sendWelcomeEmail) {
-      // TODO: Integrate with Resend or other email service
-      const emailData = {
+      await resend.emails.send({
+        from: 'SafePrompt <noreply@safeprompt.dev>',
         to: email,
         subject: 'Welcome to SafePrompt - Your Account is Ready!',
         html: `
-          <h2>Welcome to SafePrompt!</h2>
-          <p>Your account has been approved and is ready to use.</p>
-          <p><strong>Temporary Password:</strong> ${tempPassword}</p>
-          <p>Please log in and change your password immediately.</p>
-          <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/login">Log in to SafePrompt</a></p>
-          <br>
-          <p>Best regards,<br>The SafePrompt Team</p>
-        `
-      }
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>Welcome to SafePrompt!</h2>
+            <p>Your waitlist request has been approved! Your account is now ready to use.</p>
 
-      // For now, just log the email data
-      console.log('Would send email:', emailData)
+            <div style="background: #f4f4f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <p><strong>Your temporary password:</strong></p>
+              <code style="background: white; padding: 10px; display: block; border-radius: 3px; font-size: 16px;">${tempPassword}</code>
+            </div>
+
+            <p><strong>Please log in and change your password immediately:</strong></p>
+            <p style="text-align: center; margin: 30px 0;">
+              <a href="https://dashboard.safeprompt.dev/login"
+                 style="background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                Log in to SafePrompt Dashboard
+              </a>
+            </p>
+
+            <p>After logging in, you'll be able to:</p>
+            <ul>
+              <li>Access your API key</li>
+              <li>View usage statistics</li>
+              <li>Manage your subscription</li>
+              <li>Access documentation and support</li>
+            </ul>
+
+            <p>If you have any questions, feel free to reply to this email.</p>
+            <p>Best regards,<br>The SafePrompt Team</p>
+          </div>
+        `
+      })
     }
 
     return NextResponse.json({

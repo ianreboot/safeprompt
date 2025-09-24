@@ -11,16 +11,20 @@ const response = await openai.complete(userInput);
 // Your AI is exposed to prompt injection!`
 
   const protectedCode = `// ✅ PROTECTED - With SafePrompt
-import SafePrompt from '@safeprompt/js';
-
-const sp = new SafePrompt('sp_live_YOUR_KEY');
-const check = await sp.validate(userInput);
+const check = await fetch('https://api.safeprompt.dev/v1/check', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sp_live_YOUR_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ prompt: userInput })
+}).then(r => r.json());
 
 if (check.safe) {
   const response = await openai.complete(userInput);
   // Your AI is now protected!
 } else {
-  console.warn('Blocked threat:', check.threat);
+  console.warn('Blocked threats:', check.threats);
   // Handle malicious input appropriately
 }`
 

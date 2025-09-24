@@ -298,38 +298,50 @@ export default function Home() {
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Installation */}
+            {/* Quick Start */}
             <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="text-xl font-semibold mb-4">1. Install the SDK</h3>
+              <h3 className="text-xl font-semibold mb-4">1. Get your API key</h3>
+              <p className="text-muted-foreground mb-4">
+                Sign up and access your API key from the dashboard
+              </p>
               <pre className="bg-background p-4 rounded-lg overflow-x-auto">
                 <code className="text-sm text-muted-foreground">
-{`npm install @safeprompt/js
-# or
-yarn add @safeprompt/js`}
+{`// Your API key from dashboard
+const API_KEY = 'sp_live_YOUR_KEY';`}
                 </code>
               </pre>
             </div>
 
-            {/* Initialize */}
+            {/* JavaScript Example */}
             <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="text-xl font-semibold mb-4">2. Initialize with your API key</h3>
+              <h3 className="text-xl font-semibold mb-4">2. JavaScript/TypeScript</h3>
               <pre className="bg-background p-4 rounded-lg overflow-x-auto">
                 <code className="text-sm text-muted-foreground">
-{`import SafePrompt from '@safeprompt/js';
-
-const safeprompt = new SafePrompt('sp_live_YOUR_KEY');`}
+{`async function checkPrompt(userInput) {
+  const response = await fetch('https://api.safeprompt.dev/v1/check', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + API_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ prompt: userInput })
+  });
+  return response.json();
+}`}
                 </code>
               </pre>
             </div>
 
-            {/* Usage */}
+            {/* Usage Example */}
             <div className="bg-card p-6 rounded-xl border border-border">
               <h3 className="text-xl font-semibold mb-4">3. Validate user input</h3>
               <pre className="bg-background p-4 rounded-lg overflow-x-auto">
                 <code className="text-sm text-muted-foreground">
-{`const result = await safeprompt.check(userInput);
+{`// Check user input before sending to AI
+const result = await checkPrompt(userInput);
 
 if (!result.safe) {
+  console.error('Blocked:', result.threats);
   throw new Error('Potential injection detected');
 }
 
@@ -339,9 +351,9 @@ await openai.complete(userInput);`}
               </pre>
             </div>
 
-            {/* API Endpoint */}
+            {/* cURL Example */}
             <div className="bg-card p-6 rounded-xl border border-border">
-              <h3 className="text-xl font-semibold mb-4">4. Or use the API directly</h3>
+              <h3 className="text-xl font-semibold mb-4">4. Or use cURL</h3>
               <pre className="bg-background p-4 rounded-lg overflow-x-auto">
                 <code className="text-sm text-muted-foreground">
 {`curl -X POST https://api.safeprompt.dev/v1/check \\
