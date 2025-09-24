@@ -26,8 +26,20 @@ export default function Dashboard() {
       }
 
       setUser(user)
-      await fetchApiKey(user.id)
-      await fetchUsage(user.id)
+
+      // For demo user, set fake API key
+      if (user.email === 'demo@safeprompt.dev') {
+        setApiKey({
+          key: 'sp_demo_k3y_f0r_pr3v13w_0nly',
+          key_hint: 'pr3v13w_0nly',
+          created_at: new Date().toISOString(),
+          is_active: true
+        })
+        setUsage({ current: 2543, limit: 10000, percentage: 25, tier: 'demo' })
+      } else {
+        await fetchApiKey(user.id)
+        await fetchUsage(user.id)
+      }
     } catch (error) {
       console.error('Error:', error)
     } finally {
@@ -82,16 +94,23 @@ export default function Dashboard() {
   }
 
   async function copyApiKey() {
-    if (apiKey?.key_hint) {
-      // In production, fetch the full key from a secure endpoint
-      const fullKey = `sp_live_${'*'.repeat(28)}${apiKey.key_hint}`
-      await navigator.clipboard.writeText(fullKey)
+    if (user?.email === 'demo@safeprompt.dev') {
+      await navigator.clipboard.writeText('sp_demo_k3y_f0r_pr3v13w_0nly')
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } else if (apiKey?.key) {
+      await navigator.clipboard.writeText(apiKey.key)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
   }
 
   async function regenerateKey() {
+    if (user?.email === 'demo@safeprompt.dev') {
+      alert('API key regeneration is disabled in demo mode. Sign up for a real account to get a working API key!')
+      return
+    }
+
     if (!confirm('This will invalidate your current API key. Continue?')) return
 
     try {
@@ -110,6 +129,7 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error('Error regenerating key:', error)
+      alert('Feature coming soon in beta!')
     }
   }
 
@@ -126,11 +146,12 @@ export default function Dashboard() {
     )
   }
 
-  const maskedKey = apiKey
-    ? showKey
-      ? `sp_live_${'*'.repeat(28)}${apiKey.key_hint}`
-      : `sp_live_${'•'.repeat(28)}${apiKey.key_hint}`
-    : 'No API key found'
+  const isDemo = user?.email === 'demo@safeprompt.dev'
+  const maskedKey = isDemo
+    ? (showKey ? 'sp_demo_k3y_f0r_pr3v13w_0nly' : 'sp_demo_k3y_••••••••••••_0nly')
+    : apiKey
+      ? (showKey ? apiKey.key : `sp_live_${'•'.repeat(28)}${apiKey.key_hint}`)
+      : 'No API key found'
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -154,6 +175,17 @@ export default function Dashboard() {
           </div>
         </div>
       </header>
+
+      {/* Demo Mode Banner */}
+      {isDemo && (
+        <div className="bg-yellow-900/20 border-b border-yellow-800/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+            <p className="text-sm text-yellow-400">
+              🎭 Demo Mode - Exploring the dashboard interface. <a href="https://safeprompt.dev" className="underline">Sign up</a> for a real API key.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -247,83 +279,104 @@ export default function Dashboard() {
 
         </div>
 
-        {/* Quick Start Guide */}
+        {/* API Documentation */}
         <div className="mt-8 bg-gray-900 rounded-lg p-6 border border-gray-800">
-          <h2 className="text-xl font-semibold mb-4">Quick Start</h2>
+          <h2 className="text-xl font-semibold mb-4">API Documentation</h2>
 
-          <div className="space-y-4">
+          <div className="mb-6 p-4 bg-blue-900/20 border border-blue-800/50 rounded">
+            <p className="text-sm text-blue-300">
+              <strong>Beta Status:</strong> We're in open beta. The API is functional but features are still being added.
+            </p>
+          </div>
+
+          <div className="space-y-6">
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-2">1. Install the SDK</h3>
+              <h3 className="text-lg font-medium mb-3">Quick Start with cURL</h3>
               <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800">
-                <code>npm install @safeprompt/js</code>
+                <code>{`curl -X POST https://api.safeprompt.dev/v1/check \\
+  -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : maskedKey}" \\
+  -H "Content-Type: application/json" \\
+  -d '{"prompt": "Your user input here"}'`}</code>
               </pre>
             </div>
 
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-2">2. Initialize the client</h3>
+              <h3 className="text-lg font-medium mb-3">JavaScript (Fetch API)</h3>
               <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800">
-                <code>{`import SafePrompt from '@safeprompt/js'
+                <code>{`const response = await fetch('https://api.safeprompt.dev/v1/check', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : maskedKey}',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ prompt: userInput })
+})
 
-const safeprompt = new SafePrompt('${maskedKey}')`}</code>
+const result = await response.json()
+// result: { safe: true/false, confidence: 0.95, threats: [] }`}</code>
               </pre>
             </div>
 
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-2">3. Validate prompts</h3>
+              <h3 className="text-lg font-medium mb-3">Python Example</h3>
               <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800">
-                <code>{`const result = await safeprompt.check(userInput)
+                <code>{`import requests
 
-if (!result.safe) {
-  throw new Error('Potential prompt injection detected')
+response = requests.post(
+    'https://api.safeprompt.dev/v1/check',
+    headers={'Authorization': f'Bearer ${isDemo ? 'YOUR_API_KEY' : maskedKey}'},
+    json={'prompt': user_input}
+)
+
+result = response.json()
+if not result['safe']:
+    raise Exception('Potential prompt injection detected')`}</code>
+              </pre>
+            </div>
+
+            <div className="mt-6 p-4 bg-gray-800 rounded">
+              <h4 className="text-sm font-medium mb-2">Response Format</h4>
+              <pre className="bg-black rounded p-2 text-xs overflow-x-auto mt-2">
+                <code>{`{
+  "safe": true,        // Whether the prompt is safe to use
+  "confidence": 0.95,  // Confidence score (0-1)
+  "threats": [],       // Array of detected threat types
+  "processing_time": 45 // Time in milliseconds
 }`}</code>
               </pre>
             </div>
-          </div>
 
-          <div className="mt-6 flex gap-4">
-            <a
-              href="/docs"
-              className="text-primary hover:underline text-sm"
-            >
-              View Full Documentation →
-            </a>
-            <a
-              href="https://api.safeprompt.dev/health"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline text-sm"
-            >
-              API Status →
-            </a>
+            <div className="mt-6 text-sm text-gray-400">
+              <p><strong>Rate Limits:</strong> {usage.limit.toLocaleString()} requests/month</p>
+              <p><strong>Endpoint:</strong> https://api.safeprompt.dev/v1/check</p>
+              <p className="mt-2"><strong>SDK Status:</strong> npm package coming soon. Use HTTP API for now.</p>
+            </div>
           </div>
         </div>
 
         {/* Billing Section */}
-        <div className="mt-8 bg-gray-900 rounded-lg p-6 border border-gray-800">
-          <h2 className="text-xl font-semibold mb-4">Billing</h2>
+        {!isDemo && (
+          <div className="mt-8 bg-gray-900 rounded-lg p-6 border border-gray-800">
+            <h2 className="text-xl font-semibold mb-4">Billing</h2>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <p className="text-sm text-gray-400">Current Plan</p>
-              <p className="text-lg font-semibold capitalize">{usage.tier} - $5/month</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <p className="text-sm text-gray-400">Current Plan</p>
+                <p className="text-lg font-semibold capitalize">{usage.tier} - Beta (Free)</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Next Billing Date</p>
+                <p className="text-lg font-semibold">N/A - Beta Period</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-400">Next Billing Date</p>
-              <p className="text-lg font-semibold">
-                {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString()}
+
+            <div className="mt-6 p-4 bg-yellow-900/20 border border-yellow-800/50 rounded">
+              <p className="text-sm text-yellow-400">
+                <strong>Beta Period:</strong> Free during beta. Paid plans coming Q2 2025.
               </p>
             </div>
           </div>
-
-          <div className="mt-6 flex gap-4">
-            <button className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-500 transition-colors">
-              Upgrade Plan
-            </button>
-            <button className="px-4 py-2 border border-gray-700 rounded hover:border-gray-600 transition-colors">
-              Manage Billing
-            </button>
-          </div>
-        </div>
+        )}
 
       </main>
     </div>
