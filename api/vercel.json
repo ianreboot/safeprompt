@@ -1,0 +1,17 @@
+{
+  "functions": {
+    "api/v1/check.js": {
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-API-Key, Content-Type" }
+      ]
+    }
+  ]
+}

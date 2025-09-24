@@ -1,0 +1,160 @@
+{
+  "database": [
+    {
+      "operation": "Create User",
+      "success": true,
+      "details": "Mock: User created"
+    },
+    {
+      "operation": "Generate API Key",
+      "success": true,
+      "details": "Mock: Key generated"
+    },
+    {
+      "operation": "Track Usage",
+      "success": true,
+      "details": "Mock: Usage tracked"
+    },
+    {
+      "operation": "Log Attack Pattern",
+      "success": true,
+      "details": "Mock: Pattern logged"
+    },
+    {
+      "operation": "Add to Waitlist",
+      "success": true,
+      "details": "Mock: Added to waitlist"
+    }
+  ],
+  "validation": [
+    {
+      "test": "Force Safe Result",
+      "passed": true,
+      "expected": {
+        "safe": true,
+        "testing": true
+      },
+      "actual": {
+        "safe": true,
+        "testing": true,
+        "threats": []
+      }
+    },
+    {
+      "test": "Force Malicious Result",
+      "passed": true,
+      "expected": {
+        "safe": false,
+        "testing": true
+      },
+      "actual": {
+        "safe": false,
+        "testing": true,
+        "threats": [
+          "test_injection",
+          "backdoor_triggered"
+        ]
+      }
+    },
+    {
+      "test": "Trigger Specific Pattern",
+      "passed": true,
+      "expected": {
+        "safe": false,
+        "threats": [
+          "sql_injection"
+        ]
+      },
+      "actual": {
+        "safe": false,
+        "testing": true,
+        "threats": [
+          "sql_injection"
+        ]
+      }
+    },
+    {
+      "test": "Force AI Safe",
+      "passed": false,
+      "expected": {
+        "safe": true,
+        "testing": true
+      },
+      "actual": {
+        "safe": true,
+        "threats": []
+      }
+    },
+    {
+      "test": "Force AI Malicious",
+      "passed": false,
+      "expected": {
+        "safe": false,
+        "testing": true
+      },
+      "actual": {
+        "safe": true,
+        "threats": []
+      }
+    }
+  ],
+  "errors": [
+    {
+      "test": "Missing API Key",
+      "passed": false,
+      "expected": 401,
+      "actual": 500
+    },
+    {
+      "test": "Invalid API Key",
+      "passed": false,
+      "expected": 401,
+      "actual": 500
+    },
+    {
+      "test": "Missing Prompt",
+      "passed": true,
+      "expected": 400,
+      "actual": 400
+    },
+    {
+      "test": "Invalid JSON",
+      "passed": false,
+      "expected": 400,
+      "actual": 500
+    },
+    {
+      "test": "Force Error Backdoor",
+      "passed": true,
+      "expected": 500,
+      "actual": 500
+    }
+  ],
+  "patterns": [
+    {
+      "operation": "Add Pattern",
+      "success": true,
+      "details": "Mock: Pattern added"
+    },
+    {
+      "operation": "Load Pattern",
+      "success": true,
+      "details": "Mock: Pattern loaded"
+    },
+    {
+      "operation": "Update Pattern",
+      "success": true,
+      "details": "Mock: Pattern updated"
+    },
+    {
+      "operation": "Delete Pattern",
+      "success": true,
+      "details": "Mock: Pattern deleted"
+    }
+  ],
+  "summary": {
+    "total": 19,
+    "passed": 14,
+    "failed": 5
+  }
+}

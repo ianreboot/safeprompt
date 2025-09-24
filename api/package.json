@@ -1,0 +1,33 @@
+{
+  "name": "safeprompt-api",
+  "version": "1.0.0",
+  "description": "SafePrompt API - Prompt injection detection service",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node test-server.js",
+    "vercel-dev": "vercel dev --listen 3000",
+    "start": "node test-server.js",
+    "test": "node tests/test-suite.js",
+    "test:quick": "node tests/test-suite.js --mode=quick",
+    "test:full": "node tests/test-suite.js --mode=full",
+    "test:accuracy": "node tests/test-suite.js --test=accuracy",
+    "test:performance": "node tests/test-suite.js --test=performance",
+    "test:no-ai": "node tests/test-suite.js --skip-ai",
+    "test:e2e": "node tests/e2e-test-suite.js",
+    "test:all": "npm run test && npm run test:e2e"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "dotenv": "^16.6.1",
+    "node-fetch": "^3.3.2",
+    "resend": "^6.1.0",
+    "stripe": "^14.14.0"
+  },
+  "devDependencies": {
+    "vercel": "^32.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
