@@ -174,6 +174,13 @@ CREATE TABLE subscription_plans (
 
 ## 🚨 CRITICAL LESSONS LEARNED (2025-01-24)
 
+### Architecture Migration Lessons
+1. **Profiles table is the way** - Single source of truth linked to auth.users
+2. **Don't duplicate Stripe data** - Always query Stripe API for current status
+3. **API keys in profiles** - Not separate table (sync nightmares)
+4. **Triggers for auto-creation** - Profile created automatically on signup
+5. **Git large files** - Node_modules will break GitHub pushes
+
 ### What Almost Killed Us
 1. **Fake waitlist counter** - Hardcoded 1247, random increments
 2. **Broken payment URL** - Test Stripe URL in production
@@ -187,6 +194,8 @@ CREATE TABLE subscription_plans (
 - **CORS headers mandatory** - Every API endpoint needs them
 - **Cloudflare deploy** - Use `--commit-dirty=true` for uncommitted
 - **Don't email API keys** - Security risk, use dashboard
+- **Git filter-branch works** - Removes large files from history
+- **Supabase env vars** - Use SAFEPROMPT_ prefix to avoid conflicts
 
 ### User Journey Must-Haves
 1. Hero CTAs must work (link to real form)
@@ -195,13 +204,16 @@ CREATE TABLE subscription_plans (
 4. Waitlist must save to database
 5. Be honest about beta/limitations
 
-### Current Actual State
+### Current Actual State (Post-Migration)
 - **Website**: ✅ Live, honest, functional
-- **API**: ✅ Works perfectly (100% accurate)
-- **Dashboard**: ❌ Frontend only, no backend
-- **Payments**: ❌ Broken Stripe URL
-- **Emails**: ❌ Resend not configured
-- **Launch Ready**: 60% (need 2-3 more days)
+- **API**: ✅ New profiles-based auth working
+- **Dashboard**: ✅ Updated to use profiles table
+- **Payments**: ✅ Stripe webhook handlers created
+- **Subscriptions**: ✅ Full management endpoints
+- **Waitlist**: ✅ Approval workflow implemented
+- **Emails**: ❌ Resend not configured (manual setup needed)
+- **Stripe Products**: ❌ Need manual creation in dashboard
+- **Launch Ready**: 85% (just needs Stripe/Resend config)
 
 ## Development Commands
 
@@ -248,6 +260,14 @@ curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
 - Existing code in `/home/projects/api/utils/` can be reused
 - OpenRouter API key available in `/home/projects/.env`
 - Stripe integration patterns available from syncup project
+- **CRITICAL FILES TO KEEP**:
+  - `api/api/v1/check-protected.js` - NEW profiles auth
+  - `dashboard/src/app/api/stripe-webhook/` - Subscription handling
+  - `dashboard/scripts/` - Database setup scripts
+- **FILES TO DELETE** (old system):
+  - Any references to api_keys table
+  - Old stripe-webhook in api folder
+  - Test files in production folders
 
 ## When Making Changes
 1. Keep it simple - no over-engineering
