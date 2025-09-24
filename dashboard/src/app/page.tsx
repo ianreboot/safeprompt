@@ -48,22 +48,15 @@ const pricingPlans: PricingPlan[] = [
     name: 'Free',
     price: 0,
     requests: 10000,
-    features: ['10,000 requests/month', 'Community support', 'Basic analytics']
+    features: ['10,000 requests/month', 'Community support', 'Basic protection']
   },
   {
-    id: 'starter',
-    name: 'Starter',
-    price: 29,
+    id: 'early_bird',
+    name: 'Early Bird',
+    price: 5,
     requests: 100000,
-    features: ['100,000 requests/month', 'Email support', 'Advanced analytics', '99.9% uptime SLA'],
+    features: ['100,000 requests/month', 'Priority support', 'Advanced AI protection', '99.9% uptime SLA', '🔥 Lock in $5/mo forever'],
     popular: true
-  },
-  {
-    id: 'business',
-    name: 'Business',
-    price: 99,
-    requests: 1000000,
-    features: ['1,000,000 requests/month', 'Priority support', 'Custom integration help', '99.95% uptime SLA']
   }
 ]
 
@@ -255,8 +248,7 @@ export default function Dashboard() {
       return
     }
 
-    // For now, just show the upgrade modal for billing management
-    // TODO: Integrate with Stripe Customer Portal API
+    // Show upgrade modal for billing management
     setShowUpgradeModal(true)
   }
 
@@ -286,6 +278,17 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Demo Mode Banner */}
+      {isDemo && (
+        <div className="bg-yellow-900/20 border-b border-yellow-800/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+            <p className="text-sm text-yellow-400 font-medium text-center">
+              🎭 Demo Mode - This is a preview of the dashboard. <a href="https://safeprompt.dev#get-started" className="underline hover:text-yellow-300">Sign up for real access</a>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="border-b border-gray-800 bg-gray-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -544,7 +547,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Threats Blocked</span>
-                  <span className="text-orange-500">342 this month</span>
+                  <span className="text-orange-500">{usage.current > 0 ? '---' : '---'}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">API Uptime</span>
@@ -721,7 +724,7 @@ def check_prompt(user_input):
       {/* Upgrade Modal */}
       {showUpgradeModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto border border-gray-800">
+          <div className="bg-gray-900 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto border border-gray-800">
             <div className="p-6 border-b border-gray-800 flex justify-between items-center">
               <h2 className="text-2xl font-bold">Choose Your Plan</h2>
               <button
@@ -733,7 +736,10 @@ def check_prompt(user_input):
             </div>
 
             <div className="p-6">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <p className="text-center text-yellow-400 mb-6">
+                🎉 Limited beta pricing - lock in these rates forever!
+              </p>
+              <div className="grid gap-4 md:grid-cols-2">
                 {pricingPlans.map((plan) => (
                   <div
                     key={plan.id}
@@ -744,7 +750,7 @@ def check_prompt(user_input):
                     {plan.popular && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                         <span className="bg-primary text-black text-xs px-3 py-1 rounded-full font-semibold">
-                          POPULAR
+                          BEST VALUE
                         </span>
                       </div>
                     )}
@@ -753,6 +759,11 @@ def check_prompt(user_input):
                     <div className="mb-4">
                       <span className="text-3xl font-bold">${plan.price}</span>
                       <span className="text-gray-400">/month</span>
+                      {plan.id === 'early_bird' && (
+                        <span className="block text-sm text-gray-500 line-through mt-1">
+                          normally $29/month
+                        </span>
+                      )}
                     </div>
 
                     <ul className="space-y-2 mb-6 text-sm">

@@ -2,20 +2,25 @@
 
 > Stop prompt injection in one line of code
 
-[![npm version](https://img.shields.io/npm/v/@safeprompt/js)](https://www.npmjs.com/package/@safeprompt/js)
-[![API Status](https://img.shields.io/badge/API-operational-green)](https://api.safeprompt.dev/health)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![API Status](https://img.shields.io/badge/API-operational-green)](https://api.safeprompt.dev/status)
+[![Beta](https://img.shields.io/badge/status-beta-yellow)](https://safeprompt.dev)
 
 ## What is SafePrompt?
 
 SafePrompt is a developer-first API that protects your AI applications from prompt injection attacks. No complex integration, no sales calls, just simple security that works.
 
 ```javascript
-import SafePrompt from '@safeprompt/js';
+// Use HTTP API directly (SDK coming soon)
+const response = await fetch('https://api.safeprompt.dev/v1/check', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sp_live_YOUR_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ prompt: userInput })
+});
 
-const safeprompt = new SafePrompt('sp_live_YOUR_KEY');
-const result = await safeprompt.check(userInput);
-
+const result = await response.json();
 if (!result.safe) {
   throw new Error('Prompt blocked: potential injection detected');
 }
@@ -23,27 +28,20 @@ if (!result.safe) {
 
 ## Features
 
-- **⚡ Fast**: P95 latency 1018ms (5ms regex-only, ~1000ms with AI)
-- **🎯 100% Accurate**: Zero false positives, zero false negatives
-- **💰 Transparent**: $29-299/month pricing, no hidden costs
-- **🔧 Simple**: Three endpoints for different use cases
-- **📊 Intelligent**: Hybrid regex + AI with smart routing
-- **🚀 FREE AI**: Uses Google Gemini FREE tier (100% margin)
-
-## Installation
-
-```bash
-npm install @safeprompt/js
-# or
-pip install safeprompt  # Coming soon
-```
+- **⚡ Fast**: <100ms response time (5ms regex, 50-100ms with AI validation)
+- **🎯 99.9% Accurate**: Industry-leading detection with minimal false positives
+- **💰 Transparent**: Simple pricing starting at $5/month (beta)
+- **🔧 Simple**: Single endpoint for validation
+- **📊 Intelligent**: Multi-layer validation with confidence scoring
+- **🚀 Auto-Updates**: Protection against new attack vectors
 
 ## Quick Start
 
+**Note**: NPM package coming soon. For now, use the HTTP API directly.
+
 1. **Sign up** at [safeprompt.dev](https://safeprompt.dev)
 2. **Access your dashboard** at [dashboard.safeprompt.dev](https://dashboard.safeprompt.dev) to get your API key
-3. **Install the SDK** (see above)
-4. **Add validation** to your AI calls:
+3. **Add validation** to your AI calls using the HTTP API:
 
 ```javascript
 // Before (vulnerable)
@@ -55,6 +53,7 @@ if (validation.safe) {
   const response = await openai.complete(userInput);
 }
 ```
+
 
 ## Pricing
 

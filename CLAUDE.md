@@ -333,6 +333,38 @@ curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
 - [ ] Am I showing real data, not fake numbers?
 - [ ] Are emails going through contact form, not exposed?
 
+### 🚨 ANTI-PATTERNS TO AVOID (Critical - Read This!)
+**These patterns have caused major credibility issues:**
+
+1. **NEVER create links to non-existent resources:**
+   - ❌ GitHub repos that don't exist
+   - ❌ Social media accounts not created
+   - ❌ API endpoints not implemented
+   - ❌ Pages not built (/blog, /docs, etc.)
+   - ✅ Only link to things that actually exist
+
+2. **NEVER show fake/hardcoded metrics:**
+   - ❌ `useState(1247)` for user counts
+   - ❌ "342 threats blocked" as static text
+   - ❌ Random number animations
+   - ✅ Query real data or show "---" if none
+
+3. **NEVER reference non-existent packages:**
+   - ❌ `npm install @safeprompt/js` when not published
+   - ❌ Import statements for packages not in package.json
+   - ✅ Use direct HTTP/API examples until packages exist
+
+4. **NEVER use placeholder implementations:**
+   - ❌ `onClick={() => alert('Coming soon')}`
+   - ❌ `console.log('Would send email')`
+   - ❌ `// TODO: Implement` in production
+   - ✅ Either implement it or remove the UI element
+
+5. **NEVER expose internal details:**
+   - ❌ `mailto:support@safeprompt.dev`
+   - ❌ Showing real API keys even partially
+   - ✅ Always use contact forms, never direct emails
+
 ### Development Rules:
 1. Keep it simple - no over-engineering
 2. **Backend first, UI second** - Never reverse this
