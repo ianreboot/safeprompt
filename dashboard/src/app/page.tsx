@@ -294,8 +294,8 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-primary">SafePrompt</h1>
               <nav className="hidden md:flex items-center gap-6">
                 <a href="#" className="text-sm text-white">Dashboard</a>
-                <a href="https://safeprompt.dev#documentation" className="text-sm text-gray-300 hover:text-white">Docs</a>
-                <a href="mailto:support@safeprompt.dev" className="text-sm text-gray-300 hover:text-white">Support</a>
+                <a href="#documentation" className="text-sm text-gray-300 hover:text-white">Docs</a>
+                <a href="https://safeprompt.dev#contact" className="text-sm text-gray-300 hover:text-white">Support</a>
               </nav>
             </div>
             <div className="flex items-center gap-4">
@@ -556,43 +556,169 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Quick Start Section */}
-        <div className="mt-8 bg-gray-900 rounded-lg p-6 border border-gray-800">
-          <h2 className="text-xl font-semibold mb-4">Quick Start</h2>
+        {/* Documentation Section */}
+        <div id="documentation" className="mt-8 bg-gray-900 rounded-lg p-6 border border-gray-800">
+          <h2 className="text-xl font-semibold mb-4">📚 How to Use SafePrompt</h2>
 
           <div className="space-y-6">
+            {/* Quick Start */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-medium">cURL</h3>
+              <h3 className="text-lg font-medium mb-3">1. Quick Test with cURL</h3>
+              <div className="relative">
                 <button
                   onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/v1/check \\
   -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Your user input here"}'`, 'curl')}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
                 >
                   {copiedCode === 'curl' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                 </button>
-              </div>
-              <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800">
-                <code>{`curl -X POST https://api.safeprompt.dev/v1/check \\
+                <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
+                  <code>{`curl -X POST https://api.safeprompt.dev/v1/check \\
   -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Your user input here"}'`}</code>
+                </pre>
+              </div>
+            </div>
+
+            {/* JavaScript Example */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">2. JavaScript/TypeScript Integration</h3>
+              <div className="relative">
+                <button
+                  onClick={() => copyCodeBlock(`async function checkPrompt(userInput) {
+  const response = await fetch('https://api.safeprompt.dev/v1/check', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ prompt: userInput })
+  });
+
+  const result = await response.json();
+
+  if (!result.safe) {
+    console.error('Threat detected:', result.threats);
+    throw new Error('Potential injection detected');
+  }
+
+  return result;
+}`, 'js')}
+                  className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
+                >
+                  {copiedCode === 'js' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                </button>
+                <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
+                  <code>{`async function checkPrompt(userInput) {
+  const response = await fetch('https://api.safeprompt.dev/v1/check', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ prompt: userInput })
+  });
+
+  const result = await response.json();
+
+  if (!result.safe) {
+    console.error('Threat detected:', result.threats);
+    throw new Error('Potential injection detected');
+  }
+
+  return result;
+}`}</code>
+                </pre>
+              </div>
+            </div>
+
+            {/* Python Example */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">3. Python Integration</h3>
+              <div className="relative">
+                <button
+                  onClick={() => copyCodeBlock(`import requests
+
+def check_prompt(user_input):
+    response = requests.post(
+        'https://api.safeprompt.dev/v1/check',
+        headers={
+            'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
+            'Content-Type': 'application/json'
+        },
+        json={'prompt': user_input}
+    )
+
+    result = response.json()
+
+    if not result['safe']:
+        raise Exception(f"Threat detected: {result['threats']}")
+
+    return result`, 'python')}
+                  className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
+                >
+                  {copiedCode === 'python' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                </button>
+                <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
+                  <code>{`import requests
+
+def check_prompt(user_input):
+    response = requests.post(
+        'https://api.safeprompt.dev/v1/check',
+        headers={
+            'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
+            'Content-Type': 'application/json'
+        },
+        json={'prompt': user_input}
+    )
+
+    result = response.json()
+
+    if not result['safe']:
+        raise Exception(f"Threat detected: {result['threats']}")
+
+    return result`}</code>
+                </pre>
+              </div>
+            </div>
+
+            {/* Response Format */}
+            <div>
+              <h3 className="text-lg font-medium mb-3">4. Response Format</h3>
+              <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800">
+                <code>{`// Safe response:
+{
+  "safe": true,
+  "threats": [],
+  "confidence": 0.95
+}
+
+// Unsafe response:
+{
+  "safe": false,
+  "threats": ["prompt_injection", "data_extraction"],
+  "confidence": 0.99,
+  "details": {
+    "matched_patterns": ["ignore previous", "system prompt"]
+  }
+}`}</code>
               </pre>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2 mt-6 pt-6 border-t border-gray-800">
               <div>
-                <p className="text-sm text-gray-400 mb-2">📚 Documentation</p>
+                <p className="text-sm text-gray-400 mb-2">📖 Full API Documentation</p>
                 <a href="https://safeprompt.dev#documentation" className="text-primary hover:underline flex items-center gap-1">
-                  View Documentation <ExternalLink className="w-3 h-3" />
+                  View Complete Guide <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
               <div>
-                <p className="text-sm text-gray-400 mb-2">💬 Support</p>
-                <a href="mailto:support@safeprompt.dev" className="text-primary hover:underline">
-                  Email Support →
+                <p className="text-sm text-gray-400 mb-2">💬 Need Help?</p>
+                <a href="https://safeprompt.dev#contact" className="text-primary hover:underline flex items-center gap-1">
+                  Contact Support <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
             </div>
