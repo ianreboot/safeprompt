@@ -262,8 +262,9 @@ export default function Dashboard() {
       return
     }
 
-    // In production, this would open Stripe billing portal
-    window.open('https://billing.stripe.com/p/login/test_xxx', '_blank')
+    // For now, just show the upgrade modal for billing management
+    // TODO: Integrate with Stripe Customer Portal API
+    setShowUpgradeModal(true)
   }
 
   async function signOut() {
@@ -299,10 +300,9 @@ export default function Dashboard() {
             <div className="flex items-center gap-8">
               <h1 className="text-2xl font-bold text-primary">SafePrompt</h1>
               <nav className="hidden md:flex items-center gap-6">
-                <a href="#" className="text-sm text-gray-300 hover:text-white">Dashboard</a>
-                <a href="#docs" className="text-sm text-gray-300 hover:text-white">Docs</a>
-                <a href="https://status.safeprompt.dev" className="text-sm text-gray-300 hover:text-white">Status</a>
-                <a href="#support" className="text-sm text-gray-300 hover:text-white">Support</a>
+                <a href="#" className="text-sm text-white">Dashboard</a>
+                <a href="https://safeprompt.dev#documentation" className="text-sm text-gray-300 hover:text-white">Docs</a>
+                <a href="mailto:support@safeprompt.dev" className="text-sm text-gray-300 hover:text-white">Support</a>
               </nav>
             </div>
             <div className="flex items-center gap-4">
@@ -584,14 +584,14 @@ export default function Dashboard() {
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <p className="text-sm text-gray-400 mb-2">📚 Documentation</p>
-                <a href="https://docs.safeprompt.dev" className="text-primary hover:underline flex items-center gap-1">
-                  API Reference <ExternalLink className="w-3 h-3" />
+                <a href="https://safeprompt.dev#documentation" className="text-primary hover:underline flex items-center gap-1">
+                  View Documentation <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
               <div>
                 <p className="text-sm text-gray-400 mb-2">💬 Support</p>
-                <a href="#" onClick={() => alert('Support form would open here')} className="text-primary hover:underline">
-                  Get Help →
+                <a href="mailto:support@safeprompt.dev" className="text-primary hover:underline">
+                  Email Support →
                 </a>
               </div>
             </div>
