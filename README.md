@@ -40,9 +40,10 @@ pip install safeprompt  # Coming soon
 
 ## Quick Start
 
-1. **Get your API key** at [safeprompt.dev](https://safeprompt.dev)
-2. **Install the SDK** (see above)
-3. **Add validation** to your AI calls:
+1. **Sign up** at [safeprompt.dev](https://safeprompt.dev)
+2. **Access your dashboard** at [dashboard.safeprompt.dev](https://dashboard.safeprompt.dev) to get your API key
+3. **Install the SDK** (see above)
+4. **Add validation** to your AI calls:
 
 ```javascript
 // Before (vulnerable)
@@ -142,9 +143,12 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ### Beta Access
 - Sign up at https://safeprompt.dev
-- Use Stripe test card: `4242 4242 4242 4242`
+- Choose between free waitlist or $5/month instant access
+- For testing payments, use Stripe test card: `4242 4242 4242 4242`
+- After payment, check your email for instructions
 - Access your dashboard at https://dashboard.safeprompt.dev
-- View API keys, usage metrics, and manage billing
+- Login with your email and password to view your API key
+- View usage metrics, manage billing, and access documentation
 
 ### Beta Pricing
 - **Early Bird Special**: $5/month (limited time)

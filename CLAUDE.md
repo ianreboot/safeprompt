@@ -5,7 +5,7 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 
 **Domain**: safeprompt.dev
 **Repository**: https://github.com/ianreboot/safeprompt.git
-**Status**: Pre-launch development (January 2025)
+**Status**: MVP Complete - Ready for Beta Testing (January 2025)
 
 ## Core Value Proposition
 "Stop prompt injection in one line of code"
@@ -63,24 +63,29 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - [x] Website deployed: safeprompt.dev (Cloudflare Pages)
 - [x] Database schema: Supabase tables created
 - [x] Stripe products: Configured in test mode
+- [x] User Dashboard: dashboard.safeprompt.dev (Next.js + Supabase Auth)
+- [x] Admin Dashboard: dashboard.safeprompt.dev/admin (restricted access)
+- [x] Email System: Resend integrated for notifications
+- [x] Stripe Webhook: Automated account creation and API key generation
+- [x] Website UX: Clear user journey from signup to API integration
 
-### In Progress (Dashboard-First MVP)
-- [ ] User Dashboard - View/manage API keys (2-3 days)
-- [ ] Admin Dashboard - User and waitlist management (1 day)
-- [ ] Email System - Notifications only, no API keys (4 hours)
-- [ ] Stripe Webhook - Complete account creation flow (2 hours)
+### Ready for Beta
+- All core systems operational
+- Dashboard provides self-service API key management
+- Payment flow automated via Stripe webhook
+- Clear documentation and onboarding flow
 
 ### Available Assets
 - Validation logic: `/home/projects/safeprompt/api/lib/prompt-validator.js`
 - AI validator: `/home/projects/safeprompt/api/lib/ai-validator.js`
 - Stripe webhook: `/home/projects/safeprompt/api/api/v1/stripe-webhook.js`
 
-### Critical Next Steps (Dashboard-First Approach)
-1. **User Dashboard** - Build dashboard.safeprompt.dev for API key management
-2. **Admin Dashboard** - Create admin panel for user/waitlist management
-3. **Email Notifications** - Implement Resend for confirmations (NOT API keys)
-4. **Complete Stripe Webhook** - Create accounts and generate keys in database
-5. **Beta Launch** - Onboard first 10 users with proper self-service
+### Next Steps for Launch
+1. **Enable Production Mode** - Switch Stripe from test to live mode
+2. **Marketing Launch** - Announce on Twitter, HN, Product Hunt
+3. **Monitor First Users** - Watch for issues, gather feedback
+4. **Iterate Based on Feedback** - Quick fixes and improvements
+5. **Scale Infrastructure** - Optimize as usage grows
 
 ## File Structure
 ```
@@ -91,8 +96,9 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 │   ├── TECHNICAL.md   # Architecture, implementation details
 │   ├── BUSINESS.md    # Strategy, market, pricing
 │   └── API.md         # Endpoint documentation
-├── api/               # Vercel Functions
-├── frontend/          # Astro website + dashboard
+├── api/               # Vercel Functions (API endpoints)
+├── website/           # Next.js marketing website
+├── dashboard/         # Next.js user dashboard
 └── packages/          # NPM packages (SDK)
 ```
 
