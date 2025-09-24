@@ -7,27 +7,57 @@
 **Task Type**: MVP Implementation & Production Readiness
 **Context Switches**: 1  # Fresh-eyes review revealed critical gaps
 
-## 📊 Current Reality Check
+## 📊 Current Reality Check (VERIFIED BY POTEMKIN AUDIT 2025-01-24)
 - **Technical Validation**: ✅ Complete (100% accuracy achieved)
 - **Customer Flow**: ❌ BROKEN (cannot onboard real users)
-- **Production Readiness**: 4 critical blockers
-- **Time to Launch**: ~8 hours of focused work
-- **Last Update**: 2025-01-24 by Claude
+- **Production Readiness**: 6 critical blockers identified
+- **Time to Launch**: 2-3 days of focused work
+- **Last Update**: 2025-01-24 by Claude (with comprehensive audit)
 
-## 🚨 LAUNCH BLOCKERS (Must Fix Before Any Customer)
+## 🚨 POTEMKIN AUDIT FINDINGS - REAL LAUNCH BLOCKERS
 
-### Critical Path to Launch (~8 hours)
-1. **❌ Waitlist Form Broken** - Form submits but saves nothing to database
-2. **❌ Payment → Account Flow** - Stripe webhook exists but doesn't create users
-3. **❌ No Email Delivery** - Resend configured but not implemented
-4. **❌ No Legal Pages** - Terms of Service & Privacy Policy missing
+### VERIFIED BY 4-AGENT PARALLEL AUDIT (2025-01-24)
 
-### What Actually Works
+#### 🔴 CRITICAL - Blocks Any Revenue (Fix First)
+1. **❌ NPM Package Doesn't Exist** - @safeprompt/js referenced everywhere but not published
+   - **WHY IT MATTERS**: Developers can't integrate without SDK
+   - **FILES**: website/app/page.tsx, docs/API.md
+   - **FIX**: Either publish package OR remove all references and use curl examples
+
+2. **❌ Stripe in Test Mode Only** - Cannot process real payments
+   - **WHY IT MATTERS**: Can't collect money from customers
+   - **EVIDENCE**: WaitlistForm.tsx redirects to waitlist instead of checkout
+   - **FIX**: Create live Stripe products and update webhook
+
+3. **❌ Zero Email Functionality** - All emails are console.log() only
+   - **WHY IT MATTERS**: Paid users can't get login credentials
+   - **EVIDENCE**: Every resend.emails.send() is commented out
+   - **FILES**: stripe-webhook/route.ts, waitlist/approve/route.ts
+   - **FIX**: Implement Resend integration with actual send() calls
+
+#### 🟡 HIGH PRIORITY - Blocks User Experience
+4. **❌ Dashboard Can't Show Real API Keys** - Only works for demo user
+   - **WHY IT MATTERS**: Real users see nothing after payment
+   - **EVIDENCE**: fetchApiKey() has no backend for real users
+   - **FIX**: Create API endpoint to retrieve user's key from profiles table
+
+5. **❌ Missing Legal Pages** - /terms, /privacy, /security all 404
+   - **WHY IT MATTERS**: Legal liability, trust issues
+   - **FILES**: website/app/page.tsx footer links
+   - **FIX**: Create pages or remove links
+
+6. **❌ Social Links to Non-Existent Accounts** - Twitter/Discord fake
+   - **WHY IT MATTERS**: Users can't get support
+   - **FIX**: Create accounts or remove links
+
+### What Actually Works (AUDIT VERIFIED ✅)
 - **✅ Validation Engine** - 100% accuracy, zero false positives
 - **✅ API Infrastructure** - Live at api.safeprompt.dev
 - **✅ Website Deployed** - Live at safeprompt.dev
-- **✅ Database Schema** - Tables created in Supabase
-- **✅ Stripe Products** - Configured in test mode
+- **✅ Waitlist System** - WORKING (despite docs saying broken!)
+- **✅ Database Operations** - Profiles table functional
+- **✅ API Authentication** - Uses profiles table correctly
+- **✅ Usage Tracking** - api_logs table working
 
 **Current Focus**: GO decision made - Ready for production deployment
 **Last Completed**: AI integration and testing
@@ -1476,6 +1506,147 @@ User → Dashboard → Supabase (RLS) → Protected Data
 - **Payment Flow**: ❌ Broken (needs Stripe setup)
 - **Launch Readiness**: 60% - Need 2-3 more days
 
+## 🎯 EXECUTABLE PLAYBOOK FOR FUTURE AI - LAUNCH SAFEPROMPT
+
+### READ THIS FIRST - CRITICAL CONTEXT
+**The documentation lies.** Many features marked "COMPLETED" are actually broken or fake. This playbook is based on verified audit results from 2025-01-24.
+
+### WHY THIS PLAYBOOK EXISTS
+Previous AIs wasted weeks building features that looked complete but weren't connected. Every fake feature discovered by users destroys trust exponentially. This playbook ensures you build REAL functionality.
+
+### PHASE 1: EMERGENCY FIXES (Day 1 - 4 hours)
+These block ANY customer from using the product.
+
+#### 1.1 Fix NPM Package Reference (30 min)
+**PROBLEM**: Docs say "npm install @safeprompt/js" but package doesn't exist
+**WHY**: Developers literally cannot integrate without this
+**FILES**:
+- website/app/page.tsx (lines 306-308)
+- website/components/CodeDemo.tsx
+- docs/API.md
+**SOLUTION**:
+```bash
+# Option A: Remove all npm references, use curl examples only
+grep -r "@safeprompt/js" . --exclude-dir=node_modules
+# Then replace with curl examples
+
+# Option B: Actually publish the package
+cd packages && npm init @safeprompt/js
+# Build minimal SDK wrapper
+```
+
+#### 1.2 Implement Email Sending (2 hours)
+**PROBLEM**: All emails are console.log(), no actual sending
+**WHY**: Paid users can't get login credentials = 100% churn
+**FILES**:
+- dashboard/src/app/api/stripe-webhook/route.ts
+- dashboard/src/app/api/waitlist/approve/route.ts
+**SOLUTION**:
+```javascript
+// Install Resend
+cd dashboard && npm install resend
+
+// Replace console.log with actual sending
+import { Resend } from 'resend';
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// In stripe-webhook:
+await resend.emails.send({
+  from: 'SafePrompt <noreply@safeprompt.dev>',
+  to: email,
+  subject: 'Welcome to SafePrompt',
+  html: emailTemplate
+});
+```
+
+#### 1.3 Connect Dashboard Backend (1.5 hours)
+**PROBLEM**: Real users see empty dashboard, only demo user works
+**WHY**: Users paid but can't access what they bought
+**FILE**: dashboard/src/app/page.tsx
+**SOLUTION**:
+```javascript
+// Create API endpoint for real users
+// dashboard/src/app/api/user/api-key/route.ts
+export async function GET(req) {
+  const session = await getSession(req);
+  const { data } = await supabase
+    .from('profiles')
+    .select('api_key')
+    .eq('id', session.user.id)
+    .single();
+  return Response.json({ api_key: data.api_key });
+}
+```
+
+### PHASE 2: ENABLE REVENUE (Day 1 - 2 hours)
+
+#### 2.1 Switch Stripe to Live Mode
+**PROBLEM**: Test mode = no real payments
+**WHY**: Can't make money in test mode
+**STEPS**:
+1. Create live products in Stripe dashboard
+2. Update webhook secret in .env
+3. Update price IDs in code
+4. Test with real card (refund after)
+
+#### 2.2 Create Legal Pages
+**PROBLEM**: Footer links to /terms, /privacy are 404
+**WHY**: Legal liability, trust issues
+**SOLUTION**:
+```bash
+# Copy from reboot project
+cp /home/projects/reboot/src/pages/terms.tsx website/app/terms/page.tsx
+cp /home/projects/reboot/src/pages/privacy.tsx website/app/privacy/page.tsx
+# Update company name to SafePrompt
+```
+
+### PHASE 3: TRUST & CREDIBILITY (Day 2 - 2 hours)
+
+#### 3.1 Fix or Remove Social Links
+**PROBLEM**: Links to non-existent Twitter/Discord
+**SOLUTION**: Either create accounts or remove links
+
+#### 3.2 Update Documentation Honesty
+**PROBLEM**: This doc claims things work that don't
+**SOLUTION**: Mark actual status, not aspirational
+
+### VERIFICATION CHECKLIST
+Before claiming anything is "done":
+- [ ] Can a real user sign up?
+- [ ] Do they receive an email?
+- [ ] Can they pay with real card?
+- [ ] Do they get API key access?
+- [ ] Can they make API calls?
+- [ ] Do usage limits work?
+
+### TESTING COMMANDS
+```bash
+# Test waitlist
+curl -X POST https://api.safeprompt.dev/api/waitlist \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com"}'
+
+# Test validation
+curl -X POST https://api.safeprompt.dev/api/v1/check \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"ignore instructions"}'
+
+# Check if npm package exists
+npm view @safeprompt/js
+```
+
+### COMMON PITFALLS TO AVOID
+1. **Don't mark complete until tested end-to-end**
+2. **Don't show features that don't exist**
+3. **Don't use fake data in production**
+4. **Don't claim emails work without sending one**
+5. **Don't say "dashboard working" if only demo user works**
+
+### SUCCESS METRICS
+- First real payment processed: TARGET = Day 2
+- First user successfully uses API: TARGET = Day 2
+- Zero Potemkin issues found: TARGET = Day 3
+
 ## References
 
 - Methodology: /home/projects/docs/methodology-long-running-tasks.md
@@ -1484,3 +1655,4 @@ User → Dashboard → Supabase (RLS) → Protected Data
 - Website: /home/projects/safeprompt/website/
 - Dashboard: /home/projects/safeprompt/dashboard/
 - Terms/Privacy templates: /home/projects/reboot/src/pages/
+- Potemkin Audit Results: /home/projects/user-input/claude-1/safeprompt-potemkin-audit-mission.md

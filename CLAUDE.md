@@ -172,6 +172,43 @@ CREATE TABLE subscription_plans (
 └── packages/          # NPM packages (SDK)
 ```
 
+## ⛔ ANTI-POTEMKIN RULES (MANDATORY FOR ALL AIs)
+
+**Potemkin Village**: Fake features presented as functional. This destroyed trust and wasted weeks.
+
+### NEVER DO THIS:
+1. **NEVER show installation for non-existent packages**
+   - ❌ `npm install @safeprompt/js` (package doesn't exist)
+   - ✅ Use curl/HTTP examples until package is published
+
+2. **NEVER create UI without backend**
+   - ❌ "Regenerate API Key" button with no endpoint
+   - ✅ Disable button with "Coming soon" or build backend first
+
+3. **NEVER fake metrics or counters**
+   - ❌ Hardcoded "1,247 developers"
+   - ✅ Show real count from database, even if "0"
+
+4. **NEVER link to non-existent pages**
+   - ❌ Links to `/docs` that 404
+   - ✅ Only link to pages that exist, inline docs if needed
+
+5. **NEVER reference non-existent database columns**
+   - ❌ Query `api_calls_limit` without checking schema
+   - ✅ Verify schema first: `\d table_name` in psql
+
+### ALWAYS DO THIS:
+1. **Build backend → Test → Add UI** (in that order)
+2. **Mark demo/beta clearly** with banners/badges
+3. **Test every link and button** before committing
+4. **Check database schema** before writing queries
+5. **Use real data** or clearly marked test data
+
+### The Trust Equation:
+- Each fake element discovered = -10x trust
+- One honest "beta" label = maintained trust
+- Working minimal feature > Fake complete feature
+
 ## 🚨 CRITICAL LESSONS LEARNED (2025-01-24)
 
 ### Architecture Migration Lessons
@@ -270,14 +307,25 @@ curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
   - Test files in production folders
 
 ## When Making Changes
+
+### Pre-Flight Checklist (MANDATORY):
+- [ ] Does the backend for this feature exist?
+- [ ] Have I tested every link/button I'm adding?
+- [ ] Are all database columns I'm using real?
+- [ ] Is demo/beta status clearly marked?
+- [ ] Am I showing real data, not fake numbers?
+
+### Development Rules:
 1. Keep it simple - no over-engineering
-2. Optimize for developer experience
-3. Maintain <200ms response time target (validated at P95=67ms)
-4. Document API changes in docs/API.md
-5. Update this file with major decisions
-6. **NO TEMPORAL FILES** - Update existing docs to reflect current state only
-7. Test files go in `/home/projects/user-input/claude-safeprompt/`
-8. Never reference historical states - document as deprecated if needed
+2. **Backend first, UI second** - Never reverse this
+3. Optimize for developer experience
+4. Maintain <200ms response time target (validated at P95=67ms)
+5. Document API changes in docs/API.md
+6. Update this file with major decisions
+7. **NO TEMPORAL FILES** - Update existing docs to reflect current state only
+8. Test files go in `/home/projects/user-input/claude-safeprompt/`
+9. Never reference historical states - document as deprecated if needed
+10. **If it doesn't work, mark it as "Coming Soon" or remove it**
 
 ## See Also
 - `docs/TECHNICAL.md` - Implementation details
