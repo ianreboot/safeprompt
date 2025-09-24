@@ -170,8 +170,7 @@ Maximum security. Good for financial or healthcare.
 |------|----------------|-------------|---------------|
 | Free | 10 | 1,000 | 10,000 |
 | Starter | 50 | 10,000 | 100,000 |
-| Pro | 200 | 100,000 | 1,000,000 |
-| Scale | 1000 | 1,000,000 | 10,000,000 |
+| Business | 200 | 100,000 | 1,000,000 |
 
 Rate limit headers:
 ```

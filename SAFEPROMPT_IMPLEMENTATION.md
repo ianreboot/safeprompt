@@ -939,9 +939,9 @@ async function learnFromMiss(prompt, actualThreat) {
 #### 8.2 Stripe Setup ✅ COMPLETED
 1. Stripe account configured (test mode)
 2. Products created:
-   - Beta Access: $5/month (price_1SAaJGIceoFuMr41bDK1egBY)
-   - Starter: $29/month (price_1SAaK4IceoFuMr41rq9yNrbo)
-   - Business: $99/month (price_1SAaKZIceoFuMr41JPNPtZ73)
+   - Early Bird: $5/month (price_1SAaJGIceoFuMr41bDK1egBY) - Gets Starter tier features during beta
+   - Starter: $29/month (price_1SAaK4IceoFuMr41rq9yNrbo) - 100,000 requests/month
+   - Business: $99/month (price_1SAaKZIceoFuMr41JPNPtZ73) - 1,000,000 requests/month
 3. Webhook endpoint configured: https://api.safeprompt.dev/api/v1/stripe-webhook
 4. Webhook secret: whsec_kAqeLUqd6wDWfbCPeEXlC061Jfc475QL
 

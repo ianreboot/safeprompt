@@ -59,18 +59,11 @@ const pricingPlans: PricingPlan[] = [
     popular: true
   },
   {
-    id: 'pro',
-    name: 'Pro',
+    id: 'business',
+    name: 'Business',
     price: 99,
     requests: 1000000,
     features: ['1,000,000 requests/month', 'Priority support', 'Custom integration help', '99.95% uptime SLA']
-  },
-  {
-    id: 'scale',
-    name: 'Scale',
-    price: 499,
-    requests: 10000000,
-    features: ['10,000,000 requests/month', 'Dedicated support', 'Custom models', '99.99% uptime SLA']
   }
 ]
 
@@ -451,9 +444,17 @@ export default function Dashboard() {
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <p className="font-semibold">{currentPlan.name} Plan</p>
-                    <p className="text-sm text-gray-400">
-                      ${currentPlan.price}/month
-                    </p>
+                    {currentPlan.id === 'starter' && user?.created_at && new Date(user.created_at) < new Date('2025-03-01') ? (
+                      <div className="text-sm">
+                        <span className="text-green-400">$5/month</span>
+                        <span className="text-gray-500 line-through ml-2">${currentPlan.price}/month</span>
+                        <div className="text-xs text-green-400 mt-1">Early Bird Pricing</div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-400">
+                        ${currentPlan.price}/month
+                      </p>
+                    )}
                   </div>
                   <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">CURRENT</span>
                 </div>

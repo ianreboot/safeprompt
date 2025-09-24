@@ -48,10 +48,9 @@ Developers building AI features face a dilemma:
 
 ### Tiers (VALIDATED - Highly Profitable with Free Models)
 ```
-Free         $0/mo        1,000 validations
-Starter     $29/mo       50,000 validations
-Pro         $99/mo      250,000 validations
-Scale      $299/mo    1,000,000 validations
+Free         $0/mo       10,000 validations
+Starter     $29/mo      100,000 validations  (Early Bird: $5/mo during beta)
+Business    $99/mo    1,000,000 validations
 Enterprise  Custom         Custom volume/SLA
 ```
 
@@ -128,9 +127,9 @@ Enterprise  Custom         Custom volume/SLA
 
 ### Beta Pricing Model
 - **Waitlist**: Free tier users join waitlist (creates scarcity/social proof)
-- **Early Bird**: $5/month instant access with $29 tier limits (50,000 validations)
-- **Value Prop**: "Lock in $5/month forever vs future $29/month"
-- **No Higher Tiers**: During beta, only offer starter tier to focus testing
+- **Early Bird**: $5/month instant access with Starter tier limits (100,000 validations)
+- **Value Prop**: "Get $29 Starter tier for only $5/month during beta"
+- **Limited Tiers**: During beta, focus on Free (waitlist) and Early Bird (instant access)
 
 ### API Key Management System
 - **Architecture**: Custom built on Supabase (preserves 100% margins)

@@ -285,7 +285,7 @@ export default function Home() {
           </div>
 
           <p className="text-center text-muted-foreground mt-8">
-            After beta: Starter $29/mo • Pro $99/mo • Enterprise $299/mo
+            After beta: Starter $29/mo • Business $99/mo
           </p>
         </div>
       </section>
