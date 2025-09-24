@@ -64,12 +64,21 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - [x] Admin Dashboard: dashboard.safeprompt.dev/admin (restricted access)
 - [x] Demo user: demo@safeprompt.dev / demo123 (preview mode)
 
-### In Progress (Beta)
-- [ ] Validation engine implementation
-- [ ] Supabase trigger for auto user→profile creation
-- [ ] Stripe integration (products not configured)
-- [ ] API key generation and validation
-- [ ] Usage tracking and rate limiting
+### Completed (January 2025)
+- [x] Validation engine implementation (check-protected-new.js)
+- [x] Supabase trigger for auto profile creation
+- [x] Stripe webhook integration (dashboard/api/stripe-webhook)
+- [x] API key generation and validation
+- [x] Usage tracking and rate limiting
+- [x] Subscription management endpoints
+- [x] Waitlist approval workflow
+- [x] User lifecycle testing suite
+
+### Pending Configuration
+- [ ] Create Stripe products and update price IDs
+- [ ] Configure Resend for email notifications
+- [ ] Deploy new API endpoints to production
+- [ ] Run database migration scripts in Supabase
 
 ### Ready for Beta
 - All core systems operational
@@ -77,26 +86,53 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - Payment flow automated via Stripe webhook
 - Clear documentation and onboarding flow
 
-### Database Architecture (Correct Pattern)
+### Database Architecture (UPDATED January 2025)
 
 ```sql
--- Minimal profiles table (replaces complex users table)
+-- Unified profiles table with subscription management
 CREATE TABLE profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   stripe_customer_id TEXT UNIQUE,
   api_key TEXT UNIQUE DEFAULT gen_random_uuid(),
   api_calls_this_month INT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  subscription_status TEXT DEFAULT 'free',
+  subscription_plan_id TEXT,
+  subscription_period_end TIMESTAMPTZ,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Auto-create profile on signup
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
+-- API usage tracking
+CREATE TABLE api_logs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  profile_id UUID REFERENCES profiles(id),
+  endpoint TEXT,
+  prompt_length INT,
+  response_time_ms INT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Subscription plans
+CREATE TABLE subscription_plans (
+  stripe_price_id TEXT PRIMARY KEY,
+  name TEXT,
+  api_calls_limit INT,
+  price_cents INT
+);
 ```
 
-**Key Principle**: Supabase Auth for identity, profiles for business logic, Stripe API for subscription status (don't duplicate)
+**Key Updates**:
+- Profiles table now includes subscription fields
+- API logs replace validation_logs
+- Subscription plans table for tier management
+- See MIGRATION_GUIDE.md for full details
 
 ### Next Steps for Launch
 1. **Enable Production Mode** - Switch Stripe from test to live mode

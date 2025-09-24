@@ -50,14 +50,20 @@ export default function Dashboard() {
   async function fetchApiKey(userId: string) {
     try {
       const { data, error } = await supabase
-        .from('api_keys')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_active', true)
+        .from('profiles')
+        .select('api_key, created_at, is_active')
+        .eq('id', userId)
         .single()
 
-      if (data) {
-        setApiKey(data)
+      if (data && data.api_key) {
+        // Format data to match expected structure
+        setApiKey({
+          key: data.api_key,
+          key_hint: data.api_key.slice(-4),
+          created_at: data.created_at,
+          is_active: data.is_active,
+          last_used_at: null // Will be tracked in api_logs
+        })
       }
     } catch (error) {
       console.error('Error fetching API key:', error)
@@ -77,15 +83,17 @@ export default function Dashboard() {
         .eq('id', userId)
         .single()
 
+      // Use api_logs table instead of validation_logs
       const { count } = await supabase
-        .from('validation_logs')
+        .from('api_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
+        .eq('profile_id', userId)
         .gte('created_at', startOfMonth.toISOString())
 
-      // Determine limit based on whether they have a Stripe customer
+      // Determine limit based on subscription tier
+      // TODO: Get actual plan from Stripe subscription data
       const limit = profileData?.stripe_customer_id ? 100000 : 10000
-      const current = profileData?.api_calls_this_month || 0
+      const current = profileData?.api_calls_this_month || count || 0
       const percentage = Math.round((current / limit) * 100)
       const tier = profileData?.stripe_customer_id ? 'pro' : 'free'
 
@@ -116,22 +124,30 @@ export default function Dashboard() {
     if (!confirm('This will invalidate your current API key. Continue?')) return
 
     try {
-      // Call API endpoint to regenerate key
-      const response = await fetch('/api/regenerate-key', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.id}`
-        }
-      })
+      // Generate new API key
+      const newApiKey = `sp_live_${Math.random().toString(36).substring(2, 34)}`
 
-      if (response.ok) {
+      // Update profile with new API key
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({
+          api_key: newApiKey,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+        .select('api_key, created_at, is_active')
+        .single()
+
+      if (error) {
+        console.error('Error regenerating key:', error)
+        alert('Failed to regenerate API key. Please try again.')
+      } else {
         await fetchApiKey(user.id)
         alert('New API key generated! Please update your applications.')
       }
     } catch (error) {
       console.error('Error regenerating key:', error)
-      alert('Feature coming soon in beta!')
+      alert('Failed to regenerate API key. Please try again.')
     }
   }
 
