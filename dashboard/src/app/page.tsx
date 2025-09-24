@@ -294,8 +294,7 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-primary">SafePrompt</h1>
               <nav className="hidden md:flex items-center gap-6">
                 <a href="#" className="text-sm text-white">Dashboard</a>
-                <a href="#documentation" className="text-sm text-gray-300 hover:text-white">Docs</a>
-                <a href="https://safeprompt.dev#contact" className="text-sm text-gray-300 hover:text-white">Support</a>
+                <a href="https://safeprompt.dev/contact" className="text-sm text-gray-300 hover:text-white">Support</a>
               </nav>
             </div>
             <div className="flex items-center gap-4">
@@ -708,19 +707,11 @@ def check_prompt(user_input):
               </pre>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 mt-6 pt-6 border-t border-gray-800">
-              <div>
-                <p className="text-sm text-gray-400 mb-2">📖 Full API Documentation</p>
-                <a href="https://safeprompt.dev#documentation" className="text-primary hover:underline flex items-center gap-1">
-                  View Complete Guide <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
-              <div>
-                <p className="text-sm text-gray-400 mb-2">💬 Need Help?</p>
-                <a href="https://safeprompt.dev#contact" className="text-primary hover:underline flex items-center gap-1">
-                  Contact Support <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
+            <div className="mt-6 pt-6 border-t border-gray-800 text-center">
+              <p className="text-sm text-gray-400 mb-2">💬 Need Help?</p>
+              <a href="https://safeprompt.dev/contact" className="text-primary hover:underline flex items-center gap-1 justify-center">
+                Contact Support <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
         </div>

@@ -161,7 +161,7 @@ export default function Login() {
             Documentation
           </a>
           <span>•</span>
-          <a href="mailto:support@safeprompt.dev" className="hover:text-white transition-colors">
+          <a href="https://safeprompt.dev/contact" className="hover:text-white transition-colors">
             Support
           </a>
         </div>

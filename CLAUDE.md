@@ -14,6 +14,28 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 - **Transparent**: Public pricing, no sales calls
 - **Accurate**: Multi-layer validation with confidence scoring
 
+## 🔒 EMAIL PRIVACY PROTOCOL
+
+### MANDATORY: No Email Address Exposure
+**ALL customer contact must go through the contact form at safeprompt.dev/contact**
+
+### Never Expose These Emails:
+- ❌ support@safeprompt.dev
+- ❌ info@safeprompt.dev
+- ❌ ian@rebootmedia.net
+- ❌ Any other internal email addresses
+
+### Always Use:
+- ✅ Contact form: https://safeprompt.dev/contact
+- ✅ Form sends to info@safeprompt.dev via Resend (backend only)
+- ✅ Auto-reply confirms receipt
+
+### Why This Matters:
+1. **Spam Prevention**: Exposed emails get harvested by bots
+2. **Professional Image**: Contact forms look more legitimate
+3. **Tracking**: We can measure support volume
+4. **Security**: Reduces phishing attack surface
+
 ## Technical Architecture
 
 ### Stack
@@ -22,6 +44,7 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 - **Database**: Supabase PostgreSQL (profiles table linked to auth.users)
 - **AI**: OpenRouter (multi-model strategy for cost optimization)
 - **Payments**: Stripe (direct API checks, no data duplication)
+- **Email**: Resend (contact form → info@safeprompt.dev)
 
 ### Validation Pipeline
 1. **Regex Patterns** - Fast first pass (5ms) from `/home/projects/api/utils/prompt-validator.js`
@@ -45,8 +68,7 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 ### Pricing Model
 - **Free**: 10,000 validations/month
 - **Starter**: $29/month - 100,000 validations
-- **Pro**: $99/month - 1,000,000 validations
-- **Scale**: $499/month - 10,000,000 validations
+- **Business**: $99/month - 1,000,000 validations
 
 ### Competitive Positioning
 Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
@@ -62,6 +84,7 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - **Domain**: safeprompt.dev (live)
 - **API**: api.safeprompt.dev (operational)
 - **Dashboard**: dashboard.safeprompt.dev (fully functional)
+- **Contact Form**: safeprompt.dev/contact (Resend integration)
 - **Implementation**: 90% complete, ready for beta testing
 - **Stripe**: Test mode (awaiting user testing)
 - **Emails**: Resend integration complete
@@ -134,6 +157,7 @@ This includes:
 - ❌ Hardcoded metrics (waitlist counter was fake)
 - ❌ Links to non-existent pages (/docs, /api/health)
 - ❌ Non-functional features presented as working
+- ❌ Exposed email addresses (use contact form instead)
 
 ### Correct Patterns
 - ✅ Use HTTP/curl examples until SDK actually exists
@@ -141,6 +165,7 @@ This includes:
 - ✅ Check Stripe API directly for subscription status
 - ✅ Clear demo mode indicators for preview accounts
 - ✅ Inline documentation when dedicated pages don't exist
+- ✅ Contact form instead of exposed email addresses
 
 ## File Structure
 ```
@@ -152,7 +177,7 @@ This includes:
 │   ├── BUSINESS.md    # Strategy, market, pricing
 │   └── API.md         # Endpoint documentation
 ├── api/               # Vercel Functions (API endpoints)
-├── website/           # Next.js marketing website
+├── website/           # Next.js marketing website (includes /contact)
 ├── dashboard/         # Next.js user dashboard
 └── packages/          # NPM packages (SDK)
 ```
@@ -182,12 +207,17 @@ This includes:
    - ❌ Query `api_calls_limit` without checking schema
    - ✅ Verify schema first: `\d table_name` in psql
 
+6. **NEVER expose email addresses**
+   - ❌ mailto:support@safeprompt.dev
+   - ✅ Link to contact form at /contact
+
 ### ALWAYS DO THIS:
 1. **Build backend → Test → Add UI** (in that order)
 2. **Mark demo/beta clearly** with banners/badges
 3. **Test every link and button** before committing
 4. **Check database schema** before writing queries
 5. **Use real data** or clearly marked test data
+6. **Use contact form** for all customer communication
 
 ### The Trust Equation:
 - Each fake element discovered = -10x trust
@@ -225,6 +255,7 @@ This includes:
 3. Dashboard must exist and function
 4. Waitlist must save to database
 5. Be honest about beta/limitations
+6. Contact form must work (no exposed emails)
 
 ### Current Actual State (Post-Migration)
 - **Website**: ✅ Live, honest, functional
@@ -233,9 +264,10 @@ This includes:
 - **Payments**: ✅ Stripe webhook handlers created
 - **Subscriptions**: ✅ Full management endpoints
 - **Waitlist**: ✅ Approval workflow implemented
-- **Emails**: ❌ Resend not configured (manual setup needed)
+- **Contact Form**: ✅ Resend integration complete
+- **Emails**: ✅ Resend configured (sends to info@safeprompt.dev)
 - **Stripe Products**: ❌ Need manual creation in dashboard
-- **Launch Ready**: 85% (just needs Stripe/Resend config)
+- **Launch Ready**: 90% (just needs Stripe config)
 
 ## Development Commands
 
@@ -299,6 +331,7 @@ curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
 - [ ] Are all database columns I'm using real?
 - [ ] Is demo/beta status clearly marked?
 - [ ] Am I showing real data, not fake numbers?
+- [ ] Are emails going through contact form, not exposed?
 
 ### Development Rules:
 1. Keep it simple - no over-engineering
@@ -311,6 +344,7 @@ curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
 8. Test files go in `/home/projects/user-input/claude-safeprompt/`
 9. Never reference historical states - document as deprecated if needed
 10. **If it doesn't work, mark it as "Coming Soon" or remove it**
+11. **ALL customer contact through safeprompt.dev/contact form**
 
 ## See Also
 - `docs/TECHNICAL.md` - Implementation details

@@ -115,7 +115,7 @@ npm run dev
 ## Support
 
 - Documentation: [safeprompt.dev/docs](https://safeprompt.dev/docs)
-- Email: support@safeprompt.dev
+- Contact: [safeprompt.dev/contact](https://safeprompt.dev/contact)
 - Discord: [Join our community](https://discord.gg/safeprompt)
 - GitHub Issues: [Report a bug](https://github.com/ianreboot/safeprompt/issues)
 

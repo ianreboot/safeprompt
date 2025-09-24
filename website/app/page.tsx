@@ -373,7 +373,7 @@ await openai.complete(userInput);`}
               <a href="https://dashboard.safeprompt.dev" className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition">
                 Access Dashboard
               </a>
-              <a href="mailto:support@safeprompt.dev" className="border border-border text-foreground px-6 py-2 rounded-lg hover:bg-card transition">
+              <a href="/contact" className="border border-border text-foreground px-6 py-2 rounded-lg hover:bg-card transition">
                 Contact Support
               </a>
             </div>
@@ -432,7 +432,7 @@ await openai.complete(userInput);`}
           </div>
 
           <p className="text-sm text-muted-foreground mt-8">
-            No spam. Unsubscribe anytime. Questions? Email <a href="mailto:support@safeprompt.dev" className="text-primary hover:underline">support@safeprompt.dev</a>
+            No spam. Unsubscribe anytime. Questions? <a href="/contact" className="text-primary hover:underline">Contact us</a>
           </p>
         </div>
       </section>
@@ -477,7 +477,7 @@ await openai.complete(userInput);`}
               <ul className="space-y-2">
                 <li><a href="https://twitter.com/safeprompt" className="text-muted-foreground hover:text-foreground transition">Twitter</a></li>
                 <li><a href="https://discord.gg/safeprompt" className="text-muted-foreground hover:text-foreground transition">Discord</a></li>
-                <li><a href="mailto:support@safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">support@safeprompt.dev</a></li>
+                <li><a href="/contact" className="text-muted-foreground hover:text-foreground transition">Contact Form</a></li>
               </ul>
             </div>
           </div>
