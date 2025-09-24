@@ -5,6 +5,7 @@
 
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 
@@ -18,9 +19,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
 
 // Supabase client
 const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
+  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
+
+// Resend client for email notifications
+const resend = new Resend(process.env.RESEND_API_KEY || '');
 
 // Webhook endpoint secret for signature verification
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
@@ -109,12 +113,45 @@ async function handleCheckoutComplete(session: any) {
     return;
   }
 
-  // Generate API key
-  const apiKey = await generateApiKeyForUser(email, customerId);
+  // Generate API key (stored in database, not emailed)
+  await generateApiKeyForUser(email, customerId);
 
-  // Send welcome email with API key
-  // TODO: Implement email sending via Resend
-  console.log(`Welcome email would be sent to ${email} with API key: ${apiKey}`);
+  // Send welcome email (NO API KEY - direct to dashboard)
+  try {
+    await resend.emails.send({
+      from: 'SafePrompt <noreply@safeprompt.dev>',
+      to: email,
+      subject: 'Welcome to SafePrompt - Your Account is Ready!',
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #00FF41;">Welcome to SafePrompt!</h1>
+          <p>Your account has been successfully created and your API key is ready.</p>
+
+          <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h2 style="margin-top: 0;">Access Your Dashboard</h2>
+            <p>Your API key and usage metrics are available in your secure dashboard:</p>
+            <a href="https://dashboard.safeprompt.dev" style="display: inline-block; background: #00FF41; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Go to Dashboard</a>
+          </div>
+
+          <h3>Quick Start:</h3>
+          <ol>
+            <li>Log in to your dashboard at dashboard.safeprompt.dev</li>
+            <li>Copy your API key (securely displayed)</li>
+            <li>Install our SDK: <code>npm install @safeprompt/js</code></li>
+            <li>Start protecting your AI applications!</li>
+          </ol>
+
+          <p style="color: #666; font-size: 14px; margin-top: 30px;">
+            Need help? Reply to this email or visit our docs at safeprompt.dev/docs
+          </p>
+        </div>
+      `
+    });
+    console.log(`Welcome email sent to ${email}`);
+  } catch (emailError) {
+    console.error('Failed to send welcome email:', emailError);
+    // Don't fail the webhook if email fails - user can still access dashboard
+  }
 
   // Remove from waitlist if exists
   await supabase
@@ -231,7 +268,29 @@ export default async function handler(req: any, res: any) {
       case 'invoice.payment_failed':
         // Handle failed payment
         console.error('Payment failed for customer:', event.data.object.customer);
-        // TODO: Send payment failure email
+
+        // Send payment failure notification
+        try {
+          const customerEmail = event.data.object.customer_email;
+          if (customerEmail) {
+            await resend.emails.send({
+              from: 'SafePrompt <noreply@safeprompt.dev>',
+              to: customerEmail,
+              subject: 'Payment Failed - Action Required',
+              html: `
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                  <h1 style="color: #FF0000;">Payment Failed</h1>
+                  <p>We were unable to process your payment for SafePrompt.</p>
+                  <p>Please update your payment method to continue using the service:</p>
+                  <a href="https://dashboard.safeprompt.dev/billing" style="display: inline-block; background: #00FF41; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Update Payment Method</a>
+                  <p style="color: #666; margin-top: 20px;">Your API access will remain active for 7 days while we retry the payment.</p>
+                </div>
+              `
+            });
+          }
+        } catch (emailError) {
+          console.error('Failed to send payment failure email:', emailError);
+        }
         break;
 
       default:

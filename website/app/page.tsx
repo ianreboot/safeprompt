@@ -34,10 +34,11 @@ export default function Home() {
           <div className="flex items-center space-x-6">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition">Features</a>
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition">Pricing</a>
-            <a href="https://docs.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Docs</a>
-            <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+            <a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Dashboard</a>
+            <a href="#docs" className="text-muted-foreground hover:text-foreground transition">Docs</a>
+            <a href="#get-started" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition">
               Get Started
-            </button>
+            </a>
           </div>
         </div>
       </nav>
@@ -73,17 +74,24 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <button className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition glow-primary">
+              <a href="#get-started" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition glow-primary">
                 Get Instant Access - $5/mo
-              </button>
-              <button className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
+              </a>
+              <a href="#get-started" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
                 Join Free Waitlist
-              </button>
+              </a>
             </div>
 
             <p className="text-sm text-muted-foreground mt-4">
               Early bird pricing: Lock in $5/month forever (Future price: $29/mo)
             </p>
+
+            {/* Clear instructions about what happens next */}
+            <div className="mt-8 p-4 bg-card/50 rounded-lg border border-border/50">
+              <p className="text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">How it works:</span> After payment, you'll receive an email with instructions to access your dashboard at <span className="text-primary">dashboard.safeprompt.dev</span> where you can view your API key and start integrating SafePrompt.
+              </p>
+            </div>
           </motion.div>
 
           {/* Attack Theater Demo */}
@@ -274,8 +282,87 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Documentation Section */}
+      <section id="docs" className="py-20 px-6 bg-card/50">
+        <div className="container mx-auto max-w-6xl">
+          <h2 className="text-4xl font-bold text-center mb-12">
+            Quick Start <span className="gradient-text">Documentation</span>
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Installation */}
+            <div className="bg-card p-6 rounded-xl border border-border">
+              <h3 className="text-xl font-semibold mb-4">1. Install the SDK</h3>
+              <pre className="bg-background p-4 rounded-lg overflow-x-auto">
+                <code className="text-sm text-muted-foreground">
+{`npm install @safeprompt/js
+# or
+yarn add @safeprompt/js`}
+                </code>
+              </pre>
+            </div>
+
+            {/* Initialize */}
+            <div className="bg-card p-6 rounded-xl border border-border">
+              <h3 className="text-xl font-semibold mb-4">2. Initialize with your API key</h3>
+              <pre className="bg-background p-4 rounded-lg overflow-x-auto">
+                <code className="text-sm text-muted-foreground">
+{`import SafePrompt from '@safeprompt/js';
+
+const safeprompt = new SafePrompt('sp_live_YOUR_KEY');`}
+                </code>
+              </pre>
+            </div>
+
+            {/* Usage */}
+            <div className="bg-card p-6 rounded-xl border border-border">
+              <h3 className="text-xl font-semibold mb-4">3. Validate user input</h3>
+              <pre className="bg-background p-4 rounded-lg overflow-x-auto">
+                <code className="text-sm text-muted-foreground">
+{`const result = await safeprompt.check(userInput);
+
+if (!result.safe) {
+  throw new Error('Potential injection detected');
+}
+
+// Safe to use with your AI
+await openai.complete(userInput);`}
+                </code>
+              </pre>
+            </div>
+
+            {/* API Endpoint */}
+            <div className="bg-card p-6 rounded-xl border border-border">
+              <h3 className="text-xl font-semibold mb-4">4. Or use the API directly</h3>
+              <pre className="bg-background p-4 rounded-lg overflow-x-auto">
+                <code className="text-sm text-muted-foreground">
+{`curl -X POST https://api.safeprompt.dev/v1/check \\
+  -H "Authorization: Bearer sp_live_YOUR_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"prompt": "User input here"}'`}
+                </code>
+              </pre>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-muted-foreground mb-4">
+              Need help? Check out our full documentation or reach out to support.
+            </p>
+            <div className="flex items-center justify-center space-x-4">
+              <a href="https://dashboard.safeprompt.dev" className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition">
+                Access Dashboard
+              </a>
+              <a href="mailto:support@safeprompt.dev" className="border border-border text-foreground px-6 py-2 rounded-lg hover:bg-card transition">
+                Contact Support
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
-      <section className="py-20 px-6 bg-gradient-to-b from-card/50 to-background">
+      <section id="get-started" className="py-20 px-6 bg-gradient-to-b from-card/50 to-background">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-4xl font-bold mb-6">
             Your AI Is At Risk <span className="gradient-text">Right Now</span>
@@ -287,8 +374,45 @@ export default function Home() {
 
           <WaitlistForm />
 
+          {/* Clear process explanation */}
+          <div className="mt-8 p-6 bg-card rounded-xl border border-border max-w-2xl mx-auto text-left">
+            <h3 className="font-semibold text-lg mb-4">What happens next?</h3>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <div className="flex items-start space-x-3">
+                <span className="text-primary font-semibold">1.</span>
+                <div>
+                  <strong className="text-foreground">Choose your option:</strong> Join the free waitlist or get instant access for $5/month
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <span className="text-primary font-semibold">2.</span>
+                <div>
+                  <strong className="text-foreground">Complete payment:</strong> If you chose early bird access, you'll be redirected to Stripe for secure payment
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <span className="text-primary font-semibold">3.</span>
+                <div>
+                  <strong className="text-foreground">Check your email:</strong> You'll receive a welcome email with instructions
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <span className="text-primary font-semibold">4.</span>
+                <div>
+                  <strong className="text-foreground">Access your dashboard:</strong> Log in at <a href="https://dashboard.safeprompt.dev" className="text-primary hover:underline">dashboard.safeprompt.dev</a> to view your API key
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <span className="text-primary font-semibold">5.</span>
+                <div>
+                  <strong className="text-foreground">Start integrating:</strong> Use our SDK or API directly to protect your AI applications
+                </div>
+              </div>
+            </div>
+          </div>
+
           <p className="text-sm text-muted-foreground mt-8">
-            No spam. Unsubscribe anytime. We'll only email when your spot is ready.
+            No spam. Unsubscribe anytime. Questions? Email <a href="mailto:support@safeprompt.dev" className="text-primary hover:underline">support@safeprompt.dev</a>
           </p>
         </div>
       </section>
@@ -312,7 +436,8 @@ export default function Home() {
               <ul className="space-y-2">
                 <li><a href="#features" className="text-muted-foreground hover:text-foreground transition">Features</a></li>
                 <li><a href="#pricing" className="text-muted-foreground hover:text-foreground transition">Pricing</a></li>
-                <li><a href="https://docs.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Documentation</a></li>
+                <li><a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Dashboard</a></li>
+                <li><a href="#docs" className="text-muted-foreground hover:text-foreground transition">Documentation</a></li>
                 <li><a href="https://api.safeprompt.dev/status" className="text-muted-foreground hover:text-foreground transition">API Status</a></li>
               </ul>
             </div>

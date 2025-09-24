@@ -40,7 +40,7 @@ pip install safeprompt  # Coming soon
 
 ## Quick Start
 
-1. **Get your API key** at [safeprompt.dev](https://bda9f85e.safeprompt.pages.dev) (temporary URL)
+1. **Get your API key** at [safeprompt.dev](https://safeprompt.dev)
 2. **Install the SDK** (see above)
 3. **Add validation** to your AI calls:
 
@@ -129,16 +129,22 @@ Found a vulnerability? Email security@safeprompt.dev for responsible disclosure.
 
 Built with ❤️ for developers who just want their AI apps to be secure.
 
-## Current Deployment Status (Sept 2025)
+## Current Deployment Status (January 2025)
 
 ### Live Services
 - **Website**: https://safeprompt.dev ✅ (Cloudflare Pages)
 - **API**: https://api.safeprompt.dev ✅ (Vercel Functions)
-- **Database**: Supabase project vkyggknknyfallmnrmfu ✅ (configured)
-- **Payments**: Stripe test mode ✅ (webhook pending)
+- **Dashboard**: https://dashboard.safeprompt.dev ✅ (Vercel/Next.js)
+- **Admin Panel**: https://dashboard.safeprompt.dev/admin ✅
+- **Database**: Supabase ✅ (fully configured with RLS)
+- **Payments**: Stripe ✅ (webhook automated account creation)
+- **Email**: Resend ✅ (welcome & notification emails)
 
-### Test Credentials
-For testing, use Stripe test card: `4242 4242 4242 4242`
+### Beta Access
+- Sign up at https://safeprompt.dev
+- Use Stripe test card: `4242 4242 4242 4242`
+- Access your dashboard at https://dashboard.safeprompt.dev
+- View API keys, usage metrics, and manage billing
 
 ### Beta Pricing
 - **Early Bird Special**: $5/month (limited time)

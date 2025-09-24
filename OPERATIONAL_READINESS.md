@@ -5,30 +5,33 @@
 
 ## 🚨 CRITICAL BLOCKERS (Cannot accept real customers)
 
-### 1. Waitlist Form - Database Table Missing
-- **Status**: ⚠️ CODE READY, TABLE MISSING
-- **Issue**: Waitlist table not created in Supabase database
-- **Impact**: Cannot capture interested users
-- **Fix Required**: Run SQL in Supabase dashboard (see SUPABASE_SETUP.md)
-- **Time to Fix**: 5 minutes
+### 1. No User Dashboard
+- **Status**: ❌ NOT BUILT
+- **Issue**: No way for users to view/manage API keys
+- **Impact**: Cannot deliver service professionally
+- **Fix Required**: Build dashboard.safeprompt.dev with Supabase Auth
+- **Time to Fix**: 2-3 days
 
-### 2. Payment → Account Creation
+### 2. No Admin Dashboard
+- **Status**: ❌ NOT BUILT
+- **Issue**: Cannot manage users or waitlist
+- **Impact**: Cannot onboard beta users
+- **Fix Required**: Build admin panel at /admin
+- **Time to Fix**: 1 day
+
+### 3. Email System (Notifications Only)
 - **Status**: ❌ NOT IMPLEMENTED
-- **Issue**: Stripe webhook exists but doesn't create accounts
-- **Impact**: Customers can pay but get nothing
-- **Fix Required**: Process webhook events, generate API keys
+- **Issue**: Cannot send welcome emails or notifications
+- **Impact**: Poor user experience, no confirmations
+- **Fix Required**: Implement Resend for notifications (NOT for API keys)
+- **Time to Fix**: 4 hours
 
-### 3. No Legal Pages
-- **Status**: ❌ MISSING
-- **Issue**: No Terms of Service or Privacy Policy
-- **Impact**: Legal liability, trust issues
-- **Fix Required**: Adapt from reboot project templates
-
-### 4. No Email System
-- **Status**: ❌ NOT IMPLEMENTED
-- **Issue**: Cannot send API keys or notifications
-- **Impact**: No way to deliver service after payment
-- **Fix Required**: Implement Resend integration
+### 4. Payment → Account Creation
+- **Status**: ❌ INCOMPLETE
+- **Issue**: Stripe webhook doesn't create accounts or generate keys
+- **Impact**: Customers pay but cannot access service
+- **Fix Required**: Complete webhook to create accounts and store API keys
+- **Time to Fix**: 2 hours
 
 ## ⚠️ OPERATIONAL GAPS (Can launch but painful)
 
@@ -77,13 +80,14 @@
 
 ## 📋 LAUNCH READINESS CHECKLIST
 
-### Minimum Viable Launch (8 hours work)
-- [ ] Fix waitlist form → Supabase
-- [ ] Implement Stripe webhook processing
+### Minimum Viable Launch (3-4 days work)
+- [ ] Build user dashboard with API key management
+- [ ] Build admin dashboard for user/waitlist management
+- [ ] Fix Stripe webhook to create accounts (not email keys)
+- [ ] Setup Resend for notifications only
 - [ ] Add Terms & Privacy pages
-- [ ] Setup basic email sending
 - [ ] Configure support email
-- [ ] Test end-to-end flow
+- [ ] Test complete signup → dashboard flow
 
 ### Week 1 Improvements (24 hours work)
 - [ ] Basic admin dashboard
@@ -113,7 +117,7 @@
 5. Support email active ✅
 6. One successful test customer ✅
 
-**Estimated Time to GO**: 8 hours of focused work
+**Estimated Time to GO**: 3-4 days (with proper dashboards)
 
 ## 📊 OPERATIONAL METRICS
 
@@ -133,16 +137,23 @@
 
 ## 🚀 RECOMMENDED NEXT STEPS
 
-### Today (2-3 hours)
-1. Wire up waitlist form to Supabase
-2. Test saving and retrieving data
-3. Add email notification on signup
+### Day 1-2 (User Dashboard)
+1. Create Next.js app at dashboard.safeprompt.dev
+2. Implement Supabase Auth (login/signup)
+3. Display API keys (masked with copy button)
+4. Show usage metrics and limits
 
-### Tomorrow (3-4 hours)
-1. Implement Stripe webhook processing
-2. Generate and hash API keys
-3. Send API key via email
-4. Test complete payment flow
+### Day 3 (Admin Dashboard)
+1. Create admin panel at /admin
+2. User management interface
+3. Waitlist approval system
+4. Basic analytics overview
+
+### Day 4 (Integration)
+1. Fix Stripe webhook (create accounts, not email keys)
+2. Setup Resend for notifications
+3. Test complete flow
+4. Add legal pages
 
 ### This Week (2-3 hours)
 1. Add Terms and Privacy pages
