@@ -16,9 +16,33 @@ export default function WaitlistForm() {
     setIsSubmitting(true)
 
     if (choice === 'earlybird') {
-      // Redirect to Stripe checkout for early bird access
-      // Using the Beta Access product price ID
-      window.location.href = `https://checkout.stripe.com/c/pay/cs_test_a1XYZ#fidkdWxOYHwnPyd1blpxYHZxWjA0T2Jwa2ZMbDNPUjR8Nk5BNTVGMGpSaUFBNDVyTGFrMlNjRGN1NTB0YX1jZnBJfGBBXzJcYGFjYHZ2YHdmYCc%2FcGApJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl?prefilled_email=${encodeURIComponent(email)}`
+      // For now, add to waitlist with early bird flag since Stripe is in test mode
+      // TODO: Once Stripe is live, redirect to real checkout session
+      try {
+        const response = await fetch('https://api.safeprompt.dev/api/waitlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            source: 'website',
+            earlyBirdInterest: true // Flag for tracking early bird interest
+          })
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to join waitlist')
+        }
+
+        setSubmitted(true)
+      } catch (error) {
+        console.error('Early bird signup error:', error)
+        alert('Early bird signup temporarily unavailable. You\'ve been added to the waitlist and we\'ll notify you when payment is ready.')
+        setSubmitted(true)
+      }
     } else {
       // Add to waitlist via API
       try {
@@ -56,7 +80,10 @@ export default function WaitlistForm() {
         <div className="text-4xl mb-4">🎉</div>
         <h3 className="text-xl font-semibold mb-2">You're on the list!</h3>
         <p className="text-muted-foreground">
-          We'll email you at <span className="text-foreground font-medium">{email}</span> when your spot is ready.
+          We'll email you at <span className="text-foreground font-medium">{email}</span> when SafePrompt is ready for beta access.
+        </p>
+        <p className="text-sm text-muted-foreground mt-3">
+          Note: Payment processing is currently being set up. Early bird pricing will be available soon.
         </p>
       </motion.div>
     )

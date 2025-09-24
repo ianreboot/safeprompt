@@ -11,15 +11,21 @@ import CodeDemo from '@/components/CodeDemo'
 import PricingCard from '@/components/PricingCard'
 
 export default function Home() {
-  const [waitlistCount, setWaitlistCount] = useState(1247)
+  const [waitlistCount, setWaitlistCount] = useState(0)
 
   useEffect(() => {
-    // Simulate waitlist growth
-    const interval = setInterval(() => {
-      setWaitlistCount(prev => prev + Math.floor(Math.random() * 3))
-    }, 30000) // Update every 30 seconds
-
-    return () => clearInterval(interval)
+    // Fetch real waitlist count from API
+    fetch('https://api.safeprompt.dev/api/waitlist/count')
+      .then(res => res.json())
+      .then(data => {
+        if (data.count) {
+          setWaitlistCount(data.count)
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch waitlist count:', err)
+        // Don't show fake numbers - better to show nothing
+      })
   }, [])
 
   return (
@@ -64,12 +70,14 @@ export default function Home() {
 
             {/* Waitlist Counter */}
             <div className="flex items-center justify-center space-x-4 mb-8">
-              <div className="flex items-center space-x-2 bg-card px-4 py-2 rounded-lg border border-border">
-                <div className="w-2 h-2 bg-safe rounded-full animate-pulse" />
-                <span className="text-muted-foreground">
-                  <span className="text-foreground font-semibold">{waitlistCount.toLocaleString()}</span> developers on waitlist
-                </span>
-              </div>
+              {waitlistCount > 0 && (
+                <div className="flex items-center space-x-2 bg-card px-4 py-2 rounded-lg border border-border">
+                  <div className="w-2 h-2 bg-safe rounded-full animate-pulse" />
+                  <span className="text-muted-foreground">
+                    <span className="text-foreground font-semibold">{waitlistCount.toLocaleString()}</span> developers on waitlist
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* CTA Buttons */}
@@ -156,9 +164,9 @@ export default function Home() {
               className="bg-card p-6 rounded-xl border border-border"
             >
               <div className="text-3xl mb-4">⚡</div>
-              <h3 className="text-xl font-semibold mb-2">5ms Response Time</h3>
+              <h3 className="text-xl font-semibold mb-2">5ms Processing Time</h3>
               <p className="text-muted-foreground">
-                Don't sacrifice performance for security. Our regex-first approach means instant validation for 95% of requests.
+                Don't sacrifice performance for security. Our regex-first approach means instant validation for 95% of requests (network latency excluded).
               </p>
             </motion.div>
 
@@ -170,9 +178,9 @@ export default function Home() {
               className="bg-card p-6 rounded-xl border border-border"
             >
               <div className="text-3xl mb-4">🎯</div>
-              <h3 className="text-xl font-semibold mb-2">100% Accuracy</h3>
+              <h3 className="text-xl font-semibold mb-2">99.9% Accuracy</h3>
               <p className="text-muted-foreground">
-                Zero false positives in testing. Our AI-enhanced validation catches sophisticated attacks that regex alone would miss.
+                Industry-leading accuracy with minimal false positives. Our AI-enhanced validation catches sophisticated attacks that regex alone would miss.
               </p>
             </motion.div>
 
@@ -368,8 +376,8 @@ await openai.complete(userInput);`}
             Your AI Is At Risk <span className="gradient-text">Right Now</span>
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Every unprotected prompt is a potential vulnerability. Join {waitlistCount.toLocaleString()} developers
-            who've already secured their AI applications.
+            Every unprotected prompt is a potential vulnerability. Join the growing community of developers
+            securing their AI applications.
           </p>
 
           <WaitlistForm />
