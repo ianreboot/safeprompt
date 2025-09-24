@@ -96,7 +96,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-safeprompt-green">Loading admin dashboard...</div>
+        <div className="text-primary">Loading admin dashboard...</div>
       </div>
     )
   }
@@ -108,7 +108,7 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Shield className="w-8 h-8 text-safeprompt-green" />
+              <Shield className="w-8 h-8 text-primary" />
               <h1 className="text-2xl font-bold">SafePrompt Admin</h1>
             </div>
             <div className="flex items-center space-x-4">
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
         {/* Waitlist */}
         <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 mb-8">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-safeprompt-green" />
+            <Clock className="w-5 h-5 text-primary" />
             Waitlist ({waitlist.length})
           </h2>
 
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
                   </div>
                   <button
                     onClick={() => approveWaitlist(entry.email)}
-                    className="flex items-center gap-1 px-3 py-1 bg-safeprompt-green text-black rounded text-sm hover:bg-green-400 transition-colors"
+                    className="flex items-center gap-1 px-3 py-1 bg-primary text-white rounded text-sm hover:bg-blue-500 transition-colors"
                   >
                     <CheckCircle className="w-4 h-4" />
                     Approve
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
         {/* Users */}
         <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <Users className="w-5 h-5 text-safeprompt-green" />
+            <Users className="w-5 h-5 text-primary" />
             Recent Users
           </h2>
 

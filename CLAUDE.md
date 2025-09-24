@@ -63,8 +63,8 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - [x] Website deployed: safeprompt.dev (Cloudflare Pages)
 - [x] Database schema: Supabase tables created
 - [x] Stripe products: Configured in test mode
-- [x] User Dashboard: dashboard.safeprompt.dev (Next.js + Supabase Auth)
-- [x] Admin Dashboard: dashboard.safeprompt.dev/admin (restricted access)
+- [x] User Dashboard: dashboard.safeprompt.dev (Next.js + Supabase Auth) - Now on Cloudflare Pages
+- [x] Admin Dashboard: dashboard.safeprompt.dev/admin (restricted access) - Now on Cloudflare Pages
 - [x] Email System: Resend integrated for notifications
 - [x] Stripe Webhook: Automated account creation and API key generation
 - [x] Website UX: Clear user journey from signup to API integration

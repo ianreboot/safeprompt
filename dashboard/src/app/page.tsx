@@ -121,7 +121,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-safeprompt-green">Loading...</div>
+        <div className="text-primary">Loading...</div>
       </div>
     )
   }
@@ -139,7 +139,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Shield className="w-8 h-8 text-safeprompt-green" />
+              <Shield className="w-8 h-8 text-primary" />
               <h1 className="text-2xl font-bold">SafePrompt Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
@@ -163,7 +163,7 @@ export default function Dashboard() {
           <div className="lg:col-span-2 bg-gray-900 rounded-lg p-6 border border-gray-800">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Key className="w-5 h-5 text-safeprompt-green" />
+                <Key className="w-5 h-5 text-primary" />
                 API Key
               </h2>
               <button
@@ -194,7 +194,7 @@ export default function Dashboard() {
                 </div>
               </div>
               {copied && (
-                <div className="mt-2 text-safeprompt-green text-xs">Copied to clipboard!</div>
+                <div className="mt-2 text-primary text-xs">Copied to clipboard!</div>
               )}
             </div>
 
@@ -207,7 +207,7 @@ export default function Dashboard() {
           {/* Usage Card */}
           <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <BarChart className="w-5 h-5 text-safeprompt-green" />
+              <BarChart className="w-5 h-5 text-primary" />
               Usage
             </h2>
 
@@ -220,7 +220,7 @@ export default function Dashboard() {
                 <div className="w-full bg-gray-800 rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all ${
-                      usage.percentage > 80 ? 'bg-red-500' : 'bg-safeprompt-green'
+                      usage.percentage > 80 ? 'bg-red-500' : 'bg-primary'
                     }`}
                     style={{ width: `${Math.min(usage.percentage, 100)}%` }}
                   />
@@ -283,7 +283,7 @@ if (!result.safe) {
           <div className="mt-6 flex gap-4">
             <a
               href="/docs"
-              className="text-safeprompt-green hover:underline text-sm"
+              className="text-primary hover:underline text-sm"
             >
               View Full Documentation →
             </a>
@@ -291,7 +291,7 @@ if (!result.safe) {
               href="https://api.safeprompt.dev/health"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-safeprompt-green hover:underline text-sm"
+              className="text-primary hover:underline text-sm"
             >
               API Status →
             </a>
@@ -316,7 +316,7 @@ if (!result.safe) {
           </div>
 
           <div className="mt-6 flex gap-4">
-            <button className="px-4 py-2 bg-safeprompt-green text-black rounded hover:bg-green-400 transition-colors">
+            <button className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-500 transition-colors">
               Upgrade Plan
             </button>
             <button className="px-4 py-2 border border-gray-700 rounded hover:border-gray-600 transition-colors">

@@ -52,7 +52,7 @@ export default function Login() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <Shield className="w-12 h-12 text-safeprompt-green" />
+            <Shield className="w-12 h-12 text-primary" />
           </div>
           <h1 className="text-3xl font-bold">SafePrompt</h1>
           <p className="text-gray-400 mt-2">
@@ -74,7 +74,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-safeprompt-green transition-colors"
+                className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
                 placeholder="you@company.com"
               />
             </div>
@@ -92,7 +92,7 @@ export default function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-safeprompt-green transition-colors"
+                className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
                 placeholder="••••••••"
                 minLength={6}
               />
@@ -112,7 +112,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-safeprompt-green text-black font-medium rounded-lg hover:bg-green-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               'Loading...'
@@ -135,7 +135,7 @@ export default function Login() {
                 setIsSignUp(!isSignUp)
                 setMessage('')
               }}
-              className="text-safeprompt-green hover:underline"
+              className="text-primary hover:underline"
             >
               {isSignUp ? 'Sign in' : 'Sign up'}
             </button>
