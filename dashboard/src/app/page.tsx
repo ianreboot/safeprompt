@@ -71,9 +71,9 @@ export default function Dashboard() {
       startOfMonth.setDate(1)
       startOfMonth.setHours(0, 0, 0, 0)
 
-      const { data: userData } = await supabase
-        .from('users')
-        .select('monthly_limit, tier')
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('api_calls_this_month, stripe_customer_id')
         .eq('id', userId)
         .single()
 
@@ -83,11 +83,13 @@ export default function Dashboard() {
         .eq('user_id', userId)
         .gte('created_at', startOfMonth.toISOString())
 
-      const limit = userData?.monthly_limit || 50000
-      const current = count || 0
+      // Determine limit based on whether they have a Stripe customer
+      const limit = profileData?.stripe_customer_id ? 100000 : 10000
+      const current = profileData?.api_calls_this_month || 0
       const percentage = Math.round((current / limit) * 100)
+      const tier = profileData?.stripe_customer_id ? 'pro' : 'free'
 
-      setUsage({ current, limit, percentage, tier: userData?.tier || 'beta' })
+      setUsage({ current, limit, percentage, tier })
     } catch (error) {
       console.error('Error fetching usage:', error)
     }

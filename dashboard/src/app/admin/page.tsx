@@ -37,14 +37,14 @@ export default function AdminDashboard() {
   }
 
   async function fetchData() {
-    // Fetch users
-    const { data: usersData } = await supabase
-      .from('users')
+    // Fetch profiles
+    const { data: profilesData } = await supabase
+      .from('profiles')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(50)
 
-    if (usersData) setUsers(usersData)
+    if (profilesData) setUsers(profilesData)
 
     // Fetch waitlist
     const { data: waitlistData } = await supabase
@@ -57,9 +57,9 @@ export default function AdminDashboard() {
     if (waitlistData) setWaitlist(waitlistData)
 
     // Calculate stats
-    const totalUsers = usersData?.length || 0
-    const activeUsers = usersData?.filter(u => u.subscription_status === 'active').length || 0
-    const revenue = activeUsers * 5 // $5 per user for beta
+    const totalUsers = profilesData?.length || 0
+    const activeUsers = profilesData?.filter(p => p.stripe_customer_id !== null).length || 0
+    const revenue = activeUsers * 0 // Free during beta
 
     setStats({ totalUsers, activeUsers, revenue })
   }
@@ -81,8 +81,8 @@ export default function AdminDashboard() {
     if (!confirm('Are you sure you want to suspend this user?')) return
 
     await supabase
-      .from('users')
-      .update({ subscription_status: 'suspended' })
+      .from('profiles')
+      .update({ is_active: false })
       .eq('id', userId)
 
     await supabase

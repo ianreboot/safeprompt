@@ -17,11 +17,11 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 ## Technical Architecture
 
 ### Stack
-- **Frontend**: Astro + React islands + Tailwind → Cloudflare Pages
+- **Frontend**: Next.js + Tailwind → Cloudflare Pages
 - **API**: Vercel Functions (stateless validation endpoints)
-- **Database**: Supabase PostgreSQL (users, logs, billing)
+- **Database**: Supabase PostgreSQL (profiles table linked to auth.users)
 - **AI**: OpenRouter (multi-model strategy for cost optimization)
-- **Payments**: Stripe (subscriptions + usage-based billing)
+- **Payments**: Stripe (direct API checks, no data duplication)
 
 ### Validation Pipeline
 1. **Regex Patterns** - Fast first pass (5ms) from `/home/projects/api/utils/prompt-validator.js`
@@ -58,16 +58,18 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 
 ### Completed
 - [x] Domain registered: safeprompt.dev
-- [x] Validation engine: 100% accurate with 0% false positives
-- [x] API deployed: api.safeprompt.dev (live and working)
+- [x] API endpoint structure: api.safeprompt.dev (needs implementation)
 - [x] Website deployed: safeprompt.dev (Cloudflare Pages)
-- [x] Database schema: Supabase tables created
-- [x] Stripe products: Configured in test mode
-- [x] User Dashboard: dashboard.safeprompt.dev (Next.js + Supabase Auth) - Now on Cloudflare Pages
-- [x] Admin Dashboard: dashboard.safeprompt.dev/admin (restricted access) - Now on Cloudflare Pages
-- [x] Email System: Resend integrated for notifications
-- [x] Stripe Webhook: Automated account creation and API key generation
-- [x] Website UX: Clear user journey from signup to API integration
+- [x] Dashboard deployed: dashboard.safeprompt.dev (Cloudflare Pages)
+- [x] Admin Dashboard: dashboard.safeprompt.dev/admin (restricted access)
+- [x] Demo user: demo@safeprompt.dev / demo123 (preview mode)
+
+### In Progress (Beta)
+- [ ] Validation engine implementation
+- [ ] Supabase trigger for auto user→profile creation
+- [ ] Stripe integration (products not configured)
+- [ ] API key generation and validation
+- [ ] Usage tracking and rate limiting
 
 ### Ready for Beta
 - All core systems operational
@@ -75,10 +77,26 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - Payment flow automated via Stripe webhook
 - Clear documentation and onboarding flow
 
-### Available Assets
-- Validation logic: `/home/projects/safeprompt/api/lib/prompt-validator.js`
-- AI validator: `/home/projects/safeprompt/api/lib/ai-validator.js`
-- Stripe webhook: `/home/projects/safeprompt/api/api/v1/stripe-webhook.js`
+### Database Architecture (Correct Pattern)
+
+```sql
+-- Minimal profiles table (replaces complex users table)
+CREATE TABLE profiles (
+  id UUID REFERENCES auth.users(id) PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  stripe_customer_id TEXT UNIQUE,
+  api_key TEXT UNIQUE DEFAULT gen_random_uuid(),
+  api_calls_this_month INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Auto-create profile on signup
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+```
+
+**Key Principle**: Supabase Auth for identity, profiles for business logic, Stripe API for subscription status (don't duplicate)
 
 ### Next Steps for Launch
 1. **Enable Production Mode** - Switch Stripe from test to live mode
@@ -86,6 +104,22 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 3. **Monitor First Users** - Watch for issues, gather feedback
 4. **Iterate Based on Feedback** - Quick fixes and improvements
 5. **Scale Infrastructure** - Optimize as usage grows
+
+## Lessons Learned (Critical for Future Development)
+
+### What NOT to Build (Mistakes Made)
+- ❌ Fake npm packages (`@safeprompt/js` doesn't exist)
+- ❌ Complex user tables duplicating Stripe data
+- ❌ Hardcoded metrics (waitlist counter was fake)
+- ❌ Links to non-existent pages (/docs, /api/health)
+- ❌ Non-functional features presented as working
+
+### Correct Patterns
+- ✅ Use HTTP/curl examples until SDK actually exists
+- ✅ Minimal profiles table linked to auth.users
+- ✅ Check Stripe API directly for subscription status
+- ✅ Clear demo mode indicators for preview accounts
+- ✅ Inline documentation when dedicated pages don't exist
 
 ## File Structure
 ```
