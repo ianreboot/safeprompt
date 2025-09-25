@@ -57,13 +57,10 @@ if (validation.safe) {
 
 ## Pricing
 
-- **Free Waitlist**: Full functionality (regex + AI), limited daily requests, approval required
-- **Early Bird**: $5/month - 50,000 validations (limited time, instant access)
-- **Starter**: $29/month - 50,000 validations
-- **Pro**: $99/month - 250,000 validations
-- **Enterprise**: $299/month - 1,000,000 validations
+- **Free**: 10,000 validations/month - Full AI protection, community support
+- **Early Bird**: $5/month - 100,000 validations/month, priority support, 99.9% uptime SLA (beta pricing)
 
-All tiers include the SAME technology - full regex + AI validation with 99.9% accuracy.
+Both tiers include the SAME technology - full regex + AI validation with 99.9% accuracy.
 
 ## Why SafePrompt?
 
@@ -113,10 +110,9 @@ npm run dev
 
 ## Support
 
-- Documentation: [safeprompt.dev/docs](https://safeprompt.dev/docs)
+- Documentation: [safeprompt.dev/#docs](https://safeprompt.dev/#docs)
 - Contact: [safeprompt.dev/contact](https://safeprompt.dev/contact)
-- Discord: [Join our community](https://discord.gg/safeprompt)
-- GitHub Issues: [Report a bug](https://github.com/ianreboot/safeprompt/issues)
+- API Status: [api.safeprompt.dev/status](https://api.safeprompt.dev/status)
 
 ## License
 
@@ -135,11 +131,10 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 ### Live Services
 - **Website**: https://safeprompt.dev ✅ (Cloudflare Pages)
 - **API**: https://api.safeprompt.dev ✅ (Vercel Functions)
-- **Dashboard**: https://dashboard.safeprompt.dev ✅ (Vercel/Next.js)
-- **Admin Panel**: https://dashboard.safeprompt.dev/admin ✅
+- **Dashboard**: https://dashboard.safeprompt.dev ✅ (Cloudflare Pages)
 - **Database**: Supabase ✅ (fully configured with RLS)
-- **Payments**: Stripe ✅ (webhook automated account creation)
-- **Email**: Resend ✅ (welcome & notification emails)
+- **Payments**: Stripe ✅ (integration ready for production)
+- **Email**: Resend ✅ (configured for transactional emails)
 
 ### Beta Access
 - Sign up at https://safeprompt.dev
@@ -150,15 +145,14 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - Login with your email and password to view your API key
 - View usage metrics, manage billing, and access documentation
 
-### Beta Pricing
-- **Early Bird Special**: $5/month (limited time)
-- **Starter**: $29/month after beta
-- **Business**: $99/month
+### Current Beta Pricing (September 2025)
+- **Free Tier**: 10,000 validations/month
+- **Early Bird Special**: $5/month for 100,000 validations (limited time)
 
 ## Technical Implementation
 
-- **Accuracy**: 100% (2000+ test cases validated)
-- **False Positive Rate**: 0%
-- **Cost per API call**: ~$0.00001 (using FREE AI model)
-- **Gross Margin**: ~100%
+- **Accuracy**: 99.9% detection rate
+- **Response Time**: <10ms (regex) or 50-100ms (with AI validation)
+- **Uptime SLA**: 99.9% for paid plans
+- **Architecture**: Serverless functions with global CDN
 
