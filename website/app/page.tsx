@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import WaitlistForm from '@/components/WaitlistForm'
 import PricingCard from '@/components/PricingCard'
 import CodeSelector from '@/components/CodeSelector'
-import Logo from '@/components/Logo'
 
 export default function Home() {
   const [waitlistCount, setWaitlistCount] = useState(0)
@@ -29,8 +28,8 @@ export default function Home() {
       {/* Simple Navigation */}
       <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-border">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <Logo variant="inline" height={48} />
+          <div className="flex items-center space-x-2">
+            <span className="text-2xl font-bold gradient-text">SafePrompt</span>
             <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">BETA</span>
           </div>
           <div className="flex items-center space-x-6">
@@ -378,9 +377,7 @@ export default function Home() {
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="mb-4">
-                <Logo variant="inline" height={56} />
-              </div>
+              <h3 className="font-bold text-lg mb-4">SafePrompt</h3>
               <p className="text-muted-foreground text-sm">
                 Protecting AI applications from prompt injection.
               </p>

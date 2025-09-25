@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Outer shield shape matching safe1.png design -->
-  <path d="M 16 4 L 16 8 L 10 8 L 10 13 L 5 13 L 5 18 C 5 23 8 26 16 29 C 24 26 27 23 27 18 L 27 13 L 22 13 L 22 8 L 16 8 L 16 4"
-        fill="#3b82f6" />
-  <!-- Inner cutout for depth -->
-  <path d="M 16 10 L 16 12 L 13 12 L 13 15 L 10 15 L 10 18 C 10 21 12 22.5 16 24 C 20 22.5 22 21 22 18 L 22 15 L 19 15 L 19 12 L 16 12 L 16 10"
-        fill="#000000" />
-</svg>
