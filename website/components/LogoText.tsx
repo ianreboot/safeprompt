@@ -4,9 +4,9 @@ interface LogoTextProps {
 }
 
 export default function LogoText({ size = 'md', className = '' }: LogoTextProps) {
-  // Configuration from your testing
+  // Configuration from your testing - adjusted vertical offset to lower icon
   const config = {
-    verticalOffset: 0,
+    verticalOffset: 3,  // Positive value moves icon down
     horizontalGap: 0,
     iconScale: 0.90
   }
@@ -51,7 +51,7 @@ export default function LogoText({ size = 'md', className = '' }: LogoTextProps)
         }}
       />
       <span className={`font-bold ${currentSize.fontSizeClass}`}>
-        <span style={{ color: '#3b82f6' }}>afe</span>
+        <span style={{ color: '#60a5fa' }}>afe</span>
         <span className="text-white">Prompt</span>
       </span>
     </div>
