@@ -120,7 +120,7 @@ MIT - Use it however you want.
 
 ## Security
 
-Found a vulnerability? Email security@safeprompt.dev for responsible disclosure.
+Found a vulnerability? Use our [contact form](https://safeprompt.dev/contact) for responsible disclosure.
 
 ---
 
