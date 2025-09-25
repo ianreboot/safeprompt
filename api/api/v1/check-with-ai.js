@@ -4,10 +4,12 @@
  *
  * Validates prompts using regex + AI for high accuracy
  * Phase 2: Includes AI validation with FREE models
+ * Phase 19: Added caching support for improved performance
  */
 
 import { validatePrompt, needsAIValidation, CONFIDENCE_THRESHOLDS } from '../../lib/prompt-validator.js';
 import { validateWithAI, selectModel } from '../../lib/ai-validator.js';
+import { getCache } from '../../lib/cache-manager.js';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -54,6 +56,20 @@ export default async function handler(req, res) {
       return res.status(413).json({
         error: 'Prompt too long',
         message: 'Maximum prompt length is 50,000 characters'
+      });
+    }
+
+    // Get cache instance
+    const cache = getCache();
+
+    // Check cache first
+    const cachedResult = cache.get(prompt);
+    if (cachedResult) {
+      // Return cached response with cache metadata
+      return res.status(200).json({
+        ...cachedResult,
+        cached: true,
+        cacheAge: cachedResult.cacheAge
       });
     }
 
@@ -142,8 +158,12 @@ export default async function handler(req, res) {
       confidence: finalResult.confidence,
       threats: finalResult.threats,
       processingTime: finalResult.processingTime,
-      validationType: finalResult.validationType
+      validationType: finalResult.validationType,
+      cached: false
     };
+
+    // Cache the result before returning
+    cache.set(prompt, response);
 
     // Add details in non-production mode
     if (process.env.NODE_ENV !== 'production' || req.body.debug) {
@@ -152,7 +172,8 @@ export default async function handler(req, res) {
         promptLength: prompt.length,
         mode: mode,
         aiUsed: needsAI,
-        aiError: finalResult.aiError
+        aiError: finalResult.aiError,
+        cacheStats: cache.getStats()
       };
     }
 

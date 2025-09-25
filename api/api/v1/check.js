@@ -4,9 +4,11 @@
  *
  * Validates prompts for injection attacks
  * Phase 1: Regex validation only (no AI)
+ * Phase 19: Added caching support for improved performance
  */
 
 import { validatePrompt, needsAIValidation, CONFIDENCE_THRESHOLDS } from '../../lib/prompt-validator.js';
+import { getCache } from '../../lib/cache-manager.js';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -55,6 +57,20 @@ export default async function handler(req, res) {
       });
     }
 
+    // Get cache instance
+    const cache = getCache();
+
+    // Check cache first
+    const cachedResult = cache.get(prompt);
+    if (cachedResult) {
+      // Return cached response with cache metadata
+      return res.status(200).json({
+        ...cachedResult,
+        cached: true,
+        cacheAge: cachedResult.cacheAge
+      });
+    }
+
     // Perform validation
     const validationResult = validatePrompt(prompt);
 
@@ -87,15 +103,20 @@ export default async function handler(req, res) {
       threats: validationResult.threats || [],
       processingTime: validationResult.processingTime,
       validationType: 'regex',
-      requiresAI: requiresAI
+      requiresAI: requiresAI,
+      cached: false
     };
+
+    // Cache the result before returning
+    cache.set(prompt, response);
 
     // Add details for debugging (can be removed in production)
     if (process.env.NODE_ENV !== 'production') {
       response.debug = {
         promptLength: prompt.length,
         isLegitimateBusinessUse: validationResult.isLegitimateBusinessUse,
-        mixedSignals: validationResult.mixedSignals
+        mixedSignals: validationResult.mixedSignals,
+        cacheStats: cache.getStats()
       };
     }
 
