@@ -342,11 +342,12 @@ export default function Dashboard() {
         error_rate: usage.error_rate + '%'
       },
       compliance_attestation: {
+        notice: 'BETA - Compliance features under development. For feedback: contact@safeprompt.dev',
         data_processing: 'All prompts processed in memory only',
         data_retention: 'No prompt content retained after processing',
         data_location: 'US-East-1 (Virginia)',
         encryption: 'TLS 1.3 in transit, no data at rest',
-        gdpr_compliant: true,
+        status: 'Working toward compliance certifications',
         ccpa_compliant: true,
         soc2_type2: 'In progress',
         iso27001: 'Planned'
@@ -390,7 +391,7 @@ Data Processing: ${report.compliance_attestation.data_processing}
 Data Retention: ${report.compliance_attestation.data_retention}
 Data Location: ${report.compliance_attestation.data_location}
 Encryption: ${report.compliance_attestation.encryption}
-GDPR Compliant: ${report.compliance_attestation.gdpr_compliant}
+Status: ${report.compliance_attestation.status}
 CCPA Compliant: ${report.compliance_attestation.ccpa_compliant}
 
 SECURITY SUMMARY
@@ -658,9 +659,11 @@ For questions, contact: support@safeprompt.dev`
             <button
               onClick={() => downloadComplianceReport()}
               className="text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded transition-colors flex items-center gap-2"
+              title="Export usage data for your records"
             >
               <Download className="w-4 h-4" />
-              Compliance Report
+              Export Report
+              <span className="text-xs text-gray-500">(Beta)</span>
             </button>
           </div>
 

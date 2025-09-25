@@ -212,24 +212,35 @@ export default function Home() {
       {/* Core Features Section */}
       <section className="py-20 px-6 bg-gradient-to-b from-background to-secondary/5">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Enterprise-Ready Features
+          <h2 className="text-3xl font-bold text-center mb-4">
+            Simple API, Powerful Features
           </h2>
+          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+            Built for indie developers and startups. One endpoint, instant protection, no complexity.
+          </p>
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-card rounded-xl border border-border p-6">
-              <div className="text-4xl mb-4">🛡️</div>
-              <h3 className="text-xl font-semibold mb-2">Multi-Layer Protection</h3>
+              <div className="text-4xl mb-4">🚀</div>
+              <h3 className="text-xl font-semibold mb-2">One Line Integration</h3>
               <p className="text-muted-foreground">
-                Regex patterns + AI validation catch sophisticated attacks that simple filters miss
+                Literally just POST to /check. No SDKs, no complex setup, works everywhere
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
               <div className="text-4xl mb-4">⚡</div>
-              <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
+              <h3 className="text-xl font-semibold mb-2">5ms Response Time</h3>
               <p className="text-muted-foreground">
-                5ms average response time with intelligent caching that reduces costs by 30%
+                Your users won't even notice. Smart caching saves you 30% on costs automatically
+              </p>
+            </div>
+
+            <div className="bg-card rounded-xl border border-border p-6">
+              <div className="text-4xl mb-4">🛡️</div>
+              <h3 className="text-xl font-semibold mb-2">Real AI Protection</h3>
+              <p className="text-muted-foreground">
+                Not just regex. Multi-layer validation catches attacks that simple filters miss
               </p>
             </div>
 
@@ -237,33 +248,32 @@ export default function Home() {
               <div className="text-4xl mb-4">📊</div>
               <h3 className="text-xl font-semibold mb-2">Batch Processing</h3>
               <p className="text-muted-foreground">
-                Validate up to 100 prompts in one call. Perfect for CI/CD and bulk testing
+                Need to validate 100 prompts? One API call. Perfect for testing and CI/CD
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
               <div className="text-4xl mb-4">📈</div>
-              <h3 className="text-xl font-semibold mb-2">Usage Analytics</h3>
+              <h3 className="text-xl font-semibold mb-2">Usage Dashboard</h3>
               <p className="text-muted-foreground">
-                Real-time dashboard shows threat trends, validation counts, and performance metrics
+                See what threats we're blocking, track your usage, monitor performance
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
               <div className="text-4xl mb-4">📋</div>
-              <h3 className="text-xl font-semibold mb-2">Compliance Ready</h3>
+              <h3 className="text-xl font-semibold mb-2">Export Reports</h3>
               <p className="text-muted-foreground">
-                One-click reports for SOC2, HIPAA, and GDPR audits with full activity logs
+                Download usage reports for your records.
+                <span className="text-xs text-muted-foreground block mt-1">(Compliance features coming soon)</span>
               </p>
             </div>
+          </div>
 
-            <div className="bg-card rounded-xl border border-border p-6">
-              <div className="text-4xl mb-4">🔧</div>
-              <h3 className="text-xl font-semibold mb-2">Simple Integration</h3>
-              <p className="text-muted-foreground">
-                One API endpoint, clear responses. Works with any language or framework
-              </p>
-            </div>
+          <div className="mt-8 text-center">
+            <p className="text-sm text-muted-foreground">
+              💡 Built by developers who hate complexity. Enterprise-grade security without enterprise headaches.
+            </p>
           </div>
         </div>
       </section>
