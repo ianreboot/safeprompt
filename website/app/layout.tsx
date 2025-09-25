@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   description: 'Protect your AI applications from prompt injection attacks with simple, transparent, developer-first security.',
   keywords: 'prompt injection, ai security, chatgpt security, llm security, api security',
   authors: [{ name: 'SafePrompt' }],
+  icons: {
+    icon: '/favicon.webp',
+    shortcut: '/favicon.webp',
+    apple: '/favicon.webp',
+  },
   openGraph: {
     title: 'SafePrompt - Stop Prompt Injection in One Line of Code',
     description: 'Protect your AI applications from prompt injection attacks.',
