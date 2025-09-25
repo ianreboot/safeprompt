@@ -175,34 +175,34 @@ export default function Home() {
 
           <div className="space-y-6">
             <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-xl font-semibold mb-3">🎨 Vibe Coders & Side Projects</h3>
+              <h3 className="text-xl font-semibold mb-3">🚀 Solo Developers & Side Projects</h3>
               <p className="text-muted-foreground">
-                Building an AI feature for your weekend project? Don't let someone break it on ProductHunt launch day.
-                One line of code protects your vibe.
+                Building an AI feature for yourself or a client? Whether it's a weekend project or freelance gig,
+                protect it with one line of code.
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-xl font-semibold mb-3">🚀 Indie Developers & Solo Founders</h3>
+              <h3 className="text-xl font-semibold mb-3">🏢 Startups & Small Teams</h3>
               <p className="text-muted-foreground">
-                Shipping fast doesn't mean shipping vulnerable. Whether it's your first AI feature or your tenth,
-                keep it secure without the enterprise complexity.
+                Move fast without breaking things. Get enterprise-level security without the complexity or cost.
+                Scale from MVP to millions of users.
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-xl font-semibold mb-3">🤖 AI Chatbots & Assistants</h3>
+              <h3 className="text-xl font-semibold mb-3">🤖 AI Applications & Chatbots</h3>
               <p className="text-muted-foreground">
-                Customer service bots, internal tools, or public-facing assistants -
-                all are vulnerable to users trying to extract training data or bypass restrictions.
+                Customer service, internal tools, or public assistants - all need protection from prompt manipulation
+                and data extraction attempts.
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-xl font-semibold mb-3">🔧 No-Code AI Builders</h3>
+              <h3 className="text-xl font-semibold mb-3">🔧 Agencies & Consultants</h3>
               <p className="text-muted-foreground">
-                Using Zapier, Make.com, or Bubble with AI? Protect your workflows from manipulation.
-                Works with any platform that can make HTTP calls.
+                Deliver secure AI features to clients without security expertise. Works with any tech stack
+                that can make HTTP calls.
               </p>
             </div>
           </div>
@@ -216,7 +216,7 @@ export default function Home() {
             Simple API, Powerful Features
           </h2>
           <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Built for vibe coders, indie developers, and solo founders. One endpoint, instant protection, no complexity.
+            Built for developers who value simplicity. From side projects to production apps - one endpoint, instant protection.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -262,17 +262,16 @@ export default function Home() {
 
             <div className="bg-card rounded-xl border border-border p-6">
               <div className="text-4xl mb-4">📋</div>
-              <h3 className="text-xl font-semibold mb-2">Export Reports</h3>
+              <h3 className="text-xl font-semibold mb-2">Scales With You</h3>
               <p className="text-muted-foreground">
-                Download usage reports for your records.
-                <span className="text-xs text-muted-foreground block mt-1">(Compliance features coming soon)</span>
+                From 10 to 10 million requests. Export reports, track usage, ready for compliance when you need it.
               </p>
             </div>
           </div>
 
           <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground">
-              💡 Built by vibe coders who hate complexity. Perfect for side projects, MVPs, and scaling startups.
+              💡 Whether you're building a weekend project or a business-critical app, we've got you covered.
             </p>
           </div>
         </div>
@@ -312,7 +311,7 @@ export default function Home() {
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold text-center mb-12">
-            Why Vibe Coders Choose SafePrompt
+            Why Developers Choose SafePrompt
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -342,9 +341,9 @@ export default function Home() {
 
             <div className="text-center">
               <div className="text-4xl mb-4">🚀</div>
-              <h3 className="text-xl font-semibold mb-2">Keep Shipping, Stay Secure</h3>
+              <h3 className="text-xl font-semibold mb-2">Ship Faster, Worry Less</h3>
               <p className="text-muted-foreground">
-                Don't let security slow your vibe. One API call and you're back to building features.
+                One API call is all it takes. No complex rules to write, no constant updates to maintain.
               </p>
             </div>
           </div>
