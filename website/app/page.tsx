@@ -29,8 +29,8 @@ export default function Home() {
       {/* Simple Navigation */}
       <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-border">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Logo variant="inline" height={36} />
+          <div className="flex items-center space-x-3">
+            <Logo variant="inline" height={48} />
             <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">BETA</span>
           </div>
           <div className="flex items-center space-x-6">
@@ -379,7 +379,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="mb-4">
-                <Logo variant="stacked" height={40} />
+                <Logo variant="inline" height={56} />
               </div>
               <p className="text-muted-foreground text-sm">
                 Protecting AI applications from prompt injection.

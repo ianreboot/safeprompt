@@ -12,9 +12,16 @@ export default function Logo({
   className = ''
 }: LogoProps) {
 
-  // Shield path - modern geometric design
-  const shieldPath = "M 12 2 L 22 5 L 22 13 C 22 17 19 20 12 21 C 5 20 2 17 2 13 L 2 5 Z"
-  const halfShieldPath = "M 12 2 L 12 21 C 5 20 2 17 2 13 L 2 5 Z"
+  // Full shield path - matching the safe1.png design with inner cutout
+  // Left side is from the image, right side mirrors it
+  const fullShieldPath = "M 12 3 L 12 6 L 8 6 L 8 10 L 4 10 L 4 14 C 4 18 6 20 12 22 C 18 20 20 18 20 14 L 20 10 L 16 10 L 16 6 L 12 6 L 12 3"
+
+  // Half shield for S integration (left side only)
+  const halfShieldPath = "M 12 3 L 12 6 L 8 6 L 8 10 L 4 10 L 4 14 C 4 18 6 20 12 22 L 12 3"
+
+  // Inner shield cutout shape
+  const innerShieldPath = "M 12 7 L 12 9 L 10 9 L 10 11 L 8 11 L 8 14 C 8 16 9 17 12 18 C 15 17 16 16 16 14 L 16 11 L 14 11 L 14 9 L 12 9 L 12 7"
+  const innerHalfPath = "M 12 7 L 12 9 L 10 9 L 10 11 L 8 11 L 8 14 C 8 16 9 17 12 18 L 12 7"
 
   if (variant === 'icon') {
     // Just the shield for favicon
@@ -27,10 +34,6 @@ export default function Logo({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="100%" stopColor="#2563eb" />
-          </linearGradient>
           <filter id="glow">
             <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
             <feMerge>
@@ -41,16 +44,14 @@ export default function Logo({
         </defs>
         <g className="shield-group">
           <path
-            d={shieldPath}
-            fill="url(#shieldGrad)"
+            d={fullShieldPath}
+            fill="#3b82f6"
             className="shield-main"
           />
           <path
-            d="M 12 5 L 19 7 L 19 13 C 19 16 17 18 12 19"
-            fill="none"
-            stroke="#60a5fa"
-            strokeWidth="0.5"
-            opacity="0.6"
+            d={innerShieldPath}
+            fill="#000000"
+            className="shield-cutout"
           />
         </g>
         <style jsx>{`
@@ -68,7 +69,7 @@ export default function Logo({
   }
 
   if (variant === 'stacked') {
-    // Shield above text
+    // Shield above text (keeping for potential future use)
     const width = height * 3
     return (
       <svg
@@ -79,10 +80,6 @@ export default function Logo({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="shieldGradStacked" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="100%" stopColor="#2563eb" />
-          </linearGradient>
           <filter id="glowStacked">
             <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
             <feMerge>
@@ -92,25 +89,22 @@ export default function Logo({
           </filter>
         </defs>
 
-        {/* Shield centered above */}
-        <g className="shield-group" transform="translate(36, 1) scale(0.5)">
+        {/* Shield centered above with more spacing */}
+        <g className="shield-group" transform="translate(36, 0) scale(0.5)">
           <path
-            d={shieldPath}
-            fill="url(#shieldGradStacked)"
+            d={fullShieldPath}
+            fill="#3b82f6"
           />
           <path
-            d="M 12 5 L 19 7 L 19 13 C 19 16 17 18 12 19"
-            fill="none"
-            stroke="#60a5fa"
-            strokeWidth="0.5"
-            opacity="0.6"
+            d={innerShieldPath}
+            fill="#000000"
           />
         </g>
 
-        {/* Text below */}
+        {/* Text below with more spacing */}
         <text
           x="48"
-          y="24"
+          y="26"
           fontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif"
           fontSize="11"
           textAnchor="middle"
@@ -125,7 +119,7 @@ export default function Logo({
             transform-origin: 12px 12px;
           }
           svg:hover .shield-group {
-            transform: translate(36, 1) scale(0.525);
+            transform: translate(36, 0) scale(0.525);
             filter: url(#glowStacked) drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
           }
         `}</style>
@@ -133,21 +127,17 @@ export default function Logo({
     )
   }
 
-  // Default inline variant
-  const width = height * 4.5
+  // Default inline variant with corrected shield design
+  const width = height * 5
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 144 32"
+      viewBox="0 0 160 32"
       className={`logo-inline ${className}`}
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <linearGradient id="shieldGradInline" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#3b82f6" />
-          <stop offset="100%" stopColor="#2563eb" />
-        </linearGradient>
         <filter id="glowInline">
           <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
           <feMerge>
@@ -157,27 +147,24 @@ export default function Logo({
         </filter>
       </defs>
 
-      {/* Half shield integrated with S */}
-      <g className="shield-group" transform="translate(2, 4)">
+      {/* Half shield integrated with S - scaled and positioned */}
+      <g className="shield-group" transform="translate(4, 5) scale(1.0)">
         <path
           d={halfShieldPath}
-          fill="url(#shieldGradInline)"
+          fill="#3b82f6"
         />
         <path
-          d="M 12 5 L 19 7 L 19 11"
-          fill="none"
-          stroke="#60a5fa"
-          strokeWidth="0.5"
-          opacity="0.6"
+          d={innerHalfPath}
+          fill="#000000"
         />
       </g>
 
-      {/* SafePrompt text */}
+      {/* SafePrompt text - adjusted positioning */}
       <text
-        x="14"
+        x="15"
         y="22"
         fontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif"
-        fontSize="20"
+        fontSize="22"
       >
         <tspan fill="#3b82f6" fontWeight="700">Safe</tspan>
         <tspan fill="white" fontWeight="400">Prompt</tspan>
@@ -189,7 +176,7 @@ export default function Logo({
           transform-origin: 12px 12px;
         }
         svg:hover .shield-group {
-          transform: translate(2, 4) scale(1.05);
+          transform: translate(4, 5) scale(1.05);
           filter: url(#glowInline) drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
         }
       `}</style>

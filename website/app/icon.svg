@@ -1,10 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3b82f6" />
-      <stop offset="100%" style="stop-color:#2563eb" />
-    </linearGradient>
-  </defs>
-  <path d="M 16 3 L 28 7 L 28 18 C 28 24 23 29 16 30 C 9 29 4 24 4 18 L 4 7 Z" fill="url(#grad)" />
-  <path d="M 16 7 L 24 9.5 L 24 18 C 24 22 21 25 16 26" fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.6" />
+  <!-- Outer shield shape matching safe1.png design -->
+  <path d="M 16 4 L 16 8 L 10 8 L 10 13 L 5 13 L 5 18 C 5 23 8 26 16 29 C 24 26 27 23 27 18 L 27 13 L 22 13 L 22 8 L 16 8 L 16 4"
+        fill="#3b82f6" />
+  <!-- Inner cutout for depth -->
+  <path d="M 16 10 L 16 12 L 13 12 L 13 15 L 10 15 L 10 18 C 10 21 12 22.5 16 24 C 20 22.5 22 21 22 18 L 22 15 L 19 15 L 19 12 L 16 12 L 16 10"
+        fill="#000000" />
 </svg>
