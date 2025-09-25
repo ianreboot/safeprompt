@@ -272,6 +272,7 @@ export default function Home() {
               ]}
               buttonText="Join Waitlist"
               buttonVariant="blue"
+              buttonHref="https://dashboard.safeprompt.dev/signup"
             />
 
             <PricingCard
@@ -289,6 +290,7 @@ export default function Home() {
               buttonText="Get Early Access"
               buttonVariant="primary"
               popular={true}
+              buttonHref="https://dashboard.safeprompt.dev/signup?plan=earlybird"
             />
           </div>
         </div>

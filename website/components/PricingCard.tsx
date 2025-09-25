@@ -11,6 +11,8 @@ interface PricingCardProps {
   buttonText: string
   buttonVariant: 'primary' | 'secondary' | 'blue'
   popular?: boolean
+  buttonHref?: string
+  buttonOnClick?: () => void
 }
 
 export default function PricingCard({
@@ -21,7 +23,9 @@ export default function PricingCard({
   features,
   buttonText,
   buttonVariant,
-  popular
+  popular,
+  buttonHref,
+  buttonOnClick
 }: PricingCardProps) {
   return (
     <motion.div
@@ -69,17 +73,33 @@ export default function PricingCard({
         ))}
       </ul>
 
-      <button
-        className={`w-full py-3 rounded-lg font-semibold transition ${
-          buttonVariant === 'primary'
-            ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-            : buttonVariant === 'blue'
-            ? 'bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30'
-            : 'border border-border text-foreground hover:bg-secondary'
-        }`}
-      >
-        {buttonText}
-      </button>
+      {buttonHref ? (
+        <a
+          href={buttonHref}
+          className={`block w-full py-3 rounded-lg font-semibold transition text-center ${
+            buttonVariant === 'primary'
+              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+              : buttonVariant === 'blue'
+              ? 'bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30'
+              : 'border border-border text-foreground hover:bg-secondary'
+          }`}
+        >
+          {buttonText}
+        </a>
+      ) : (
+        <button
+          onClick={buttonOnClick}
+          className={`w-full py-3 rounded-lg font-semibold transition ${
+            buttonVariant === 'primary'
+              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+              : buttonVariant === 'blue'
+              ? 'bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30'
+              : 'border border-border text-foreground hover:bg-secondary'
+          }`}
+        >
+          {buttonText}
+        </button>
+      )}
     </motion.div>
   )
 }
