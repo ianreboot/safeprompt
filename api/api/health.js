@@ -13,4 +13,4 @@ export default function handler(req, res) {
     environment: process.env.NODE_ENV || 'production',
     version: '1.0.0'
   });
-}
+}// Deploy trigger Thu Sep 25 04:09:05 UTC 2025
