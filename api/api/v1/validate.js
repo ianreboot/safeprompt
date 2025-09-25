@@ -1,5 +1,5 @@
 // Consolidated validation endpoint that handles all check types
-import { validatePrompt } from '../../utils/prompt-validator.js';
+import { validatePrompt } from '../../lib/prompt-validator.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
