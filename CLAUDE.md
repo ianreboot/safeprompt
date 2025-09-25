@@ -359,13 +359,17 @@ curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
   - Test files in production folders
 
 ## 🛡️ Threat Detection Research
-**PERSUASION_PATTERNS.md** - Comprehensive catalog of AI manipulation techniques based on academic research. This file documents:
-- Cialdini's 7 principles of persuasion as applied to AI manipulation
-- Specific prompt patterns that bypass safety measures
-- Detection strategies and red flags
-- Implementation notes for SafePrompt's validator
+**AI_MANIPULATION_TECHNIQUES.md** - The most comprehensive catalog of AI manipulation and jailbreak techniques compiled from global research. This file documents:
+- All 7 Cialdini persuasion principles with success rates
+- Role-playing & persona attacks (DAN variants)
+- Encoding & obfuscation methods (Unicode, Base64, etc.)
+- Context manipulation (many-shot jailbreaking)
+- Multimodal attacks (image/audio injection)
+- 35+ documented jailbreak techniques from DEF CON and security research
+- OWASP Top 10 for LLMs (2025)
+- Detection strategies and mitigation effectiveness
 
-**Purpose**: As new AI manipulation research emerges, we compile patterns here for integration into our threat detection. This is our knowledge base for staying ahead of evolving prompt injection techniques.
+**Purpose**: This represents the sum of human knowledge on AI manipulation techniques, compiled from academic papers, security research, red team competitions, and industry reports. Critical for keeping SafePrompt ahead of evolving threats.
 
 ## When Making Changes
 
