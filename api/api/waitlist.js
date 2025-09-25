@@ -66,9 +66,53 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to add to waitlist' });
     }
 
-    // Email notifications temporarily disabled - Resend domain verification pending
-    // TODO: Re-enable once domain is verified
-    console.log('New waitlist signup:', email, 'from', source);
+    // Send notification email to admin
+    try {
+      const { Resend } = await import('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY);
+
+      await resend.emails.send({
+        from: 'SafePrompt <noreply@safeprompt.dev>',
+        to: 'info@safeprompt.dev',
+        subject: 'New Waitlist Signup',
+        html: `
+          <h2>New waitlist signup!</h2>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Source:</strong> ${source}</p>
+          <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
+          <hr>
+          <p>View all signups in Supabase dashboard.</p>
+        `
+      });
+
+      // Send auto-reply to user
+      await resend.emails.send({
+        from: 'SafePrompt <noreply@safeprompt.dev>',
+        to: email,
+        subject: 'Welcome to SafePrompt - You\'re on the list!',
+        html: `
+          <h2>Thanks for joining the SafePrompt waitlist!</h2>
+          <p>We're excited to have you as part of our early community.</p>
+          <p>We'll notify you as soon as we're ready for beta access. In the meantime:</p>
+          <ul>
+            <li>Check out our <a href="https://safeprompt.dev">website</a> for updates</li>
+            <li>Follow our development progress</li>
+            <li>Get ready to secure your AI applications!</li>
+          </ul>
+          <p>If you have any questions, feel free to reach out via our <a href="https://safeprompt.dev/contact">contact form</a>.</p>
+          <hr>
+          <p style="color: #666; font-size: 12px;">
+            SafePrompt - Stop prompt injection in one line of code<br>
+            <a href="https://safeprompt.dev">safeprompt.dev</a>
+          </p>
+        `
+      });
+
+      console.log('Notification emails sent for:', email);
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      // Don't fail the signup if email fails
+    }
 
     return res.status(200).json({
       success: true,
