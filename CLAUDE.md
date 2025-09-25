@@ -358,6 +358,15 @@ curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
   - Old stripe-webhook in api folder
   - Test files in production folders
 
+## 🛡️ Threat Detection Research
+**PERSUASION_PATTERNS.md** - Comprehensive catalog of AI manipulation techniques based on academic research. This file documents:
+- Cialdini's 7 principles of persuasion as applied to AI manipulation
+- Specific prompt patterns that bypass safety measures
+- Detection strategies and red flags
+- Implementation notes for SafePrompt's validator
+
+**Purpose**: As new AI manipulation research emerges, we compile patterns here for integration into our threat detection. This is our knowledge base for staying ahead of evolving prompt injection techniques.
+
 ## When Making Changes
 
 ### Pre-Flight Checklist (MANDATORY):
