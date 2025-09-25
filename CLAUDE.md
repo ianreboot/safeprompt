@@ -419,3 +419,53 @@ Even when deployment instructions exist in CLAUDE.md, they may be incomplete or 
 3. **Verify domain routing** - Deployment success ≠ accessible on custom domain
 4. **Document pitfalls immediately** - Add to CLAUDE.md when discovered
 5. **Use context7 for current docs** - Platform APIs change frequently
+
+## 🎨 Website & Dashboard Design Philosophy (Added 2025-09-25)
+
+### Website Design Principles
+**Purpose**: Marketing site to convert visitors to trial users
+
+1. **Timeless Over Trendy**
+   - ❌ "New Features Just Launched!" sections (looks dated quickly)
+   - ✅ "Enterprise-Ready Features" (evergreen positioning)
+   - ❌ Mixing old and new features in separate sections (Frankenstein look)
+   - ✅ One unified features grid showcasing all capabilities
+
+2. **Clean Information Architecture**
+   - Hero → Problem Education → Who Needs This → Core Features → Simple Integration → Pricing
+   - Don't duplicate features across sections
+   - Don't show complex code examples on marketing site
+   - Point to dashboard for advanced features
+
+3. **Integration Examples**
+   - Website: ONE simple curl example showing basic usage
+   - Dashboard: Full code examples in multiple languages + batch API
+   - Reasoning: Developers already convinced by the time they're in dashboard
+
+### Dashboard Design Principles
+**Purpose**: Developer workspace for actual implementation
+
+1. **Dashboard is the Developer Manual**
+   - Full code examples in multiple languages
+   - Advanced features documentation (batch API, caching)
+   - Actual API key integration in examples when logged in
+   - This is where complexity belongs, not marketing site
+
+2. **Progressive Disclosure**
+   - Basic examples first (curl, JS, Python)
+   - Advanced features section below (batch, caching)
+   - Help links at bottom
+
+### Critical Lesson: Feature Presentation
+When adding new capabilities:
+- ❌ DON'T bolt on "New Features" sections to existing pages
+- ❌ DON'T duplicate similar features across multiple sections
+- ❌ DON'T mix marketing (website) with implementation (dashboard)
+- ✅ DO integrate features naturally into existing information flow
+- ✅ DO keep marketing simple, implementation detailed
+- ✅ DO maintain clear separation of concerns
+
+### The Frankenstein Problem
+**What happened**: Added new features section + kept old features section + added code examples = messy
+**Solution**: Unified features grid, moved code to dashboard, kept website clean
+**Rule**: When user says design looks "Frankenstein" or "cobbled together", they mean too many separate sections that should be unified

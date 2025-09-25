@@ -868,6 +868,64 @@ def check_prompt(user_input):
               </pre>
             </div>
 
+            {/* Advanced Features Section */}
+            <div className="mt-8 pt-8 border-t border-gray-800">
+              <h3 className="text-lg font-medium mb-4">5. Advanced Features</h3>
+
+              {/* Batch API */}
+              <div className="mb-6">
+                <h4 className="font-medium mb-3">Batch Validation API</h4>
+                <p className="text-sm text-gray-400 mb-3">
+                  Process up to 100 prompts in a single request. Perfect for CI/CD pipelines and bulk testing.
+                </p>
+                <div className="relative">
+                  <button
+                    onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/api/v1/batch-check \\
+  -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "prompts": [
+      "First prompt to validate",
+      "Second prompt to check",
+      "Third prompt for testing"
+    ]
+  }'`, 'batch')}
+                    className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
+                  >
+                    {copiedCode === 'batch' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                  <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
+                    <code>{`curl -X POST https://api.safeprompt.dev/api/v1/batch-check \\
+  -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "prompts": [
+      "First prompt to validate",
+      "Second prompt to check",
+      "Third prompt for testing"
+    ]
+  }'`}</code>
+                  </pre>
+                </div>
+
+                <div className="mt-3 text-xs text-gray-500">
+                  Response includes cache hit rates and bulk processing metrics
+                </div>
+              </div>
+
+              {/* Caching Info */}
+              <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-800">
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-yellow-500" />
+                  Intelligent Caching
+                </h4>
+                <p className="text-sm text-gray-400">
+                  Automatic response caching reduces costs by 30% and speeds up repeated validations to under 1ms.
+                  Cached responses are returned with no additional charges.
+                </p>
+              </div>
+            </div>
+
             <div className="mt-6 pt-6 border-t border-gray-800 text-center">
               <p className="text-sm text-gray-400 mb-2">💬 Need Help?</p>
               <a href="https://safeprompt.dev/contact?subject=support" className="text-primary hover:underline flex items-center gap-1 justify-center">
