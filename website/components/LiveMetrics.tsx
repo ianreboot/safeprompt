@@ -56,7 +56,11 @@ export default function LiveMetrics() {
         className="bg-card rounded-xl border border-border p-6"
       >
         <div className="flex items-center justify-between mb-4">
-          <span className="text-4xl">🛡️</span>
+          <img
+            src="/safeprompt-icon.webp"
+            alt="Shield"
+            className="w-10 h-10"
+          />
           <div className="flex items-center space-x-1">
             <div className="w-2 h-2 bg-safe rounded-full animate-pulse" />
             <span className="text-xs text-muted-foreground">Live</span>

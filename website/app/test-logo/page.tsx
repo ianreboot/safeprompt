@@ -79,7 +79,7 @@ export default function TestLogoPage() {
                   display: 'block'
                 }}
               />
-              <span className="text-2xl font-bold text-blue-500">afePrompt</span>
+              <span className="text-2xl font-bold text-primary">afePrompt</span>
             </div>
           </div>
           <div className="mt-2 text-xs text-gray-500">
@@ -106,7 +106,7 @@ export default function TestLogoPage() {
                   display: 'block'
                 }}
               />
-              <span className="text-4xl font-bold text-blue-500">afePrompt</span>
+              <span className="text-4xl font-bold text-primary">afePrompt</span>
             </div>
           </div>
           <div className="mt-2 text-xs text-gray-500">
@@ -133,7 +133,7 @@ export default function TestLogoPage() {
                   display: 'block'
                 }}
               />
-              <span className="text-5xl font-bold text-blue-500">afePrompt</span>
+              <span className="text-5xl font-bold text-primary">afePrompt</span>
             </div>
           </div>
           <div className="mt-2 text-xs text-gray-500">
@@ -160,7 +160,7 @@ export default function TestLogoPage() {
                   display: 'block'
                 }}
               />
-              <span className="text-6xl font-bold text-blue-500">afePrompt</span>
+              <span className="text-6xl font-bold text-primary">afePrompt</span>
             </div>
           </div>
           <div className="mt-2 text-xs text-gray-500">
@@ -195,7 +195,7 @@ export default function TestLogoPage() {
                     display: 'block'
                   }}
                 />
-                <span className="text-5xl font-bold text-blue-500">afePrompt</span>
+                <span className="text-5xl font-bold text-primary">afePrompt</span>
               </div>
             </div>
             <div className="mt-4 text-xs text-gray-500 space-y-1">

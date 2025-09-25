@@ -74,7 +74,7 @@ export default function PricingCard({
           buttonVariant === 'primary'
             ? 'bg-primary text-primary-foreground hover:bg-primary/90'
             : buttonVariant === 'blue'
-            ? 'bg-blue-600/20 text-blue-600 hover:bg-blue-600/30 border border-blue-600/30'
+            ? 'bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30'
             : 'border border-border text-foreground hover:bg-secondary'
         }`}
       >

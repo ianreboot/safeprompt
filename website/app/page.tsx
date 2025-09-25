@@ -218,7 +218,13 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="text-4xl mb-4">🛡️</div>
+              <div className="mb-4 flex justify-center">
+                <img
+                  src="/safeprompt-icon.webp"
+                  alt="Shield"
+                  className="w-12 h-12"
+                />
+              </div>
               <h3 className="text-xl font-semibold mb-2">Sleep Better at Night</h3>
               <p className="text-muted-foreground">
                 Stop worrying about what users might make your AI reveal or do.
