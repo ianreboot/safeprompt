@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 interface LogoTextProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
@@ -39,7 +41,7 @@ export default function LogoText({ size = 'md', className = '' }: LogoTextProps)
   const actualIconSize = currentSize.iconSize * config.iconScale
 
   return (
-    <div className={`inline-flex items-baseline ${className}`} style={{ gap: `${config.horizontalGap}px` }}>
+    <Link href="/" className={`inline-flex items-baseline ${className} hover:opacity-90 transition-opacity`} style={{ gap: `${config.horizontalGap}px` }}>
       <img
         src="/safeprompt-icon.webp"
         alt="SafePrompt Shield"
@@ -54,6 +56,6 @@ export default function LogoText({ size = 'md', className = '' }: LogoTextProps)
         <span style={{ color: '#60a5fa' }}>afe</span>
         <span style={{ marginLeft: '0.15em' }} className="text-white">Prompt</span>
       </span>
-    </div>
+    </Link>
   )
 }

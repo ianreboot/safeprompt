@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { Send, CheckCircle, AlertCircle } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 function ContactForm() {
   const searchParams = useSearchParams()
@@ -61,22 +63,11 @@ function ContactForm() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <a href="/" className="text-2xl font-bold gradient-text">SafePrompt</a>
-          <nav className="hidden md:flex items-center space-x-6">
-            <a href="/#features" className="text-muted-foreground hover:text-foreground transition">Features</a>
-            <a href="/#pricing" className="text-muted-foreground hover:text-foreground transition">Pricing</a>
-            <a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Dashboard</a>
-            <a href="/contact" className="text-foreground">Contact</a>
-          </nav>
-        </div>
-      </header>
-
-      {/* Contact Form */}
-      <section className="py-20 px-6">
+    <>
+      <Header />
+      <main className="min-h-screen bg-background pt-20">
+        {/* Contact Form */}
+        <section className="py-20 px-6">
         <div className="container mx-auto max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -221,27 +212,9 @@ function ContactForm() {
           </motion.div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-card/50 py-12 px-6 border-t border-border">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="mb-4 md:mb-0">
-              <h3 className="text-2xl font-bold gradient-text">SafePrompt</h3>
-              <p className="text-muted-foreground mt-2">Protecting AI applications from prompt injection.</p>
-            </div>
-            <div className="flex items-center space-x-6">
-              <a href="/terms" className="text-muted-foreground hover:text-foreground transition">Terms</a>
-              <a href="/privacy" className="text-muted-foreground hover:text-foreground transition">Privacy</a>
-              <a href="/contact" className="text-foreground">Contact</a>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} SafePrompt. All rights reserved.
-          </div>
-        </div>
-      </footer>
-    </div>
+      </main>
+      <Footer />
+    </>
   )
 }
 

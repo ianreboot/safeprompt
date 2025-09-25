@@ -1,30 +1,16 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      {/* Simple Navigation */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-border">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <a href="/" className="text-2xl font-bold gradient-text">SafePrompt</a>
-            <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">BETA</span>
-          </div>
-          <div className="flex items-center space-x-6">
-            <a href="/#pricing" className="text-muted-foreground hover:text-foreground transition">Pricing</a>
-            <a href="/#docs" className="text-muted-foreground hover:text-foreground transition">Documentation</a>
-            <a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Dashboard</a>
-            <a href="/#get-started" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition">
-              Get Started
-            </a>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-12 px-6">
+    <>
+      <Header />
+      <main className="min-h-screen bg-background text-foreground pt-20">
+        {/* Hero Section */}
+        <section className="pt-12 pb-12 px-6">
         <div className="container mx-auto max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -187,6 +173,8 @@ export default function AboutPage() {
           </motion.div>
         </div>
       </section>
-    </main>
+      </main>
+      <Footer />
+    </>
   )
 }
