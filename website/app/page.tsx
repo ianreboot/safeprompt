@@ -209,6 +209,106 @@ export default function Home() {
         </div>
       </section>
 
+      {/* NEW: Advanced Features Section */}
+      <section className="py-20 px-6 bg-gradient-to-b from-background to-secondary/10">
+        <div className="container mx-auto max-w-6xl">
+          <h2 className="text-3xl font-bold text-center mb-4">
+            🚀 New Features Just Launched
+          </h2>
+          <p className="text-center text-muted-foreground mb-12">
+            Performance optimizations and enterprise features now available
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-card rounded-xl border border-primary/20 p-6">
+              <div className="text-2xl mb-3">⚡</div>
+              <h3 className="text-xl font-semibold mb-2">Intelligent Caching</h3>
+              <p className="text-muted-foreground mb-4">
+                Automatic response caching reduces costs by 30% and speeds up repeated validations to under 1ms
+              </p>
+              <div className="text-sm text-primary">Saves you money automatically</div>
+            </div>
+
+            <div className="bg-card rounded-xl border border-primary/20 p-6">
+              <div className="text-2xl mb-3">📊</div>
+              <h3 className="text-xl font-semibold mb-2">Batch Validation API</h3>
+              <p className="text-muted-foreground mb-4">
+                Validate up to 100 prompts in a single API call. Perfect for CI/CD pipelines and bulk testing
+              </p>
+              <div className="text-sm text-primary">Enterprise-ready performance</div>
+            </div>
+
+            <div className="bg-card rounded-xl border border-primary/20 p-6">
+              <div className="text-2xl mb-3">📋</div>
+              <h3 className="text-xl font-semibold mb-2">Compliance Reports</h3>
+              <p className="text-muted-foreground mb-4">
+                One-click compliance reports for SOC2, HIPAA, and GDPR audits with full usage metrics
+              </p>
+              <div className="text-sm text-primary">Audit-ready documentation</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Code Examples Section */}
+      <section className="py-20 px-6">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Integration in Seconds
+          </h2>
+
+          <div className="space-y-8">
+            {/* Standard Check Example */}
+            <div className="bg-card rounded-xl border border-border p-6">
+              <h3 className="text-lg font-semibold mb-4 text-primary">Single Prompt Validation</h3>
+              <pre className="bg-background p-4 rounded-lg overflow-x-auto">
+                <code className="text-sm">{`curl -X POST https://api.safeprompt.dev/api/v1/check \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -d '{"prompt": "User input to validate"}'
+
+# Response (with caching!)
+{
+  "safe": true,
+  "confidence": 0.95,
+  "cached": false,  // Will be true on repeat requests
+  "processingTime": 5
+}`}</code>
+              </pre>
+            </div>
+
+            {/* NEW: Batch API Example */}
+            <div className="bg-card rounded-xl border border-primary/20 p-6">
+              <h3 className="text-lg font-semibold mb-4 text-primary">
+                🆕 Batch Validation (Process 100 at once!)
+              </h3>
+              <pre className="bg-background p-4 rounded-lg overflow-x-auto">
+                <code className="text-sm">{`curl -X POST https://api.safeprompt.dev/api/v1/batch-check \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -d '{
+    "prompts": [
+      "First prompt to check",
+      "Second prompt to validate",
+      "Third prompt for testing"
+    ]
+  }'
+
+# Response with cache optimization
+{
+  "results": [...],
+  "summary": {
+    "total": 3,
+    "cacheHits": 2,        // Automatic cost savings!
+    "cacheHitRate": "66%"
+  }
+}`}</code>
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Why SafePrompt - Outcome Focused */}
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-6xl">
