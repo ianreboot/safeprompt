@@ -8,7 +8,7 @@
  */
 
 import { validatePrompt, needsAIValidation, CONFIDENCE_THRESHOLDS } from '../../lib/prompt-validator.js';
-import { getCache } from '../../lib/cache-manager.js';
+import { getCached, setCached, getStats } from '../../lib/simple-cache.js';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -57,18 +57,11 @@ export default async function handler(req, res) {
       });
     }
 
-    // Get cache instance
-    const cache = getCache();
-
     // Check cache first
-    const cachedResult = cache.get(prompt);
+    const cachedResult = getCached(prompt);
     if (cachedResult) {
       // Return cached response with cache metadata
-      return res.status(200).json({
-        ...cachedResult,
-        cached: true,
-        cacheAge: cachedResult.cacheAge
-      });
+      return res.status(200).json(cachedResult);
     }
 
     // Perform validation
@@ -108,7 +101,7 @@ export default async function handler(req, res) {
     };
 
     // Cache the result before returning
-    cache.set(prompt, response);
+    setCached(prompt, response);
 
     // Add details for debugging (can be removed in production)
     if (process.env.NODE_ENV !== 'production') {
@@ -116,7 +109,7 @@ export default async function handler(req, res) {
         promptLength: prompt.length,
         isLegitimateBusinessUse: validationResult.isLegitimateBusinessUse,
         mixedSignals: validationResult.mixedSignals,
-        cacheStats: cache.getStats()
+        cacheStats: getStats()
       };
     }
 

@@ -4,7 +4,7 @@
  * Reduces API calls and improves response times
  */
 
-import crypto from 'crypto';
+import { createHash } from 'crypto';
 
 class CacheManager {
   constructor(options = {}) {
@@ -23,8 +23,7 @@ class CacheManager {
    * Generate cache key from prompt text
    */
   generateKey(prompt) {
-    return crypto
-      .createHash('sha256')
+    return createHash('sha256')
       .update(prompt.toLowerCase().trim())
       .digest('hex')
       .substring(0, 16); // Use first 16 chars for shorter keys

@@ -6,7 +6,7 @@
  * Phase 19: Provides visibility into optimization
  */
 
-import { getCache } from '../../lib/cache-manager.js';
+import { getStats } from '../../lib/simple-cache.js';
 
 export default async function handler(req, res) {
   // Enable CORS
@@ -28,11 +28,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Get cache instance
-    const cache = getCache();
-
     // Get current stats
-    const stats = cache.getStats();
+    const stats = getStats();
 
     // Add additional metrics
     const enhancedStats = {
