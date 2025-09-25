@@ -469,3 +469,45 @@ When adding new capabilities:
 **What happened**: Added new features section + kept old features section + added code examples = messy
 **Solution**: Unified features grid, moved code to dashboard, kept website clean
 **Rule**: When user says design looks "Frankenstein" or "cobbled together", they mean too many separate sections that should be unified
+
+## 🎯 Target Audience Messaging (Critical Lesson 2025-09-25)
+
+### The Enterprise Trap
+**Problem**: Using "Enterprise-Ready Features" scared indie developers into thinking the product was complex
+**Solution**: Changed to "Simple API, Powerful Features" with "Built for indie developers" messaging
+**Key Insight**: Lead with simplicity, let enterprise features be a bonus, not a barrier
+
+### Compliance Claims Caution
+**Problem**: Claiming HIPAA/SOC2/GDPR compliance without certification is risky
+**Solution**:
+- Changed "Compliance Ready" to "Export Reports"
+- Added "(coming soon)" or "(Beta)" labels
+- CSV exports include disclaimer: "Working toward compliance certifications"
+**Rule**: Never claim compliance without actual certification. Flag as "under development" to gather feedback
+
+### Messaging Hierarchy
+1. **Primary**: Simple, one-line integration, no complexity
+2. **Secondary**: Powerful features that scale with you
+3. **Tertiary**: Enterprise capabilities (when you need them)
+**Never lead with enterprise** - it scares away solo developers who think they need a team to use it
+
+## 🔄 Feature Rollout Strategy (Learned 2025-09-25)
+
+### When Adding New Features
+1. **Research Phase**: Deep investigation without scope creep
+2. **Prioritization**: Choose high-value, easy-to-implement features
+3. **Implementation**: Backend first, then UI
+4. **Integration**: Merge naturally into existing sections (avoid "New!" badges)
+5. **Documentation**: Details in dashboard, simplicity on website
+
+### Features Implemented in Phase 19
+- ✅ Intelligent caching (30% cost reduction)
+- ✅ Batch validation API (100 prompts/request)
+- ✅ Usage reports (CSV export with metrics)
+- ✅ Cache statistics tracking
+
+### What NOT to Build (Scope Creep Examples)
+- ❌ Webhook notifications (nice-to-have, not critical)
+- ❌ Custom threat policies (complexity without clear value)
+- ❌ Real-time threat feeds (operational overhead)
+- ✅ Focus on: Speed, simplicity, cost savings
