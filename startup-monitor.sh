@@ -8,7 +8,7 @@ echo "[$(date -u +"%Y-%m-%d %H:%M:%S UTC")] SafePrompt Health Check"
 
 # Configuration
 WEBSITE_URL="https://safeprompt.dev"
-API_URL="https://api.safeprompt.dev/api/v1/check"
+API_URL="https://api.safeprompt.dev/api/v1/validate"
 TIMEOUT=10
 
 # Colors for output (if terminal supports)

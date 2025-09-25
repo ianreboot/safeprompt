@@ -22,7 +22,7 @@ const ENDPOINTS_TO_TEST = [
   },
   {
     name: 'Basic API',
-    url: 'https://api.safeprompt.dev/api/v1/check',
+    url: 'https://api.safeprompt.dev/api/v1/validate',
     method: 'POST',
     data: JSON.stringify({ prompt: 'Hello world' }),
     headers: { 'Content-Type': 'application/json' },

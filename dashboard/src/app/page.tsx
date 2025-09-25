@@ -729,7 +729,7 @@ For questions, contact: support@safeprompt.dev`
               <h3 className="text-lg font-medium mb-3">1. Quick Test with cURL</h3>
               <div className="relative">
                 <button
-                  onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/v1/check \\
+                  onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
   -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Your user input here"}'`, 'curl')}
@@ -738,7 +738,7 @@ For questions, contact: support@safeprompt.dev`
                   {copiedCode === 'curl' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                 </button>
                 <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
-                  <code>{`curl -X POST https://api.safeprompt.dev/v1/check \\
+                  <code>{`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
   -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Your user input here"}'`}</code>
@@ -807,7 +807,7 @@ For questions, contact: support@safeprompt.dev`
 
 def check_prompt(user_input):
     response = requests.post(
-        'https://api.safeprompt.dev/v1/check',
+        'https://api.safeprompt.dev/api/v1/validate',
         headers={
             'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
             'Content-Type': 'application/json'
@@ -830,7 +830,7 @@ def check_prompt(user_input):
 
 def check_prompt(user_input):
     response = requests.post(
-        'https://api.safeprompt.dev/v1/check',
+        'https://api.safeprompt.dev/api/v1/validate',
         headers={
             'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
             'Content-Type': 'application/json'
@@ -883,7 +883,7 @@ def check_prompt(user_input):
                 </p>
                 <div className="relative">
                   <button
-                    onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/api/v1/batch-check \\
+                    onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
   -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -898,7 +898,7 @@ def check_prompt(user_input):
                     {copiedCode === 'batch' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                   </button>
                   <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
-                    <code>{`curl -X POST https://api.safeprompt.dev/api/v1/batch-check \\
+                    <code>{`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
   -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{

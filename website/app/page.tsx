@@ -287,7 +287,7 @@ export default function Home() {
           <div className="bg-card rounded-xl border border-border p-6">
             <h3 className="text-lg font-semibold mb-4">Simple API Call</h3>
             <pre className="bg-background p-4 rounded-lg overflow-x-auto">
-              <code className="text-sm">{`curl -X POST https://api.safeprompt.dev/api/v1/check \\
+              <code className="text-sm">{`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -d '{"prompt": "User input to validate"}'

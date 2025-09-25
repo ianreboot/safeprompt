@@ -13,7 +13,7 @@ const codeExamples: CodeExample[] = [
   {
     language: 'curl',
     label: 'cURL',
-    code: `curl -X POST https://api.safeprompt.dev/v1/check \\
+    code: `curl -X POST https://api.safeprompt.dev/api/v1/validate \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Hello world"}'`
@@ -21,7 +21,7 @@ const codeExamples: CodeExample[] = [
   {
     language: 'javascript',
     label: 'Node.js',
-    code: `const response = await fetch('https://api.safeprompt.dev/v1/check', {
+    code: `const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
@@ -39,7 +39,7 @@ console.log(result);`
     code: `import requests
 
 response = requests.post(
-    'https://api.safeprompt.dev/v1/check',
+    'https://api.safeprompt.dev/api/v1/validate',
     headers={
         'Authorization': 'Bearer YOUR_API_KEY',
         'Content-Type': 'application/json'
@@ -53,7 +53,7 @@ print(result)`
   {
     language: 'php',
     label: 'PHP',
-    code: `$ch = curl_init('https://api.safeprompt.dev/v1/check');
+    code: `$ch = curl_init('https://api.safeprompt.dev/api/v1/validate');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -84,7 +84,7 @@ func main() {
     })
 
     req, _ := http.NewRequest("POST",
-        "https://api.safeprompt.dev/v1/check",
+        "https://api.safeprompt.dev/api/v1/validate",
         bytes.NewBuffer(body))
 
     req.Header.Set("Authorization", "Bearer YOUR_API_KEY")

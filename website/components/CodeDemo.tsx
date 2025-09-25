@@ -11,7 +11,7 @@ const response = await openai.complete(userInput);
 // Your AI is exposed to prompt injection!`
 
   const protectedCode = `// ✅ PROTECTED - With SafePrompt
-const check = await fetch('https://api.safeprompt.dev/v1/check', {
+const check = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer sp_live_YOUR_KEY',

@@ -11,7 +11,7 @@ SafePrompt protects your AI applications from prompt injection attacks. Built fo
 
 ```javascript
 // Use HTTP API directly (SDK coming soon)
-const response = await fetch('https://api.safeprompt.dev/v1/check', {
+const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer sp_live_YOUR_KEY',

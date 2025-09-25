@@ -63,29 +63,50 @@ Response: {safe: boolean, confidence: number, threats: []}
 
 ## 📁 Key Files & Their Purpose
 
-### API Endpoints - CURRENT STATE
+### API Endpoints - CONSOLIDATED (2025-09-25)
 
-#### Active Endpoints (`/api/api/`)
-| File | Purpose | Status |
-|------|---------|--------|
-| `v1/check.js` | Basic validation (regex only) | ✅ Active |
-| `v1/check-with-ai.js` | AI-enhanced validation | ✅ Active |
-| `v1/check-protected-new.js` | Auth validation (profiles) | ✅ NEW - Production ready |
-| `waitlist.js` | Waitlist signups | ✅ Active |
+⚠️ **CRITICAL**: We consolidated from 14 endpoints to 5 to fix Vercel's 12-function limit on Hobby plan.
 
-#### Dashboard API (`/dashboard/src/app/api/`)
-| File | Purpose | Status |
-|------|---------|--------|
-| `stripe-webhook/route.ts` | Stripe events handler | ✅ Active |
-| `subscription/route.ts` | Manage subscriptions | ✅ Active |
-| `waitlist/approve/route.ts` | Approve waitlist | ✅ Active |
+#### Current Consolidated Endpoints (`/api/api/`)
+| File | Purpose | Old Endpoints Replaced | Status |
+|------|---------|------------------------|--------|
+| `admin.js` | System management | `health.js`, `status.js`, `cache-stats.js`, `user/api-key.js` | ✅ Active |
+| `v1/validate.js` | All validation modes | `v1/check.js`, `v1/check-optimized.js`, `v1/check-protected.js`, `v1/check-with-ai.js`, `v1/batch-check.js` | ✅ Active |
+| `webhooks.js` | External webhooks | `v1/stripe-webhook.js` | ✅ Active |
+| `contact.js` | Contact form | (unchanged) | ✅ Active |
+| `waitlist.js` | Waitlist signups | (unchanged) | ✅ Active |
 
-#### TO REMOVE (Old System)
-| File | Reason |
-|------|--------|
-| `v1/check-protected.js` | Uses old api_keys table |
-| `v1/keys.js` | Old key management |
-| `v1/stripe-webhook.js` | Moved to dashboard |
+#### Endpoint Mapping Guide
+
+**Health & Status:**
+- OLD: `GET /api/health` → NEW: `GET /api/admin?action=health`
+- OLD: `GET /api/status` → NEW: `GET /api/admin?action=status`
+- OLD: `GET /api/v1/cache-stats` → NEW: `GET /api/admin?action=cache`
+
+**User Management:**
+- OLD: `GET /api/user/api-key` → NEW: `GET /api/admin?action=user-api-key` (requires Bearer token)
+- OLD: `POST /api/user/api-key` → NEW: `POST /api/admin?action=user-api-key&operation=regenerate`
+
+**Validation:**
+- OLD: `POST /api/v1/check` → NEW: `POST /api/v1/validate`
+- OLD: `POST /api/v1/check-optimized` → NEW: `POST /api/v1/validate` with `mode: "optimized"`
+- OLD: `POST /api/v1/check-with-ai` → NEW: `POST /api/v1/validate` with `mode: "ai-only"`
+- OLD: `POST /api/v1/batch-check` → NEW: `POST /api/v1/validate` with `prompts: []` array
+
+**Webhooks:**
+- OLD: `POST /api/v1/stripe-webhook` → NEW: `POST /api/webhooks?source=stripe`
+
+#### REMOVED Endpoints (No Longer Exist)
+- `/api/v1/check.js` - Use `/api/v1/validate` instead
+- `/api/v1/check-optimized.js` - Use `/api/v1/validate` with mode parameter
+- `/api/v1/check-protected.js` - Use `/api/v1/validate` with API key
+- `/api/v1/check-with-ai.js` - Use `/api/v1/validate` with mode: "ai-only"
+- `/api/v1/batch-check.js` - Use `/api/v1/validate` with prompts array
+- `/api/v1/cache-stats.js` - Use `/api/admin?action=cache`
+- `/api/v1/stripe-webhook.js` - Use `/api/webhooks?source=stripe`
+- `/api/health.js` - Use `/api/admin?action=health`
+- `/api/status.js` - Use `/api/admin?action=status`
+- `/api/user/api-key.js` - Use `/api/admin?action=user-api-key`
 
 ### Core Libraries (`/api/lib/`)
 | File | Purpose | Critical Lines |

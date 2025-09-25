@@ -46,6 +46,23 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 - **Payments**: Stripe (direct API checks, no data duplication)
 - **Email**: Resend (contact form → info@safeprompt.dev)
 
+### 🚨 CRITICAL: API Consolidation (2025-09-25)
+**We consolidated from 14 endpoints to 5 to stay under Vercel's 12-function limit.**
+
+**Current endpoints:**
+1. `/api/admin` - Health, status, cache, user API keys
+2. `/api/v1/validate` - All validation modes (replaced 6 endpoints)
+3. `/api/webhooks` - Stripe and future webhooks
+4. `/api/contact` - Contact form
+5. `/api/waitlist` - Waitlist signup
+
+**Common mistakes to avoid:**
+- ❌ Don't use `/api/v1/check` → Use `/api/v1/validate`
+- ❌ Don't use `/api/health` → Use `/api/admin?action=health`
+- ❌ Don't use `/api/v1/stripe-webhook` → Use `/api/webhooks?source=stripe`
+
+See ARCHITECTURE.md for complete endpoint mapping.
+
 ### Validation Pipeline
 1. **Regex Patterns** - Fast first pass (5ms) from `/home/projects/api/utils/prompt-validator.js`
 2. **Confidence Scoring** - Determine if AI validation needed

@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '/home/projects/.env' });
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const WEBHOOK_ENDPOINT_URL = 'https://api.safeprompt.dev/api/v1/stripe-webhook';
+const WEBHOOK_ENDPOINT_URL = 'https://api.safeprompt.dev/api/webhooks?source=stripe';
 
 if (!STRIPE_SECRET_KEY) {
   console.error('❌ STRIPE_SECRET_KEY not found in environment');

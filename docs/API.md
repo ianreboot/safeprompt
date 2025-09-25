@@ -7,7 +7,7 @@
 
 ```bash
 # Basic validation
-curl -X POST https://api.safeprompt.dev/v1/check \
+curl -X POST https://api.safeprompt.dev/api/v1/validate \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"prompt": "Hello world"}'
@@ -17,7 +17,7 @@ curl -X POST https://api.safeprompt.dev/v1/check \
 
 **Node.js/JavaScript:**
 ```javascript
-const response = await fetch('https://api.safeprompt.dev/v1/check', {
+const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
@@ -37,7 +37,7 @@ if (!result.safe) {
 import requests
 
 response = requests.post(
-    'https://api.safeprompt.dev/v1/check',
+    'https://api.safeprompt.dev/api/v1/validate',
     headers={
         'Authorization': 'Bearer YOUR_API_KEY',
         'Content-Type': 'application/json'
@@ -97,7 +97,7 @@ Validate a single prompt for injection attacks.
 
 **Example:**
 ```bash
-curl -X POST https://api.safeprompt.dev/v1/check \
+curl -X POST https://api.safeprompt.dev/api/v1/validate \
   -H "Authorization: Bearer sp_live_YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -167,7 +167,7 @@ X-RateLimit-Reset: 1640995200
 ```javascript
 async function checkPrompt(userInput) {
   try {
-    const response = await fetch('https://api.safeprompt.dev/v1/check', {
+    const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + process.env.SAFEPROMPT_API_KEY,
@@ -199,7 +199,7 @@ def check_prompt(user_input, retries=3):
     for attempt in range(retries):
         try:
             response = requests.post(
-                'https://api.safeprompt.dev/v1/check',
+                'https://api.safeprompt.dev/api/v1/validate',
                 headers={
                     'Authorization': f'Bearer {os.environ["SAFEPROMPT_API_KEY"]}',
                     'Content-Type': 'application/json'
@@ -219,7 +219,7 @@ def check_prompt(user_input, retries=3):
 
 ### PHP Example
 ```php
-$ch = curl_init('https://api.safeprompt.dev/v1/check');
+$ch = curl_init('https://api.safeprompt.dev/api/v1/validate');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
