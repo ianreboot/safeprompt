@@ -7,7 +7,7 @@
 
 ## What is SafePrompt?
 
-SafePrompt protects your AI applications from prompt injection attacks. Built for indie developers and startups who need security without complexity. No SDKs to install, no complex rules to write - just POST to our API and you're protected.
+SafePrompt protects your AI applications from prompt injection attacks. Built for vibe coders, indie developers, and solo founders who need security without complexity. Perfect for side projects, MVPs, and scaling startups. No SDKs to install, no complex rules to write - just POST to our API and you're protected.
 
 ```javascript
 // Use HTTP API directly (SDK coming soon)

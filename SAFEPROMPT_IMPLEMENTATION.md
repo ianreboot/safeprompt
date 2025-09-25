@@ -1917,6 +1917,428 @@ open https://safeprompt.dev/privacy
 4. **Real compliance certification** - SOC2 Type II process
 5. **SDK development** - Actual NPM package (not fake)
 
+## Phase 20: Security Intelligence Layer - Bot Detection & Trust Signals
+
+**STATUS**: PLANNED
+**TIMELINE**: 2-3 days implementation
+**PHILOSOPHY**: Optional enhancement, immediate value, zero friction
+**PRIORITY**: HIGH - Competitive differentiation through intelligence layer
+**CRITICAL**: Read competitive moat analysis at `/home/projects/user-input/safeprompt/competitive-moat-features-proposal.md`
+
+### WHY This Feature Matters (Critical Context for Implementation)
+
+#### Business Rationale
+1. **Creates Network Effects**: More users = better detection = harder to compete
+2. **Increases Switching Costs**: Users rely on intelligence data, not just validation
+3. **Differentiates from Lakera**: They hide features behind enterprise sales, we give insights to everyone
+4. **Builds Data Moat**: Every request improves our models, competitors start from zero
+
+#### Technical Rationale
+1. **Already Collecting Data**: We have api_logs table with timestamps and patterns
+2. **Minimal Code Changes**: ~200 lines total across existing endpoints
+3. **No Performance Impact**: Analysis runs async, doesn't block response
+4. **Progressive Enhancement**: Works without any client changes
+
+#### User Psychology (CRITICAL for messaging)
+1. **Reciprocity Principle**: "We give you free insights" creates goodwill
+2. **FOMO Driver**: "Others are getting better data" encourages participation
+3. **Control Preservation**: Optional = user chooses, Mandatory = user resists
+4. **Value First**: Show benefit immediately, ask for participation later
+
+### Core Principle: Progressive Enhancement
+- **Day 1 users**: One line of code still works perfectly
+- **Power users**: Optional context provides security intelligence
+- **Beta testers**: Help train our models, get exclusive insights
+- **No breaking changes**: 100% backward compatible
+
+### CRITICAL Implementation Philosophy
+
+#### What We're NOT Building
+- ❌ **NOT a separate product tier** - This isn't "SafePrompt Pro"
+- ❌ **NOT browser fingerprinting** - No canvas/WebGL/font detection
+- ❌ **NOT tracking users** - We're detecting patterns, not people
+- ❌ **NOT a paywall feature** - Free tier gets basic signals too
+- ❌ **NOT complex to integrate** - Must work with zero changes
+
+#### What We ARE Building
+- ✅ **Invisible enhancement** - Like ABS brakes, works without user knowing
+- ✅ **Optional participation** - Rewards contributors without punishing others
+- ✅ **Immediate value delivery** - Every response includes useful signals
+- ✅ **Community intelligence** - Shared threat detection benefits everyone
+- ✅ **Progressive disclosure** - Simple by default, powerful when needed
+
+### 20.1 Bot Farm Detection (Server-Side Only)
+
+**Implementation**: Extract from existing HTTP headers, no client changes needed
+
+#### Technical Components
+```javascript
+// api/lib/request-intelligence.js
+function analyzeRequestPatterns(req, prompt) {
+  return {
+    // IP Intelligence (from headers)
+    ip_type: detectIPType(req.ip),  // datacenter/residential/mobile
+    geographic_anomaly: checkGeoAnomaly(req.headers),
+
+    // Behavioral Patterns (from prompt)
+    prompt_entropy: calculateEntropy(prompt),
+    typing_pattern: analyzeTimingIfProvided(req.body.timestamp),
+
+    // Request Patterns (from headers)
+    header_authenticity: scoreHeaderCombination(req.headers),
+    user_agent_validity: validateUserAgent(req.headers['user-agent']),
+
+    // Cross-Request Analysis (from database)
+    velocity: await checkRequestVelocity(req.ip, req.apiKey),
+    similarity_score: await findSimilarRequests(prompt, '1h')
+  };
+}
+```
+
+#### Database Schema Addition
+```sql
+-- Add to api_logs table (minimal change)
+ALTER TABLE api_logs ADD COLUMN IF NOT EXISTS
+  client_ip VARCHAR(45),
+  user_agent TEXT,
+  request_fingerprint JSONB,
+  bot_probability DECIMAL(3,2);
+
+-- Create index for pattern analysis
+CREATE INDEX IF NOT EXISTS idx_api_logs_ip_time
+  ON api_logs(client_ip, created_at DESC);
+```
+
+### 20.2 Trust Signals Response (Immediate Value)
+
+**When NO context provided** (default behavior):
+```javascript
+{
+  "safe": true,
+  "confidence": 0.95,
+  "threats": [],
+  "processing_time": 5,
+  // NEW: Basic trust signals from server-side analysis
+  "trust_signals": {
+    "request_authenticity": "high",  // Simplified for non-participants
+    "automation_likelihood": "low"
+  }
+}
+```
+
+**When optional context IS provided** (enhanced response):
+```javascript
+// Request with optional context
+{
+  "prompt": "Check this input",
+  "client_context": {  // OPTIONAL field
+    "timestamp": 1634567890123,
+    "timezone": "America/New_York",
+    "platform": "web"  // web/mobile/cli/server
+  }
+}
+
+// Enhanced response with detailed intelligence
+{
+  "safe": true,
+  "confidence": 0.95,
+  "threats": [],
+  "processing_time": 5,
+  "trust_signals": {
+    "bot_probability": 0.12,
+    "ip_reputation": {
+      "type": "residential",
+      "risk_score": "low",
+      "country": "US"
+    },
+    "automation_indicators": {
+      "scripted_behavior": false,
+      "timing_regularity": 0.23,
+      "header_authenticity": 0.91
+    },
+    "request_patterns": {
+      "velocity_normal": true,
+      "similar_requests_1h": 2,
+      "account_age_days": 45
+    },
+    "behavioral_analysis": {
+      "typing_pattern": "human-like",
+      "prompt_complexity": "natural",
+      "interaction_consistency": 0.88
+    }
+  },
+  "intelligence_tip": "Add more context for deeper insights"
+}
+```
+
+### 20.3 Website Integration (Seamless, Not Frankenstein)
+
+#### DON'T: Add new sections or badges
+#### DO: Enhance existing messaging subtly
+
+**Current Hero Section**: Keep exactly as is
+
+**Features Grid Update** (minimal change):
+```javascript
+// In the existing features grid, update ONE feature card:
+{
+  icon: Shield,
+  title: "Real Protection",
+  // OLD: "Not just regex - multi-layer AI validation"
+  // NEW:
+  description: "Multi-layer AI validation with security intelligence"
+}
+```
+
+**Documentation Section** (add one line to existing code example):
+```javascript
+// Existing simple example stays PRIMARY
+const result = await fetch('/api/v1/check', {
+  method: 'POST',
+  headers: { 'Authorization': 'Bearer YOUR_KEY' },
+  body: JSON.stringify({ prompt: userInput })
+});
+
+// Add subtle comment only
+// Tip: Include client_context for security insights (beta)
+```
+
+**Pricing Section**: NO CHANGES
+- Don't add "Advanced Intelligence" tier
+- Don't create feature comparison matrix
+- Keep it simple
+
+**FAQ Addition** (if FAQ exists, add ONE entry):
+```
+Q: What are trust signals?
+A: Optional security insights that help you understand your traffic
+   patterns. Available in beta for all users who want to participate.
+```
+
+### 20.4 Dashboard Integration (Power User Features)
+
+#### Add to existing dashboard, don't create new sections
+
+**Main Dashboard** (`/src/app/page.tsx`):
+```javascript
+// In Performance Metrics section, add one card:
+<Card>
+  <CardHeader>
+    <CardTitle>Security Intelligence (Beta)</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div className="space-y-2">
+      <div className="flex justify-between">
+        <span>Bot Detection Active</span>
+        <Badge variant="outline">Server-Side</Badge>
+      </div>
+      <div className="flex justify-between">
+        <span>Requests Analyzed Today</span>
+        <span className="font-mono">{metrics.analyzed}</span>
+      </div>
+      <div className="flex justify-between">
+        <span>Automation Blocked</span>
+        <span className="font-mono">{metrics.blocked}</span>
+      </div>
+      <Button variant="ghost" size="sm" className="w-full mt-2">
+        View Intelligence Report →
+      </Button>
+    </div>
+  </CardContent>
+</Card>
+```
+
+**Documentation Tab Update**:
+Add collapsible section at bottom:
+```markdown
+### Beta: Security Intelligence
+
+Get detailed insights about your API traffic by including optional context:
+
+```javascript
+// Enhanced request with context (optional)
+const result = await fetch('/api/v1/check', {
+  method: 'POST',
+  headers: { 'Authorization': 'Bearer YOUR_KEY' },
+  body: JSON.stringify({
+    prompt: userInput,
+    client_context: {
+      timestamp: Date.now(),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      platform: 'web'
+    }
+  })
+});
+
+// Receive additional trust signals in response
+if (result.trust_signals?.bot_probability > 0.7) {
+  // Handle suspicious request
+}
+```
+
+**Benefits of participating**:
+- Bot probability scores
+- IP reputation data
+- Behavioral analysis
+- Request pattern insights
+```
+
+**New Page** `/intelligence` (linked from dashboard only):
+- Detailed analytics for power users
+- Not linked from main website
+- Only discoverable by logged-in users
+
+### 20.5 API Implementation
+
+#### Core Endpoints Updates
+
+**`/api/v1/check` and `/api/v1/check-protected`**:
+```javascript
+export default async function handler(req, res) {
+  // Existing validation logic unchanged
+  const validationResult = await validatePrompt(req.body.prompt);
+
+  // NEW: Silent intelligence gathering (always happens)
+  const requestIntel = await analyzeRequestPatterns(req, req.body.prompt);
+
+  // Store intelligence data (non-blocking)
+  storeIntelligence(requestIntel).catch(console.error);
+
+  // Prepare response
+  let response = {
+    safe: validationResult.safe,
+    confidence: validationResult.confidence,
+    threats: validationResult.threats,
+    processing_time: Date.now() - startTime
+  };
+
+  // Add basic trust signals (always)
+  response.trust_signals = {
+    request_authenticity: requestIntel.header_authenticity > 0.7 ? "high" : "low",
+    automation_likelihood: requestIntel.bot_probability > 0.5 ? "high" : "low"
+  };
+
+  // If client context provided, add enhanced signals
+  if (req.body.client_context) {
+    response.trust_signals = formatEnhancedSignals(requestIntel);
+
+    // Track beta participation
+    await trackBetaParticipation(req.apiKey);
+  }
+
+  return res.json(response);
+}
+```
+
+### 20.6 Gradual Rollout Strategy
+
+#### Week 1: Soft Launch
+- Deploy server-side detection only
+- Return basic trust signals to all users
+- No website changes yet
+- Monitor for false positives
+
+#### Week 2: Beta Invitation
+- Add single line to documentation
+- Email top users about beta feature
+- Track participation rate
+
+#### Week 3: Enhance Responders
+- Show enhanced signals to participants
+- Add dashboard intelligence card
+- Measure value perception
+
+#### Week 4: Optimize & Iterate
+- Tune detection algorithms
+- Add most requested signals
+- Consider making some signals standard
+
+### 20.7 Messaging Guidelines
+
+#### DO Say:
+- "Security intelligence included free"
+- "Help us improve, get exclusive insights"
+- "Optional enhancement"
+- "Progressive security"
+- "Community-powered protection"
+
+#### DON'T Say:
+- "Advanced bot detection tier"
+- "Enterprise security features"
+- "Required for full protection"
+- "AI-powered fingerprinting"
+- "Next-generation defense"
+
+### 20.8 Success Metrics
+
+**Technical Metrics**:
+- Bot detection accuracy > 70% (server-side only)
+- False positive rate < 1%
+- No performance degradation
+- Cache effectiveness maintained
+
+**Adoption Metrics**:
+- 10% of users try client_context within first month
+- 50% of those continue using it
+- Support tickets don't increase
+- No complaints about complexity
+
+**Value Metrics**:
+- Users who get trust signals have 20% higher retention
+- Beta participants become advocates
+- Feature drives differentiation in sales
+
+### 20.9 Implementation Checklist
+
+#### Phase 1: Core Implementation (Day 1)
+- [ ] Create `api/lib/request-intelligence.js`
+- [ ] Add database columns (non-breaking)
+- [ ] Update check endpoints with basic signals
+- [ ] Test with 1000 sample requests
+- [ ] Verify zero performance impact
+
+#### Phase 2: Enhanced Signals (Day 2)
+- [ ] Implement client_context parsing
+- [ ] Build enhanced signal formatting
+- [ ] Add bot probability calculation
+- [ ] Create IP reputation lookup
+- [ ] Test with participating beta users
+
+#### Phase 3: Interface Updates (Day 3)
+- [ ] Update website features grid (1 word change)
+- [ ] Add dashboard intelligence card
+- [ ] Update API documentation (collapsible section)
+- [ ] Create /intelligence page (dashboard only)
+- [ ] Deploy and monitor
+
+### 20.10 Risk Mitigation
+
+**Risk**: Users think it's too complex
+- **Mitigation**: Keep default experience unchanged
+- **Messaging**: "Works exactly as before"
+
+**Risk**: False positives block legitimate users
+- **Solution**: Start with logging only, don't block
+- **Threshold**: Require 95% confidence to flag
+
+**Risk**: Performance degradation
+- **Solution**: All intelligence gathering async
+- **Timeout**: 50ms max for analysis
+
+**Risk**: Privacy concerns
+- **Solution**: Hash IPs, delete after 30 days
+- **Transparency**: Explain what we collect and why
+
+### 20.11 Future Evolution Path
+
+**Phase 20**: Basic bot detection (current)
+**Phase 21**: Behavioral biometrics
+**Phase 22**: Cross-site attack coordination
+**Phase 23**: Custom intelligence rules
+**Phase 24**: Intelligence API for enterprise
+
+Each phase builds on the previous, maintaining simplicity while adding power for those who want it.
+
 ## References
 
 - Methodology: /home/projects/docs/methodology-long-running-tasks.md
