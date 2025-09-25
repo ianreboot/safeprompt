@@ -187,7 +187,7 @@ export default function Dashboard() {
 
   async function fetchCacheStats() {
     try {
-      const response = await fetch('https://api.safeprompt.dev/api/v1/cache-stats')
+      const response = await fetch('https://api.safeprompt.dev/api/admin?action=cache')
       if (response.ok) {
         const stats = await response.json()
         setCacheStats(stats)
@@ -752,7 +752,7 @@ For questions, contact: support@safeprompt.dev`
               <div className="relative">
                 <button
                   onClick={() => copyCodeBlock(`async function checkPrompt(userInput) {
-  const response = await fetch('https://api.safeprompt.dev/v1/check', {
+  const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
@@ -776,7 +776,7 @@ For questions, contact: support@safeprompt.dev`
                 </button>
                 <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
                   <code>{`async function checkPrompt(userInput) {
-  const response = await fetch('https://api.safeprompt.dev/v1/check', {
+  const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
