@@ -248,6 +248,11 @@ This includes:
 - **Don't email API keys** - Security risk, use dashboard
 - **Git filter-branch works** - Removes large files from history
 - **Supabase env vars** - Use SAFEPROMPT_ prefix to avoid conflicts
+- **Vercel functions are stateless** - Cache only works per-instance, not across deployments
+- **Import crypto correctly** - Use `import { createHash } from 'crypto'` not `import crypto`
+- **Vercel project linking crucial** - Wrong project = deployment to wrong domain
+- **Check .vercel/project.json** - Determines which project deploys happen to
+- **Use `vercel link --project`** - To ensure correct project association
 
 ### User Journey Must-Haves
 1. Hero CTAs must work (link to real form)
@@ -283,7 +288,18 @@ cd frontend && npm run dev
 ```
 
 ### Deployment
+
+#### CRITICAL: Vercel Project Linking (Added 2025-09-25)
 ```bash
+# ALWAYS verify correct project before deploying!
+cd api && cat .vercel/project.json
+# Should show: "projectName":"safeprompt-api" NOT just "api"
+
+# If wrong project, re-link:
+rm -rf .vercel
+source /home/projects/.env
+vercel link --token $VERCEL_TOKEN --yes --project safeprompt-api
+
 # Deploy API to Vercel
 cd api && source /home/projects/.env
 vercel --prod --token $VERCEL_TOKEN --yes
@@ -293,6 +309,8 @@ cd frontend && npm run build
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
 wrangler pages deploy dist --project-name safeprompt --branch main
 ```
+
+**⚠️ COMMON PITFALL**: Multiple Vercel projects can exist (api, safeprompt-api, etc). The `.vercel/project.json` determines which deploys. Wrong project = endpoints won't appear on custom domain!
 
 ### Vercel Environment Variable Management
 ```bash
@@ -393,3 +411,11 @@ curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
 - Go/no-go decision criteria
 
 Failure to read these documents will result in repeating mistakes and building on false assumptions.
+
+## 📚 Why AIs Miss Critical Knowledge (Lesson from 2025-09-25)
+Even when deployment instructions exist in CLAUDE.md, they may be incomplete or lack critical details. Always:
+1. **Test deployment commands fully** - Don't assume they work
+2. **Check for multiple projects** - Vercel/Cloudflare can have duplicates
+3. **Verify domain routing** - Deployment success ≠ accessible on custom domain
+4. **Document pitfalls immediately** - Add to CLAUDE.md when discovered
+5. **Use context7 for current docs** - Platform APIs change frequently
