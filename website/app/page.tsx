@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import WaitlistForm from '@/components/WaitlistForm'
 import PricingCard from '@/components/PricingCard'
+import CodeSelector from '@/components/CodeSelector'
 
 export default function Home() {
   const [waitlistCount, setWaitlistCount] = useState(0)
@@ -207,40 +208,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Simple Integration Code */}
-      <section className="py-20 px-6 bg-card/50">
-        <div className="container mx-auto max-w-4xl">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Simple to Integrate
-          </h2>
-
-          <div className="bg-card rounded-xl border border-border p-8">
-            <pre className="overflow-x-auto">
-              <code className="text-sm">{`// Before: Your AI is vulnerable
-const response = await openai.complete(userInput);
-
-// After: Your AI is protected
-const check = await fetch('https://api.safeprompt.dev/v1/check', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer YOUR_API_KEY',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ prompt: userInput })
-});
-
-const result = await check.json();
-if (result.safe) {
-  const response = await openai.complete(userInput);
-} else {
-  // Malicious prompt blocked
-  console.warn('Blocked threat:', result.threat_type);
-}`}</code>
-            </pre>
-          </div>
-        </div>
-      </section>
-
       {/* Why SafePrompt - Outcome Focused */}
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-6xl">
@@ -293,11 +260,11 @@ if (result.safe) {
               description="Perfect for testing"
               features={[
                 '10,000 validations/month',
-                'Basic protection',
+                'Advanced AI protection',
                 'Community support',
               ]}
               buttonText="Join Waitlist"
-              buttonVariant="secondary"
+              buttonVariant="blue"
             />
 
             <PricingCard
@@ -347,13 +314,8 @@ if (result.safe) {
               <div className="flex items-start space-x-4">
                 <span className="text-2xl font-bold text-primary">2</span>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-2">Make Your First Request</h3>
-                  <pre className="bg-background p-4 rounded-lg overflow-x-auto mb-4">
-                    <code className="text-sm">{`curl -X POST https://api.safeprompt.dev/v1/check \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"prompt": "Hello world"}'`}</code>
-                  </pre>
+                  <h3 className="text-lg font-semibold mb-4">Make Your First Request</h3>
+                  <CodeSelector />
                 </div>
               </div>
             </div>
@@ -399,7 +361,14 @@ if (result.safe) {
             Secure it now with one simple integration.
           </p>
 
-          <WaitlistForm />
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <a href="https://dashboard.safeprompt.dev/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
+              Start Free Trial
+            </a>
+            <a href="#pricing" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
+              View Pricing
+            </a>
+          </div>
         </div>
       </section>
 
@@ -426,17 +395,17 @@ if (result.safe) {
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2">
-                <li><a href="/terms" className="text-muted-foreground hover:text-foreground transition text-sm">Terms</a></li>
-                <li><a href="/privacy" className="text-muted-foreground hover:text-foreground transition text-sm">Privacy</a></li>
+                <li><a href="/about" className="text-muted-foreground hover:text-foreground transition text-sm">About</a></li>
                 <li><a href="/contact" className="text-muted-foreground hover:text-foreground transition text-sm">Contact</a></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Resources</h4>
+              <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2">
+                <li><a href="/terms" className="text-muted-foreground hover:text-foreground transition text-sm">Terms</a></li>
+                <li><a href="/privacy" className="text-muted-foreground hover:text-foreground transition text-sm">Privacy</a></li>
                 <li><a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition text-sm">Dashboard</a></li>
-                <li><a href="/contact" className="text-muted-foreground hover:text-foreground transition text-sm">Support</a></li>
               </ul>
             </div>
           </div>

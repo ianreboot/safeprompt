@@ -80,9 +80,10 @@ export default function Dashboard() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   const isDemo = user?.email === 'demo@safeprompt.dev'
-  const maskedKey = showKey && apiKey?.key
-    ? apiKey.key
-    : (apiKey?.key ? `${apiKey.key.substring(0, 7)}${'•'.repeat(24)}${apiKey.key_hint}` : 'sp_demo_k3y_f0r_pr3v13w_0nly')
+  const hasRealKey = apiKey?.key && apiKey.key !== 'demo_key'
+  const maskedKey = hasRealKey
+    ? (showKey ? apiKey.key : `${apiKey.key.substring(0, 7)}${'•'.repeat(24)}${apiKey.key_hint}`)
+    : 'sp_demo_k3y_f0r_pr3v13w_0nly'
 
   useEffect(() => {
     checkUser()
@@ -297,7 +298,7 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-primary">SafePrompt</h1>
               <nav className="hidden md:flex items-center gap-6">
                 <a href="#" className="text-sm text-white">Dashboard</a>
-                <a href="https://safeprompt.dev/contact" className="text-sm text-gray-300 hover:text-white">Support</a>
+                <a href="https://safeprompt.dev/contact?subject=support" className="text-sm text-gray-300 hover:text-white">Support</a>
               </nav>
             </div>
             <div className="flex items-center gap-4">
@@ -404,12 +405,15 @@ export default function Dashboard() {
               <div className="p-4 pr-12 font-mono text-sm">
                 <div className="flex items-center gap-2">
                   <span className="break-all">{maskedKey}</span>
-                  <button
-                    onClick={() => setShowKey(!showKey)}
-                    className="text-gray-400 hover:text-white transition-colors ml-2"
-                  >
-                    {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+                  {hasRealKey && (
+                    <button
+                      onClick={() => setShowKey(!showKey)}
+                      className="text-gray-400 hover:text-white transition-colors ml-2"
+                      title={showKey ? 'Hide API key' : 'Show API key'}
+                    >
+                      {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -712,7 +716,7 @@ def check_prompt(user_input):
 
             <div className="mt-6 pt-6 border-t border-gray-800 text-center">
               <p className="text-sm text-gray-400 mb-2">💬 Need Help?</p>
-              <a href="https://safeprompt.dev/contact" className="text-primary hover:underline flex items-center gap-1 justify-center">
+              <a href="https://safeprompt.dev/contact?subject=support" className="text-primary hover:underline flex items-center gap-1 justify-center">
                 Contact Support <ExternalLink className="w-3 h-3" />
               </a>
             </div>

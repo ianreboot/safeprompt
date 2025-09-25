@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Send, CheckCircle, AlertCircle } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 
 export default function ContactPage() {
+  const searchParams = useSearchParams()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,6 +15,14 @@ export default function ContactPage() {
   })
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+
+  // Set subject from URL params if provided
+  useEffect(() => {
+    const subject = searchParams.get('subject')
+    if (subject === 'support') {
+      setFormData(prev => ({ ...prev, subject: 'support' }))
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -207,9 +217,6 @@ export default function ContactPage() {
 
             <div className="mt-8 text-center text-sm text-muted-foreground">
               <p>We typically respond within 24 hours during business days.</p>
-              <p className="mt-2">
-                For urgent issues, please include "URGENT" in your subject line.
-              </p>
             </div>
           </motion.div>
         </div>

@@ -267,28 +267,117 @@ export default function TermsPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4">13. Anti-Abuse and Fee-Shifting Provisions</h2>
+                <h2 className="text-2xl font-semibold mb-4">13. Anti-Frivolous Lawsuit and Fee-Shifting Provisions</h2>
+
                 <p className="text-muted-foreground mb-4">
-                  <strong>13.1 Prevailing Party Fees:</strong> In any legal proceeding, the prevailing party is entitled
-                  to recover reasonable attorneys' fees and costs.
+                  <strong>13.1 Prevailing Party Attorney's Fees:</strong> In any action or proceeding to enforce rights under these Terms,
+                  the prevailing party will be entitled to recover costs and attorney's fees. This includes any lawsuit, arbitration, or administrative proceeding.
                 </p>
+
                 <p className="text-muted-foreground mb-4">
-                  <strong>13.2 Frivolous Claims:</strong> If any claim against us is found to be frivolous, brought in bad
-                  faith, or primarily for harassment, you agree to pay:
+                  <strong>13.2 Frivolous Claims Penalties:</strong> If you file any lawsuit, arbitration demand, or administrative complaint
+                  against us that a court or arbitrator determines to be:
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
-                  <li>All our attorneys' fees and costs</li>
-                  <li>A penalty of $25,000 or triple your claimed damages, whichever is greater</li>
-                  <li>Any court-imposed sanctions</li>
+                  <li>Frivolous or without substantial justification</li>
+                  <li>Filed in bad faith or for purposes of harassment</li>
+                  <li>Based on claims you knew or should have known were false</li>
+                  <li>Filed primarily to extract a nuisance settlement ("strike suit")</li>
                 </ul>
                 <p className="text-muted-foreground mb-4">
-                  <strong>13.3 Security Testing:</strong> Unauthorized penetration testing, vulnerability scanning, or security
-                  research without written permission constitutes a violation of the Computer Fraud and Abuse Act and these
-                  Terms. We reserve the right to pursue criminal and civil remedies.
+                  You agree to pay: (a) all our attorney's fees and costs, (b) a penalty of $25,000 or triple the amount of your
+                  claimed damages, whichever is greater, and (c) any sanctions imposed by the court.
                 </p>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.3 Pre-Filing Requirements:</strong> Before filing any legal action, you must:
+                </p>
+                <ol className="list-decimal list-inside text-muted-foreground space-y-2 ml-4 mb-4">
+                  <li>Send written notice to legal@safeprompt.dev detailing your specific claims</li>
+                  <li>Provide 30 days for us to respond and attempt resolution</li>
+                  <li>Participate in good faith settlement discussions</li>
+                  <li>Certify that your claims are brought in good faith, not for improper purposes</li>
+                </ol>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.4 Settlement Offer Protection:</strong> If we make a written settlement offer and you reject it, and the final
+                  judgment is not more favorable to you than our offer, you must pay all our costs and attorney's fees incurred after
+                  the settlement offer, regardless of who prevails.
+                </p>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.5 Cure Period for Legal Compliance:</strong> For any claim based on alleged non-compliance with law or regulation, you must:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
+                  <li>Provide written notice specifically identifying the law/regulation and alleged violation</li>
+                  <li>Allow 60 days for us to cure any alleged violation before filing any legal action</li>
+                  <li>Include evidence that the alleged violation is not common industry practice</li>
+                  <li>Demonstrate actual harm, not merely technical non-compliance</li>
+                </ul>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.6 Industry Standard Defense:</strong> It shall be a complete defense to any claim that our practices were
+                  consistent with prevailing industry standards among similar services at the time of the alleged violation. The burden
+                  of proving our practices deviated from industry standards rests with the claimant.
+                </p>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.7 ADA and Accessibility Claims:</strong> For any claim related to website accessibility or ADA compliance:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
+                  <li>You must first contact us with specific accessibility barriers encountered</li>
+                  <li>Provide assistive technology used and detailed description of the issue</li>
+                  <li>Allow 90 days for us to implement reasonable accommodations or fixes</li>
+                  <li>Acknowledge that perfect accessibility may not be achievable for all features</li>
+                  <li>Damages are limited to injunctive relief only unless you can prove intentional discrimination</li>
+                </ul>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.8 Third-Party Deception Defense:</strong> We shall not be liable for any consequences resulting from:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
+                  <li>Users providing false or deceptive information, including honeypot email addresses</li>
+                  <li>Users causing us to unknowingly contact restricted addresses or systems</li>
+                  <li>Third parties misrepresenting their identity or authority</li>
+                  <li>Any form of entrapment or deceptive practices by users or third parties</li>
+                </ul>
+                <p className="text-muted-foreground mb-4">
+                  Users who engage in such deceptive practices agree to indemnify us for any resulting claims, fines, or damages,
+                  including attorney's fees.
+                </p>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.9 Regulatory Complaint Responsibilities:</strong> If you file any complaint with any governmental agency,
+                  regulatory body, or consumer protection agency, you agree to:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
+                  <li><strong>Truthfulness:</strong> Provide only truthful, accurate, and complete information</li>
+                  <li><strong>Cost Recovery:</strong> Reimburse us for all costs incurred responding to frivolous complaints</li>
+                  <li><strong>Cooperation:</strong> Fully cooperate with any investigation</li>
+                  <li><strong>Pre-Filing Notice:</strong> Contact us first through our dispute resolution process</li>
+                  <li><strong>Withdrawal:</strong> Withdraw any complaint that becomes moot</li>
+                </ul>
+                <p className="text-muted-foreground mb-4">
+                  If any governmental investigation results in a finding that your complaint was knowingly false or made in bad faith,
+                  you agree to pay liquidated damages of $5,000 plus all costs incurred.
+                </p>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.10 Security Testing:</strong> Unauthorized penetration testing, vulnerability scanning, or security research
+                  without written permission constitutes a violation of the Computer Fraud and Abuse Act. We reserve the right to pursue
+                  criminal and civil remedies. Responsible disclosure requires 90 days for remediation before public disclosure.
+                </p>
+
+                <p className="text-muted-foreground mb-4">
+                  <strong>13.11 Communication Failures:</strong> You acknowledge that electronic communications may fail due to spam filters,
+                  technical issues, or incorrect contact information. You are responsible for ensuring your contact information is current.
+                  Failure to receive a response does not extend any deadlines or cure periods. We are not liable for failed communications
+                  unless you can prove intentional non-response.
+                </p>
+
                 <p className="text-muted-foreground">
-                  <strong>13.4 Responsible Disclosure:</strong> Security researchers must follow responsible disclosure practices
-                  and provide 90 days for remediation before public disclosure.
+                  <strong>13.12 Account Requirements for Claims:</strong> Only users who have created an account and accepted these Terms
+                  have standing to bring claims. Guest users are limited to claims related to their actual use of the Service.
                 </p>
               </div>
 
