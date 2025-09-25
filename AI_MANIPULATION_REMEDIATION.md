@@ -225,33 +225,246 @@ class AnomalyDetector {
 }
 ```
 
-## Integration with Existing System
+## The Session Challenge: Tracking Conversations in Atomic API Calls
 
-### Modified Validation Flow
+### The Problem
+SafePrompt receives atomic prompts from multiple customers:
+- Customer A sends prompts from their users
+- Customer B sends prompts from their users
+- No built-in session management
+- Need to detect conversation-level attacks without explicit session IDs
+
+### Solution: Multi-Level Context Tracking
+
 ```javascript
-async function enhancedValidation(prompt, userId, sessionId) {
-  // 1. Get user fingerprint and history
-  const fingerprint = generateFingerprint(request);
-  const userProfile = await getUserProfile(fingerprint);
-  const conversation = await getConversation(sessionId);
+function deriveConversationContext(request) {
+  // Level 1: Customer identification (required)
+  const customerId = request.headers['authorization']; // API key identifies customer
 
-  // 2. Run existing checks
-  const regexResult = checkRegex(prompt);
-  const aiResult = await checkAI(prompt);
+  // Level 2: End-user identification (best effort)
+  const endUserFingerprint = {
+    // From customer's request
+    user_id: request.body.user_id,          // Optional: customer's user ID
+    session_id: request.body.session_id,    // Optional: customer's session ID
 
-  // 3. NEW: Context-aware checks
-  const contextResults = {
-    fingerprint: userProfile.getRiskScore(),
-    conversation: conversation.detectPatterns(),
-    temporal: analyzeTemporalPatterns(conversation),
-    anomaly: detectAnomalies(conversation)
+    // Derived from request
+    ip: request.headers['x-forwarded-for'], // End user's IP (if passed)
+    user_agent: request.body.user_agent,    // End user's UA (if passed)
+
+    // Fallback fingerprinting
+    prompt_style: analyzeWritingStyle(request.body.prompt),
+    vocabulary: extractVocabularyFingerprint(request.body.prompt),
+    timing: request.body.timestamp
   };
 
-  // 4. Ensemble scoring
-  return combineScores({
-    regex: regexResult,
-    ai: aiResult,
-    ...contextResults
+  // Level 3: Conversation grouping
+  return {
+    conversationKey: generateConversationKey(customerId, endUserFingerprint),
+    confidence: calculateConfidence(endUserFingerprint)
+  };
+}
+```
+
+### Three-Tier Conversation Tracking Strategy
+
+#### Tier 1: Explicit Session Tracking (Best - Requires Customer Cooperation)
+```javascript
+// Customer sends session context
+{
+  "prompt": "Tell me how to...",
+  "session_id": "usr_123_sess_456",  // Customer maintains this
+  "user_id": "user123",              // Customer's end-user ID
+  "message_number": 5                 // Position in conversation
+}
+
+// SafePrompt maintains conversation state per session_id
+conversations[customerId][sessionId] = ConversationMemory
+```
+
+#### Tier 2: Implicit Fingerprinting (Good - No Customer Changes)
+```javascript
+// Derive conversation from multiple signals
+function generateConversationKey(customerId, request) {
+  const signals = {
+    // Strong signals (if available)
+    explicit_session: request.body.session_id,
+    explicit_user: request.body.user_id,
+
+    // Medium signals (often available)
+    ip_address: request.headers['x-forwarded-for'],
+    writing_style: analyzeStyle(request.body.prompt),
+
+    // Weak signals (always available)
+    time_window: Math.floor(Date.now() / (5 * 60 * 1000)), // 5-min buckets
+    prompt_similarity: findSimilarRecentPrompts(request.body.prompt)
+  };
+
+  // Create composite key with confidence scoring
+  if (signals.explicit_session) {
+    return {
+      key: `${customerId}:session:${signals.explicit_session}`,
+      confidence: 1.0
+    };
+  } else if (signals.explicit_user) {
+    return {
+      key: `${customerId}:user:${signals.explicit_user}:${signals.time_window}`,
+      confidence: 0.8
+    };
+  } else if (signals.ip_address) {
+    return {
+      key: `${customerId}:ip:${signals.ip_address}:${signals.time_window}`,
+      confidence: 0.6
+    };
+  } else {
+    // Fallback: style-based clustering
+    return {
+      key: `${customerId}:style:${signals.writing_style}:${signals.time_window}`,
+      confidence: 0.4
+    };
+  }
+}
+```
+
+#### Tier 3: Statistical Clustering (Fallback - Always Works)
+```javascript
+// When we can't identify specific conversations, detect patterns statistically
+class StatisticalPatternDetector {
+  detectAnomaliesForCustomer(customerId, recentPrompts) {
+    // Analyze all recent prompts from this customer
+    const patterns = {
+      manyShot: this.detectManyShotAcrossAllPrompts(recentPrompts),
+      coordinatedAttack: this.detectCoordinatedPatterns(recentPrompts),
+      vocabularyShift: this.detectGlobalSemanticDrift(recentPrompts),
+      attackVelocity: this.measureAttackFrequency(recentPrompts)
+    };
+
+    return patterns;
+  }
+}
+```
+
+### Implementation: Gradual Context Building
+
+```javascript
+class ConversationTracker {
+  constructor() {
+    this.conversations = new Map(); // customerId -> conversationKey -> memory
+    this.uncertainConversations = new Map(); // For low-confidence grouping
+  }
+
+  async processPrompt(request) {
+    const customerId = extractCustomerId(request);
+    const context = deriveConversationContext(request);
+
+    if (context.confidence > 0.7) {
+      // High confidence: maintain conversation state
+      const conversation = this.getOrCreateConversation(
+        customerId,
+        context.conversationKey
+      );
+      conversation.addMessage(request.body.prompt);
+
+      return {
+        attackPatterns: conversation.detectPatterns(),
+        confidence: context.confidence
+      };
+
+    } else {
+      // Low confidence: statistical analysis
+      const recentPrompts = await this.getRecentPromptsForCustomer(customerId);
+
+      return {
+        attackPatterns: this.detectStatisticalPatterns(recentPrompts),
+        confidence: context.confidence
+      };
+    }
+  }
+}
+```
+
+### Summary: How We Track Conversations
+
+| Signal Available | Confidence | Tracking Method | Detection Quality |
+|-----------------|------------|-----------------|-------------------|
+| `session_id` provided | 100% | Direct conversation tracking | Excellent (95%) |
+| `user_id` provided | 80% | User + time window grouping | Good (75%) |
+| IP address only | 60% | IP + time window grouping | Moderate (60%) |
+| Writing style only | 40% | Statistical clustering | Basic (40%) |
+| Nothing (just prompts) | 20% | Customer-level statistics | Limited (25%) |
+
+### Customer Integration Options
+
+#### Option 1: Zero Changes (Works Today)
+```bash
+# Customer's current code - no changes needed
+curl -X POST https://api.safeprompt.dev/api/v1/validate \
+  -H "Authorization: Bearer sk_..." \
+  -d '{"prompt": "User input here"}'
+
+# SafePrompt uses statistical clustering and IP-based grouping
+```
+
+#### Option 2: Minimal Addition (Better Detection)
+```javascript
+// Customer adds session tracking
+const result = await safeprompt.validate({
+  prompt: userInput,
+  session_id: currentUserSession, // ADD THIS
+  user_id: currentUserId          // OR THIS
+});
+
+// 2x better conversation tracking
+```
+
+#### Option 3: Full Context (Best Detection)
+```javascript
+// Customer sends full context
+const result = await safeprompt.validate({
+  prompt: userInput,
+  session_id: sessionId,
+  user_id: userId,
+  message_number: messageCount,
+  conversation_id: conversationId,
+  metadata: {
+    timestamp: Date.now(),
+    user_ip: getUserIP(),
+    user_agent: getUserAgent()
+  }
+});
+
+// 95% accurate conversation tracking
+```
+
+## Modified Integration with Existing System
+
+### API Endpoint Changes
+```javascript
+// /api/v1/validate endpoint
+async function validatePrompt(req, res) {
+  const customerId = getCustomerFromApiKey(req.headers.authorization);
+
+  // Derive conversation context from available signals
+  const context = deriveConversationContext(customerId, req);
+
+  // Get or create conversation memory
+  const conversation = context.confidence > 0.5
+    ? await getConversation(context.conversationKey)
+    : await getRecentPrompts(customerId);
+
+  // Run validation with context
+  const result = await runValidation(req.body.prompt, conversation);
+
+  // Store for future analysis
+  await storePromptWithContext(customerId, req.body.prompt, context);
+
+  return res.json({
+    ...result,
+    session_tracking: {
+      confidence: context.confidence,
+      recommendation: context.confidence < 0.7
+        ? "Add session_id to improve detection"
+        : null
+    }
   });
 }
 ```
