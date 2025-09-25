@@ -1580,29 +1580,37 @@ User → Dashboard → Supabase (RLS) → Protected Data
 - **User Dashboard**: ✅ UI complete, needs backend connections
 - **Legal Pages**: ✅ Terms & Privacy published
 
-## 🚨 CRITICAL REMAINING TASKS (Updated 2025-09-25)
+## ✅ STATUS UPDATE (2025-09-25)
 
-### Must-Have for Launch
-1. **API Health Endpoint Fix**
-   - Currently returns 404 at api.safeprompt.dev/health
-   - Need to create `/api/health` endpoint in Vercel
-   - Critical for monitoring and uptime checks
+### Completed Today
+1. **API Health Endpoint** ✅
+   - Works at api.safeprompt.dev/api/health
+   - Returns proper health status JSON
 
-2. **Stripe Webhook Implementation**
-   - Endpoint exists but doesn't process events
-   - Need to handle `checkout.session.completed`
-   - Must create user profile and generate API key
-   - Send welcome email with API key
+2. **Stripe Webhook Implementation** ✅
+   - Created `/api/v1/stripe-webhook` endpoint
+   - Handles checkout.session.completed events
+   - Creates user profiles and generates API keys
+   - Processes subscription updates and cancellations
 
-3. **Dashboard Backend Connection**
-   - `/api/user/api-key` endpoint needed
-   - Connect real usage data (not demo data)
-   - API key regeneration functionality
+3. **Dashboard Backend Connection** ✅
+   - Created `/api/user/api-key` endpoint
+   - Fetches real user data from Supabase
+   - Supports API key regeneration
+   - Returns usage statistics
 
-4. **Resend Domain Verification**
-   - Complete domain verification process
-   - Enable transactional emails for waitlist
-   - Add email templates for API key delivery
+4. **Resend Domain Verification** ✅
+   - safeprompt.dev domain is VERIFIED
+   - Email sending enabled for waitlist
+   - Welcome emails configured
+
+### Current Blocker
+**Vercel Function Limit**: Hit 12-function limit on Hobby plan
+- New endpoints created but not deployed
+- Need to either:
+  - Upgrade to Pro plan for more functions
+  - Combine some endpoints to reduce count
+  - Move to different hosting solution
 
 ### Nice-to-Have (Can Launch Without)
 - Cookie consent banner
