@@ -1,7 +1,10 @@
 {
   "functions": {
-    "api/v1/check.js": {
+    "api/v1/validate.js": {
       "maxDuration": 10
+    },
+    "api/webhooks.js": {
+      "maxDuration": 30
     }
   },
   "headers": [
