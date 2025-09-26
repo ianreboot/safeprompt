@@ -3,6 +3,7 @@
 import BlogLayout from '@/components/blog/BlogLayout'
 import CodeBlock from '@/components/blog/CodeBlock'
 import CodeTabs from '@/components/blog/CodeTabs'
+import ReferenceSection, { ProofOfConceptBox } from '@/components/blog/References'
 import { AlertTriangle, Shield, TrendingUp, Zap } from 'lucide-react'
 
 const blogMeta = {
@@ -623,39 +624,40 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \\
         </p>
 
 
-        <hr />
+        <ProofOfConceptBox
+          title="🎥 See the Attack in Action:"
+          url="https://0din.ai/blog/phishing-for-gemini"
+          description="Watch Mozilla's live demonstration of the Gmail attack (July 2025)"
+        />
 
-        <h3>Proof of Concept & Technical References</h3>
-
-        <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 my-4">
-          <p className="text-red-300 font-semibold mb-2">🎥 See the Attack in Action:</p>
-          <a href="https://0din.ai/blog/phishing-for-gemini" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">
-            Watch Mozilla's live demonstration of the Gmail attack (July 2025)
-          </a>
-        </div>
-
-        <ul>
-          <li>
-            <a href="https://0din.ai/blog/phishing-for-gemini" target="_blank" rel="noopener">
-              Mozilla 0din Bug Bounty Disclosure: Gmail Gemini Prompt Injection
-            </a> (July 2025 - Marco Figueroa)
-          </li>
-          <li>
-            <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-32711" target="_blank" rel="noopener">
-              CVE-2025-32711: Microsoft Copilot EchoLeak Vulnerability
-            </a>
-          </li>
-          <li>
-            <a href="https://security.googleblog.com/2025/06/mitigating-prompt-injection-attacks.html" target="_blank" rel="noopener">
-              Google Security Blog: Mitigating Prompt Injection Attacks
-            </a>
-          </li>
-          <li>
-            <a href="https://www.darkreading.com/remote-workforce/google-gemini-ai-bug-invisible-malicious-prompts" target="_blank" rel="noopener">
-              Dark Reading: Google Gemini Bug Allows Invisible Malicious Prompts
-            </a>
-          </li>
-        </ul>
+        <ReferenceSection
+          references={[
+            {
+              title: "Mozilla 0din Bug Bounty Disclosure: Gmail Gemini Prompt Injection",
+              url: "https://0din.ai/blog/phishing-for-gemini",
+              source: "Mozilla 0din",
+              date: "July 2025"
+            },
+            {
+              title: "CVE-2025-32711: Microsoft Copilot EchoLeak Vulnerability",
+              url: "https://nvd.nist.gov/vuln/detail/CVE-2025-32711",
+              source: "NIST NVD",
+              date: "2025"
+            },
+            {
+              title: "Mitigating Prompt Injection Attacks",
+              url: "https://security.googleblog.com/2025/06/mitigating-prompt-injection-attacks.html",
+              source: "Google Security Blog",
+              date: "June 2025"
+            },
+            {
+              title: "Google Gemini Bug Allows Invisible Malicious Prompts",
+              url: "https://www.darkreading.com/remote-workforce/google-gemini-ai-bug-invisible-malicious-prompts",
+              source: "Dark Reading",
+              date: "2025"
+            }
+          ]}
+        />
       </div>
     </BlogLayout>
   )

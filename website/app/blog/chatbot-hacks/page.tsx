@@ -1,6 +1,7 @@
 'use client'
 
 import BlogLayout from '@/components/blog/BlogLayout'
+import ReferenceSection from '@/components/blog/References'
 import CodeBlock from '@/components/blog/CodeBlock'
 import CodeTabs from '@/components/blog/CodeTabs'
 import { AlertTriangle, Shield, TrendingUp, Zap } from 'lucide-react'
@@ -437,18 +438,28 @@ export async function POST(request: NextRequest) {
           - because "no takesies backsies" is now legal precedent.
         </p>
 
-        <hr />
-
-        <h3>References & Further Reading</h3>
-
-        <div className="bg-zinc-900 rounded-lg p-4 my-4 border border-zinc-800">
-          <p className="text-zinc-300 font-semibold mb-2">📰 Verified Incidents:</p>
-          <ul className="space-y-1 text-sm">
-            <li><a href="https://www.cbc.ca/news/canada/british-columbia/air-canada-chatbot-lawsuit-1.7116416" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">Air Canada Lawsuit (CBC News)</a></li>
-            <li><a href="https://www.inc.com/ben-sherry/chevrolet-used-chatgpt-for-customer-service-and-learned-that-ai-isnt-always-on-your-side.html" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">Chevrolet $1 Car Incident (Inc.com)</a></li>
-            <li><a href="https://www.bbc.com/news/technology-68025677" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">DPD Chatbot Swearing (BBC)</a></li>
-          </ul>
-        </div>
+        <ReferenceSection
+          references={[
+            {
+              title: 'Air Canada Lawsuit - Chatbot promises upheld in court',
+              url: 'https://www.cbc.ca/news/canada/british-columbia/air-canada-chatbot-lawsuit-1.7116416',
+              source: 'CBC News',
+              date: 'February 2024'
+            },
+            {
+              title: 'Chevrolet $1 Car Incident - AI agrees to sell car for $1',
+              url: 'https://www.inc.com/ben-sherry/chevrolet-used-chatgpt-for-customer-service-and-learned-that-ai-isnt-always-on-your-side.html',
+              source: 'Inc.com',
+              date: 'December 2023'
+            },
+            {
+              title: 'DPD Chatbot Swearing - AI criticizes own company',
+              url: 'https://www.bbc.com/news/technology-68025677',
+              source: 'BBC News',
+              date: 'January 2024'
+            }
+          ]}
+        />
       </div>
     </BlogLayout>
   )
