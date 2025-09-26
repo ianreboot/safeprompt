@@ -24,14 +24,6 @@
       "static/chunks/983-1a75a5fc6b401e7c.js",
       "static/chunks/app/about/page-9d15a908d3a8f501.js"
     ],
-    "/blog/gmail-ai-threat/page": [
-      "static/chunks/webpack-41a9ee0a1d65a3d2.js",
-      "static/chunks/fd9d1056-f874c913947458c4.js",
-      "static/chunks/117-bc10c6bd1b16ad41.js",
-      "static/chunks/main-app-8be56c545ec976b8.js",
-      "static/chunks/972-903c646da3376ba3.js",
-      "static/chunks/app/blog/gmail-ai-threat/page-8287585706fdd50d.js"
-    ],
     "/blog/page": [
       "static/chunks/webpack-41a9ee0a1d65a3d2.js",
       "static/chunks/fd9d1056-f874c913947458c4.js",
@@ -39,6 +31,14 @@
       "static/chunks/main-app-8be56c545ec976b8.js",
       "static/chunks/972-903c646da3376ba3.js",
       "static/chunks/app/blog/page-90b758f4774bf133.js"
+    ],
+    "/blog/gmail-ai-threat/page": [
+      "static/chunks/webpack-41a9ee0a1d65a3d2.js",
+      "static/chunks/fd9d1056-f874c913947458c4.js",
+      "static/chunks/117-bc10c6bd1b16ad41.js",
+      "static/chunks/main-app-8be56c545ec976b8.js",
+      "static/chunks/972-903c646da3376ba3.js",
+      "static/chunks/app/blog/gmail-ai-threat/page-6f0c4d4d36b5f780.js"
     ],
     "/contact/page": [
       "static/chunks/webpack-41a9ee0a1d65a3d2.js",

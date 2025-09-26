@@ -1,8 +1,8 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/about/page": "app/about/page.js",
-  "/blog/gmail-ai-threat/page": "app/blog/gmail-ai-threat/page.js",
   "/blog/page": "app/blog/page.js",
+  "/blog/gmail-ai-threat/page": "app/blog/gmail-ai-threat/page.js",
   "/contact/page": "app/contact/page.js",
   "/page": "app/page.js",
   "/privacy/page": "app/privacy/page.js",

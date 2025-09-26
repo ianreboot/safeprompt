@@ -352,10 +352,10 @@ class ContactController extends Controller
         <div className="bg-orange-900/20 border border-orange-500/50 rounded-lg p-4 my-6">
           <p className="text-orange-300 font-semibold mb-2">⚠️ These aren't theories - they're real incidents:</p>
           <ul className="space-y-2 text-sm">
-            <li>• <strong>July 2025:</strong> Mozilla's bug bounty program confirms Gmail Gemini attacks (Marco Figueroa disclosure)</li>
-            <li>• <strong>Sept 2025:</strong> Booking.com phishing emails use hidden prompts to bypass AI scanners</li>
-            <li>• <strong>CVE-2025-32711:</strong> Microsoft's "EchoLeak" - zero-click data theft via Copilot (CVSS 9.4)</li>
-            <li>• <strong>Active Now:</strong> CISA warns of ongoing exploitation in the wild</li>
+            <li><strong>July 2025:</strong> Mozilla's bug bounty program confirms Gmail Gemini attacks (Marco Figueroa disclosure)</li>
+            <li><strong>Sept 2025:</strong> Booking.com phishing emails use hidden prompts to bypass AI scanners</li>
+            <li><strong>CVE-2025-32711:</strong> Microsoft's "EchoLeak" - zero-click data theft via Copilot (CVSS 9.4)</li>
+            <li><strong>Active Now:</strong> CISA warns of ongoing exploitation in the wild</li>
           </ul>
         </div>
 
@@ -423,7 +423,12 @@ How it worked:
         <p>Sign up at <a href="https://safeprompt.dev" className="text-blue-400 hover:text-blue-300">safeprompt.dev</a> - free tier gives you 10,000 validations/month.</p>
 
         <h3>Step 2: Add Validation (5 minutes)</h3>
-        <p>Here's the actual code you need (yes, it's more than one line but it works):</p>
+        <p>Add this code to your form handler:</p>
+
+        <h3>Step 3: Test & Deploy (8 minutes)</h3>
+        <p>Test with the examples from this article, handle errors, and deploy.</p>
+
+        <p className="mt-4">Here's the actual code you need (yes, it's more than one line but it works):</p>
 
         <CodeBlock
           language="javascript"
