@@ -321,17 +321,49 @@ This includes:
 5. Be honest about beta/limitations
 6. Contact form must work (no exposed emails)
 
-### Current Actual State (Post-Migration)
-- **Website**: ✅ Live, honest, functional
-- **API**: ✅ New profiles-based auth working
+### Current Actual State (Updated 2025-09-26)
+- **Website**: ✅ Live on Cloudflare Pages (safeprompt-website)
+- **API**: ✅ Live on Vercel (safeprompt-api project)
 - **Dashboard**: ✅ Updated to use profiles table
 - **Payments**: ✅ Stripe webhook handlers created
 - **Subscriptions**: ✅ Full management endpoints
-- **Waitlist**: ✅ Approval workflow implemented
-- **Contact Form**: ✅ Resend integration complete
+- **Waitlist**: ✅ Working via consolidated /api/website endpoint
+- **Contact Form**: ⚠️ Working but SafePrompt validation too strict (flagging normal messages)
 - **Emails**: ✅ Resend configured (sends to info@safeprompt.dev)
+- **Blog**: ✅ Gmail AI threat article at /blog/gmail-ai-threat
 - **Stripe Products**: ❌ Need manual creation in dashboard
-- **Launch Ready**: 95% (just needs Stripe live mode activation)
+- **Launch Ready**: 95% (validation tuning needed, Stripe live mode)
+
+### 🚨 CRITICAL: Consolidated API Structure (2025-09-26)
+**To stay within Vercel's 12-function limit, we consolidated endpoints:**
+
+**Old structure** (removed):
+- `/api/contact` - Separate contact form endpoint
+- `/api/waitlist` - Separate waitlist endpoint
+
+**New structure** (current):
+- `/api/website` - Consolidated endpoint with action routing
+  ```javascript
+  POST /api/website
+  {
+    "action": "contact|waitlist",
+    "data": { ... }
+  }
+  ```
+
+**Frontend updated** to use new structure:
+- Contact form: POST to `/api/website` with `action: "contact"`
+- Waitlist form: POST to `/api/website` with `action: "waitlist"`
+
+### 🔧 MODULE TYPE FIX (2025-09-26)
+**Problem**: `/api/website` returned 500 FUNCTION_INVOCATION_FAILED
+**Root Cause**: package.json had `"type": "module"` but code used CommonJS syntax
+**Solution**: Converted all files to ESM syntax:
+- Changed `require()` → `import`
+- Changed `module.exports` → `export default`
+- Changed `const { x } = require()` → `import { x } from`
+
+**Status**: ✅ FIXED - API fully operational
 
 ## Development Commands
 

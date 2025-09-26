@@ -504,6 +504,7 @@ export default function Home() {
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2">
                 <li><a href="/about" className="text-muted-foreground hover:text-foreground transition text-sm">About</a></li>
+                <li><a href="/blog" className="text-muted-foreground hover:text-foreground transition text-sm">Blog</a></li>
                 <li><a href="/contact" className="text-muted-foreground hover:text-foreground transition text-sm">Contact</a></li>
               </ul>
             </div>

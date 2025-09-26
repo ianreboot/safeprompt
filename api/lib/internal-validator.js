@@ -1,12 +1,12 @@
 /**
- * CommonJS wrapper for ES6 AI validator
- * This allows CommonJS endpoints to use the ES6 validation module
+ * ESM validator for internal use
+ * This allows endpoints to validate prompts using the SafePrompt API
  */
 
-const https = require('https');
+import https from 'https';
 
 // Use the same validation endpoint internally but with special header
-async function validateInternal(prompt, options = {}) {
+export async function validateInternal(prompt, options = {}) {
   return new Promise((resolve) => {
     const postData = JSON.stringify({
       prompt: prompt,
@@ -48,11 +48,11 @@ async function validateInternal(prompt, options = {}) {
             });
           }
         } catch (error) {
-          console.error('Parse error:', error);
-          // Fail closed on error
+          console.error('Validation parse error:', error);
+          // Fail closed on parse error
           resolve({
             safe: false,
-            error: error.message,
+            error: 'Failed to parse validation response',
             threats: ['validation_error']
           });
         }
@@ -60,20 +60,22 @@ async function validateInternal(prompt, options = {}) {
     });
 
     req.on('error', (error) => {
-      console.error('Internal validation error:', error);
-      // Fail closed on error
+      console.error('Validation request error:', error);
+      // Fail closed on network error
       resolve({
         safe: false,
-        error: error.message,
+        error: 'Network error during validation',
         threats: ['validation_error']
       });
     });
 
     req.on('timeout', () => {
       req.destroy();
+      console.error('Validation request timeout');
+      // Fail closed on timeout
       resolve({
         safe: false,
-        error: 'Request timeout',
+        error: 'Validation request timed out',
         threats: ['validation_error']
       });
     });
@@ -82,5 +84,3 @@ async function validateInternal(prompt, options = {}) {
     req.end();
   });
 }
-
-module.exports = { validateInternal };
