@@ -32,12 +32,15 @@ function ContactForm() {
     setErrorMessage('')
 
     try {
-      const response = await fetch('https://api.safeprompt.dev/api/contact', {
+      const response = await fetch('https://api.safeprompt.dev/api/website', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          action: 'contact',
+          data: formData
+        })
       })
 
       const data = await response.json()

@@ -19,15 +19,18 @@ export default function WaitlistForm() {
       // For now, add to waitlist with early bird flag since Stripe is in test mode
       // TODO: Once Stripe is live, redirect to real checkout session
       try {
-        const response = await fetch('https://api.safeprompt.dev/api/waitlist', {
+        const response = await fetch('https://api.safeprompt.dev/api/website', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email,
-            source: 'website',
-            earlyBirdInterest: true // Flag for tracking early bird interest
+            action: 'waitlist',
+            data: {
+              email,
+              source: 'website',
+              earlyBirdInterest: true // Flag for tracking early bird interest
+            }
           })
         })
 
@@ -46,12 +49,15 @@ export default function WaitlistForm() {
     } else {
       // Add to waitlist via API
       try {
-        const response = await fetch('https://api.safeprompt.dev/api/waitlist', {
+        const response = await fetch('https://api.safeprompt.dev/api/website', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, source: 'website' })
+          body: JSON.stringify({
+            action: 'waitlist',
+            data: { email, source: 'website' }
+          })
         })
 
         const data = await response.json()
