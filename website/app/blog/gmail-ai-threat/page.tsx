@@ -487,39 +487,6 @@ function sanitizeForEmail(text) {
 }`}
         />
 
-        <h2>Performance & Pricing</h2>
-
-        <div className="grid md:grid-cols-2 gap-6 my-8">
-          <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-            <h4 className="flex items-center gap-2 text-green-400 mb-4">
-              <Zap className="w-5 h-5" />
-              Performance Metrics
-            </h4>
-            <ul className="space-y-2 text-sm">
-              <li>• Average response time: <strong>250ms</strong></li>
-              <li>• P95 response time: <strong>400ms</strong></li>
-              <li>• P99 response time: <strong>650ms</strong></li>
-              <li>• Cache hit rate: <strong>67%</strong></li>
-              <li>• False positive rate: <strong>&lt;8%</strong></li>
-              <li>• Detection accuracy: <strong>92.9%</strong></li>
-            </ul>
-          </div>
-
-          <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-            <h4 className="flex items-center gap-2 text-blue-400 mb-4">
-              <TrendingUp className="w-5 h-5" />
-              Simple Pricing
-            </h4>
-            <ul className="space-y-2 text-sm">
-              <li>• Free tier: <strong>10,000 validations/month</strong></li>
-              <li>• Starter: <strong>$29/month</strong> for 100K validations</li>
-              <li>• Business: <strong>$99/month</strong> for 1M validations</li>
-              <li>• Pay per validation, not per field</li>
-              <li>• Batch all fields = one validation</li>
-              <li>• No hidden fees or overage charges</li>
-            </ul>
-          </div>
-        </div>
 
 
         <h2>The Business Case for Protection</h2>
@@ -628,28 +595,6 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \\
           vulnerabilities.
         </p>
 
-        <div className="bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-xl p-8 my-12 border border-primary/30">
-          <h3 className="text-2xl font-bold mb-4">Start Your Protection Today</h3>
-          <p className="mb-6">
-            Join thousands of developers protecting their forms with enterprise-grade security that
-            takes just one line of code to implement.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <a
-              href="https://safeprompt.dev"
-              className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
-            >
-              <Shield className="w-5 h-5" />
-              Get Your API Key
-            </a>
-            <a
-              href="https://dashboard.safeprompt.dev/docs"
-              className="inline-flex items-center gap-2 bg-zinc-900 text-white px-6 py-3 rounded-lg font-semibold border border-zinc-800 hover:bg-zinc-800 transition"
-            >
-              View Documentation
-            </a>
-          </div>
-        </div>
 
         <hr />
 
