@@ -36,6 +36,48 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 3. **Tracking**: We can measure support volume
 4. **Security**: Reduces phishing attack surface
 
+## 🐕 INTERNAL TEST ACCOUNT (Dogfooding)
+
+### Account Details
+SafePrompt has an internal test account for unlimited API usage:
+
+- **Email**: ian.ho@rebootmedia.net
+- **Password**: SafePromptTest2025!
+- **API Key**: sp_test_unlimited_dogfood_key_2025
+- **Monthly Limit**: 999,999 (effectively unlimited)
+- **Company**: Reboot Media
+- **Status**: Active, Beta User
+
+### Purpose
+This account bypasses all rate limits and is used for:
+1. **Testing contact forms** across all Reboot Media projects
+2. **Dashboard development** with real production data
+3. **API integration testing** without usage concerns
+4. **Waitlist form connections** to SafePrompt API
+5. **Eating our own dogfood** - using SafePrompt to protect SafePrompt
+
+### Technical Implementation
+- Recognized by hardcoded check in `/api/api/v1/validate.js`
+- Returns `internal_account: true` in API responses
+- Stored in `/home/projects/.env` as SAFEPROMPT_TEST_* variables
+- User exists in both auth.users and users tables in Supabase
+
+### Usage Examples
+```javascript
+// Use in any form that needs prompt validation
+const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-API-Key': 'sp_test_unlimited_dogfood_key_2025'
+  },
+  body: JSON.stringify({
+    prompt: userInput,
+    mode: 'optimized'
+  })
+});
+```
+
 ## Technical Architecture
 
 ### Stack

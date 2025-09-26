@@ -1,32 +1,4 @@
 const { Resend } = require('resend');
-const fetch = require('node-fetch');
-
-// Use SafePrompt to validate all form inputs
-async function validateWithSafePrompt(text) {
-  try {
-    const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': process.env.SAFEPROMPT_TEST_API_KEY || 'sp_test_unlimited_dogfood_key_2025'
-      },
-      body: JSON.stringify({
-        prompt: text,
-        mode: 'optimized'
-      })
-    });
-
-    if (!response.ok) {
-      console.error('SafePrompt API error:', response.status);
-      return { safe: true }; // Fail open for now
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('SafePrompt validation error:', error);
-    return { safe: true }; // Fail open for now
-  }
-}
 
 module.exports = async (req, res) => {
   // Enable CORS
@@ -58,43 +30,7 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Please provide a valid email address' });
     }
 
-    // === SAFEPROMPT VALIDATION ===
-    // Validate each text field with SafePrompt to prevent injection attacks
-    console.log('[Contact] Validating form inputs with SafePrompt...');
-
-    // Check name field
-    const nameCheck = await validateWithSafePrompt(name);
-    if (!nameCheck.safe) {
-      console.warn(`[Contact] Blocked unsafe name input: ${nameCheck.threats?.join(', ')}`);
-      return res.status(400).json({
-        error: 'Your name contains potentially harmful content. Please use a regular name.',
-        threats: nameCheck.threats
-      });
-    }
-
-    // Check subject field
-    const subjectCheck = await validateWithSafePrompt(subject);
-    if (!subjectCheck.safe) {
-      console.warn(`[Contact] Blocked unsafe subject: ${subjectCheck.threats?.join(', ')}`);
-      return res.status(400).json({
-        error: 'Your subject contains potentially harmful content. Please rephrase.',
-        threats: subjectCheck.threats
-      });
-    }
-
-    // Check message field
-    const messageCheck = await validateWithSafePrompt(message);
-    if (!messageCheck.safe) {
-      console.warn(`[Contact] Blocked unsafe message: ${messageCheck.threats?.join(', ')}`);
-      return res.status(400).json({
-        error: 'Your message contains potentially harmful content. Please rephrase without prompt injection attempts or external references.',
-        threats: messageCheck.threats
-      });
-    }
-
-    console.log('[Contact] All inputs validated as safe');
-
-    // Sanitize input (additional layer of protection)
+    // Sanitize input to prevent injection
     const sanitize = (str) => {
       return str.replace(/[<>]/g, '').slice(0, 1000);
     };
@@ -112,7 +48,6 @@ module.exports = async (req, res) => {
           <p><strong>From:</strong> ${sanitizedName}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Subject:</strong> ${sanitizedSubject}</p>
-          <p style="color: #0a0; font-size: 12px;">✅ Validated by SafePrompt</p>
         </div>
 
         <div style="background: white; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
@@ -123,7 +58,7 @@ module.exports = async (req, res) => {
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
 
         <p style="color: #999; font-size: 12px;">
-          This email was sent from the SafePrompt contact form and validated for safety.
+          This email was sent from the SafePrompt contact form.
         </p>
       </div>
     `;
@@ -168,8 +103,7 @@ module.exports = async (req, res) => {
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
 
         <p style="color: #999; font-size: 12px;">
-          This is an automated response. Please do not reply to this email.<br>
-          Your message was validated by SafePrompt to ensure safety.
+          This is an automated response. Please do not reply to this email.
         </p>
       </div>
     `;
@@ -181,11 +115,7 @@ module.exports = async (req, res) => {
       html: autoReplyHtml,
     });
 
-    return res.status(200).json({
-      success: true,
-      validated: true,
-      message: 'Your message has been sent successfully and validated for safety.'
-    });
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.error('Contact form error:', error);
     return res.status(500).json({ error: 'An unexpected error occurred. Please try again.' });
