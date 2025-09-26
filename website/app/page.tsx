@@ -369,7 +369,7 @@ export default function Home() {
               ]}
               buttonText="Join Waitlist"
               buttonVariant="blue"
-              buttonHref="https://dashboard.safeprompt.dev/signup"
+              buttonHref="https://dashboard.safeprompt.dev/login"
             />
 
             <PricingCard
@@ -387,7 +387,7 @@ export default function Home() {
               buttonText="Get Early Access"
               buttonVariant="primary"
               popular={true}
-              buttonHref="https://dashboard.safeprompt.dev/signup?plan=earlybird"
+              buttonHref="https://dashboard.safeprompt.dev/login?plan=earlybird"
             />
           </div>
         </div>
@@ -468,7 +468,7 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <a href="https://dashboard.safeprompt.dev/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
+            <a href="https://dashboard.safeprompt.dev/login" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
               Start Free Trial
             </a>
             <a href="#pricing" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
