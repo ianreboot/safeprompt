@@ -436,33 +436,19 @@ export async function validatePrompt(prompt, options = {}) {
     });
   }
 
-  // For standard and optimized modes, try patterns first
+  // For standard and optimized modes, ALWAYS use AI validator
+  // Pattern matching is done inside the hardened validator anyway
   if (mode === 'standard' || mode === 'optimized') {
-    // Run pattern validation first
-    const patternResult = validatePromptSync(prompt);
+    // Use hardened AI validator which includes pattern matching
+    const aiResult = await validateWithAI(prompt, {
+      skipPatterns: false,  // Use patterns for quick detection
+      skipExternalCheck: false  // Check external references
+    });
 
-    // If patterns detect threats with high confidence, return immediately
-    if (!patternResult.safe && patternResult.confidence < 0.2) {
-      return patternResult;
-    }
-
-    // If patterns are uncertain or show it's safe but we want AI verification
-    if (mode === 'standard' || patternResult.confidence < 0.8) {
-      // Use hardened AI validator for final decision
-      const aiResult = await validateWithAI(prompt, {
-        skipPatterns: false,  // Let AI validator also use its patterns
-        skipExternalCheck: false
-      });
-
-      // Merge results, preferring AI's decision
-      return {
-        ...aiResult,
-        mode,
-        patternThreats: patternResult.threats
-      };
-    }
-
-    return { ...patternResult, mode };
+    return {
+      ...aiResult,
+      mode
+    };
   }
 
   // Default fallback

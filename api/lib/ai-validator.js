@@ -97,9 +97,12 @@ export async function validateWithAI(prompt, options = {}) {
       threats.push('ai_detected_manipulation');
     }
 
+    // External references should mark as unsafe
+    const safe = result.safe && !result.externalReferences;
+
     // Return in existing format for backward compatibility
     return {
-      safe: result.safe,
+      safe,
       threats,
       confidence: result.confidence,
       processingTime: Date.now() - startTime,
