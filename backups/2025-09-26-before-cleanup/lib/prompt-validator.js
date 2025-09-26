@@ -1,10 +1,8 @@
 /**
  * SafePrompt Core Validation Module
  * Fast regex-based validation with confidence scoring
- * Integrated with hardened AI validator
+ * Adapted from Ultra Brain security patterns
  */
-
-import { validateWithAI } from './ai-validator.js';
 
 // Testing backdoor configuration
 const TESTING_MODE = process.env.SAFEPROMPT_TESTING === 'true';
@@ -186,9 +184,9 @@ const POLYGLOT_PATTERNS = [
 ];
 
 /**
- * Validate a prompt using pattern matching only (sync)
+ * Validate a prompt and return detailed results
  */
-export function validatePromptSync(prompt) {
+export function validatePrompt(prompt) {
   const startTime = Date.now();
 
   // Testing backdoor handling
@@ -419,52 +417,4 @@ export function needsAIValidation(confidence, mode = 'standard') {
 
   // Standard mode
   return confidence < CONFIDENCE_THRESHOLDS.PROBABLY_SAFE;
-}
-
-/**
- * Validate a prompt with integrated hardened AI validator (async)
- * This is the main export that should be used in production
- */
-export async function validatePrompt(prompt, options = {}) {
-  const { mode = 'optimized' } = options;
-
-  // For ai-only mode, use the hardened validator directly
-  if (mode === 'ai-only') {
-    return validateWithAI(prompt, {
-      skipPatterns: true,
-      skipExternalCheck: false
-    });
-  }
-
-  // For standard and optimized modes, try patterns first
-  if (mode === 'standard' || mode === 'optimized') {
-    // Run pattern validation first
-    const patternResult = validatePromptSync(prompt);
-
-    // If patterns detect threats with high confidence, return immediately
-    if (!patternResult.safe && patternResult.confidence < 0.2) {
-      return patternResult;
-    }
-
-    // If patterns are uncertain or show it's safe but we want AI verification
-    if (mode === 'standard' || patternResult.confidence < 0.8) {
-      // Use hardened AI validator for final decision
-      const aiResult = await validateWithAI(prompt, {
-        skipPatterns: false,  // Let AI validator also use its patterns
-        skipExternalCheck: false
-      });
-
-      // Merge results, preferring AI's decision
-      return {
-        ...aiResult,
-        mode,
-        patternThreats: patternResult.threats
-      };
-    }
-
-    return { ...patternResult, mode };
-  }
-
-  // Default fallback
-  return validatePromptSync(prompt);
 }
