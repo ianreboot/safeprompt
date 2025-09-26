@@ -81,7 +81,7 @@ const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
 ## Technical Architecture
 
 ### Stack
-- **Frontend**: Next.js + Tailwind → Cloudflare Pages
+- **Website + Blog**: Next.js + Tailwind → Cloudflare Pages (NOT Astro!)
 - **API**: Vercel Functions (stateless validation endpoints)
 - **Database**: Supabase PostgreSQL (profiles table linked to auth.users)
 - **AI**: OpenRouter (multi-model strategy for cost optimization)
@@ -266,7 +266,12 @@ This includes:
 │   ├── BUSINESS.md    # Strategy, market, pricing
 │   └── API.md         # Endpoint documentation
 ├── api/               # Vercel Functions (API endpoints)
-├── website/           # Next.js marketing website (includes /contact)
+├── website/           # Next.js marketing website + blog (NOT Astro!)
+│   ├── app/
+│   │   ├── blog/      # Blog posts as React components
+│   │   └── contact/   # Contact form page
+│   └── components/
+│       └── blog/      # Reusable blog components (References, CodeBlock, etc.)
 ├── dashboard/         # Next.js user dashboard
 └── packages/          # NPM packages (SDK)
 ```
@@ -342,6 +347,9 @@ This includes:
 - **Vercel project linking crucial** - Wrong project = deployment to wrong domain
 - **Check .vercel/project.json** - Determines which project deploys happen to
 - **Use `vercel link --project`** - To ensure correct project association
+- **Next.js builds to 'out' not 'dist'** - Critical for Cloudflare Pages deployment
+- **CSS double-bullet/checkmark bug** - Remove `list-disc` from globals.css, use manual bullets
+- **Blog uses Next.js NOT Astro** - Common misconception, website is all Next.js
 
 ### User Journey Must-Haves
 1. Hero CTAs must work (link to real form)
@@ -425,10 +433,11 @@ vercel link --token $VERCEL_TOKEN --yes --project safeprompt-api
 cd api && source /home/projects/.env
 vercel --prod --token $VERCEL_TOKEN --yes
 
-# Deploy frontend to Cloudflare Pages
-cd frontend && npm run build
+# Deploy WEBSITE (Next.js) to Cloudflare Pages
+cd website && npm run build
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
-wrangler pages deploy dist --project-name safeprompt --branch main
+wrangler pages deploy out --project-name safeprompt --branch main
+# NOTE: Next.js builds to 'out' directory, not 'dist'!
 ```
 
 **⚠️ COMMON PITFALL**: Multiple Vercel projects can exist (api, safeprompt-api, etc). The `.vercel/project.json` determines which deploys. Wrong project = endpoints won't appear on custom domain!
@@ -718,3 +727,47 @@ When adding new capabilities:
 - ❌ Custom threat policies (complexity without clear value)
 - ❌ Real-time threat feeds (operational overhead)
 - ✅ Focus on: Speed, simplicity, cost savings
+
+## 📝 Blog Development Patterns (Added 2025-09-26)
+
+### Blog Component Architecture
+**Location**: `/website/app/blog/` - Each post is a React component, NOT markdown
+
+### Reusable Blog Components
+Create standardized components in `/website/components/blog/`:
+- **References.tsx** - Standardized reference sections with consistent styling
+- **CodeBlock.tsx** - Syntax-highlighted code blocks
+- **CodeTabs.tsx** - Multi-language code examples
+- **ProofOfConceptBox.tsx** - Highlight real incidents/research
+
+### CSS Pitfalls & Fixes
+**Double-bullet/checkmark rendering bug**:
+- **Problem**: `list-disc` in globals.css causes double bullets when using manual bullet characters
+- **Solution**: Use `list-none` for blog content, add manual bullets in content
+- **Location**: `/website/app/globals.css` lines 121-136
+
+### Blog Content Strategy for Target Audience
+**For Vibe Coders (primary demographic)**:
+- Lead with emotional hook, not technical details
+- Use "Ship Fast, Get Hacked" style headlines
+- Include copy-pasteable code (60-100 lines max)
+- Reference real incidents (Chevrolet $1 car, Air Canada lawsuit)
+- Avoid academic language and complex architecture diagrams
+
+### Blog Deployment
+```bash
+cd /home/projects/safeprompt/website
+npm run build  # Builds to 'out' directory
+source /home/projects/.env && export CLOUDFLARE_API_TOKEN
+wrangler pages deploy out --project-name safeprompt --branch main
+```
+
+### Common Blog Mistakes to Avoid
+- ❌ Claiming "one line fix" when it's 60+ lines
+- ❌ Using "Part 1, Part 2" headers (confusing)
+- ❌ Fabricating statistics or incidents
+- ❌ Leading with technical details before problem
+- ✅ Use real incidents with sources
+- ✅ Lead with relatable scenarios
+- ✅ Clear, numbered steps with accurate time estimates
+- ✅ Standardize components across all posts
