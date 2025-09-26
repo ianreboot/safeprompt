@@ -37,8 +37,13 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Company</h4>
+            <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
+              <li>
+                <Link href="/blog/gmail-ai-threat" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Gmail AI Security Threat
+                </Link>
+              </li>
               <li>
                 <Link href="/about" className="text-muted-foreground hover:text-foreground transition text-sm">
                   About

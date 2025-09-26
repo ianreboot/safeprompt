@@ -1,4 +1,5 @@
 const { Resend } = require('resend');
+const { validateInternal } = require('../lib/internal-validator.js');
 
 /**
  * SafePrompt Contact Form - SECURE Implementation
@@ -34,18 +35,13 @@ function checkRateLimit(ip) {
 
 async function validateWithSafePrompt(fields) {
   try {
-    // Use internal validator directly - we're already inside the SafePrompt API
-    // Import dynamically since we're in CommonJS but ai-validator is ES6
-    const { validateWithAI } = await import('../lib/ai-validator.js');
-
     // Validate all fields as a single JSON string
     const combinedPrompt = JSON.stringify(fields);
 
-    console.log('[Contact] Validating with internal SafePrompt validator...');
+    console.log('[Contact] Validating with SafePrompt...');
 
-    const result = await validateWithAI(combinedPrompt, {
-      skipPatterns: false,
-      skipExternalCheck: false
+    const result = await validateInternal(combinedPrompt, {
+      mode: 'optimized'
     });
 
     return result;
