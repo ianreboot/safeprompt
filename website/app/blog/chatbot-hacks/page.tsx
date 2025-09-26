@@ -300,15 +300,15 @@ export async function POST(request: NextRequest) {
           <div className="space-y-3 text-lg">
             <label className="flex items-start gap-3">
               <input type="checkbox" className="mt-1" disabled checked />
-              <span>✅ It can answer questions about products or services</span>
+              <span>It can answer questions about products or services</span>
             </label>
             <label className="flex items-start gap-3">
               <input type="checkbox" className="mt-1" disabled checked />
-              <span>✅ It has access to any company information</span>
+              <span>It has access to any company information</span>
             </label>
             <label className="flex items-start gap-3">
               <input type="checkbox" className="mt-1" disabled checked />
-              <span>✅ Customers can type custom messages (not just buttons)</span>
+              <span>Customers can type custom messages (not just buttons)</span>
             </label>
           </div>
           <p className="mt-4 text-yellow-400">
@@ -444,9 +444,9 @@ export async function POST(request: NextRequest) {
         <div className="bg-zinc-900 rounded-lg p-4 my-4 border border-zinc-800">
           <p className="text-zinc-300 font-semibold mb-2">📰 Verified Incidents:</p>
           <ul className="space-y-1 text-sm">
-            <li>• <a href="https://www.cbc.ca/news/canada/british-columbia/air-canada-chatbot-lawsuit-1.7116416" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">Air Canada Lawsuit (CBC News)</a></li>
-            <li>• <a href="https://www.inc.com/ben-sherry/chevrolet-used-chatgpt-for-customer-service-and-learned-that-ai-isnt-always-on-your-side.html" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">Chevrolet $1 Car Incident (Inc.com)</a></li>
-            <li>• <a href="https://www.bbc.com/news/technology-68025677" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">DPD Chatbot Swearing (BBC)</a></li>
+            <li><a href="https://www.cbc.ca/news/canada/british-columbia/air-canada-chatbot-lawsuit-1.7116416" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">Air Canada Lawsuit (CBC News)</a></li>
+            <li><a href="https://www.inc.com/ben-sherry/chevrolet-used-chatgpt-for-customer-service-and-learned-that-ai-isnt-always-on-your-side.html" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">Chevrolet $1 Car Incident (Inc.com)</a></li>
+            <li><a href="https://www.bbc.com/news/technology-68025677" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">DPD Chatbot Swearing (BBC)</a></li>
           </ul>
         </div>
       </div>

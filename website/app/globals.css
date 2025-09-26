@@ -119,7 +119,7 @@
 
 /* Blog Lists */
 .blog-content ul {
-  @apply list-disc list-inside mb-6 space-y-2 text-zinc-300 ml-4;
+  @apply list-none mb-6 space-y-2 text-zinc-300 ml-4;
 }
 
 .blog-content ol {
@@ -128,6 +128,11 @@
 
 .blog-content li {
   @apply pl-2;
+}
+
+/* Special styling for ul elements that should have bullets */
+.blog-content ul.bulleted {
+  @apply list-disc list-inside;
 }
 
 /* Blog Blockquotes */
