@@ -302,97 +302,6 @@ class ContactController extends Controller
     }
   ]
 
-  const sanitizationCode = `// Advanced sanitization function
-function sanitizeForEmail(str) {
-  if (typeof str !== 'string') return ''
-
-  return str
-    // Remove ALL HTML/XML tags and comments
-    .replace(/<!--[\\s\\S]*?-->/g, '')
-    .replace(/<script\\b[^<]*(?:(?!<\\/script>)<[^<]*)*<\\/script>/gi, '')
-    .replace(/<style\\b[^<]*(?:(?!<\\/style>)<[^<]*)*<\\/style>/gi, '')
-    .replace(/<[^>]*>/g, '')
-
-    // Remove control characters and invisible text patterns
-    .replace(/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/g, '')
-
-    // Remove zero-width characters and Unicode direction overrides
-    .replace(/[\\u200B\\u200C\\u200D\\uFEFF]/g, '')
-    .replace(/[\\u202A-\\u202E\\u2066-\\u2069]/g, '')
-
-    // Remove CSS injection patterns
-    .replace(/style\\s*=\\s*["'][^"']*["']/gi, '')
-    .replace(/on\\w+\\s*=\\s*["'][^"']*["']/gi, '')
-
-    // Remove common hiding techniques
-    .replace(/font-size\\s*:\\s*0/gi, '')
-    .replace(/color\\s*:\\s*(white|#fff|transparent)/gi, '')
-    .replace(/display\\s*:\\s*none/gi, '')
-    .replace(/visibility\\s*:\\s*hidden/gi, '')
-
-    .trim()
-}`
-
-  const monitoringCode = `// Real-time attack monitoring
-class SecurityMonitor {
-  constructor() {
-    this.attacks = []
-    this.blockedIPs = new Set()
-    this.patterns = new Map()
-  }
-
-  recordThreat(threat) {
-    this.attacks.push({
-      timestamp: Date.now(),
-      ip: threat.ip,
-      type: threat.type,
-      confidence: threat.confidence,
-      payload: threat.payload.substring(0, 100) // Sample only
-    })
-
-    // Detect attack patterns
-    const hourlyAttempts = this.attacks.filter(a =>
-      a.ip === threat.ip &&
-      Date.now() - a.timestamp < 3600000
-    ).length
-
-    if (hourlyAttempts > 10) {
-      this.blockIP(threat.ip)
-      this.notifySecurityTeam(threat)
-    }
-
-    // Track attack types
-    const type = threat.type || 'unknown'
-    this.patterns.set(type, (this.patterns.get(type) || 0) + 1)
-  }
-
-  getStats() {
-    const hour = 3600000
-    const now = Date.now()
-
-    return {
-      last_hour: this.attacks.filter(a => now - a.timestamp < hour).length,
-      last_24h: this.attacks.filter(a => now - a.timestamp < hour * 24).length,
-      top_threats: [...this.patterns.entries()]
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5),
-      blocked_ips: this.blockedIPs.size,
-      threat_level: this.calculateThreatLevel()
-    }
-  }
-
-  calculateThreatLevel() {
-    const recentAttacks = this.attacks.filter(a =>
-      Date.now() - a.timestamp < 3600000
-    ).length
-
-    if (recentAttacks > 100) return 'CRITICAL'
-    if (recentAttacks > 50) return 'HIGH'
-    if (recentAttacks > 10) return 'MEDIUM'
-    if (recentAttacks > 0) return 'LOW'
-    return 'SAFE'
-  }
-}`
 
   return (
     <BlogLayout meta={blogMeta}>
@@ -469,7 +378,7 @@ class SecurityMonitor {
         </p>
 
         <CodeBlock
-          language="javascript"
+          language="markdown"
           filename="echoleak-timeline.md"
           code={`Timeline of EchoLeak (CVE-2025-32711):
 - January 2025: Discovered by Aim Labs researchers
@@ -490,186 +399,95 @@ How it worked:
 
         <h2>Part 3: Complete Protection Implementation</h2>
 
+        <h3>The Smart Way: Batch All Form Fields Together</h3>
+
         <p>
-          Here's how SafePrompt is protecting thousands of contact forms in production, processing over
-          50,000 submissions daily with a 92.9% attack detection rate:
+          <strong>Important:</strong> Always send ALL form fields as a single validation request. This is more efficient
+          and provides better context for detection:
+        </p>
+
+        <CodeBlock
+          language="javascript"
+          filename="efficient-validation.js"
+          code={`// ✅ CORRECT: Send all fields together for better detection
+const validation = await fetch('https://api.safeprompt.dev/api/v1/validate', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': process.env.SAFEPROMPT_API_KEY,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    prompt: JSON.stringify({
+      name: formData.name,
+      email: formData.email,
+      subject: formData.subject,
+      message: formData.message
+    }),
+    mode: 'optimized'
+  })
+})
+
+// ❌ WRONG: Don't validate fields separately
+// This is slower and loses context
+const nameValid = await validate(formData.name)
+const messageValid = await validate(formData.message)`}
+        />
+
+        <p>
+          <strong>Why batch validation?</strong> It's faster (one API call vs many), more accurate (AI sees the full context),
+          and simpler to implement. SafePrompt can detect coordinated attacks across multiple fields.
         </p>
 
         <h3>Implementation by Framework</h3>
 
         <CodeTabs examples={protectionImplementations} />
 
-        <h3>Advanced Sanitization Layer</h3>
+        <h2>Part 4: Bonus - Additional Protection Layers</h2>
 
         <p>
-          Even after SafePrompt validation, apply defense-in-depth with sanitization:
+          SafePrompt handles the AI threat detection. Here are optional extras for defense-in-depth:
         </p>
 
-        <CodeBlock
-          language="javascript"
-          filename="sanitizer.js"
-          code={sanitizationCode}
-        />
-
-        <h3>Real-Time Attack Monitoring</h3>
+        <h3>Honeypot Fields (Simple Bot Detection)</h3>
 
         <p>
-          Track and respond to attacks in real-time:
+          Add a hidden field that humans won't see but bots will fill:
         </p>
-
-        <CodeBlock
-          language="javascript"
-          filename="security-monitor.js"
-          code={monitoringCode}
-        />
-
-        <h2>Part 4: Additional Security Layers</h2>
-
-        <h3>1. Honeypot Fields</h3>
 
         <CodeBlock
           language="html"
           filename="honeypot.html"
-          code={`<!-- Add hidden field that bots will fill -->
-<form id="contact-form">
-  <!-- Visible fields -->
-  <input type="text" name="name" required />
-  <input type="email" name="email" required />
-  <textarea name="message" required></textarea>
+          code={`<!-- Add to your form -->
+<div style="position:absolute;left:-9999px">
+  <input type="text" name="website" tabindex="-1" />
+</div>
 
-  <!-- Honeypot (hidden from real users) -->
-  <div style="position:absolute;left:-9999px">
-    <label for="website">Website (leave empty)</label>
-    <input type="text" name="website" id="website" tabindex="-1" />
-  </div>
-
-  <button type="submit">Send</button>
-</form>
-
-<script>
-// Validate on submit
-document.getElementById('contact-form').onsubmit = (e) => {
-  if (document.getElementById('website').value) {
-    // Bot detected - fake success
-    e.preventDefault()
-    alert('Message sent successfully!')
-    return false
-  }
-}
-</script>`}
-        />
-
-        <h3>2. Behavioral Analysis</h3>
-
-        <CodeBlock
-          language="javascript"
-          filename="behavioral-analysis.js"
-          code={`const submissions = new Map()
-
-function detectSuspiciousBehavior(req) {
-  const ip = req.headers['x-forwarded-for'] || req.ip
-  const fingerprint = generateFingerprint(req)
-  const now = Date.now()
-
-  // Get submission history
-  const history = submissions.get(fingerprint) || []
-
-  // Clean old entries (keep 1 hour)
-  const recentHistory = history.filter(h => now - h.time < 3600000)
-
-  // Detection rules
-  const suspicious = {
-    rapid_submission: recentHistory.length > 3,
-    duplicate_content: recentHistory.some(h =>
-      h.messageHash === hashMessage(req.body.message)
-    ),
-    pattern_detected: detectPatterns(req.body),
-    known_attacker: isKnownAttacker(ip),
-    vpn_detected: isVPN(ip),
-    impossible_typing: calculateTypingSpeed(req) > 1000 // WPM
-  }
-
-  // Calculate risk score
-  const riskScore = Object.values(suspicious)
-    .filter(v => v).length * 20
-
-  // Update history
-  recentHistory.push({
-    time: now,
-    messageHash: hashMessage(req.body.message),
-    riskScore
-  })
-  submissions.set(fingerprint, recentHistory)
-
-  return {
-    suspicious: riskScore > 40,
-    riskScore,
-    reasons: Object.entries(suspicious)
-      .filter(([_, v]) => v)
-      .map(([k]) => k)
-  }
+<!-- Check in your backend -->
+if (req.body.website) {
+  // Bot detected - reject silently
+  return res.json({ success: true }) // Fake success
 }`}
         />
 
-        <h3>3. Cloudflare Turnstile Integration</h3>
+        <h3>Sanitization for Extra Safety</h3>
+
+        <p>
+          While SafePrompt catches prompt injections, you can add sanitization for general HTML/script cleanup:
+        </p>
 
         <CodeBlock
           language="javascript"
-          filename="turnstile-integration.js"
-          code={`// Frontend implementation
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
-<form onsubmit="handleSubmit(event)">
-  <!-- Your form fields -->
-  <div class="cf-turnstile"
-       data-sitekey="YOUR_SITE_KEY"
-       data-callback="onTurnstileSuccess"></div>
-  <button type="submit">Send Message</button>
-</form>
-
-<script>
-let turnstileToken = null
-
-function onTurnstileSuccess(token) {
-  turnstileToken = token
-}
-
-async function handleSubmit(e) {
-  e.preventDefault()
-
-  if (!turnstileToken) {
-    alert('Please complete the security check')
-    return
-  }
-
-  const response = await fetch('/api/contact', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      ...formData,
-      cf_token: turnstileToken
-    })
-  })
-}
-</script>
-
-// Backend verification
-async function verifyTurnstile(token) {
-  const response = await fetch(
-    'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: \`secret=\${process.env.TURNSTILE_SECRET}&response=\${token}\`
-    }
-  )
-
-  const result = await response.json()
-  return result.success
+          filename="basic-sanitization.js"
+          code={`// Optional sanitization after SafePrompt validation
+function sanitizeForEmail(text) {
+  return text
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '') // Control chars
+    .trim()
 }`}
         />
 
-        <h2>Part 5: Performance & Cost Analysis</h2>
+        <h2>Performance & Pricing</h2>
 
         <div className="grid md:grid-cols-2 gap-6 my-8">
           <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
@@ -690,54 +508,19 @@ async function verifyTurnstile(token) {
           <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
             <h4 className="flex items-center gap-2 text-blue-400 mb-4">
               <TrendingUp className="w-5 h-5" />
-              Cost Breakdown
+              Simple Pricing
             </h4>
             <ul className="space-y-2 text-sm">
-              <li>• Cost per 100K requests: <strong>$0.50</strong></li>
-              <li>• vs GPT-4: <strong>300x cheaper</strong></li>
-              <li>• vs Manual review: <strong>10,000x cheaper</strong></li>
-              <li>• Cache savings: <strong>30% reduction</strong></li>
-              <li>• Batch processing: <strong>50% discount</strong></li>
-              <li>• ROI payback: <strong>&lt;1 month</strong></li>
+              <li>• Free tier: <strong>10,000 validations/month</strong></li>
+              <li>• Starter: <strong>$29/month</strong> for 100K validations</li>
+              <li>• Business: <strong>$99/month</strong> for 1M validations</li>
+              <li>• Pay per validation, not per field</li>
+              <li>• Batch all fields = one validation</li>
+              <li>• No hidden fees or overage charges</li>
             </ul>
           </div>
         </div>
 
-        <h2>Part 6: Incident Response Plan</h2>
-
-        <CodeBlock
-          language="markdown"
-          filename="incident-response.md"
-          code={`# Contact Form Attack Response Playbook
-
-## Immediate Actions (0-5 minutes)
-1. [ ] Check SecurityMonitor.getStats() for threat level
-2. [ ] If CRITICAL: Enable strict mode (block all suspicious)
-3. [ ] Review last 10 blocked submissions for patterns
-4. [ ] Check if specific IPs are flooding the system
-5. [ ] Notify security team via Slack webhook
-
-## Investigation (5-30 minutes)
-1. [ ] Export attack logs for analysis
-2. [ ] Identify attack patterns and vectors
-3. [ ] Check if attacks correlate with public disclosure
-4. [ ] Review if legitimate users are being blocked
-5. [ ] Document attack timeline and impact
-
-## Mitigation (30-60 minutes)
-1. [ ] Update SafePrompt validation rules if needed
-2. [ ] Implement IP blocking for confirmed attackers
-3. [ ] Adjust rate limits if under DDoS
-4. [ ] Enable CAPTCHA if automated attacks detected
-5. [ ] Deploy emergency patches if new exploit found
-
-## Post-Incident (1-24 hours)
-1. [ ] Complete incident report
-2. [ ] Update security documentation
-3. [ ] Share threat intelligence with community
-4. [ ] Review and improve detection rules
-5. [ ] Schedule security review meeting`}
-        />
 
         <h2>The Business Case for Protection</h2>
 
@@ -854,7 +637,7 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \\
           <div className="flex flex-wrap gap-4">
             <a
               href="https://safeprompt.dev"
-              className="inline-flex items-center gap-2 bg-primary text-black px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition"
+              className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
             >
               <Shield className="w-5 h-5" />
               Get Your API Key
