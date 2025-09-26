@@ -3,11 +3,21 @@ import Link from 'next/link'
 
 const blogPosts = [
   {
-    id: 'gmail-ai-threat',
-    title: 'The Gmail AI Security Threat: How Email Became an Attack Vector',
-    excerpt: 'Google\'s new AI features in Gmail have introduced a critical security vulnerability that allows attackers to manipulate AI responses through specially crafted emails.',
+    id: 'chatbot-hacks',
+    title: 'Your Chatbot Just Sold a Car for $1: The Corporate AI Disasters You Need to Prevent',
+    excerpt: 'From Chevy dealerships to Air Canada lawsuits, chatbots are getting hacked daily. Real incidents, real lawsuits, and how to stop yours from becoming the next viral disaster.',
     author: 'SafePrompt Team',
-    date: '2025-09-26',
+    date: '2025-01-27',
+    readTime: '7 min read',
+    tags: ['Chatbots', 'AI Security', 'Real Incidents'],
+    slug: 'chatbot-hacks'
+  },
+  {
+    id: 'gmail-ai-threat',
+    title: 'Ship Fast, Get Hacked: The AI Email Attack You\'re Missing',
+    excerpt: 'Your contact form just made Gmail lie to you. Real attacks confirmed by Mozilla, Microsoft, and CISA. Here\'s a 15-minute fix that actually works.',
+    author: 'SafePrompt Team',
+    date: '2025-01-26',
     readTime: '5 min read',
     tags: ['Security', 'AI Safety', 'Gmail'],
     slug: 'gmail-ai-threat'
