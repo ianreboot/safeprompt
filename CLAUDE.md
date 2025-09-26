@@ -119,10 +119,40 @@ See ARCHITECTURE.md for complete endpoint mapping.
 
 ## Business Strategy
 
-### Target Customer
-**Primary**: Individual developers building AI side projects
-**Secondary**: Small startups (pre-Series A) adding AI features
-**Anti-target**: Large enterprises wanting complex integrations
+### Target Customer Demographics
+
+#### Primary Audience: Vibe Coders & New Developers (80% of target)
+**Vibe Coders**: Solo developers who ship fast, use AI tools extensively, prioritize momentum over perfection
+- Building AI-powered side projects and MVPs
+- Use cursor/v0/claude/chatgpt as primary coding tools
+- Value simplicity and speed over complex architectures
+- Likely building: AI chatbots, form processors, customer service tools
+- Language: Casual, direct, meme-aware but not cringe
+- Pain points: Security feels complex, don't know what they don't know
+
+**New Developers**: Recent bootcamp grads, self-taught, 0-2 years experience
+- First time integrating AI into projects
+- Following tutorials and documentation closely
+- Need hand-holding but don't want to feel talked down to
+- Building portfolio projects and early freelance work
+- Language: Clear explanations without jargon
+- Pain points: Overwhelmed by security best practices
+
+#### Secondary Audience: Small Startups & Enterprise Devs (20% of target)
+**Small Startups** (pre-Series A): Moving fast but need basic security
+- 1-10 person eng teams adding AI features
+- Need to check the security box for customers
+- Will pay for convenience and time savings
+
+**Enterprise Developers** (not the company): Individual devs at large companies
+- Building internal tools and prototypes
+- Can expense small monthly subscriptions
+- Need simple integration that won't trigger security review
+
+### Anti-target
+**Large Enterprises**: Wanting complex integrations, compliance certifications, SLAs
+- We explicitly don't serve enterprise procurement processes
+- No sales calls, RFPs, or vendor security assessments
 
 ### Pricing Model
 - **Free**: 10,000 validations/month
@@ -643,10 +673,29 @@ When adding new capabilities:
 - CSV exports include disclaimer: "Working toward compliance certifications"
 **Rule**: Never claim compliance without actual certification. Flag as "under development" to gather feedback
 
-### Messaging Hierarchy
-1. **Primary**: Simple, one-line integration, no complexity
-2. **Secondary**: Powerful features that scale with you
-3. **Tertiary**: Enterprise capabilities (when you need them)
+### Messaging Hierarchy for Target Demographics
+
+#### For Vibe Coders & New Developers:
+1. **Primary**: "Drop it in and ship" - One line of code, zero complexity
+2. **Secondary**: "We handle the scary security stuff" - Protection without paranoia
+3. **Tertiary**: "Grows with you" - From side project to startup
+
+#### Content Tone Guidelines:
+- **Do**: Use casual language, practical examples, "here's what could happen" scenarios
+- **Don't**: Academic security theory, enterprise jargon, fear-mongering
+- **Hook examples for this audience**:
+  - "Ship your AI app without getting pwned"
+  - "That sketchy user input? We catch it"
+  - "Security that doesn't slow you down"
+  - "Built by developers who hate complex APIs"
+
+#### Blog Post Optimization for Demographics:
+- Lead with relatable scenarios ("You just shipped your AI app...")
+- Use their language ("prompt injection" not "adversarial input manipulation")
+- Show don't tell - quick wins, not deep theory
+- Code examples they can copy-paste, not architecture diagrams
+- Social proof from indie hackers, not Fortune 500
+
 **Never lead with enterprise** - it scares away solo developers who think they need a team to use it
 
 ## 🔄 Feature Rollout Strategy (Learned 2025-09-25)
