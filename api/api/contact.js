@@ -1,5 +1,4 @@
 const { Resend } = require('resend');
-const fetch = require('node-fetch');
 
 /**
  * SafePrompt Contact Form - SECURE Implementation
@@ -34,48 +33,26 @@ function checkRateLimit(ip) {
 }
 
 async function validateWithSafePrompt(fields) {
-  // NEVER use hardcoded API keys
-  const apiKey = process.env.SAFEPROMPT_API_KEY;
-
-  if (!apiKey) {
-    console.error('[Contact] No SafePrompt API key configured');
-    return { safe: false, error: 'Validation service not configured' };
-  }
-
   try {
-    // Create a timeout promise
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Request timeout')), 3000)
-    );
+    // Use internal validator directly - we're already inside the SafePrompt API
+    // Import dynamically since we're in CommonJS but ai-validator is ES6
+    const { validateWithAI } = await import('../lib/ai-validator.js');
 
-    // Race between fetch and timeout
-    const response = await Promise.race([
-      fetch('https://api.safeprompt.dev/api/v1/validate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': apiKey
-        },
-        body: JSON.stringify({
-          prompt: JSON.stringify(fields), // Validate ALL fields as JSON
-          mode: 'optimized'
-        })
-      }),
-      timeoutPromise
-    ]);
+    // Validate all fields as a single JSON string
+    const combinedPrompt = JSON.stringify(fields);
 
-    if (!response.ok) {
-      // FAIL CLOSED - don't accept suspicious content when validation is down
-      console.error('[Contact] SafePrompt API error:', response.status);
-      return { safe: false, error: 'Validation service unavailable' };
-    }
+    console.log('[Contact] Validating with internal SafePrompt validator...');
 
-    const result = await response.json();
+    const result = await validateWithAI(combinedPrompt, {
+      skipPatterns: false,
+      skipExternalCheck: false
+    });
+
     return result;
 
   } catch (error) {
     // FAIL CLOSED on any error
-    console.error('[Contact] SafePrompt error:', error);
+    console.error('[Contact] SafePrompt validation error:', error);
     return { safe: false, error: error.message };
   }
 }
