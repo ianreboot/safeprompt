@@ -347,10 +347,20 @@ class ContactController extends Controller
           One poisoned form submission can make you call a scammer thinking it's urgent.
         </p>
 
-        <h2>How They're Doing It</h2>
+        <h2>Real Attacks Happening Now</h2>
+
+        <div className="bg-orange-900/20 border border-orange-500/50 rounded-lg p-4 my-6">
+          <p className="text-orange-300 font-semibold mb-2">⚠️ These aren't theories - they're real incidents:</p>
+          <ul className="space-y-2 text-sm">
+            <li>• <strong>July 2025:</strong> Mozilla's bug bounty program confirms Gmail Gemini attacks (Marco Figueroa disclosure)</li>
+            <li>• <strong>Sept 2025:</strong> Booking.com phishing emails use hidden prompts to bypass AI scanners</li>
+            <li>• <strong>CVE-2025-32711:</strong> Microsoft's "EchoLeak" - zero-click data theft via Copilot (CVSS 9.4)</li>
+            <li>• <strong>Active Now:</strong> CISA warns of ongoing exploitation in the wild</li>
+          </ul>
+        </div>
 
         <p>
-          Attackers inject invisible instructions that only AI can see:
+          Here's how attackers inject invisible instructions that only AI can see:
         </p>
 
         <CodeTabs examples={proofOfConceptExamples} />
@@ -376,7 +386,7 @@ class ContactController extends Controller
           </p>
         </div>
 
-        <h2>Part 2: The Microsoft EchoLeak Vulnerability</h2>
+        <h2>The Zero-Click Attack That Microsoft Had to Patch</h2>
 
         <p>
           CVE-2025-32711, dubbed "EchoLeak," was even more severe - a <strong>zero-click attack</strong> that
@@ -403,11 +413,17 @@ How it worked:
 6. User never knows attack occurred`}
         />
 
-        <h2>The Fix: Literally One Line of Code</h2>
+        <h2>The Fix: 15-Minute Security Upgrade</h2>
 
         <p>
-          Here's the minimum viable protection - copy this into your form handler:
+          <strong>Honest timeline:</strong> This takes about 15 minutes to set up properly, not "one line." But it's worth it.
         </p>
+
+        <h3>Step 1: Get Your API Key (2 minutes)</h3>
+        <p>Sign up at <a href="https://safeprompt.dev" className="text-blue-400 hover:text-blue-300">safeprompt.dev</a> - free tier gives you 10,000 validations/month.</p>
+
+        <h3>Step 2: Add Validation (5 minutes)</h3>
+        <p>Here's the actual code you need (yes, it's more than one line but it works):</p>
 
         <CodeBlock
           language="javascript"
@@ -445,7 +461,7 @@ const messageValid = await validate(formData.message)`}
 
         <CodeTabs examples={protectionImplementations} />
 
-        <h2>Part 4: Bonus - Additional Protection Layers</h2>
+        <h2>Extra Protection (Optional)</h2>
 
         <p>
           SafePrompt handles the AI threat detection. Here are optional extras for defense-in-depth:
@@ -604,13 +620,20 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \\
 
         <hr />
 
-        <h3>Technical References</h3>
+        <h3>Proof of Concept & Technical References</h3>
+
+        <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 my-4">
+          <p className="text-red-300 font-semibold mb-2">🎥 See the Attack in Action:</p>
+          <a href="https://0din.ai/blog/phishing-for-gemini" target="_blank" rel="noopener" className="text-blue-400 hover:text-blue-300">
+            Watch Mozilla's live demonstration of the Gmail attack (July 2025)
+          </a>
+        </div>
 
         <ul>
           <li>
             <a href="https://0din.ai/blog/phishing-for-gemini" target="_blank" rel="noopener">
-              Mozilla 0din Disclosure: Phishing for Gemini
-            </a> (July 2025)
+              Mozilla 0din Bug Bounty Disclosure: Gmail Gemini Prompt Injection
+            </a> (July 2025 - Marco Figueroa)
           </li>
           <li>
             <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-32711" target="_blank" rel="noopener">
