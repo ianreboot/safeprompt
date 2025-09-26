@@ -21,6 +21,9 @@ function getCacheKey(prompt, mode) {
   return crypto.createHash('md5').update(`${prompt}:${mode}`).digest('hex');
 }
 
+// Internal test API key for dogfooding
+const INTERNAL_API_KEY = 'sp_test_unlimited_dogfood_key_2025';
+
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -37,9 +40,15 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = req.headers['x-api-key'];
+    let isInternalUser = false;
 
+    // Check for internal test API key
+    if (apiKey === INTERNAL_API_KEY) {
+      isInternalUser = true;
+      console.log('[SafePrompt] Internal test API key used - unlimited access');
+    }
     // Validate API key
-    if (apiKey && apiKey !== 'demo_key') {
+    else if (apiKey && apiKey !== 'demo_key') {
       const hashedKey = hashApiKey(apiKey);
 
       const { data: profile, error } = await supabase
@@ -157,12 +166,20 @@ export default async function handler(req, res) {
       };
     }
 
-    return res.status(200).json({
+    const response = {
       ...result,
       mode,
       cached: false,
       timestamp: new Date().toISOString()
-    });
+    };
+
+    // Add internal user flag if applicable
+    if (isInternalUser) {
+      response.internal_account = true;
+      response.usage_tracking = 'unlimited';
+    }
+
+    return res.status(200).json(response);
 
   } catch (error) {
     console.error('Validation error:', error);
