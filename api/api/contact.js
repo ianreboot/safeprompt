@@ -43,18 +43,26 @@ async function validateWithSafePrompt(fields) {
   }
 
   try {
-    const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': apiKey
-      },
-      body: JSON.stringify({
-        prompt: JSON.stringify(fields), // Validate ALL fields as JSON
-        mode: 'optimized'
+    // Create a timeout promise
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout')), 3000)
+    );
+
+    // Race between fetch and timeout
+    const response = await Promise.race([
+      fetch('https://api.safeprompt.dev/api/v1/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': apiKey
+        },
+        body: JSON.stringify({
+          prompt: JSON.stringify(fields), // Validate ALL fields as JSON
+          mode: 'optimized'
+        })
       }),
-      signal: AbortSignal.timeout(3000) // 3 second timeout
-    });
+      timeoutPromise
+    ]);
 
     if (!response.ok) {
       // FAIL CLOSED - don't accept suspicious content when validation is down
