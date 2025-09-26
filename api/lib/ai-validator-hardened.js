@@ -12,7 +12,8 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { ExternalReferenceDetector } from './external-reference-detector.js';
 
-dotenv.config({ path: '/home/projects/.env' });
+// Load environment variables - works both locally and on Vercel
+dotenv.config();
 
 // Testing backdoor configuration
 const TESTING_MODE = process.env.SAFEPROMPT_TESTING === 'true';
@@ -260,10 +261,16 @@ async function secureApiCall(models, userPrompt, systemPrompt, options = {}) {
         }
       ];
 
+      // Ensure API key exists and is clean
+      const apiKey = process.env.OPENROUTER_API_KEY?.trim();
+      if (!apiKey) {
+        throw new Error('OPENROUTER_API_KEY environment variable not set');
+      }
+
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'https://safeprompt.dev',
           'X-Title': `SafePrompt Hardened ${passType}`

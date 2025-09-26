@@ -10,7 +10,8 @@
 import { validateHardened } from './ai-validator-hardened.js';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: '/home/projects/.env' });
+// Load environment variables - works both locally and on Vercel
+dotenv.config();
 
 // Testing backdoor configuration
 const TESTING_MODE = process.env.SAFEPROMPT_TESTING === 'true';
