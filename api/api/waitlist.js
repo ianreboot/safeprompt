@@ -1,38 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
-import fetch from 'node-fetch';
 
-// Initialize Supabase client
+/**
+ * SafePrompt Waitlist - Correct Implementation
+ *
+ * This form does NOT use SafePrompt validation because:
+ * 1. Email addresses NEVER go to AI
+ * 2. SafePrompt doesn't validate email formats
+ * 3. This is structured data, not freeform text
+ */
+
 const supabase = createClient(
   process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
   process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
-
-// Use SafePrompt to validate email input
-async function validateWithSafePrompt(text) {
-  try {
-    const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': process.env.SAFEPROMPT_TEST_API_KEY || 'sp_test_unlimited_dogfood_key_2025'
-      },
-      body: JSON.stringify({
-        prompt: text,
-        mode: 'optimized'
-      })
-    });
-
-    if (!response.ok) {
-      console.error('SafePrompt API error:', response.status);
-      return { safe: true }; // Fail open for now
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('SafePrompt validation error:', error);
-    return { safe: true }; // Fail open for now
-  }
-}
 
 export default async function handler(req, res) {
   // Handle CORS
@@ -49,41 +29,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, source = 'website', referrer } = req.body;
+    const { email, source = 'website' } = req.body;
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
     }
 
-    // Validate email format
+    // Standard email validation (NOT SafePrompt's job)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
-
-    // === SAFEPROMPT VALIDATION ===
-    // Validate email with SafePrompt to prevent injection attacks
-    console.log('[Waitlist] Validating email with SafePrompt...');
-
-    const emailCheck = await validateWithSafePrompt(email);
-    if (!emailCheck.safe) {
-      console.warn(`[Waitlist] Blocked unsafe email input: ${emailCheck.threats?.join(', ')}`);
-      return res.status(400).json({
-        error: 'The email contains potentially harmful content. Please use a regular email address.',
-        threats: emailCheck.threats
-      });
-    }
-
-    // If referrer is provided, validate it too
-    if (referrer) {
-      const referrerCheck = await validateWithSafePrompt(referrer);
-      if (!referrerCheck.safe) {
-        console.warn(`[Waitlist] Blocked unsafe referrer: ${referrerCheck.threats?.join(', ')}`);
-        // Don't block, just sanitize
-      }
-    }
-
-    console.log('[Waitlist] Email validated as safe');
 
     // Check if email already exists in waitlist
     const { data: existing, error: checkError } = await supabase
@@ -98,20 +54,15 @@ export default async function handler(req, res) {
     }
 
     if (existing) {
-      return res.status(400).json({
-        error: 'Email already on waitlist',
-        alreadyRegistered: true
-      });
+      return res.status(400).json({ error: 'Email already on waitlist' });
     }
 
-    // Add to waitlist with validation metadata
+    // Add to waitlist - no validation needed for emails
     const { data, error } = await supabase
       .from('waitlist')
       .insert({
         email,
         source,
-        referrer: referrer || null,
-        validated_by_safeprompt: true, // Track that this was validated
         created_at: new Date().toISOString()
       })
       .select()
@@ -130,14 +81,12 @@ export default async function handler(req, res) {
       await resend.emails.send({
         from: 'SafePrompt <noreply@safeprompt.dev>',
         to: 'info@safeprompt.dev',
-        subject: 'New Waitlist Signup (Validated)',
+        subject: 'New Waitlist Signup',
         html: `
           <h2>New waitlist signup!</h2>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Source:</strong> ${source}</p>
-          ${referrer ? `<p><strong>Referrer:</strong> ${referrer}</p>` : ''}
           <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-          <p style="color: #0a0;">✅ Validated by SafePrompt</p>
           <hr>
           <p>View all signups in Supabase dashboard.</p>
         `
@@ -161,8 +110,7 @@ export default async function handler(req, res) {
           <hr>
           <p style="color: #666; font-size: 12px;">
             SafePrompt - Stop prompt injection in one line of code<br>
-            <a href="https://safeprompt.dev">safeprompt.dev</a><br><br>
-            <em>Your signup was validated by SafePrompt for safety.</em>
+            <a href="https://safeprompt.dev">safeprompt.dev</a>
           </p>
         `
       });
@@ -176,7 +124,6 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       message: 'Successfully added to waitlist',
-      validated: true,
       id: data.id
     });
 

@@ -1,32 +1,16 @@
 const { Resend } = require('resend');
-const fetch = require('node-fetch');
 
-// Use SafePrompt to validate all form inputs
-async function validateWithSafePrompt(text) {
-  try {
-    const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': process.env.SAFEPROMPT_TEST_API_KEY || 'sp_test_unlimited_dogfood_key_2025'
-      },
-      body: JSON.stringify({
-        prompt: text,
-        mode: 'optimized'
-      })
-    });
-
-    if (!response.ok) {
-      console.error('SafePrompt API error:', response.status);
-      return { safe: true }; // Fail open for now
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('SafePrompt validation error:', error);
-    return { safe: true }; // Fail open for now
-  }
-}
+/**
+ * SafePrompt Contact Form - Correct Implementation
+ *
+ * This form does NOT use SafePrompt validation because:
+ * 1. Messages go to info@safeprompt.dev (humans, not AI)
+ * 2. We don't process support tickets with AI (yet)
+ * 3. SafePrompt protects AI, not email inboxes
+ *
+ * If we later add AI support processing, we'll validate
+ * at that point, not at form submission.
+ */
 
 module.exports = async (req, res) => {
   // Enable CORS
@@ -47,54 +31,27 @@ module.exports = async (req, res) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { name, email, subject, message } = req.body;
 
-    // Validate input
+    // Standard validation only - no AI involved
     if (!name || !email || !subject || !message) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // Email validation regex
+    // Email format validation (local, not SafePrompt)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ error: 'Please provide a valid email address' });
     }
 
-    // === SAFEPROMPT VALIDATION ===
-    // Validate each text field with SafePrompt to prevent injection attacks
-    console.log('[Contact] Validating form inputs with SafePrompt...');
-
-    // Check name field
-    const nameCheck = await validateWithSafePrompt(name);
-    if (!nameCheck.safe) {
-      console.warn(`[Contact] Blocked unsafe name input: ${nameCheck.threats?.join(', ')}`);
-      return res.status(400).json({
-        error: 'Your name contains potentially harmful content. Please use a regular name.',
-        threats: nameCheck.threats
-      });
+    // Length validation (local, not SafePrompt)
+    if (message.length < 10) {
+      return res.status(400).json({ error: 'Message is too short' });
     }
 
-    // Check subject field
-    const subjectCheck = await validateWithSafePrompt(subject);
-    if (!subjectCheck.safe) {
-      console.warn(`[Contact] Blocked unsafe subject: ${subjectCheck.threats?.join(', ')}`);
-      return res.status(400).json({
-        error: 'Your subject contains potentially harmful content. Please rephrase.',
-        threats: subjectCheck.threats
-      });
+    if (message.length > 5000) {
+      return res.status(400).json({ error: 'Message is too long (max 5000 characters)' });
     }
 
-    // Check message field
-    const messageCheck = await validateWithSafePrompt(message);
-    if (!messageCheck.safe) {
-      console.warn(`[Contact] Blocked unsafe message: ${messageCheck.threats?.join(', ')}`);
-      return res.status(400).json({
-        error: 'Your message contains potentially harmful content. Please rephrase without prompt injection attempts or external references.',
-        threats: messageCheck.threats
-      });
-    }
-
-    console.log('[Contact] All inputs validated as safe');
-
-    // Sanitize input (additional layer of protection)
+    // Basic HTML sanitization (not SafePrompt's job)
     const sanitize = (str) => {
       return str.replace(/[<>]/g, '').slice(0, 1000);
     };
@@ -103,16 +60,19 @@ module.exports = async (req, res) => {
     const sanitizedMessage = sanitize(message);
     const sanitizedSubject = sanitize(subject);
 
+    // Check for emergency/urgent support needs
+    const isUrgent = /urgent|emergency|down|broken|not.working/i.test(`${subject} ${message}`);
+
     // Create email HTML
     const emailHtml = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #333;">New Contact Form Submission</h2>
+        ${isUrgent ? '<p style="color: red; font-weight: bold;">⚠️ URGENT/EMERGENCY DETECTED</p>' : ''}
 
         <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <p><strong>From:</strong> ${sanitizedName}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Subject:</strong> ${sanitizedSubject}</p>
-          <p style="color: #0a0; font-size: 12px;">✅ Validated by SafePrompt</p>
         </div>
 
         <div style="background: white; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
@@ -123,7 +83,8 @@ module.exports = async (req, res) => {
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
 
         <p style="color: #999; font-size: 12px;">
-          This email was sent from the SafePrompt contact form and validated for safety.
+          This email was sent from the SafePrompt contact form.
+          ${isUrgent ? 'Marked as URGENT based on keywords.' : ''}
         </p>
       </div>
     `;
@@ -133,7 +94,7 @@ module.exports = async (req, res) => {
       from: 'SafePrompt Contact <noreply@safeprompt.dev>',
       to: 'info@safeprompt.dev',
       replyTo: email,
-      subject: `[SafePrompt Contact] ${sanitizedSubject} - from ${sanitizedName}`,
+      subject: `${isUrgent ? '🚨 URGENT: ' : ''}[SafePrompt Contact] ${sanitizedSubject} - from ${sanitizedName}`,
       html: emailHtml,
     });
 
@@ -150,6 +111,7 @@ module.exports = async (req, res) => {
         <p>Hi ${sanitizedName},</p>
 
         <p>We've received your message and will get back to you within 24 hours.</p>
+        ${isUrgent ? '<p><strong>We see this is urgent and will prioritize your request.</strong></p>' : ''}
 
         <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #666; margin-top: 0;">Your Message:</h3>
@@ -168,8 +130,7 @@ module.exports = async (req, res) => {
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
 
         <p style="color: #999; font-size: 12px;">
-          This is an automated response. Please do not reply to this email.<br>
-          Your message was validated by SafePrompt to ensure safety.
+          This is an automated response. Please do not reply to this email.
         </p>
       </div>
     `;
@@ -181,10 +142,16 @@ module.exports = async (req, res) => {
       html: autoReplyHtml,
     });
 
+    // Log for potential future AI processing
+    console.log(`[Contact] Received from ${email}: ${subject}`);
+
+    // TODO: If we add AI support processing later:
+    // await db.tickets.create({ name, email, subject, message });
+    // processWithAI(ticketId); // This would validate with SafePrompt
+
     return res.status(200).json({
       success: true,
-      validated: true,
-      message: 'Your message has been sent successfully and validated for safety.'
+      message: 'Your message has been sent successfully.'
     });
   } catch (error) {
     console.error('Contact form error:', error);
