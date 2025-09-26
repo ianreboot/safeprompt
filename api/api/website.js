@@ -6,13 +6,18 @@
 
 const { Resend } = require('resend');
 const { validateInternal } = require('../lib/internal-validator.js');
-const { createClient } = require('@supabase/supabase-js');
-
-// Initialize Supabase
-const supabase = createClient(
-  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
-  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+// Supabase import - handle both CommonJS and ESM
+let supabase;
+try {
+  const { createClient } = require('@supabase/supabase-js');
+  supabase = createClient(
+    process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
+    process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  );
+} catch (error) {
+  console.error('Supabase import error - waitlist will not work:', error);
+  // Continue without Supabase - contact form will still work
+}
 
 // Rate limiting (in-memory for now, use Redis in production)
 const rateLimiter = new Map();
@@ -282,6 +287,16 @@ async function handleWaitlist(data, clientIp, resend) {
       success: false,
       error: 'Invalid email format',
       code: 'INVALID_EMAIL'
+    };
+  }
+
+  // Check if Supabase is available
+  if (!supabase) {
+    console.error('Supabase not initialized - waitlist unavailable');
+    return {
+      success: false,
+      error: 'Waitlist service temporarily unavailable',
+      code: 'SERVICE_UNAVAILABLE'
     };
   }
 
