@@ -1006,6 +1006,76 @@ git checkout -- app/blog/gmail-ai-threat/page.tsx
 - Code examples are copy-pasteable
 - No double bullets/checkmarks in lists
 
+## 🚨 CRITICAL: Cloudflare Pages Deployment & Caching (2025-09-27)
+
+### The Homepage Header Component Trap
+**Problem**: Homepage was using inline navigation instead of importing Header component
+**Symptom**: Changes to Header.tsx didn't appear on homepage
+**Root Cause**: `/app/page.tsx` had its own `<nav>` element duplicating Header code
+**Solution**: Import and use `<Header />` component instead of inline navigation
+**Lesson**: ALWAYS check if pages are using shared components vs inline code
+
+### Cloudflare Pages Caching Issues
+**Problem**: Deployed changes not visible on main domain but visible on preview URLs
+**Example**: https://safeprompt.dev showed old content, https://xxx.safeprompt.pages.dev showed new
+**Solution Process**:
+1. Deploy with `--commit-dirty true` flag for uncommitted changes
+2. Purge Cloudflare cache if changes don't appear
+3. Verify on preview URL first, then main domain
+
+### Cache Purging Command
+```bash
+# Get zone ID for domain (safeprompt.dev zone: 294a40cddf0a0ad4deec2747c6aa34f8)
+source /home/projects/.env
+curl -X POST "https://api.cloudflare.com/client/v4/zones/294a40cddf0a0ad4deec2747c6aa34f8/purge_cache" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"purge_everything":true}'
+```
+
+### Complete Deployment Process When Changes Don't Appear
+```bash
+# 1. Clean build (if suspecting build cache issues)
+cd /home/projects/safeprompt/website
+rm -rf .next out
+npm run build
+
+# 2. Deploy with commit-dirty flag
+source /home/projects/.env && export CLOUDFLARE_API_TOKEN
+wrangler pages deploy out --project-name safeprompt --branch main --commit-dirty true
+
+# 3. Check preview URL first (shown in deployment output)
+# Example: https://07a7bf34.safeprompt.pages.dev
+
+# 4. If preview is correct but main domain isn't, purge cache
+curl -X POST "https://api.cloudflare.com/client/v4/zones/294a40cddf0a0ad4deec2747c6aa34f8/purge_cache" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"purge_everything":true}'
+
+# 5. Wait 5-10 seconds for cache to clear
+# 6. Verify with cache-busting parameter
+curl -s 'https://safeprompt.dev?v=2' | grep -o "text-to-search"
+```
+
+### Custom Domain Configuration
+**Issue**: safeprompt.dev (non-www) stopped working after deployment
+**Cause**: Domain wasn't added to Cloudflare Pages project
+**Fix**: Add custom domain to Pages project
+```bash
+curl -X POST "https://api.cloudflare.com/client/v4/accounts/c2b6e426cc1d525fe1001af818d7c77d/pages/projects/safeprompt/domains" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"name": "safeprompt.dev"}'
+```
+
+### Key Lessons Learned
+1. **Always verify component usage**: Check if pages import shared components or duplicate code
+2. **Preview URLs are truth**: If preview URL is correct but main isn't, it's a caching issue
+3. **Cache purging is often needed**: Cloudflare aggressively caches, manual purge may be required
+4. **Both www and non-www need configuration**: Each domain must be explicitly added to Pages project
+5. **Use --commit-dirty flag**: When deploying with uncommitted changes (like after clean build)
+
 ## 📚 COMPREHENSIVE BLOG ARCHITECTURE KNOWLEDGE (2025-09-27)
 
 ### The Complete Journey
