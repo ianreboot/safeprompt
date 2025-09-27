@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import StructuredData from '@/components/StructuredData'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -56,6 +57,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-background text-foreground min-h-screen`}>
+        <StructuredData type="organization" />
+        <StructuredData type="product" />
+        <StructuredData type="faq" />
         <div className="grid-background fixed inset-0 z-0" />
         <div className="relative z-10">
           {children}

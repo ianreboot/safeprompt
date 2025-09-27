@@ -1,0 +1,27 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#000000"/>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#111111" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Shield Icon -->
+  <g transform="translate(600, 200)">
+    <path d="M0,-60 L40,-40 L40,20 L0,60 L-40,20 L-40,-40 Z" fill="none" stroke="#00ff00" stroke-width="3"/>
+    <path d="M-15,-10 L-5,0 L15,-20" fill="none" stroke="#00ff00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="320" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">SafePrompt</text>
+
+  <!-- Tagline -->
+  <text x="600" y="380" font-family="Arial, sans-serif" font-size="32" fill="#00ff00" text-anchor="middle">Stop Prompt Injection in One Line of Code</text>
+
+  <!-- Features -->
+  <text x="600" y="450" font-family="Arial, sans-serif" font-size="24" fill="#888888" text-anchor="middle">Fast • Simple • Transparent • Developer-First</text>
+
+  <!-- Website -->
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="20" fill="#666666" text-anchor="middle">safeprompt.dev</text>
+</svg>

@@ -1,0 +1,81 @@
+# SafePrompt Robots Configuration
+# https://safeprompt.dev
+
+# Default: Allow all legitimate crawlers
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/admin/
+Disallow: /api/webhooks/
+Disallow: /_next/
+Disallow: /private/
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://safeprompt.dev/sitemap.xml
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/admin/
+Crawl-delay: 0
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/admin/
+Crawl-delay: 0
+
+# OpenAI GPTBot (Allow for AEO - Answer Engine Optimization)
+User-agent: GPTBot
+Allow: /
+Allow: /blog/
+Allow: /docs/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /private/
+
+# Claude/Anthropic
+User-agent: Claude-Web
+Allow: /
+Allow: /blog/
+Allow: /docs/
+Disallow: /dashboard/
+Disallow: /api/
+
+# ChatGPT Plugin
+User-agent: ChatGPT-User
+Allow: /
+Allow: /blog/
+Allow: /docs/
+Disallow: /dashboard/
+Disallow: /api/
+
+# Common AI crawlers
+User-agent: CCBot
+Allow: /blog/
+Allow: /docs/
+Disallow: /
+Crawl-delay: 10
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Block scraping bots
+User-agent: *bot*
+Disallow: /api/
+
+# Dashboard-specific robots.txt will be served from dashboard subdomain
+# API endpoints should have X-Robots-Tag headers
