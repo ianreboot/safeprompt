@@ -10,7 +10,7 @@ const blogMeta = {
   title: 'Your Chatbot Just Sold a Car for $1: The Corporate AI Disasters You Need to Prevent',
   description: 'From Chevy dealerships to Air Canada lawsuits, chatbots are getting hacked daily. Here\'s how to stop yours from becoming the next viral disaster.',
   author: 'SafePrompt Security Team',
-  date: '2025-01-27',
+  date: '2025-09-27',
   readTime: '7 min read',
   tags: ['Chatbots', 'AI Security', 'Prompt Injection', 'Customer Service', 'Real Incidents']
 }

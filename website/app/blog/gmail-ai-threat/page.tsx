@@ -10,7 +10,7 @@ const blogMeta = {
   title: 'Ship Fast, Get Hacked: The AI Email Attack You\'re Missing',
   description: 'Your contact form just made Gmail lie to you. Here\'s how hackers hide invisible text in your forms and what you can do about it in literally one line of code.',
   author: 'SafePrompt Security Team',
-  date: '2025-01-26',
+  date: '2025-09-26',
   readTime: '5 min read',
   tags: ['Security', 'AI Safety', 'Gmail', 'Prompt Injection', 'Contact Forms']
 }

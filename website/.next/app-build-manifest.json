@@ -12,7 +12,7 @@
       "static/chunks/fd9d1056-aa0b217aae21732b.js",
       "static/chunks/117-a01747f53f2c92d9.js",
       "static/chunks/main-app-8be56c545ec976b8.js",
-      "static/css/25ec20d0ff8e4bd9.css",
+      "static/css/a56228d56623dd94.css",
       "static/chunks/app/layout-719ae220b37e79da.js"
     ],
     "/about/page": [
@@ -24,14 +24,14 @@
       "static/chunks/983-2deda2dc7e154c33.js",
       "static/chunks/app/about/page-9d15a908d3a8f501.js"
     ],
-    "/blog/chatbot-hacks/page": [
+    "/blog/gmail-ai-threat/page": [
       "static/chunks/webpack-41a9ee0a1d65a3d2.js",
       "static/chunks/fd9d1056-aa0b217aae21732b.js",
       "static/chunks/117-a01747f53f2c92d9.js",
       "static/chunks/main-app-8be56c545ec976b8.js",
       "static/chunks/972-ae351083a1d7e01d.js",
       "static/chunks/419-fc57d61000cf3a41.js",
-      "static/chunks/app/blog/chatbot-hacks/page-58cfba5310b03ac9.js"
+      "static/chunks/app/blog/gmail-ai-threat/page-67339edcefbc54b1.js"
     ],
     "/blog/page": [
       "static/chunks/webpack-41a9ee0a1d65a3d2.js",
@@ -40,15 +40,6 @@
       "static/chunks/main-app-8be56c545ec976b8.js",
       "static/chunks/972-ae351083a1d7e01d.js",
       "static/chunks/app/blog/page-90b758f4774bf133.js"
-    ],
-    "/blog/gmail-ai-threat/page": [
-      "static/chunks/webpack-41a9ee0a1d65a3d2.js",
-      "static/chunks/fd9d1056-aa0b217aae21732b.js",
-      "static/chunks/117-a01747f53f2c92d9.js",
-      "static/chunks/main-app-8be56c545ec976b8.js",
-      "static/chunks/972-ae351083a1d7e01d.js",
-      "static/chunks/419-fc57d61000cf3a41.js",
-      "static/chunks/app/blog/gmail-ai-threat/page-dda36ee37f88b74c.js"
     ],
     "/contact/page": [
       "static/chunks/webpack-41a9ee0a1d65a3d2.js",
@@ -59,14 +50,6 @@
       "static/chunks/983-2deda2dc7e154c33.js",
       "static/chunks/app/contact/page-ac1d64a3bb3cf97c.js"
     ],
-    "/privacy/page": [
-      "static/chunks/webpack-41a9ee0a1d65a3d2.js",
-      "static/chunks/fd9d1056-aa0b217aae21732b.js",
-      "static/chunks/117-a01747f53f2c92d9.js",
-      "static/chunks/main-app-8be56c545ec976b8.js",
-      "static/chunks/972-ae351083a1d7e01d.js",
-      "static/chunks/app/privacy/page-a75f589c7b4ff614.js"
-    ],
     "/page": [
       "static/chunks/webpack-41a9ee0a1d65a3d2.js",
       "static/chunks/fd9d1056-aa0b217aae21732b.js",
@@ -75,6 +58,14 @@
       "static/chunks/972-ae351083a1d7e01d.js",
       "static/chunks/983-2deda2dc7e154c33.js",
       "static/chunks/app/page-b3a26604d3a3b3f7.js"
+    ],
+    "/privacy/page": [
+      "static/chunks/webpack-41a9ee0a1d65a3d2.js",
+      "static/chunks/fd9d1056-aa0b217aae21732b.js",
+      "static/chunks/117-a01747f53f2c92d9.js",
+      "static/chunks/main-app-8be56c545ec976b8.js",
+      "static/chunks/972-ae351083a1d7e01d.js",
+      "static/chunks/app/privacy/page-a75f589c7b4ff614.js"
     ],
     "/terms/page": [
       "static/chunks/webpack-41a9ee0a1d65a3d2.js",
@@ -90,6 +81,15 @@
       "static/chunks/117-a01747f53f2c92d9.js",
       "static/chunks/main-app-8be56c545ec976b8.js",
       "static/chunks/app/test-logo/page-c073756e7571db53.js"
+    ],
+    "/blog/chatbot-hacks/page": [
+      "static/chunks/webpack-41a9ee0a1d65a3d2.js",
+      "static/chunks/fd9d1056-aa0b217aae21732b.js",
+      "static/chunks/117-a01747f53f2c92d9.js",
+      "static/chunks/main-app-8be56c545ec976b8.js",
+      "static/chunks/972-ae351083a1d7e01d.js",
+      "static/chunks/419-fc57d61000cf3a41.js",
+      "static/chunks/app/blog/chatbot-hacks/page-690475795b7b9b05.js"
     ]
   }
 }

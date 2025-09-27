@@ -7,7 +7,7 @@ const blogPosts = [
     title: 'Your Chatbot Just Sold a Car for $1: The Corporate AI Disasters You Need to Prevent',
     excerpt: 'From Chevy dealerships to Air Canada lawsuits, chatbots are getting hacked daily. Real incidents, real lawsuits, and how to stop yours from becoming the next viral disaster.',
     author: 'SafePrompt Team',
-    date: '2025-01-27',
+    date: '2025-09-27',
     readTime: '7 min read',
     tags: ['Chatbots', 'AI Security', 'Real Incidents'],
     slug: 'chatbot-hacks'
@@ -17,7 +17,7 @@ const blogPosts = [
     title: 'Ship Fast, Get Hacked: The AI Email Attack You\'re Missing',
     excerpt: 'Your contact form just made Gmail lie to you. Real attacks confirmed by Mozilla, Microsoft, and CISA. Here\'s a 15-minute fix that actually works.',
     author: 'SafePrompt Team',
-    date: '2025-01-26',
+    date: '2025-09-26',
     readTime: '5 min read',
     tags: ['Security', 'AI Safety', 'Gmail'],
     slug: 'gmail-ai-threat'
