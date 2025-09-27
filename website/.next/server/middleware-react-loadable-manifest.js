@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}";
+self.__REACT_LOADABLE_MANIFEST='{"app/blog/test-aeo/page.tsx -> @/components/blog/AEOLayout":{"id":335,"files":["static/chunks/335.75dd1a01bf334cad.js"]},"app/blog/test-gmail-dynamic/page.tsx -> @/components/blog/AEOLayout":{"id":335,"files":["static/chunks/335.75dd1a01bf334cad.js"]}}';

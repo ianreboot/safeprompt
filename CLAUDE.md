@@ -774,23 +774,59 @@ wrangler pages deploy out --project-name safeprompt --branch main
 
 ## 🚨 CRITICAL: Blog AEO Implementation Lessons (2025-09-27)
 
-### The Great Next.js JSX Compilation Battle
+### The Great Next.js JSX Compilation Battle - SOLVED!
 **Problem**: Attempted to create AEOLayout component for blog optimization, got persistent "Unexpected token BlogLayout" errors
-**Investigation Time Wasted**: 3+ hours
-**Root Cause**: Unknown - possibly Next.js static export limitations with complex JSX
+**Initial Investigation Time**: 3+ hours
+**Root Cause**: Next.js static export requires dynamic imports for complex components
+**Solution Found**: Dynamic imports with SSR disabled work perfectly!
 
-### What Failed (DO NOT ATTEMPT AGAIN)
-- ❌ Creating separate AEOLayout component
-- ❌ Importing AEOLayout into blog posts
-- ❌ Adding React imports explicitly
+### What Failed Initially
+- ❌ Creating separate AEOLayout component with default export
+- ❌ Importing AEOLayout directly into blog posts
+- ❌ Adding React imports explicitly (didn't help)
 - ❌ Changing file extensions to .jsx
 - ❌ Wrapping returns in different parentheses patterns
-- ❌ Using different import syntaxes
 
-### What Worked
-- ✅ Keep using BlogLayout (it works!)
+### ✅ THE WORKING SOLUTION (Confirmed 2025-09-27)
+**Use Dynamic Imports with SSR Disabled for Complex Components:**
+
+```jsx
+'use client'
+
+import dynamic from 'next/dynamic'
+import BlogLayout from '@/components/blog/BlogLayout'
+
+// This WORKS with Next.js static export!
+const ComparisonTable = dynamic(
+  () => import('@/components/blog/AEOLayout').then(mod => mod.ComparisonTable),
+  {
+    ssr: false,
+    loading: () => <div>Loading table...</div>
+  }
+)
+
+export default function BlogPost() {
+  return (
+    <BlogLayout meta={{...}}>
+      <ComparisonTable
+        headers={['Column 1', 'Column 2']}
+        rows={[['Data 1', 'Data 2']]}
+      />
+    </BlogLayout>
+  )
+}
+```
+
+**Important Notes:**
+1. **Named exports work better** than default exports for dynamic imports
+2. **Must include `ssr: false`** for static export compatibility
+3. **Optional loading component** improves UX
+4. **CodeBlock props**: Use `code` prop, not children
+
+### What Still Works (Simple Fallback)
+- ✅ Keep using BlogLayout (always works)
 - ✅ Add AEO elements inline within BlogLayout children
-- ✅ Create reusable components for tables/sections
+- ✅ Create simple reusable components without complex imports
 - ✅ Comment out problematic imports rather than fight them
 
 ### AEO Elements to Include (inline, not as component)
