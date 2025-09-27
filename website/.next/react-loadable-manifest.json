@@ -2,7 +2,7 @@
   "app/blog/chatbot-hacks/page.tsx -> @/components/blog/AEOComponents": {
     "id": 1801,
     "files": [
-      "static/chunks/801.d75865aa54409e35.js"
+      "static/chunks/801.6affc1b8c1bfe0b5.js"
     ]
   },
   "app/blog/chatbot-hacks/page.tsx -> @/components/blog/BlogLayout": {
@@ -33,7 +33,7 @@
   "app/blog/gmail-ai-threat/page.tsx -> @/components/blog/AEOComponents": {
     "id": 1801,
     "files": [
-      "static/chunks/801.d75865aa54409e35.js"
+      "static/chunks/801.6affc1b8c1bfe0b5.js"
     ]
   },
   "app/blog/gmail-ai-threat/page.tsx -> @/components/blog/BlogLayout": {
