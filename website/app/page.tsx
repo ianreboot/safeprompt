@@ -36,8 +36,8 @@ export default function Home() {
           <div className="flex items-center space-x-6">
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition">Pricing</a>
             <a href="#docs" className="text-muted-foreground hover:text-foreground transition">Documentation</a>
-            <a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Dashboard</a>
-            <a href="#get-started" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+            <a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Sign In</a>
+            <a href="/signup" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition">
               Get Started
             </a>
           </div>
@@ -76,8 +76,8 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <a href="#get-started" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
-                Get API Key
+              <a href="/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
+                Get Started - $5/mo Beta
               </a>
               <a href="#docs" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
                 View Documentation
@@ -366,28 +366,30 @@ export default function Home() {
                 '10,000 validations/month',
                 'Advanced AI protection',
                 'Community support',
+                '2-3 week waitlist',
               ]}
               buttonText="Join Waitlist"
               buttonVariant="blue"
-              buttonHref="https://dashboard.safeprompt.dev/login"
+              buttonHref="/signup?plan=free"
             />
 
             <PricingCard
-              title="Early Bird"
+              title="Beta Access"
               price="$5"
               period="/month"
-              description="Limited beta pricing (normally $29)"
+              description="First 50 users only (then $29)"
               features={[
                 '100,000 validations/month',
                 'Advanced AI protection',
                 'Priority support',
                 '99.9% uptime SLA',
                 '🔥 Lock in this price forever',
+                '⚡ Only 37/50 spots left',
               ]}
-              buttonText="Get Early Access"
+              buttonText="Get Beta Access"
               buttonVariant="primary"
               popular={true}
-              buttonHref="https://dashboard.safeprompt.dev/login?plan=earlybird"
+              buttonHref="/signup?plan=paid"
             />
           </div>
         </div>
@@ -468,8 +470,8 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <a href="https://dashboard.safeprompt.dev/login" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
-              Start Free Trial
+            <a href="/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
+              Claim Beta Access - $5/mo
             </a>
             <a href="#pricing" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
               View Pricing

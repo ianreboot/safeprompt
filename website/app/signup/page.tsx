@@ -12,8 +12,8 @@ export default function UnifiedSignup() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [betaSpotsLeft, setBetaSpotsLeft] = useState(37) // 50 - 13 already signed up
   const [waitlistSpots, setWaitlistSpots] = useState(47) // Fake scarcity
-  const [betaEndTime, setBetaEndTime] = useState('14 days')
 
   // Fake countdown for urgency
   useEffect(() => {
@@ -75,12 +75,12 @@ export default function UnifiedSignup() {
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-500" />
             <span className="text-sm">
-              <strong>Beta pricing ends in {betaEndTime}</strong> - Lock in $5/month forever (regular price $29)
+              <strong>Only {betaSpotsLeft} of 50 beta spots left</strong> - Lock in $5/month forever (regular price $29)
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-yellow-600">
             <Users className="w-4 h-4" />
-            <span>283 developers already saving $24/month</span>
+            <span>{50 - betaSpotsLeft} developers already saving $24/month</span>
           </div>
         </motion.div>
 
@@ -108,7 +108,7 @@ export default function UnifiedSignup() {
               >
                 {/* Best Value Badge */}
                 <div className="absolute -top-3 left-6 bg-primary text-black text-xs font-bold px-3 py-1 rounded-full">
-                  BEST VALUE - 83% CHOOSE THIS
+                  BETA PRICING - {betaSpotsLeft} SPOTS LEFT
                 </div>
 
                 <div className="flex items-start gap-4">
@@ -158,7 +158,7 @@ export default function UnifiedSignup() {
 
                     <div className="mt-4 p-3 bg-green-900/20 rounded-lg border border-green-900/30">
                       <p className="text-xs text-green-400">
-                        💰 <strong>You save $288/year</strong> with beta pricing. This rate is locked for life!
+                        💰 <strong>You save $288/year</strong> with beta pricing. Only {betaSpotsLeft} of 50 spots remain!
                       </p>
                     </div>
                   </div>
@@ -381,9 +381,9 @@ export default function UnifiedSignup() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">What happens after beta?</h3>
+              <h3 className="font-semibold mb-2">What happens after 50 beta users?</h3>
               <p className="text-sm text-gray-400">
-                Beta users keep their $5/month rate forever. New users will pay the standard $29/month.
+                First 50 beta users keep $5/month forever. After that, pricing increases to $29/month for new signups.
               </p>
             </div>
             <div>

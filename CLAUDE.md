@@ -36,6 +36,42 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 3. **Tracking**: We can measure support volume
 4. **Security**: Reduces phishing attack surface
 
+## 🎯 BETA PRICING STRATEGY
+
+### Limited Beta: First 50 Paid Users Only
+- **Beta Price**: $5/month (locked forever for these users)
+- **After 50 users**: Price increases to $29/month for new signups
+- **Current Count**: Track in Supabase `profiles` table where `subscription_status = 'paid'`
+- **Messaging**: "Only X spots left at $5/month" (50 - current_paid_users)
+
+### Implementation:
+- Check paid user count before showing beta pricing
+- Once 50 reached, automatically switch to $29 pricing
+- Beta users keep $5 rate forever (honor the promise)
+- Use `VITE_BETA_USER_LIMIT=50` environment variable
+
+## Unified Signup Flow (Conversion Optimized)
+
+### Architecture:
+- **Website** (`/signup`): Static page showing both options
+- **Dashboard** (`/onboard`): Handles API calls (Supabase, Stripe, waitlist)
+
+### Key Features:
+1. **Single page** with both Free (waitlist) and Paid ($5 beta) options
+2. **Paid pre-selected** by default (3-5x conversion boost)
+3. **Visual hierarchy** favoring paid plan
+4. **Urgency**: "Only X/50 beta spots left"
+5. **Anchoring**: Show $29 crossed out
+
+### Expected Results:
+- Overall signups: 15%+ (vs 8% current)
+- Paid conversion: 40%+ of signups
+- Abandonment: -50%
+
+### Files:
+- `/website/app/signup/page.tsx` - Unified signup page
+- `/dashboard/src/app/onboard/page.tsx` - API handler
+
 ## 🐕 INTERNAL TEST ACCOUNT (Dogfooding)
 
 ### Account Details
