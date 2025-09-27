@@ -454,29 +454,36 @@ cd frontend && npm run dev
 
 ### Deployment
 
-#### CRITICAL: Vercel Project Linking (Added 2025-09-25)
+#### CRITICAL: Deployment Architecture (Updated 2025-09-27)
+**All SafePrompt services are deployed as follows:**
+- **API**: Vercel Functions at api.safeprompt.dev
+- **Website**: Cloudflare Pages at www.safeprompt.dev
+- **Dashboard**: Cloudflare Pages at dashboard.safeprompt.dev
+
 ```bash
-# ALWAYS verify correct project before deploying!
-cd api && cat .vercel/project.json
-# Should show: "projectName":"safeprompt-api" NOT just "api"
-
-# If wrong project, re-link:
-rm -rf .vercel
-source /home/projects/.env
-vercel link --token $VERCEL_TOKEN --yes --project safeprompt-api
-
 # Deploy API to Vercel
-cd api && source /home/projects/.env
+cd /home/projects/safeprompt/api
+source /home/projects/.env
 vercel --prod --token $VERCEL_TOKEN --yes
+# Verify: Should show "projectName":"safeprompt-api" in .vercel/project.json
 
-# Deploy WEBSITE (Next.js) to Cloudflare Pages
-cd website && npm run build
+# Deploy WEBSITE to Cloudflare Pages
+cd /home/projects/safeprompt/website
+npm run build  # Builds to 'out' directory
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
 wrangler pages deploy out --project-name safeprompt --branch main
-# NOTE: Next.js builds to 'out' directory, not 'dist'!
+
+# Deploy DASHBOARD to Cloudflare Pages
+cd /home/projects/safeprompt/dashboard
+npm run build  # Builds to 'out' directory
+source /home/projects/.env && export CLOUDFLARE_API_TOKEN
+wrangler pages deploy out --project-name safeprompt-dashboard --branch main
 ```
 
-**⚠️ COMMON PITFALL**: Multiple Vercel projects can exist (api, safeprompt-api, etc). The `.vercel/project.json` determines which deploys. Wrong project = endpoints won't appear on custom domain!
+**⚠️ IMPORTANT**:
+- Dashboard is on Cloudflare Pages, NOT Vercel!
+- All Next.js projects build to 'out' directory for static export
+- API is the only service on Vercel (for serverless functions)
 
 ### Vercel Environment Variable Management
 ```bash
