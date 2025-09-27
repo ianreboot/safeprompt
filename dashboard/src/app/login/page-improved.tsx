@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Shield, Mail, Lock, ArrowRight, Info, Zap, Clock } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
-export default function ImprovedLogin() {
+function LoginContent() {
   const searchParams = useSearchParams()
   const intent = searchParams.get('intent') // free, earlybird, waitlist
   const plan = searchParams.get('plan')
@@ -72,7 +72,7 @@ export default function ImprovedLogin() {
   }
 
   const config = getIntentConfig()
-  const Icon = config?.icon
+  const Icon = config?.icon || Shield
 
   async function handleAuth(e: React.FormEvent) {
     e.preventDefault()
@@ -306,5 +306,17 @@ export default function ImprovedLogin() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ImprovedLogin() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <Shield className="w-8 h-8 text-primary animate-pulse" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }

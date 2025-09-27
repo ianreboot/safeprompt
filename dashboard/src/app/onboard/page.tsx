@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Shield, CheckCircle, Loader, CreditCard, Clock } from 'lucide-react'
 
-export default function Onboard() {
+function OnboardContent() {
   const searchParams = useSearchParams()
   const plan = searchParams.get('plan') || 'free'
   const email = searchParams.get('email') || ''
@@ -254,4 +254,16 @@ export default function Onboard() {
   }
 
   return null
+}
+
+export default function Onboard() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <Loader className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    }>
+      <OnboardContent />
+    </Suspense>
+  )
 }
