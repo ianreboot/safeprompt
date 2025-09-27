@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import LogoText from './LogoText'
 
 export default function Footer() {
   return (
@@ -7,9 +6,7 @@ export default function Footer() {
       <div className="container mx-auto max-w-6xl">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <div className="mb-4">
-              <LogoText size="lg" />
-            </div>
+            <h4 className="font-semibold mb-4">SafePrompt</h4>
             <p className="text-muted-foreground text-sm">
               Protecting AI applications from prompt injection.
             </p>
