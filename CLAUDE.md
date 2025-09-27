@@ -771,3 +771,100 @@ wrangler pages deploy out --project-name safeprompt --branch main
 - ✅ Lead with relatable scenarios
 - ✅ Clear, numbered steps with accurate time estimates
 - ✅ Standardize components across all posts
+
+## 🚨 CRITICAL: Blog AEO Implementation Lessons (2025-09-27)
+
+### The Great Next.js JSX Compilation Battle
+**Problem**: Attempted to create AEOLayout component for blog optimization, got persistent "Unexpected token BlogLayout" errors
+**Investigation Time Wasted**: 3+ hours
+**Root Cause**: Unknown - possibly Next.js static export limitations with complex JSX
+
+### What Failed (DO NOT ATTEMPT AGAIN)
+- ❌ Creating separate AEOLayout component
+- ❌ Importing AEOLayout into blog posts
+- ❌ Adding React imports explicitly
+- ❌ Changing file extensions to .jsx
+- ❌ Wrapping returns in different parentheses patterns
+- ❌ Using different import syntaxes
+
+### What Worked
+- ✅ Keep using BlogLayout (it works!)
+- ✅ Add AEO elements inline within BlogLayout children
+- ✅ Create reusable components for tables/sections
+- ✅ Comment out problematic imports rather than fight them
+
+### AEO Elements to Include (inline, not as component)
+When optimizing for AI Engine Optimization:
+```jsx
+// Add these directly in the blog post component, NOT as separate layout
+<div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-500/50 rounded-xl p-6 mb-6">
+  <h2 className="text-lg font-bold mb-2 text-white">Direct Answer</h2>
+  <p className="text-white">[50-word complete answer]</p>
+</div>
+
+<div className="flex items-center gap-2 text-sm text-zinc-400 mb-6">
+  <Calendar className="w-4 h-4" />
+  <span>Last updated: September 27, 2025</span>
+</div>
+
+// Quick facts, cost analysis, etc. - all inline
+```
+
+### Date Management Critical Issue
+**Problem**: Blogs showing dates from the past (January 2025 when today is September 2025)
+**Impact**: Makes content look stale, reduces trust
+**Solution**: ALWAYS check current date from <env> block
+**Files to Update**:
+- `/website/app/blog/[slug]/page.tsx` - Blog post dates
+- `/website/app/blog/page.tsx` - Blog listing dates
+
+### Build and Deploy Reality Check
+```bash
+# CORRECT deployment sequence that actually works
+cd /home/projects/safeprompt/website
+npm run build  # Creates 'out' directory, NOT 'dist'!
+source /home/projects/.env && export CLOUDFLARE_API_TOKEN
+wrangler pages deploy out --project-name safeprompt --branch main
+
+# Common errors:
+# "no such directory 'dist'" - Next.js builds to 'out'
+# "Unexpected token BlogLayout" - JSX compilation issue, revert to working version
+```
+
+### Component Import Limitations
+**Cannot use these patterns in blog posts**:
+- `import { ComparisonTable } from '@/components/blog/AEOLayout'` - Causes JSX errors
+- Complex component compositions with multiple imports
+
+**Must use inline HTML tables instead**:
+```jsx
+<div className="overflow-x-auto my-8">
+  <table className="w-full border-collapse">
+    {/* Full HTML table structure */}
+  </table>
+</div>
+```
+
+### The Revert Pattern (When Nothing Works)
+```bash
+# When build keeps failing after multiple attempts:
+git checkout -- app/blog/chatbot-hacks/page.tsx
+git checkout -- app/blog/gmail-ai-threat/page.tsx
+# Start over with working version, make smaller changes
+```
+
+### Time-Saving Rules for Future AIs
+1. **If JSX build error persists after 3 attempts** - Revert and use simpler approach
+2. **Never fight Next.js static export** - It has undocumented limitations
+3. **Test blog components in isolation first** - Create test file, verify it builds
+4. **Keep blog posts simple** - BlogLayout + inline content works reliably
+5. **Don't create new layout components** - Reuse what exists
+6. **Always verify dates** - Check <env> block for current date, not your training data
+
+### What Success Looks Like
+- Build completes without errors
+- Deployment to Cloudflare Pages succeeds
+- Blog posts show current dates (September 2025, not January)
+- All reference links work
+- Code examples are copy-pasteable
+- No double bullets/checkmarks in lists
