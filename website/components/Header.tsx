@@ -19,12 +19,6 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link href="/#pricing" className="text-muted-foreground hover:text-foreground transition">
-              Pricing
-            </Link>
-            <Link href="/#docs" className="text-muted-foreground hover:text-foreground transition">
-              Documentation
-            </Link>
             <Link href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">
               Sign In
             </Link>
@@ -52,20 +46,6 @@ export default function Header() {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-3">
-            <Link
-              href="/#pricing"
-              className="block text-muted-foreground hover:text-foreground transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/#docs"
-              className="block text-muted-foreground hover:text-foreground transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Documentation
-            </Link>
             <Link
               href="https://dashboard.safeprompt.dev"
               className="block text-muted-foreground hover:text-foreground transition"

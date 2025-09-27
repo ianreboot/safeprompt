@@ -9,7 +9,7 @@
     "id": 5402,
     "files": [
       "static/chunks/972-9f58e0c181cc6a2f.js",
-      "static/chunks/402.a005cf2683cd2810.js"
+      "static/chunks/402.a525d363cf9cf869.js"
     ]
   },
   "app/blog/chatbot-hacks/page.tsx -> @/components/blog/CodeBlock": {
@@ -40,7 +40,7 @@
     "id": 5402,
     "files": [
       "static/chunks/972-9f58e0c181cc6a2f.js",
-      "static/chunks/402.a005cf2683cd2810.js"
+      "static/chunks/402.a525d363cf9cf869.js"
     ]
   },
   "app/blog/gmail-ai-threat/page.tsx -> @/components/blog/CodeBlock": {

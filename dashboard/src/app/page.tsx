@@ -89,11 +89,10 @@ export default function Dashboard() {
   const [currentPlan, setCurrentPlan] = useState<PricingPlan>(pricingPlans[0])
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
-  const isDemo = user?.email === 'demo@safeprompt.dev'
-  const hasRealKey = apiKey?.key && apiKey.key !== 'demo_key'
+  const hasRealKey = apiKey?.key
   const maskedKey = hasRealKey
     ? (showKey ? apiKey.key : `${apiKey.key.substring(0, 7)}${'•'.repeat(24)}${apiKey.key_hint}`)
-    : 'sp_demo_k3y_f0r_pr3v13w_0nly'
+    : ''
 
   useEffect(() => {
     checkUser()
@@ -108,9 +107,16 @@ export default function Dashboard() {
         await fetchUsage(user.id)
         await fetchLastUsed(user.id)
         await fetchCacheStats()
+      } else {
+        // No user logged in, redirect to login page
+        window.location.href = '/login'
+        return
       }
     } catch (error) {
       console.error('Error:', error)
+      // On error, redirect to login
+      window.location.href = '/login'
+      return
     } finally {
       setLoading(false)
     }
@@ -168,7 +174,7 @@ export default function Dashboard() {
       setCurrentPlan(pricingPlans[planIndex >= 0 ? planIndex : 0])
 
       const limit = pricingPlans[planIndex >= 0 ? planIndex : 0].requests
-      const current = profileData?.api_calls_this_month || count || (isDemo ? 2534 : 0)
+      const current = profileData?.api_calls_this_month || count || 0
       const percentage = Math.round((current / limit) * 100)
 
       setUsage({
@@ -231,10 +237,12 @@ export default function Dashboard() {
   }
 
   async function copyApiKey() {
-    const keyToCopy = isDemo ? 'sp_demo_k3y_f0r_pr3v13w_0nly' : apiKey?.key || ''
-    await navigator.clipboard.writeText(keyToCopy)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    const keyToCopy = apiKey?.key || ''
+    if (keyToCopy) {
+      await navigator.clipboard.writeText(keyToCopy)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
   }
 
   async function copyCodeBlock(code: string, blockId: string) {
@@ -244,11 +252,6 @@ export default function Dashboard() {
   }
 
   async function regenerateKey() {
-    if (isDemo) {
-      alert('API key regeneration is disabled in demo mode.')
-      return
-    }
-
     if (!confirm('This will invalidate your current API key. Continue?')) return
 
     try {
@@ -276,11 +279,6 @@ export default function Dashboard() {
   }
 
   async function openBillingPortal() {
-    if (isDemo) {
-      setShowUpgradeModal(true)
-      return
-    }
-
     // Show upgrade modal for billing management
     setShowUpgradeModal(true)
   }
@@ -417,17 +415,6 @@ For questions, contact: support@safeprompt.dev`
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Demo Mode Banner */}
-      {isDemo && (
-        <div className="bg-yellow-900/20 border-b border-yellow-800/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-            <p className="text-sm text-yellow-400 font-medium text-center">
-              🎭 Demo Mode - This is a preview of the dashboard. <a href="https://safeprompt.dev#get-started" className="underline hover:text-yellow-300">Sign up for real access</a>
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <header className="border-b border-gray-800 bg-gray-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -451,17 +438,6 @@ For questions, contact: support@safeprompt.dev`
           </div>
         </div>
       </header>
-
-      {/* Demo Mode Banner */}
-      {isDemo && (
-        <div className="bg-yellow-900/20 border-b border-yellow-800/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-            <p className="text-sm text-yellow-400">
-              🎭 Demo Mode - <button onClick={() => setShowUpgradeModal(true)} className="underline">Sign up</button> for a real API key.
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -730,7 +706,7 @@ For questions, contact: support@safeprompt.dev`
               <div className="relative">
                 <button
                   onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "Authorization: Bearer ${apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Your user input here"}'`, 'curl')}
                   className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
@@ -739,7 +715,7 @@ For questions, contact: support@safeprompt.dev`
                 </button>
                 <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
                   <code>{`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "Authorization: Bearer ${apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Your user input here"}'`}</code>
                 </pre>
@@ -755,7 +731,7 @@ For questions, contact: support@safeprompt.dev`
   const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     method: 'POST',
     headers: {
-      'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
+      'Authorization': 'Bearer ${apiKey?.key || 'YOUR_API_KEY'}',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ prompt: userInput })
@@ -779,7 +755,7 @@ For questions, contact: support@safeprompt.dev`
   const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     method: 'POST',
     headers: {
-      'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
+      'Authorization': 'Bearer ${apiKey?.key || 'YOUR_API_KEY'}',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ prompt: userInput })
@@ -809,7 +785,7 @@ def check_prompt(user_input):
     response = requests.post(
         'https://api.safeprompt.dev/api/v1/validate',
         headers={
-            'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
+            'Authorization': 'Bearer ${apiKey?.key || 'YOUR_API_KEY'}',
             'Content-Type': 'application/json'
         },
         json={'prompt': user_input}
@@ -832,7 +808,7 @@ def check_prompt(user_input):
     response = requests.post(
         'https://api.safeprompt.dev/api/v1/validate',
         headers={
-            'Authorization': 'Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}',
+            'Authorization': 'Bearer ${apiKey?.key || 'YOUR_API_KEY'}',
             'Content-Type': 'application/json'
         },
         json={'prompt': user_input}
@@ -884,7 +860,7 @@ def check_prompt(user_input):
                 <div className="relative">
                   <button
                     onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "Authorization: Bearer ${apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{
     "prompts": [
@@ -899,7 +875,7 @@ def check_prompt(user_input):
                   </button>
                   <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
                     <code>{`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer ${isDemo ? 'YOUR_API_KEY' : apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "Authorization: Bearer ${apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{
     "prompts": [
@@ -1004,11 +980,7 @@ def check_prompt(user_input):
                       }`}
                       disabled={currentPlan.id === plan.id}
                       onClick={() => {
-                        if (isDemo) {
-                          alert('Sign up for a real account to select a plan')
-                        } else {
-                          alert(`Would redirect to Stripe checkout for ${plan.name} plan`)
-                        }
+                        alert(`Would redirect to Stripe checkout for ${plan.name} plan`)
                       }}
                     >
                       {currentPlan.id === plan.id ? 'Current Plan' : 'Select Plan'}

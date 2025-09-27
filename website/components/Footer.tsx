@@ -28,11 +28,6 @@ export default function Footer() {
                   Documentation
                 </Link>
               </li>
-              <li>
-                <Link href="https://api.safeprompt.dev/status" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  API Status
-                </Link>
-              </li>
             </ul>
           </div>
 

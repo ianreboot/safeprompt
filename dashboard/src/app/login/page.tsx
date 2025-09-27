@@ -142,14 +142,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Demo credentials for testing */}
-        {!isSignUp && (
-          <div className="mt-8 p-4 bg-gray-900 rounded-lg border border-gray-800">
-            <p className="text-xs text-gray-500 mb-2">Demo Credentials (Beta)</p>
-            <p className="text-sm font-mono">Email: demo@safeprompt.dev</p>
-            <p className="text-sm font-mono">Password: demo123</p>
-          </div>
-        )}
 
         {/* Links */}
         <div className="mt-8 flex justify-center gap-4 text-sm text-gray-400">
