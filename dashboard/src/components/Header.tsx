@@ -1,7 +1,8 @@
 'use client'
 
-import { Shield, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js'
+import LogoText from './LogoText'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -23,14 +24,11 @@ export default function Header({ user, usage }: HeaderProps) {
   }
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-xl border-b border-gray-800">
-      <div className="container mx-auto px-6 py-4">
+    <header className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-gray-800">
+      <div className="container mx-auto max-w-6xl px-6 py-4">
         <div className="flex justify-between items-center">
           {/* Left side - Logo */}
-          <a href="/" className="flex items-center gap-2">
-            <Shield className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold">SafePrompt</span>
-          </a>
+          <LogoText size="md" />
 
           {/* Right side - Usage, User info, Sign out */}
           <div className="flex items-center gap-6">

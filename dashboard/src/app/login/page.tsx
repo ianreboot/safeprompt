@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import LoginHeader from '@/components/LoginHeader'
 import Footer from '@/components/Footer'
 import { Shield, Mail, Lock, ArrowRight } from 'lucide-react'
 
@@ -49,16 +50,17 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-4">
+      <LoginHeader />
+
+      <div className="flex-1 flex items-center justify-center px-4 pt-20">
       <div className="max-w-md w-full">
-        {/* Logo */}
+        {/* Login heading */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <Shield className="w-12 h-12 text-primary" />
-          </div>
-          <h1 className="text-3xl font-bold">SafePrompt</h1>
-          <p className="text-gray-400 mt-2">
+          <h1 className="text-3xl font-bold">
             {isSignUp ? 'Create your account' : 'Sign in to your dashboard'}
+          </h1>
+          <p className="text-gray-400 mt-2">
+            {isSignUp ? 'Start protecting your AI applications' : 'Welcome back'}
           </p>
         </div>
 

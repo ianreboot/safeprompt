@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className="mt-auto py-6 px-6 border-t border-gray-800">
-      <div className="container mx-auto">
+    <footer className="py-12 px-6 border-t border-gray-800">
+      <div className="container mx-auto max-w-6xl">
         <div className="flex justify-between items-center text-sm">
           {/* Left side - Copyright */}
           <div className="text-gray-400">
