@@ -12,16 +12,7 @@ export default function UnifiedSignup() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [betaSpotsLeft, setBetaSpotsLeft] = useState(37) // 50 - 13 already signed up
-  const [waitlistSpots, setWaitlistSpots] = useState(47) // Fake scarcity
-
-  // Fake countdown for urgency
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setWaitlistSpots(prev => Math.max(prev - 1, 12)) // Never go below 12
-    }, 300000) // Decrease every 5 minutes
-    return () => clearInterval(timer)
-  }, [])
+  const [betaSpotsLeft] = useState(37) // Actual: 50 total - 13 current users
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,12 +66,12 @@ export default function UnifiedSignup() {
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-500" />
             <span className="text-sm">
-              <strong>Only {betaSpotsLeft} of 50 beta spots left</strong> - Lock in $5/month forever (regular price $29)
+              <strong>Beta pricing: First 50 users get $5/month forever</strong> (regular price will be $29)
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-yellow-600">
             <Users className="w-4 h-4" />
-            <span>{50 - betaSpotsLeft} developers already saving $24/month</span>
+            <span>Join early adopters saving $24/month</span>
           </div>
         </motion.div>
 
@@ -108,7 +99,7 @@ export default function UnifiedSignup() {
               >
                 {/* Best Value Badge */}
                 <div className="absolute -top-3 left-6 bg-primary text-black text-xs font-bold px-3 py-1 rounded-full">
-                  BETA PRICING - {betaSpotsLeft} SPOTS LEFT
+                  BETA PRICING - SAVE $24/MONTH
                 </div>
 
                 <div className="flex items-start gap-4">
@@ -158,7 +149,7 @@ export default function UnifiedSignup() {
 
                     <div className="mt-4 p-3 bg-green-900/20 rounded-lg border border-green-900/30">
                       <p className="text-xs text-green-400">
-                        💰 <strong>You save $288/year</strong> with beta pricing. Only {betaSpotsLeft} of 50 spots remain!
+                        💰 <strong>You save $288/year</strong> with beta pricing locked forever.
                       </p>
                     </div>
                   </div>
@@ -200,7 +191,7 @@ export default function UnifiedSignup() {
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-400">
                         <Clock className="w-4 h-4 text-yellow-600" />
-                        <span>2-3 week wait for access</span>
+                        <span>Access when we launch</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-400">
                         <X className="w-4 h-4 text-gray-600" />
@@ -208,9 +199,9 @@ export default function UnifiedSignup() {
                       </div>
                     </div>
 
-                    <div className="mt-4 p-3 bg-yellow-900/10 rounded-lg border border-yellow-900/20">
-                      <p className="text-xs text-yellow-600">
-                        ⏳ <strong>Only {waitlistSpots} spots remaining today.</strong> Currently 2-3 week wait.
+                    <div className="mt-4 p-3 bg-blue-900/10 rounded-lg border border-blue-900/20">
+                      <p className="text-xs text-blue-400">
+                        💡 <strong>Be first to know when we launch.</strong> Get early access benefits.
                       </p>
                     </div>
                   </div>
@@ -371,7 +362,7 @@ export default function UnifiedSignup() {
             <div>
               <h3 className="font-semibold mb-2">Why is there a waitlist for free?</h3>
               <p className="text-sm text-gray-400">
-                We're in beta and managing server capacity carefully. Paid users help us scale infrastructure faster.
+                We're in beta and managing server capacity carefully. Paid beta users help us scale infrastructure for everyone.
               </p>
             </div>
             <div>
@@ -389,7 +380,7 @@ export default function UnifiedSignup() {
             <div>
               <h3 className="font-semibold mb-2">Do I need a credit card for free?</h3>
               <p className="text-sm text-gray-400">
-                No credit card needed for the waitlist. We'll email you when your spot opens up.
+                No credit card needed for the waitlist. We'll email you when we're ready to onboard more users.
               </p>
             </div>
           </div>

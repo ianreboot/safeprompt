@@ -8,21 +8,6 @@ import CodeSelector from '@/components/CodeSelector'
 import LogoText from '@/components/LogoText'
 
 export default function Home() {
-  const [waitlistCount, setWaitlistCount] = useState(0)
-
-  useEffect(() => {
-    // Fetch real waitlist count from API
-    fetch('https://api.safeprompt.dev/api/waitlist/count')
-      .then(res => res.json())
-      .then(data => {
-        if (data.count) {
-          setWaitlistCount(data.count)
-        }
-      })
-      .catch(err => {
-        console.error('Failed to fetch waitlist count:', err)
-      })
-  }, [])
 
   return (
     <main className="min-h-screen">
@@ -62,17 +47,15 @@ export default function Home() {
               or executing harmful commands. One API call is all you need.
             </p>
 
-            {/* Waitlist Counter - Simple */}
-            {waitlistCount > 0 && (
-              <div className="flex items-center justify-center mb-8">
-                <div className="flex items-center space-x-2 bg-card px-4 py-2 rounded-lg border border-border">
-                  <div className="w-2 h-2 bg-safe rounded-full animate-pulse" />
-                  <span className="text-muted-foreground">
-                    <span className="text-foreground font-semibold">{waitlistCount.toLocaleString()}</span> developers on waitlist
-                  </span>
-                </div>
+            {/* Join Beta Message */}
+            <div className="flex items-center justify-center mb-8">
+              <div className="flex items-center space-x-2 bg-card px-4 py-2 rounded-lg border border-border">
+                <div className="w-2 h-2 bg-safe rounded-full animate-pulse" />
+                <span className="text-muted-foreground">
+                  <span className="text-foreground font-semibold">Beta access available</span> - Join early adopters
+                </span>
               </div>
-            )}
+            </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -366,7 +349,7 @@ export default function Home() {
                 '10,000 validations/month',
                 'Advanced AI protection',
                 'Community support',
-                '2-3 week waitlist',
+                'Early access when ready',
               ]}
               buttonText="Join Waitlist"
               buttonVariant="blue"
@@ -377,14 +360,14 @@ export default function Home() {
               title="Beta Access"
               price="$5"
               period="/month"
-              description="First 50 users only (then $29)"
+              description="Beta pricing (will be $29)"
               features={[
                 '100,000 validations/month',
                 'Advanced AI protection',
                 'Priority support',
                 '99.9% uptime SLA',
-                '🔥 Lock in this price forever',
-                '⚡ Only 37/50 spots left',
+                '🔥 Lock in beta price forever',
+                '💰 Save $288/year',
               ]}
               buttonText="Get Beta Access"
               buttonVariant="primary"

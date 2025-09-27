@@ -9,7 +9,7 @@ import { Shield, Zap, Clock, Users, ArrowRight, Check, AlertCircle } from 'lucid
 
 export default function ImprovedHome() {
   const [activeIntent, setActiveIntent] = useState<'free' | 'waitlist' | 'earlybird' | null>(null)
-  const [waitlistCount, setWaitlistCount] = useState(247) // Mock for now
+  // Removed fake waitlist count
 
   return (
     <main className="min-h-screen">
@@ -82,7 +82,7 @@ export default function ImprovedHome() {
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-primary" />
                 <span className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">{waitlistCount}</span> developers waiting
+                  <span className="font-semibold text-foreground">Join</span> our growing community
                 </span>
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function ImprovedHome() {
               </button>
 
               <p className="text-xs text-center text-muted-foreground mt-3">
-                {waitlistCount} developers waiting
+                Join our growing community
               </p>
             </motion.div>
           </div>

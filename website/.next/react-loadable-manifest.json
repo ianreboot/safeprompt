@@ -6,10 +6,10 @@
     ]
   },
   "app/blog/chatbot-hacks/page.tsx -> @/components/blog/BlogLayout": {
-    "id": 3970,
+    "id": 5402,
     "files": [
-      "static/chunks/972-ae351083a1d7e01d.js",
-      "static/chunks/970.416a84b52041d744.js"
+      "static/chunks/972-113806ce51de795a.js",
+      "static/chunks/402.e9f4199c336ed025.js"
     ]
   },
   "app/blog/chatbot-hacks/page.tsx -> @/components/blog/CodeBlock": {
@@ -37,10 +37,10 @@
     ]
   },
   "app/blog/gmail-ai-threat/page.tsx -> @/components/blog/BlogLayout": {
-    "id": 3970,
+    "id": 5402,
     "files": [
-      "static/chunks/972-ae351083a1d7e01d.js",
-      "static/chunks/970.416a84b52041d744.js"
+      "static/chunks/972-113806ce51de795a.js",
+      "static/chunks/402.e9f4199c336ed025.js"
     ]
   },
   "app/blog/gmail-ai-threat/page.tsx -> @/components/blog/CodeBlock": {
