@@ -72,6 +72,7 @@ const pricingPlans: PricingPlan[] = [
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [isClient, setIsClient] = useState(false)
   const [apiKey, setApiKey] = useState<ApiKey | null>(null)
   const [showKey, setShowKey] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -95,6 +96,7 @@ export default function Dashboard() {
     : ''
 
   useEffect(() => {
+    setIsClient(true)
     checkUser()
   }, [])
 
@@ -288,8 +290,26 @@ export default function Dashboard() {
     window.location.href = '/login'
   }
 
-  if (loading) {
-    return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>
+  // Prevent any server-side rendering of dashboard content
+  if (!isClient || loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Shield className="w-12 h-12 text-primary animate-pulse" />
+          <p className="text-gray-400">Authenticating...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // If we get here without a user, redirect (failsafe)
+  if (!user) {
+    window.location.href = '/login'
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-gray-400">Redirecting to login...</p>
+      </div>
+    )
   }
 
   const formatLastUsed = () => {
