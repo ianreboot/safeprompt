@@ -5,9 +5,9 @@ export function DirectAnswerBox({ answer }: { answer: string }) {
   return (
     <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-500/50 rounded-xl p-6 mb-6">
       <div className="flex items-start gap-3">
-        <Zap className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
+        <Zap className="w-6 h-6 text-blue-400 flex-shrink-0" />
         <div>
-          <h2 className="text-lg font-bold mb-2 text-white">Direct Answer</h2>
+          <h2 className="text-lg font-bold mb-2 text-white tldr-heading">TLDR</h2>
           <p className="text-white">{answer}</p>
         </div>
       </div>
