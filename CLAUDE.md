@@ -774,11 +774,43 @@ wrangler pages deploy out --project-name safeprompt --branch main
 
 ## 🚨 CRITICAL: Blog AEO Implementation Lessons (2025-09-27)
 
-### The Great Next.js JSX Compilation Battle - SOLVED!
-**Problem**: Attempted to create AEOLayout component for blog optimization, got persistent "Unexpected token BlogLayout" errors
+### The Great Next.js JSX Compilation Battle - FULLY UNDERSTOOD!
+**Problem**: Blog components failed with "Unexpected token" while simple pages worked fine
 **Initial Investigation Time**: 3+ hours
-**Root Cause**: Next.js static export requires dynamic imports for complex components
-**Solution Found**: Dynamic imports with SSR disabled work perfectly!
+**Root Cause Discovered**: Component complexity threshold in Next.js static export
+**Solution**: Dynamic imports with SSR disabled for complex blog components
+
+### 🔍 WHY BLOGS FAILED BUT OTHER PAGES WORKED
+
+**Simple Pages (About, Contact) - Work Fine**:
+- Import basic components: `import Header from '@/components/Header'`
+- Flat component structure with no complex nesting
+- Simple props and minimal internal logic
+- Next.js static analysis handles these easily
+
+**Blog Pages - Required Dynamic Imports**:
+- Already use complex `BlogLayout` wrapper component
+- Import multiple specialized components (CodeBlock, CodeTabs, References)
+- Adding more complexity (AEOLayout) exceeds static analysis capability
+- Deep component nesting breaks JSX compilation
+
+**The Pattern**:
+```jsx
+// ✅ WORKS: Simple pages
+import Header from '@/components/Header'  // Simple, flat component
+
+// ❌ FAILS: Complex blog components
+import BlogLayout from '@/components/blog/BlogLayout'  // Complex wrapper
+import { ComparisonTable } from '@/components/blog/AEOLayout'  // Too much nesting
+
+// ✅ SOLUTION: Dynamic imports for blog components
+const ComparisonTable = dynamic(
+  () => import('@/components/blog/AEOLayout').then(mod => mod.ComparisonTable),
+  { ssr: false }
+)
+```
+
+**Key Insight**: Next.js static export has a complexity threshold. Once your component tree gets too deep or imports too many specialized components, you MUST use dynamic imports.
 
 ### What Failed Initially
 - ❌ Creating separate AEOLayout component with default export

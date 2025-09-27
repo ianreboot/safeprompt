@@ -1,16 +1,60 @@
 'use client'
 
-import BlogLayout from '@/components/blog/BlogLayout'
-import CodeBlock from '@/components/blog/CodeBlock'
-import CodeTabs from '@/components/blog/CodeTabs'
-import ReferenceSection, { ProofOfConceptBox } from '@/components/blog/References'
+import dynamic from 'next/dynamic'
 import { AlertTriangle, Shield, TrendingUp, Zap } from 'lucide-react'
+
+// Dynamic imports with SSR disabled for complex components
+const BlogLayout = dynamic(
+  () => import('@/components/blog/BlogLayout'),
+  { ssr: false }
+)
+
+const CodeBlock = dynamic(
+  () => import('@/components/blog/CodeBlock'),
+  { ssr: false }
+)
+
+const CodeTabs = dynamic(
+  () => import('@/components/blog/CodeTabs'),
+  { ssr: false }
+)
+
+const ReferenceSection = dynamic(
+  () => import('@/components/blog/References'),
+  { ssr: false }
+)
+
+const ProofOfConceptBox = dynamic(
+  () => import('@/components/blog/References').then(mod => mod.ProofOfConceptBox),
+  { ssr: false }
+)
+
+// AEO Components
+const DirectAnswerBox = dynamic(
+  () => import('@/components/blog/AEOComponents').then(mod => mod.DirectAnswerBox),
+  { ssr: false }
+)
+
+const LastUpdated = dynamic(
+  () => import('@/components/blog/AEOComponents').then(mod => mod.LastUpdated),
+  { ssr: false }
+)
+
+const QuickFacts = dynamic(
+  () => import('@/components/blog/AEOComponents').then(mod => mod.QuickFacts),
+  { ssr: false }
+)
+
+const ComparisonTable = dynamic(
+  () => import('@/components/blog/AEOComponents').then(mod => mod.ComparisonTable),
+  { ssr: false }
+)
 
 const blogMeta = {
   title: 'Ship Fast, Get Hacked: The AI Email Attack You\'re Missing',
   description: 'Your contact form just made Gmail lie to you. Here\'s how hackers hide invisible text in your forms and what you can do about it in literally one line of code.',
   author: 'SafePrompt Security Team',
-  date: '2025-09-26',
+  date: '2025-09-27',
   readTime: '5 min read',
   tags: ['Security', 'AI Safety', 'Gmail', 'Prompt Injection', 'Contact Forms']
 }
@@ -307,6 +351,24 @@ class ContactController extends Controller
   return (
     <BlogLayout meta={blogMeta}>
       <div className="blog-content">
+        {/* AEO: Direct Answer Box */}
+        <DirectAnswerBox
+          answer="AI email assistants in Gmail, Outlook, and Apple Mail can be manipulated by invisible text in contact forms to display false urgent messages. Protect your forms with prompt injection validation in 15 minutes."
+        />
+
+        {/* AEO: Last Updated */}
+        <LastUpdated date="September 27, 2025" />
+
+        {/* AEO: Quick Facts */}
+        <QuickFacts
+          facts={[
+            { icon: <AlertTriangle className="w-5 h-5 text-red-400" />, label: "Risk Level", value: "Critical (CVSS 9.4)" },
+            { icon: <TrendingUp className="w-5 h-5 text-blue-400" />, label: "Affected Users", value: "2.2B+ globally" },
+            { icon: <Shield className="w-5 h-5 text-green-400" />, label: "Fix Time", value: "15 minutes" },
+            { icon: <Zap className="w-5 h-5 text-yellow-400" />, label: "Attack Type", value: "Zero-click injection" }
+          ]}
+        />
+
         {/* Opening Hook */}
         <h2>The Attack That's Happening Right Now</h2>
 
@@ -412,6 +474,18 @@ How it worked:
 4. Copilot appends sensitive data to attacker URL
 5. Data sent to attacker server automatically
 6. User never knows attack occurred`}
+        />
+
+        {/* AEO: Comparison Table */}
+        <ComparisonTable
+          headers={['Email Provider', 'AI Feature', 'Vulnerable?', 'Patch Status']}
+          rows={[
+            ['Gmail (Gemini)', 'AI Summaries', 'Yes', 'No patch available'],
+            ['Outlook (Copilot)', 'Smart Compose', 'Partially', 'CVE-2025-32711 patched'],
+            ['Apple Mail', 'iOS 18 AI', 'Yes', 'No patch available'],
+            ['ProtonMail', 'No AI', 'No', 'Not applicable'],
+            ['Fastmail', 'No AI', 'No', 'Not applicable']
+          ]}
         />
 
         <h2>The Fix: 15-Minute Security Upgrade</h2>

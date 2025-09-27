@@ -1,10 +1,49 @@
 'use client'
 
-import BlogLayout from '@/components/blog/BlogLayout'
-import ReferenceSection from '@/components/blog/References'
-import CodeBlock from '@/components/blog/CodeBlock'
-import CodeTabs from '@/components/blog/CodeTabs'
+import dynamic from 'next/dynamic'
 import { AlertTriangle, Shield, TrendingUp, Zap } from 'lucide-react'
+
+// Dynamic imports with SSR disabled for complex components
+const BlogLayout = dynamic(
+  () => import('@/components/blog/BlogLayout'),
+  { ssr: false }
+)
+
+const CodeBlock = dynamic(
+  () => import('@/components/blog/CodeBlock'),
+  { ssr: false }
+)
+
+const CodeTabs = dynamic(
+  () => import('@/components/blog/CodeTabs'),
+  { ssr: false }
+)
+
+const ReferenceSection = dynamic(
+  () => import('@/components/blog/References'),
+  { ssr: false }
+)
+
+// AEO Components
+const DirectAnswerBox = dynamic(
+  () => import('@/components/blog/AEOComponents').then(mod => mod.DirectAnswerBox),
+  { ssr: false }
+)
+
+const LastUpdated = dynamic(
+  () => import('@/components/blog/AEOComponents').then(mod => mod.LastUpdated),
+  { ssr: false }
+)
+
+const QuickFacts = dynamic(
+  () => import('@/components/blog/AEOComponents').then(mod => mod.QuickFacts),
+  { ssr: false }
+)
+
+const ComparisonTable = dynamic(
+  () => import('@/components/blog/AEOComponents').then(mod => mod.ComparisonTable),
+  { ssr: false }
+)
 
 const blogMeta = {
   title: 'Your Chatbot Just Sold a Car for $1: The Corporate AI Disasters You Need to Prevent',
@@ -229,6 +268,24 @@ export async function POST(request: NextRequest) {
     <BlogLayout meta={blogMeta}>
       <div className="blog-content">
 
+        {/* AEO: Direct Answer Box */}
+        <DirectAnswerBox
+          answer="Customer service chatbots can be manipulated through prompt injection to make unauthorized promises, sell products for $1, or damage brand reputation. Major incidents include Chevrolet selling cars for $1, Air Canada losing a lawsuit, and DPD's chatbot swearing at customers."
+        />
+
+        {/* AEO: Last Updated */}
+        <LastUpdated date="September 27, 2025" />
+
+        {/* AEO: Quick Facts */}
+        <QuickFacts
+          facts={[
+            { icon: <AlertTriangle className="w-5 h-5 text-red-400" />, label: "Risk", value: "Legal liability" },
+            { icon: <TrendingUp className="w-5 h-5 text-blue-400" />, label: "Viral reach", value: "800K+ views/day" },
+            { icon: <Shield className="w-5 h-5 text-green-400" />, label: "Protection", value: "Input validation" },
+            { icon: <Zap className="w-5 h-5 text-yellow-400" />, label: "Attack time", value: "< 60 seconds" }
+          ]}
+        />
+
         {/* Opening Hook */}
         <h2>The $76,000 Mistake That Went Viral</h2>
 
@@ -316,6 +373,18 @@ export async function POST(request: NextRequest) {
             <strong>If you checked ANY box:</strong> You're one viral tweet away from disaster.
           </p>
         </div>
+
+        {/* AEO: Comparison Table */}
+        <ComparisonTable
+          headers={['Company', 'Incident', 'Impact', 'Cost']}
+          rows={[
+            ['Chevrolet', 'Sold car for $1', 'Viral PR disaster', '$76,000 potential loss'],
+            ['Air Canada', 'False bereavement policy', 'Lost lawsuit', '$812 + legal fees'],
+            ['DPD', 'Bot swearing at customers', '800K viral views', 'Brand damage'],
+            ['Mental health app', 'Harmful advice given', 'Service shutdown', 'Unknown liability'],
+            ['Banking chatbot', 'Leaked account info', 'Security breach', '$2.3M fine (GDPR)']
+          ]}
+        />
 
         <h2>The Fix: 20-Minute Protection Setup</h2>
 
