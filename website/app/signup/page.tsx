@@ -143,7 +143,7 @@ export default function UnifiedSignup() {
                       </div>
                       <div className="flex items-center gap-2 text-sm">
                         <Check className="w-4 h-4 text-green-500" />
-                        <span>99.9% uptime SLA</span>
+                        <span>High availability infrastructure</span>
                       </div>
                     </div>
 
@@ -191,7 +191,7 @@ export default function UnifiedSignup() {
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-400">
                         <Clock className="w-4 h-4 text-yellow-600" />
-                        <span>Access when we launch</span>
+                        <span>Access when capacity allows</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-400">
                         <X className="w-4 h-4 text-gray-600" />
@@ -201,7 +201,7 @@ export default function UnifiedSignup() {
 
                     <div className="mt-4 p-3 bg-blue-900/10 rounded-lg border border-blue-900/20">
                       <p className="text-xs text-blue-400">
-                        💡 <strong>Be first to know when we launch.</strong> Get early access benefits.
+                        💡 <strong>Join the queue for free access.</strong> We're scaling infrastructure gradually.
                       </p>
                     </div>
                   </div>
@@ -217,7 +217,7 @@ export default function UnifiedSignup() {
               </div>
               <div className="flex items-center gap-2">
                 <Lock className="w-4 h-4" />
-                <span>SOC2 compliant</span>
+                <span>Privacy focused</span>
               </div>
               <div className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4" />

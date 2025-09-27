@@ -365,7 +365,7 @@ export default function Home() {
                 '100,000 validations/month',
                 'Advanced AI protection',
                 'Priority support',
-                '99.9% uptime SLA',
+                'High availability infrastructure',
                 '🔥 Lock in beta price forever',
                 '💰 Save $288/year',
               ]}
