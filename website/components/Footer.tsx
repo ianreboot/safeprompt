@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="py-12 px-6 border-t border-border">
       <div className="container mx-auto max-w-6xl">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-3 gap-8">
           <div>
             <h4 className="font-semibold mb-4">SafePrompt</h4>
             <p className="text-muted-foreground text-sm">
@@ -13,32 +13,16 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Product</h4>
+            <h4 className="font-semibold mb-4">Company</h4>
             <ul className="space-y-2">
-              <li>
-                <Link href="/#pricing" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link href="/#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  Documentation
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/blog/gmail-ai-threat" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  Gmail AI Security Threat
-                </Link>
-              </li>
               <li>
                 <Link href="/about" className="text-muted-foreground hover:text-foreground transition text-sm">
                   About
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog/gmail-ai-threat" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Blog
                 </Link>
               </li>
               <li>

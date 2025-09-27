@@ -5,10 +5,10 @@
   "/blog/gmail-ai-threat/page": "app/blog/gmail-ai-threat/page.js",
   "/blog/page": "app/blog/page.js",
   "/contact/page": "app/contact/page.js",
-  "/page": "app/page.js",
   "/privacy/page": "app/privacy/page.js",
   "/signup/page": "app/signup/page.js",
   "/terms/page": "app/terms/page.js",
   "/test-logo/page": "app/test-logo/page.js",
+  "/page": "app/page.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js"
 }
