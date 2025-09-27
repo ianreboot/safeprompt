@@ -8,8 +8,8 @@
   "app/blog/chatbot-hacks/page.tsx -> @/components/blog/BlogLayout": {
     "id": 5402,
     "files": [
-      "static/chunks/972-113806ce51de795a.js",
-      "static/chunks/402.e9f4199c336ed025.js"
+      "static/chunks/972-9f58e0c181cc6a2f.js",
+      "static/chunks/402.a005cf2683cd2810.js"
     ]
   },
   "app/blog/chatbot-hacks/page.tsx -> @/components/blog/CodeBlock": {
@@ -39,8 +39,8 @@
   "app/blog/gmail-ai-threat/page.tsx -> @/components/blog/BlogLayout": {
     "id": 5402,
     "files": [
-      "static/chunks/972-113806ce51de795a.js",
-      "static/chunks/402.e9f4199c336ed025.js"
+      "static/chunks/972-9f58e0c181cc6a2f.js",
+      "static/chunks/402.a005cf2683cd2810.js"
     ]
   },
   "app/blog/gmail-ai-threat/page.tsx -> @/components/blog/CodeBlock": {
