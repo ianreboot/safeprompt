@@ -6,28 +6,13 @@ import WaitlistForm from '@/components/WaitlistForm'
 import PricingCard from '@/components/PricingCard'
 import CodeSelector from '@/components/CodeSelector'
 import LogoText from '@/components/LogoText'
+import Header from '@/components/Header'
 
 export default function Home() {
 
   return (
     <main className="min-h-screen">
-      {/* Simple Navigation */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-border">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <LogoText size="md" />
-            <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">BETA</span>
-          </div>
-          <div className="flex items-center space-x-6">
-            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition">Pricing</a>
-            <a href="#docs" className="text-muted-foreground hover:text-foreground transition">Documentation</a>
-            <a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">Sign In</a>
-            <a href="/signup" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition">
-              Get Started
-            </a>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       {/* Hero Section - Problem-Aware Content */}
       <section className="pt-32 pb-20 px-6">
@@ -60,7 +45,7 @@ export default function Home() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <a href="/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
-                Get Started - $5/mo Beta
+                Sign Up - $5/mo Beta
               </a>
               <a href="#docs" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
                 View Documentation
