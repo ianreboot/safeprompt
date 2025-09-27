@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 import {
   Key, Eye, EyeOff, Copy, RefreshCw, LogOut, BarChart, CreditCard,
   FileText, HelpCircle, TrendingUp, Clock, Check, ExternalLink,
@@ -434,33 +436,11 @@ For questions, contact: support@safeprompt.dev`
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-8">
-              <h1 className="text-2xl font-bold text-primary">SafePrompt</h1>
-              <nav className="hidden md:flex items-center gap-6">
-                <a href="#" className="text-sm text-white">Dashboard</a>
-                <a href="https://safeprompt.dev/contact?subject=support" className="text-sm text-gray-300 hover:text-white">Support</a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-400">{user?.email}</span>
-              <button
-                onClick={signOut}
-                className="text-sm text-gray-400 hover:text-white flex items-center gap-1"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <Header user={user} usage={usage} />
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Content - Add padding-top to account for fixed header */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 flex-1">
 
         {/* Stats Overview */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
@@ -934,8 +914,6 @@ def check_prompt(user_input):
           </div>
         </div>
 
-      </main>
-
       {/* Upgrade Modal */}
       {showUpgradeModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -1012,6 +990,9 @@ def check_prompt(user_input):
           </div>
         </div>
       )}
+      </main>
+
+      <Footer />
     </div>
   )
 }

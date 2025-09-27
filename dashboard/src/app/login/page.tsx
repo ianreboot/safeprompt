@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import Footer from '@/components/Footer'
 import { Shield, Mail, Lock, ArrowRight } from 'lucide-react'
 
 export default function Login() {
@@ -47,7 +48,8 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <div className="flex-1 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -143,21 +145,10 @@ export default function Login() {
         </div>
 
 
-        {/* Links */}
-        <div className="mt-8 flex justify-center gap-4 text-sm text-gray-400">
-          <a href="https://safeprompt.dev" className="hover:text-white transition-colors">
-            Home
-          </a>
-          <span>•</span>
-          <a href="/docs" className="hover:text-white transition-colors">
-            Documentation
-          </a>
-          <span>•</span>
-          <a href="https://safeprompt.dev/contact" className="hover:text-white transition-colors">
-            Support
-          </a>
-        </div>
       </div>
+      </div>
+
+      <Footer />
     </div>
   )
 }
