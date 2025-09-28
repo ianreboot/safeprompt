@@ -68,7 +68,11 @@ const blogMeta = {
   author: 'SafePrompt Security Team',
   date: '2025-09-28',
   readTime: '8 min read',
-  tags: ['prompt-injection', 'gmail-hack', 'invisible-text', 'ai-security', 'contact-form-security']
+  tags: ['prompt-injection', 'gmail-hack', 'invisible-text', 'ai-security', 'contact-form-security'],
+  // AEO Dual-Headline Pattern
+  visualHeadline: 'Ship Fast, Get Hacked: The AI Email Attack You\'re Missing',
+  semanticAliases: 'Gmail AI hack, Invisible text attack, Contact form injection',
+  affectedPlatforms: 'Gmail, Outlook, Apple Mail'
 }
 
 export default function PreventAIEmailAttacksPost() {
@@ -315,33 +319,13 @@ async function moderateWithOpenAI(text) {
 
       <BlogLayout meta={blogMeta}>
         <div className="blog-content">
-          {/* AEO: Dual-Headline Pattern */}
-          <header className="article-header">
-            {/* Visual headline for humans - creative, emotional */}
-            <p className="visual-headline text-5xl font-bold mb-3 text-white">
-              Ship Fast, Get Hacked: The AI Email Attack You're Missing
-            </p>
-
-            {/* Semantic H1 for AI - exact question, smaller but visible */}
-            <h1 className="semantic-title text-xl text-gray-400 font-normal mb-4">
-              How to Prevent AI Email Prompt Injection Attacks
-            </h1>
-
-            {/* Semantic aliases visible but subtle */}
-            <p className="article-context text-sm text-gray-500 mb-6">
-              <span className="aka">Also known as: Gmail AI hack, Invisible text attack, Contact form injection</span>
-              <span className="separator"> • </span>
-              <span className="affected">Affecting: Gmail, Outlook, Apple Mail</span>
-            </p>
-
-            {/* Topic tags */}
-            <div className="article-tags mb-8">
-              <span className="tag bg-red-900/30 text-red-300 px-2 py-1 rounded text-xs mr-2">prompt-injection</span>
-              <span className="tag bg-red-900/30 text-red-300 px-2 py-1 rounded text-xs mr-2">gmail-hack</span>
-              <span className="tag bg-red-900/30 text-red-300 px-2 py-1 rounded text-xs mr-2">invisible-text</span>
-              <span className="tag bg-red-900/30 text-red-300 px-2 py-1 rounded text-xs">ai-security</span>
-            </div>
-          </header>
+          {/* Topic tags for semantic context */}
+          <div className="article-tags mb-8">
+            <span className="tag bg-red-900/30 text-red-300 px-2 py-1 rounded text-xs mr-2">prompt-injection</span>
+            <span className="tag bg-red-900/30 text-red-300 px-2 py-1 rounded text-xs mr-2">gmail-hack</span>
+            <span className="tag bg-red-900/30 text-red-300 px-2 py-1 rounded text-xs mr-2">invisible-text</span>
+            <span className="tag bg-red-900/30 text-red-300 px-2 py-1 rounded text-xs">ai-security</span>
+          </div>
 
           {/* AEO: Direct Answer Box */}
           <DirectAnswerBox

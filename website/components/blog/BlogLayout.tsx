@@ -13,6 +13,10 @@ interface BlogLayoutProps {
     date: string
     readTime: string
     tags?: string[]
+    // AEO Dual-Headline Pattern Support
+    visualHeadline?: string
+    semanticAliases?: string
+    affectedPlatforms?: string
   }
 }
 
@@ -54,10 +58,48 @@ export default function BlogLayout({ children, meta }: BlogLayoutProps) {
               </div>
             </div>
 
-            {/* Title */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              {meta.title}
-            </h1>
+            {/* AEO Dual-Headline Pattern */}
+            {meta.visualHeadline ? (
+              <>
+                {/* Visual headline for humans - large, bold, creative */}
+                <p className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+                  {meta.visualHeadline}
+                </p>
+
+                {/* Semantic H1 for AI - smaller but visible, exact question */}
+                <h1 className="text-2xl text-muted-foreground font-normal mb-6">
+                  {meta.title}
+                </h1>
+
+                {/* Semantic context if provided */}
+                {(meta.semanticAliases || meta.affectedPlatforms) && (
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {meta.semanticAliases && (
+                      <>
+                        <span className="text-muted-foreground/70">Also known as: </span>
+                        <span>{meta.semanticAliases}</span>
+                      </>
+                    )}
+                    {meta.semanticAliases && meta.affectedPlatforms && (
+                      <span className="mx-2 text-muted-foreground/50">•</span>
+                    )}
+                    {meta.affectedPlatforms && (
+                      <>
+                        <span className="text-muted-foreground/70">Affecting: </span>
+                        <span>{meta.affectedPlatforms}</span>
+                      </>
+                    )}
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                {/* Traditional single title */}
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                  {meta.title}
+                </h1>
+              </>
+            )}
 
             {/* Description */}
             <p className="text-xl text-muted-foreground leading-relaxed">
