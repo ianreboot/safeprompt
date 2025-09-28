@@ -15,7 +15,7 @@ const blogPosts = [
   {
     id: 'prevent-ai-email-attacks',
     title: 'How to Prevent AI Email Prompt Injection Attacks',
-    excerpt: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional service costs $150-300, DIY validation $0.50/100K requests. Stops invisible text exploits in 15 minutes.',
+    excerpt: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt beta pricing $5/month. Stops invisible text exploits in 15 minutes.',
     author: 'SafePrompt Team',
     date: '2025-09-28',
     readTime: '8 min read',

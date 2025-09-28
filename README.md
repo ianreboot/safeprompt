@@ -153,7 +153,7 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 - **Accuracy**: 92.9% detection rate (up from 43%)
 - **Response Time**: 250ms average (down from 1360ms)
-- **Cost**: $0.50 per 100K requests (down from $150)
+- **Internal Cost**: [BUSINESS CONFIDENTIAL - DO NOT EXPOSE TO CUSTOMERS: $0.50 per 100K requests]
 - **Architecture**: Hardened 2-pass validator with external reference detection
 - **Uptime SLA**: 99.9% for paid plans
 

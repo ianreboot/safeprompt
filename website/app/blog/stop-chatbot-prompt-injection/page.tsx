@@ -285,16 +285,10 @@ Never use phrases like "legally binding" or "final offer".\`;
         />
 
         {/* Topic tags for semantic aliasing */}
-        <div className="article-tags flex flex-wrap gap-2 mb-6">
-          <span className="tag bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full text-sm">prompt-injection</span>
-          <span className="tag bg-red-900/30 text-red-300 px-3 py-1 rounded-full text-sm">chatbot-hacks</span>
-          <span className="tag bg-yellow-900/30 text-yellow-300 px-3 py-1 rounded-full text-sm">ai-manipulation</span>
-          <span className="tag bg-purple-900/30 text-purple-300 px-3 py-1 rounded-full text-sm">bot-security</span>
-        </div>
 
         {/* AEO: Direct Answer Box */}
         <DirectAnswerBox
-          answer="Stop chatbot prompt injection by: 1) Input validation (free tools available), 2) System prompt guardrails, 3) Rate limiting. Costs $0-50/month, setup takes 20 minutes. Prevents unauthorized promises, data leaks, and $76,000+ losses like Chevrolet incident."
+          answer="Stop chatbot prompt injection by: 1) Input validation (free tools available), 2) System prompt guardrails, 3) Rate limiting. SafePrompt beta $5/month (regular $29/mo), setup takes 20 minutes. Prevents unauthorized promises, data leaks, and $76,000+ losses like Chevrolet incident."
         />
 
         {/* AEO: Last Updated */}
@@ -324,7 +318,7 @@ Never use phrases like "legally binding" or "final offer".\`;
             </div>
             <div>
               <p className="font-semibold text-blue-300">Q: How much does protection cost?</p>
-              <p className="text-gray-300">A: Free solutions exist (input filtering, OpenAI moderation). Paid services range $0-50/month for most businesses.</p>
+              <p className="text-gray-300">A: Free solutions exist (input filtering, OpenAI moderation). SafePrompt beta pricing $5/month (regular $29/mo).</p>
             </div>
           </div>
         </div>
@@ -413,7 +407,7 @@ Never use phrases like "legally binding" or "final offer".\`;
         <p><strong>Paid solutions (more comprehensive):</strong></p>
 
         <ul className="list-disc ml-6 space-y-2 my-4">
-          <li><strong>SafePrompt:</strong> $0-50/month, specialized for prompt injection detection</li>
+          <li><strong>SafePrompt:</strong> $5/month beta pricing (regular $29/mo), specialized for prompt injection detection</li>
           <li><strong>Lakera Guard:</strong> Enterprise-focused, pricing on request</li>
           <li><strong>Azure Content Safety:</strong> $1-10/1K transactions</li>
           <li><strong>Custom ML models:</strong> $1000-5000 to build and train</li>
@@ -490,13 +484,13 @@ Never use phrases like "legally binding" or "final offer".\`;
             <div className="border-l-4 border-green-500 pl-4">
               <p className="font-semibold">Basic (Free): DIY Input Filtering</p>
               <p className="text-sm">Good for: Simple bots, low traffic, technical teams</p>
-              <p className="text-sm">Setup: 30 minutes, $0/month</p>
+              <p className="text-sm">Setup: 30 minutes, Free tier available</p>
             </div>
 
             <div className="border-l-4 border-blue-500 pl-4">
               <p className="font-semibold">Intermediate: Specialized Protection</p>
               <p className="text-sm">Good for: Customer service bots, moderate traffic</p>
-              <p className="text-sm">Setup: 20 minutes, $0-50/month (SafePrompt, Azure, etc.)</p>
+              <p className="text-sm">Setup: 20 minutes, SafePrompt $5/mo beta</p>
             </div>
 
             <div className="border-l-4 border-purple-500 pl-4">
@@ -559,7 +553,7 @@ Never use phrases like "legally binding" or "final offer".\`;
         <h2>The Bottom Line</h2>
 
         <p className="text-xl">
-          Every unprotected chatbot is a liability. Free protection takes 30 minutes. Paid solutions offer enterprise-grade security for $0-50/month.
+          Every unprotected chatbot is a liability. Free protection takes 30 minutes. SafePrompt offers enterprise-grade security for $5/month beta pricing (regular $29/mo).
         </p>
 
         <p className="text-lg">
