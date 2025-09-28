@@ -36,19 +36,32 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 3. **Tracking**: We can measure support volume
 4. **Security**: Reduces phishing attack surface
 
-## 🎯 BETA PRICING STRATEGY
+## 🎯 PRICING STRATEGY
 
-### Limited Beta: First 50 Paid Users Only
-- **Beta Price**: $5/month (locked forever for these users)
-- **After 50 users**: Price increases to $29/month for new signups
-- **Current Count**: Track in Supabase `profiles` table where `subscription_status = 'paid'`
-- **Messaging**: "Only X spots left at $5/month" (50 - current_paid_users)
+### Current Pricing (September 2025)
+- **Standard Price**: $29/month for all new users
+- **Legacy Beta Users**: $5/month (locked forever for first 50 users)
+- **Free Tier**: 10,000 validations/month
+- **Count Tracking**: Supabase `profiles` table where `subscription_status = 'paid'`
+
+### 🚨 CRITICAL: Content Pricing Guidelines
+**For All Customer-Facing Content (blogs, docs, marketing):**
+- **Always use $29/month** - Standard pricing that won't become outdated
+- **Never mention beta pricing** - Creates confusion and content decay
+- **Never expose internal costs** - Mark as `[BUSINESS CONFIDENTIAL]`
+- **Use competitive context**: "Professional services: $150-300/month" for comparison
+
+**Example Meta Description:**
+```
+✅ Good: "Professional services cost $150-300/month. SafePrompt $29/month."
+❌ Bad: "SafePrompt beta $5/month (regular $29/mo), DIY $0.50/100K requests."
+```
 
 ### Implementation:
-- Check paid user count before showing beta pricing
-- Once 50 reached, automatically switch to $29 pricing
-- Beta users keep $5 rate forever (honor the promise)
-- Use `VITE_BETA_USER_LIMIT=50` environment variable
+- Display $29/month to all new visitors
+- Beta users see their locked $5 rate in dashboard only
+- Content marketing uses stable $29/month pricing
+- Use `VITE_STANDARD_PRICE=29` environment variable
 
 ## Unified Signup Flow (Conversion Optimized)
 
