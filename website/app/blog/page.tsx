@@ -3,24 +3,24 @@ import Link from 'next/link'
 
 const blogPosts = [
   {
-    id: 'chatbot-hacks',
-    title: 'Your Chatbot Just Sold a Car for $1: The Corporate AI Disasters You Need to Prevent',
-    excerpt: 'From Chevy dealerships to Air Canada lawsuits, chatbots are getting hacked daily. Real incidents, real lawsuits, and how to stop yours from becoming the next viral disaster.',
+    id: 'stop-chatbot-prompt-injection',
+    title: 'How to Stop Chatbot Prompt Injection Attacks',
+    excerpt: 'Prevent chatbots from being manipulated to make unauthorized promises, leak data, or damage reputation. Includes real attack examples and 20-minute protection setup.',
     author: 'SafePrompt Team',
     date: '2025-09-27',
     readTime: '7 min read',
-    tags: ['Chatbots', 'AI Security', 'Real Incidents'],
-    slug: 'chatbot-hacks'
+    tags: ['Prompt Injection', 'AI Security', 'Protection'],
+    slug: 'stop-chatbot-prompt-injection'
   },
   {
-    id: 'gmail-ai-threat',
-    title: 'Ship Fast, Get Hacked: The AI Email Attack You\'re Missing',
-    excerpt: 'Your contact form just made Gmail lie to you. Real attacks confirmed by Mozilla, Microsoft, and CISA. Here\'s a 15-minute fix that actually works.',
+    id: 'prevent-ai-email-attacks',
+    title: 'How to Prevent AI Email Prompt Injection Attacks',
+    excerpt: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional service costs $150-300, DIY validation $0.50/100K requests. Stops invisible text exploits in 15 minutes.',
     author: 'SafePrompt Team',
-    date: '2025-09-26',
-    readTime: '5 min read',
-    tags: ['Security', 'AI Safety', 'Gmail'],
-    slug: 'gmail-ai-threat'
+    date: '2025-09-28',
+    readTime: '8 min read',
+    tags: ['Prompt Injection', 'Gmail Hack', 'AI Security'],
+    slug: 'prevent-ai-email-attacks'
   }
 ]
 

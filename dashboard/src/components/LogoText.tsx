@@ -1,3 +1,15 @@
+/**
+ * LogoText Component
+ *
+ * NOTE: This component is intentionally duplicated in both website and dashboard.
+ * Reason: Different build systems (website uses CSS variables, dashboard uses Tailwind classes)
+ * and deployment targets (Cloudflare Pages vs different routing) make sharing impractical.
+ *
+ * If updating, ensure changes are synced to:
+ * - /website/components/LogoText.tsx
+ * - /dashboard/src/components/LogoText.tsx
+ */
+
 import Link from 'next/link'
 
 interface LogoTextProps {

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Shield, Zap, Check, X, AlertCircle, Clock, Users, ArrowRight, Lock, CreditCard } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function UnifiedSignup() {
   const router = useRouter()
@@ -42,19 +44,8 @@ export default function UnifiedSignup() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <nav className="border-b border-gray-800 bg-gray-950">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Shield className="w-8 h-8 text-primary" />
-            <span className="text-xl font-bold">SafePrompt</span>
-          </div>
-          <a href="/" className="text-sm text-gray-400 hover:text-white">
-            ← Back to home
-          </a>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <Header />
 
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Urgency Banner */}
@@ -386,6 +377,7 @@ export default function UnifiedSignup() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

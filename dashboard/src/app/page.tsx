@@ -236,7 +236,7 @@ export default function Dashboard() {
       }
     } catch (error) {
       // If no logs found, that's okay
-      console.log('No API usage yet')
+      // No API usage yet
     }
   }
 

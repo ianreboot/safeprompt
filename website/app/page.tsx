@@ -7,6 +7,7 @@ import PricingCard from '@/components/PricingCard'
 import CodeSelector from '@/components/CodeSelector'
 import LogoText from '@/components/LogoText'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 export default function Home() {
 
@@ -449,51 +450,7 @@ export default function Home() {
       </section>
 
       {/* Simple Footer */}
-      <footer className="py-12 px-6 border-t border-border">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="mb-4">
-                <LogoText size="lg" />
-              </div>
-              <p className="text-muted-foreground text-sm">
-                Protecting AI applications from prompt injection.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2">
-                <li><a href="#pricing" className="text-muted-foreground hover:text-foreground transition text-sm">Pricing</a></li>
-                <li><a href="#docs" className="text-muted-foreground hover:text-foreground transition text-sm">Documentation</a></li>
-                <li><a href="https://api.safeprompt.dev/status" className="text-muted-foreground hover:text-foreground transition text-sm">API Status</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2">
-                <li><a href="/about" className="text-muted-foreground hover:text-foreground transition text-sm">About</a></li>
-                <li><a href="/blog" className="text-muted-foreground hover:text-foreground transition text-sm">Blog</a></li>
-                <li><a href="/contact" className="text-muted-foreground hover:text-foreground transition text-sm">Contact</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li><a href="/terms" className="text-muted-foreground hover:text-foreground transition text-sm">Terms</a></li>
-                <li><a href="/privacy" className="text-muted-foreground hover:text-foreground transition text-sm">Privacy</a></li>
-                <li><a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition text-sm">Dashboard</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            © 2025 Reboot Media Inc. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   )
 }

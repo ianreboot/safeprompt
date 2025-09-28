@@ -12,6 +12,20 @@ const nextConfig = {
     domains: ['safeprompt.dev'],
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/blog/gmail-ai-threat',
+        destination: '/blog/prevent-ai-email-attacks',
+        permanent: true,
+      },
+      {
+        source: '/blog/chatbot-hacks',
+        destination: '/blog/stop-chatbot-prompt-injection',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

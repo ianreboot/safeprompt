@@ -53,14 +53,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Blog posts (manually maintained for now, could be dynamic from CMS later)
   const blogPosts = [
     {
-      url: `${baseUrl}/blog/chatbot-hacks`,
+      url: `${baseUrl}/blog/stop-chatbot-prompt-injection`,
       lastModified: new Date('2025-09-27'),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/blog/gmail-ai-threat`,
-      lastModified: new Date('2025-09-26'),
+      url: `${baseUrl}/blog/prevent-ai-email-attacks`,
+      lastModified: new Date('2025-09-28'),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     },

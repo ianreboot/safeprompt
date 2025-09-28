@@ -1,14 +1,13 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/about/page": "app/about/page.js",
-  "/blog/chatbot-hacks/page": "app/blog/chatbot-hacks/page.js",
-  "/blog/gmail-ai-threat/page": "app/blog/gmail-ai-threat/page.js",
   "/blog/page": "app/blog/page.js",
   "/contact/page": "app/contact/page.js",
+  "/page": "app/page.js",
   "/privacy/page": "app/privacy/page.js",
   "/signup/page": "app/signup/page.js",
+  "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/terms/page": "app/terms/page.js",
-  "/test-logo/page": "app/test-logo/page.js",
-  "/page": "app/page.js",
-  "/sitemap.xml/route": "app/sitemap.xml/route.js"
+  "/blog/prevent-ai-email-attacks/page": "app/blog/prevent-ai-email-attacks/page.js",
+  "/blog/stop-chatbot-prompt-injection/page": "app/blog/stop-chatbot-prompt-injection/page.js"
 }

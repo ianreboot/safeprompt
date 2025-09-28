@@ -404,7 +404,7 @@ This includes:
 - **Waitlist**: ✅ Working via consolidated /api/website endpoint
 - **Contact Form**: ⚠️ Working but SafePrompt validation too strict (flagging normal messages)
 - **Emails**: ✅ Resend configured (sends to info@safeprompt.dev)
-- **Blog**: ✅ Gmail AI threat article at /blog/gmail-ai-threat
+- **Blog**: ✅ AI email attack prevention article at /blog/prevent-ai-email-attacks
 - **Stripe Products**: ❌ Need manual creation in dashboard
 - **Launch Ready**: 95% (validation tuning needed, Stripe live mode)
 
@@ -986,7 +986,7 @@ wrangler pages deploy out --project-name safeprompt --branch main
 ```bash
 # When build keeps failing after multiple attempts:
 git checkout -- app/blog/chatbot-hacks/page.tsx
-git checkout -- app/blog/gmail-ai-threat/page.tsx
+git checkout -- app/blog/prevent-ai-email-attacks/page.tsx
 # Start over with working version, make smaller changes
 ```
 
@@ -1100,7 +1100,7 @@ Every blog page now uses this exact pattern (working in production):
 
 ### Files Created/Modified
 - **Created**: `/website/components/blog/AEOComponents.tsx` - Reusable AEO components
-- **Updated**: `/website/app/blog/gmail-ai-threat/page.tsx` - Dynamic imports + AEO
+- **Updated**: `/website/app/blog/prevent-ai-email-attacks/page.tsx` - Dynamic imports + AEO
 - **Updated**: `/website/app/blog/chatbot-hacks/page.tsx` - Dynamic imports + AEO
 - **Fixed**: `/website/app/globals.css` - Removed list-disc causing double bullets
 

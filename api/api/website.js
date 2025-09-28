@@ -343,7 +343,7 @@ async function handleWaitlist(data, clientIp, resend) {
 
         <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h4 style="color: #333; margin-top: 0;">While you wait:</h4>
-          <p>Check out our blog post on <a href="https://safeprompt.dev/blog/gmail-ai-threat">how Gmail's AI can be weaponized against you</a> and learn why prompt injection protection is critical.</p>
+          <p>Check out our blog post on <a href="https://safeprompt.dev/blog/prevent-ai-email-attacks">how Gmail's AI can be weaponized against you</a> and learn why prompt injection protection is critical.</p>
         </div>
 
         <p>Questions? Just reply to this email.</p>
