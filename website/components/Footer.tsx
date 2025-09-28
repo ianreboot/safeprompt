@@ -21,7 +21,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/blog/prevent-ai-email-attacks" className="text-muted-foreground hover:text-foreground transition text-sm">
+                <Link href="/blog" className="text-muted-foreground hover:text-foreground transition text-sm">
                   Blog
                 </Link>
               </li>

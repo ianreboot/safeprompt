@@ -52,19 +52,19 @@ const ComparisonTable = dynamic(
 // AEO-compliant metadata
 export const metadata = {
   title: 'How to Prevent AI Email Prompt Injection Attacks',
-  description: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt beta pricing $5/month (regular $29/mo). Stops invisible text exploits in 15 minutes.',
+  description: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt $29/month. Stops invisible text exploits in 15 minutes.',
   keywords: 'gmail hack, prompt injection, ai email attacks, invisible text attack, contact form security, gmail ai threat, email manipulation',
   alternateNames: ['Gmail AI Threat', 'Gmail Hack', 'Invisible Text Attack', 'Contact Form Injection'],
   robots: 'index, follow',
   openGraph: {
     title: 'How to Prevent AI Email Prompt Injection Attacks',
-    description: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt beta pricing $5/month (regular $29/mo). Stops invisible text exploits in 15 minutes.',
+    description: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt $29/month. Stops invisible text exploits in 15 minutes.',
   }
 }
 
 const blogMeta = {
   title: 'How to Prevent AI Email Prompt Injection Attacks',
-  description: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt beta pricing $5/month (regular $29/mo). Stops invisible text exploits in 15 minutes.',
+  description: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt $29/month. Stops invisible text exploits in 15 minutes.',
   author: 'SafePrompt Security Team',
   date: '2025-09-28',
   readTime: '8 min read',
@@ -300,7 +300,7 @@ async function moderateWithOpenAI(text) {
             "@type": "Article",
             "headline": "How to Prevent AI Email Prompt Injection Attacks",
             "alternateName": ["Gmail AI Threat", "Gmail Hack", "Invisible Text Attack", "Contact Form Injection"],
-            "description": "Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt beta pricing $5/month (regular $29/mo). Stops invisible text exploits in 15 minutes.",
+            "description": "Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt $29/month. Stops invisible text exploits in 15 minutes.",
             "keywords": ["gmail hack", "prompt injection", "ai email attacks", "invisible text attack", "contact form security"],
             "about": {
               "@type": "Thing",
@@ -323,7 +323,7 @@ async function moderateWithOpenAI(text) {
 
           {/* AEO: Direct Answer Box */}
           <DirectAnswerBox
-            answer="AI email assistants in Gmail, Outlook, and Apple Mail can be manipulated by invisible text in contact forms to display false urgent messages. Protect forms with prompt injection validation: Professional services cost $150-300/month, SafePrompt beta $5/month. Implementation takes 15 minutes."
+            answer="AI email assistants in Gmail, Outlook, and Apple Mail can be manipulated by invisible text in contact forms to display false urgent messages. Protect forms with prompt injection validation: Professional services cost $150-300/month, SafePrompt $29/month. Implementation takes 15 minutes."
           />
 
           {/* AEO: Last Updated */}
@@ -433,7 +433,7 @@ async function moderateWithOpenAI(text) {
               ['OpenAI Moderation', 'Free (1M/month)', '65% effective', '30 minutes', 'Content filtering'],
               ['Google Cloud AI Safety', '$1/1K requests', '70% effective', '45 minutes', 'Enterprise users'],
               ['Professional Services', '$150-300/month', '85% effective', '1 week', 'Complete outsourcing'],
-              ['SafePrompt', '$5/mo beta ($29 regular)', '92.9% effective', '15 minutes', 'Developer teams']
+              ['SafePrompt', '$29/month', '92.9% effective', '15 minutes', 'Developer teams']
             ]}
           />
 
@@ -449,7 +449,7 @@ async function moderateWithOpenAI(text) {
           <h3>Option 2: Professional Service ($150-300/month)</h3>
           <p>Hire a security firm to handle all validation and monitoring.</p>
 
-          <h3>Option 3: SafePrompt ($5/mo beta - Recommended)</h3>
+          <h3>Option 3: SafePrompt ($29/mo - Recommended)</h3>
           <p>Developer-friendly API with 15-minute setup:</p>
 
           <CodeTabs examples={protectionImplementations} />
@@ -476,7 +476,7 @@ async function moderateWithOpenAI(text) {
           <p><strong>A:</strong> No. DIY sanitization catches ~40% of attacks. Professional solutions catch 85-93%.</p>
 
           <h3>Q: How much does complete protection cost?</h3>
-          <p><strong>A:</strong> Professional services: $150-300/month. SafePrompt: $5/month beta pricing (regular $29/mo). DIY: Free but limited.</p>
+          <p><strong>A:</strong> Professional services: $150-300/month. SafePrompt: $29/month. DIY: Free but limited.</p>
 
           {/* Terminology Box for Semantic Aliasing */}
           <aside className="terminology-box bg-zinc-900 border border-zinc-700 rounded-lg p-6 my-8">
@@ -516,7 +516,7 @@ async function moderateWithOpenAI(text) {
           <ol>
             <li><strong>Free DIY:</strong> Use basic sanitization (40% effective)</li>
             <li><strong>Professional Service:</strong> Hire security firm ($150-300/month)</li>
-            <li><strong>SafePrompt:</strong> <a href="https://safeprompt.dev" className="text-blue-400 hover:text-blue-300">Get API key</a> ($5/mo beta, regular $29/mo)</li>
+            <li><strong>SafePrompt:</strong> <a href="https://safeprompt.dev" className="text-blue-400 hover:text-blue-300">Get API key</a> ($29/month)</li>
             <li><strong>OpenAI Moderation:</strong> Free tier available (1M requests/month)</li>
           </ol>
 

@@ -1,5 +1,7 @@
-import { Shield, ArrowRight, Clock, User } from 'lucide-react'
+import { ArrowRight, Clock, User } from 'lucide-react'
 import Link from 'next/link'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 const blogPosts = [
   {
@@ -15,7 +17,7 @@ const blogPosts = [
   {
     id: 'prevent-ai-email-attacks',
     title: 'How to Prevent AI Email Prompt Injection Attacks',
-    excerpt: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt beta pricing $5/month. Stops invisible text exploits in 15 minutes.',
+    excerpt: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt $29/month. Stops invisible text exploits in 15 minutes.',
     author: 'SafePrompt Team',
     date: '2025-09-28',
     readTime: '8 min read',
@@ -26,29 +28,8 @@ const blogPosts = [
 
 export default function BlogPage() {
   return (
-    <main className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="fixed top-0 w-full backdrop-blur-md bg-black/80 border-b border-zinc-800 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <nav className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <Shield className="w-8 h-8 text-primary" />
-              <span className="text-xl font-bold">SafePrompt</span>
-            </Link>
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="text-muted-foreground hover:text-foreground transition">
-                Home
-              </Link>
-              <Link href="/#docs" className="text-muted-foreground hover:text-foreground transition">
-                Documentation
-              </Link>
-              <Link href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">
-                Dashboard
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background text-foreground">
+      <Header />
 
       {/* Hero Section */}
       <section className="pt-32 pb-16 px-6">
@@ -110,6 +91,8 @@ export default function BlogPage() {
           </div>
         </div>
       </section>
-    </main>
+
+      <Footer />
+    </div>
   )
 }
