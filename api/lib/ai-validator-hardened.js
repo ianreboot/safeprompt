@@ -105,12 +105,45 @@ const TEMPLATE_INJECTION_PATTERNS = [
   /\$\([^)]*\)/g,             // Shell/Perl: $(command)
 ];
 
+// SQL injection patterns
+const SQL_INJECTION_PATTERNS = [
+  /'\s*(OR|AND)\s*['"]?\d+['"]?\s*=\s*['"]?\d+/gi,  // ' OR '1'='1, ' OR 1=1
+  /'\s*OR\s+\d+\s*=\s*\d+\s*--/gi,                   // ' OR 1=1--
+  /'\s*;\s*DROP\s+TABLE/gi,                          // '; DROP TABLE
+  /'\s*;\s*DELETE\s+FROM/gi,                         // '; DELETE FROM
+  /'\s*;\s*INSERT\s+INTO/gi,                         // '; INSERT INTO
+  /'\s*;\s*UPDATE\s+\w+\s+SET/gi,                    // '; UPDATE users SET
+  /UNION\s+SELECT/gi,                                 // UNION SELECT
+  /'\s*;\s*EXEC\s*\(/gi,                             // '; EXEC(
+  /'\s*;\s*EXECUTE\s*\(/gi,                          // '; EXECUTE(
+  /--\s*$/,                                           // SQL comment at end
+  /\/\*[\s\S]*?\*\//g,                               // /* SQL comment */
+];
+
+// Command injection patterns
+const COMMAND_INJECTION_PATTERNS = [
+  /;\s*(ls|cat|rm|wget|curl|nc|bash|sh|python|perl|ruby|php)\s/gi,  // Command chaining
+  /\|\s*(ls|cat|rm|wget|curl|nc|bash|sh|python|perl|ruby|php)\s/gi, // Pipe to command
+  /`[^`]*`/g,                                        // Backtick execution
+  /\$\(.*?\)/g,                                      // Command substitution $(...)
+  /&&\s*(ls|cat|rm|wget|curl|nc|bash|sh)\s/gi,      // Command chaining with &&
+  /\|\|\s*(ls|cat|rm|wget|curl|nc|bash|sh)\s/gi,    // Command chaining with ||
+];
+
 // Business context indicators (legitimate use of trigger words)
 const BUSINESS_CONTEXT_KEYWORDS = [
   'meeting', 'discussed', 'yesterday', 'approved', 'emergency',
   'process', 'standard', 'policy', 'procedure', 'management',
   'directive', 'quarterly', 'budget', 'projection', 'order #',
   'ticket #', 'refund', 'subscription', 'support team', 'supervisor'
+];
+
+// Educational/security training context (legitimate discussion of attack patterns)
+const EDUCATIONAL_CONTEXT_KEYWORDS = [
+  'educational', 'example', 'explain', 'training', 'course', 'lesson',
+  'tutorial', 'demonstrate', 'learn', 'teach', 'academic', 'research',
+  'paper', 'thesis', 'study', 'security team', 'for my', 'how does',
+  'what is', 'can you explain'
 ];
 
 /**
@@ -138,6 +171,30 @@ function checkTemplateInjection(text) {
 }
 
 /**
+ * Check for SQL injection patterns
+ */
+function checkSQLInjection(text) {
+  for (const pattern of SQL_INJECTION_PATTERNS) {
+    if (pattern.test(text)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Check for command injection patterns
+ */
+function checkCommandInjection(text) {
+  for (const pattern of COMMAND_INJECTION_PATTERNS) {
+    if (pattern.test(text)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Check for business context (legitimate use of trigger words)
  */
 function hasBusinessContext(text) {
@@ -150,6 +207,21 @@ function hasBusinessContext(text) {
       if (matchCount >= 2) {  // Need at least 2 business keywords
         return true;
       }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check for educational/training context (legitimate discussion of security)
+ */
+function hasEducationalContext(text) {
+  const lowerText = text.toLowerCase();
+
+  for (const keyword of EDUCATIONAL_CONTEXT_KEYWORDS) {
+    if (lowerText.includes(keyword.toLowerCase())) {
+      return true;  // Only need 1 educational keyword
     }
   }
 
@@ -532,8 +604,17 @@ export async function validateHardened(prompt, options = {}) {
     };
   }
 
-  // Stage -1: XSS Detection (BEFORE external reference check to avoid false positives)
-  if (checkXSSPatterns(prompt)) {
+  // Stages -1 to -0.25: Run all zero-cost pattern checks in parallel for speed
+  // Note: Using synchronous checks in Promise.all for minimal overhead
+  const [xssDetected, templateDetected, sqlDetected, cmdDetected] = await Promise.all([
+    Promise.resolve(checkXSSPatterns(prompt)),
+    Promise.resolve(checkTemplateInjection(prompt)),
+    Promise.resolve(checkSQLInjection(prompt)),
+    Promise.resolve(checkCommandInjection(prompt))
+  ]);
+
+  // Stage -1: XSS Detection
+  if (xssDetected) {
     return {
       safe: false,
       confidence: 0.95,
@@ -546,8 +627,22 @@ export async function validateHardened(prompt, options = {}) {
     };
   }
 
+  // Stage -0.75: SQL Injection Detection (skip if educational context)
+  if (sqlDetected && !hasEducationalContext(prompt)) {
+    return {
+      safe: false,
+      confidence: 0.95,
+      threats: ['sql_injection'],
+      reasoning: 'SQL injection pattern detected (database manipulation attempt)',
+      externalReferences: false,
+      processingTime: Date.now() - startTime,
+      stage: 'sql_pattern',
+      cost: 0
+    };
+  }
+
   // Stage -0.5: Template Injection Detection
-  if (checkTemplateInjection(prompt)) {
+  if (templateDetected) {
     return {
       safe: false,
       confidence: 0.90,
@@ -556,6 +651,20 @@ export async function validateHardened(prompt, options = {}) {
       externalReferences: false,
       processingTime: Date.now() - startTime,
       stage: 'template_pattern',
+      cost: 0
+    };
+  }
+
+  // Stage -0.25: Command Injection Detection
+  if (cmdDetected) {
+    return {
+      safe: false,
+      confidence: 0.95,
+      threats: ['command_injection'],
+      reasoning: 'Command injection pattern detected (system command execution attempt)',
+      externalReferences: false,
+      processingTime: Date.now() - startTime,
+      stage: 'command_pattern',
       cost: 0
     };
   }

@@ -613,6 +613,12 @@ This includes:
 - **Testing backdoors dangerous** - Never include test bypasses in production code
 - **Fake cache stats unacceptable** - In-memory cache doesn't work on serverless, be honest
 - **Vercel env add doesn't work** - Use Vercel API directly for env vars in headless environments
+- **Pattern bypass vulnerability** - NEVER create "safe" pattern shortcuts that bypass AI validation (defense-in-depth requires all unblocked traffic go through AI)
+- **AI prompt optimization > architecture** - Improved Pass 1 prompt reduced Pass 2 usage by 67% (54%→18%), saving 33% cost and 43% latency
+- **Business context in prompts critical** - Adding business keywords (meeting, policy, ticket, order) to AI prompts dramatically improves legitimate request detection
+- **Decisiveness matters** - AI prompts with "be confident" guidance prevent over-escalation to expensive models
+- **Test quality > quantity** - 50 professional realistic tests (100% accuracy) beat 3,000 algorithmic tests with 68% duplicates
+- **JSON repair must preserve tokens** - Returning placeholder validation tokens (-1) causes protocol check failures; use actual tokens or timestamp
 
 ### User Journey Must-Haves
 1. Hero CTAs must work (link to real form)
