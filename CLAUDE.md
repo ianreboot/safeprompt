@@ -481,6 +481,36 @@ This includes:
 - ✅ Inline documentation when dedicated pages don't exist
 - ✅ Contact form instead of exposed email addresses
 
+## 🚀 Future Development (Planned Features)
+
+### Interactive Playground/Demo (High Priority)
+**Purpose**: Let developers test SafePrompt instantly without signup
+**Target Audience**: Vibe coders and new developers who want to "try before buy"
+**Why This Matters**: Reduces friction, builds trust through transparency, demonstrates value immediately
+
+**Implementation Plan**:
+- Browser-based playground at `/playground` or embedded in hero section
+- Pre-populated examples of common prompt injection attacks
+- Real-time validation with SafePrompt API (using internal test account)
+- Show the validation result breakdown (pattern match, AI reasoning, confidence score)
+- "Try your own prompt" input box with live validation
+- Copy-paste code examples showing how to integrate
+- No signup required for basic usage (rate-limited by IP)
+
+**Trust Building Value**:
+- Proves the product works before asking for commitment
+- Educates developers about prompt injection through interaction
+- Shows transparency in how validation decisions are made
+- Differentiates from competitors who hide behind enterprise sales
+
+**Technical Notes**:
+- Use `sp_test_unlimited_dogfood_key_2025` for playground requests
+- Add IP-based rate limiting (e.g., 10 requests per hour per IP)
+- Track playground usage in separate analytics (conversion funnel insight)
+- Consider caching common test prompts for speed
+
+**Priority**: High - Addresses key feedback about trust and "show don't tell"
+
 ## File Structure
 ```
 /home/projects/safeprompt/

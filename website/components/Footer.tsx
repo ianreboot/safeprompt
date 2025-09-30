@@ -4,31 +4,55 @@ export default function Footer() {
   return (
     <footer className="py-12 px-6 border-t border-border">
       <div className="container mx-auto max-w-6xl">
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-4 gap-8">
           <div>
             <h4 className="font-semibold mb-4">SafePrompt</h4>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm mb-3">
               Protecting AI applications from prompt injection.
+            </p>
+            <p className="text-muted-foreground text-xs italic">
+              Built by developers who've seen AI apps get exploited. We made the security tool we wish existed.
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Company</h4>
+            <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
-              <li>
-                <Link href="/about" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  About
-                </Link>
-              </li>
               <li>
                 <Link href="/blog" className="text-muted-foreground hover:text-foreground transition text-sm">
                   Blog
                 </Link>
               </li>
               <li>
+                <a href="https://github.com/ianreboot/safeprompt" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  GitHub
+                </a>
+              </li>
+              <li>
                 <Link href="/contact" className="text-muted-foreground hover:text-foreground transition text-sm">
                   Contact
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Product</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="#pricing" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link href="#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Documentation
+                </Link>
+              </li>
+              <li>
+                <a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Dashboard
+                </a>
               </li>
             </ul>
           </div>

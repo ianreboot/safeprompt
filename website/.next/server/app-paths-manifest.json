@@ -6,8 +6,8 @@
   "/page": "app/page.js",
   "/privacy/page": "app/privacy/page.js",
   "/signup/page": "app/signup/page.js",
-  "/terms/page": "app/terms/page.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
+  "/terms/page": "app/terms/page.js",
   "/blog/stop-chatbot-prompt-injection/page": "app/blog/stop-chatbot-prompt-injection/page.js",
   "/blog/prevent-ai-email-attacks/page": "app/blog/prevent-ai-email-attacks/page.js"
 }
