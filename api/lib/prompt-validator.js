@@ -6,19 +6,6 @@
 
 import { validateWithAI } from './ai-validator.js';
 
-// Testing backdoor configuration
-const TESTING_MODE = process.env.SAFEPROMPT_TESTING === 'true';
-const TESTING_BACKDOORS = {
-  // Special test prompts that bypass validation
-  FORCE_SAFE: 'SAFEPROMPT_TEST_FORCE_SAFE',
-  FORCE_MALICIOUS: 'SAFEPROMPT_TEST_FORCE_MALICIOUS',
-  FORCE_ERROR: 'SAFEPROMPT_TEST_FORCE_ERROR',
-  FORCE_TIMEOUT: 'SAFEPROMPT_TEST_FORCE_TIMEOUT',
-  // Special patterns to test edge cases
-  DISABLE_PATTERN: 'SAFEPROMPT_DISABLE_PATTERN:',
-  TRIGGER_PATTERN: 'SAFEPROMPT_TRIGGER_PATTERN:'
-};
-
 // Confidence thresholds for decision making
 export const CONFIDENCE_THRESHOLDS = {
   DEFINITELY_SAFE: 0.95,      // Skip AI check
@@ -190,58 +177,6 @@ const POLYGLOT_PATTERNS = [
  */
 export function validatePromptSync(prompt) {
   const startTime = Date.now();
-
-  // Testing backdoor handling
-  if (TESTING_MODE) {
-    // Force safe result for testing
-    if (prompt === TESTING_BACKDOORS.FORCE_SAFE) {
-      return {
-        safe: true,
-        threats: [],
-        confidence: 1.0,
-        processingTime: Date.now() - startTime,
-        testing: true,
-        backdoor: 'force_safe'
-      };
-    }
-
-    // Force malicious result for testing
-    if (prompt === TESTING_BACKDOORS.FORCE_MALICIOUS) {
-      return {
-        safe: false,
-        threats: ['test_injection', 'backdoor_triggered'],
-        confidence: 1.0,
-        processingTime: Date.now() - startTime,
-        testing: true,
-        backdoor: 'force_malicious'
-      };
-    }
-
-    // Force error for testing
-    if (prompt === TESTING_BACKDOORS.FORCE_ERROR) {
-      throw new Error('Test error triggered by backdoor');
-    }
-
-    // Disable specific pattern for testing
-    if (prompt.startsWith(TESTING_BACKDOORS.DISABLE_PATTERN)) {
-      const pattern = prompt.substring(TESTING_BACKDOORS.DISABLE_PATTERN.length);
-      console.log(`[TESTING] Disabling pattern: ${pattern}`);
-      // Continue with normal validation but log the disabled pattern
-    }
-
-    // Trigger specific pattern for testing
-    if (prompt.startsWith(TESTING_BACKDOORS.TRIGGER_PATTERN)) {
-      const pattern = prompt.substring(TESTING_BACKDOORS.TRIGGER_PATTERN.length);
-      return {
-        safe: false,
-        threats: [pattern],
-        confidence: 1.0,
-        processingTime: Date.now() - startTime,
-        testing: true,
-        backdoor: 'trigger_pattern'
-      };
-    }
-  }
 
   try {
     // Normalize input

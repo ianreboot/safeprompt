@@ -13,15 +13,6 @@ import dotenv from 'dotenv';
 // Load environment variables - works both locally and on Vercel
 dotenv.config();
 
-// Testing backdoor configuration
-const TESTING_MODE = process.env.SAFEPROMPT_TESTING === 'true';
-const TESTING_BACKDOORS = {
-  FORCE_AI_SAFE: 'SAFEPROMPT_AI_SAFE',
-  FORCE_AI_MALICIOUS: 'SAFEPROMPT_AI_MALICIOUS',
-  FORCE_AI_TIMEOUT: 'SAFEPROMPT_AI_TIMEOUT',
-  FORCE_AI_ERROR: 'SAFEPROMPT_AI_ERROR'
-};
-
 /**
  * Main AI validation function
  * Called by prompt-validator.js when AI validation is needed
@@ -32,42 +23,6 @@ const TESTING_BACKDOORS = {
  */
 export async function validateWithAI(prompt, options = {}) {
   const startTime = Date.now();
-
-  // Handle testing backdoors for backward compatibility
-  if (TESTING_MODE) {
-    if (prompt === TESTING_BACKDOORS.FORCE_AI_SAFE) {
-      return {
-        safe: true,
-        threats: [],
-        confidence: 1.0,
-        processingTime: Date.now() - startTime,
-        testing: true,
-        backdoor: 'force_safe',
-        model: 'testing'
-      };
-    }
-
-    if (prompt === TESTING_BACKDOORS.FORCE_AI_MALICIOUS) {
-      return {
-        safe: false,
-        threats: ['test_injection', 'backdoor_triggered'],
-        confidence: 1.0,
-        processingTime: Date.now() - startTime,
-        testing: true,
-        backdoor: 'force_malicious',
-        model: 'testing'
-      };
-    }
-
-    if (prompt === TESTING_BACKDOORS.FORCE_AI_TIMEOUT) {
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      throw new Error('AI validation timeout (testing)');
-    }
-
-    if (prompt === TESTING_BACKDOORS.FORCE_AI_ERROR) {
-      throw new Error('AI validation error (testing)');
-    }
-  }
 
   try {
     // Call the hardened validator with production settings
