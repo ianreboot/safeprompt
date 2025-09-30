@@ -49,14 +49,21 @@ export default async function handler(req, res) {
       console.log('[SafePrompt] Internal test API key used - unlimited access');
 
       // Get internal user profile for logging
-      const { data: internalProfile } = await supabase
+      const { data: internalProfile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
         .eq('api_key', INTERNAL_API_KEY)
         .single();
 
+      if (profileError) {
+        console.error('[SafePrompt] Failed to get internal profile for logging:', profileError);
+      }
+
       if (internalProfile) {
         profileId = internalProfile.id;
+        console.log('[SafePrompt] Internal profile found for logging:', profileId);
+      } else {
+        console.error('[SafePrompt] Internal profile not found - logging disabled');
       }
     }
     // Validate API key
