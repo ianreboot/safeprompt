@@ -15,17 +15,8 @@ const generateApiKey = () => {
   return `sp_live_${crypto.randomBytes(32).toString('hex')}`;
 };
 
-// Simple in-memory cache stats (shared with validate.js in production)
-const getCacheStats = () => {
-  return {
-    size: Math.floor(Math.random() * 1000), // Demo data
-    hits: Math.floor(Math.random() * 10000),
-    misses: Math.floor(Math.random() * 1000),
-    hit_rate: '90%',
-    memory_usage: '12.5 MB',
-    ttl: '1 hour'
-  };
-};
+// Cache stats removed - in-memory caching doesn't work on serverless
+// Use Redis/Upstash for real distributed caching
 
 async function handleUserApiKey(req, res) {
   // Get authorization header
@@ -61,7 +52,6 @@ async function handleUserApiKey(req, res) {
         .insert({
           id: user.id,
           email: user.email,
-          api_key: newApiKey,
           api_key_hash: hashedKey,
           api_key_hint: keyHint,
           subscription_tier: 'free',
@@ -74,12 +64,14 @@ async function handleUserApiKey(req, res) {
         .select()
         .single();
 
+      // Return the API key only on creation (user should save it)
       return res.status(200).json({
         api_key: newApiKey,
         key_hint: keyHint,
         subscription_tier: 'free',
         usage: { current: 0, limit: 10000, percentage: 0 },
-        created_at: newProfile.created_at
+        created_at: newProfile.created_at,
+        warning: 'Save this API key now - it will not be shown again'
       });
     }
 
@@ -92,8 +84,8 @@ async function handleUserApiKey(req, res) {
       : 0;
 
     return res.status(200).json({
-      api_key: profile.api_key || `sp_${profile.api_key_hint ? '•'.repeat(60) + profile.api_key_hint : 'hidden'}`,
-      key_hint: profile.api_key_hint,
+      api_key_hint: profile.api_key_hint,
+      api_key_preview: `sp_live_${'•'.repeat(60)}${profile.api_key_hint}`,
       subscription_tier: profile.subscription_tier,
       subscription_status: profile.subscription_status,
       usage: {
@@ -102,7 +94,8 @@ async function handleUserApiKey(req, res) {
         percentage: usagePercentage
       },
       created_at: profile.created_at,
-      last_used_at: profile.last_used_at
+      last_used_at: profile.last_used_at,
+      note: 'API key is hashed for security. If lost, regenerate a new key.'
     });
   } catch (error) {
     console.error('User API key error:', error);
@@ -170,11 +163,10 @@ export default async function handler(req, res) {
         });
 
       case 'cache':
-        // Cache statistics
-        const cacheStats = getCacheStats();
-        return res.status(200).json({
-          success: true,
-          cache: cacheStats,
+        // Cache statistics - disabled (in-memory cache ineffective on serverless)
+        return res.status(501).json({
+          error: 'Cache statistics not implemented',
+          message: 'In-memory caching not supported on serverless. Use Redis/Upstash for distributed caching.',
           timestamp: new Date().toISOString()
         });
 

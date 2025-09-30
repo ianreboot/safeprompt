@@ -119,6 +119,9 @@ async function handleStripeWebhook(req, res) {
             updated_at: new Date().toISOString()
           })
           .eq('id', existingProfile.id);
+
+        // TODO: Email the API key to the user (only time it's available in plaintext)
+        console.log(`API key generated for ${customerEmail} (send via email): ${apiKey.slice(0, 10)}...${keyHint}`);
       } else {
         await supabase
           .from('profiles')
@@ -128,7 +131,6 @@ async function handleStripeWebhook(req, res) {
             stripe_customer_id: customerId,
             stripe_subscription_id: subscriptionId,
             subscription_tier: tier,
-            api_key: apiKey,
             api_key_hash: hashedKey,
             api_key_hint: keyHint,
             api_requests_limit: requestLimit,
@@ -137,6 +139,9 @@ async function handleStripeWebhook(req, res) {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           });
+
+        // TODO: Email the API key to the user (only time it's available in plaintext)
+        console.log(`API key generated for ${customerEmail} (send via email): ${apiKey.slice(0, 10)}...${keyHint}`);
       }
 
       console.log(`API key generated for ${customerEmail}`);
