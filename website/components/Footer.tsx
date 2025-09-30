@@ -24,9 +24,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="https://github.com/ianreboot/safeprompt" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  GitHub
-                </a>
+                <Link href="#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  API Documentation
+                </Link>
               </li>
               <li>
                 <Link href="/contact" className="text-muted-foreground hover:text-foreground transition text-sm">
