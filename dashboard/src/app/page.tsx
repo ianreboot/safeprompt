@@ -158,7 +158,7 @@ export default function Dashboard() {
 
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('api_calls_this_month, subscription_status, stripe_customer_id')
+        .select('api_requests_used, api_requests_limit, subscription_status, subscription_tier, stripe_customer_id')
         .eq('id', userId)
         .single()
 
@@ -201,13 +201,15 @@ export default function Dashboard() {
         ? parseFloat(((errorCount / recentLogs.length) * 100).toFixed(2))
         : null
 
-      const tier = profileData?.subscription_status || 'free'
+      // Use actual limit from profile (for special accounts like ian.ho with 999,999)
+      const limit = profileData?.api_requests_limit || 10000
+      const current = profileData?.api_requests_used || 0
+      const percentage = Math.round((current / limit) * 100)
+
+      // Set plan based on subscription_tier or subscription_status
+      const tier = profileData?.subscription_tier || profileData?.subscription_status || 'free'
       const planIndex = pricingPlans.findIndex(p => p.id === tier)
       setCurrentPlan(pricingPlans[planIndex >= 0 ? planIndex : 0])
-
-      const limit = pricingPlans[planIndex >= 0 ? planIndex : 0].requests
-      const current = profileData?.api_calls_this_month || count || 0
-      const percentage = Math.round((current / limit) * 100)
 
       setUsage({
         current,
