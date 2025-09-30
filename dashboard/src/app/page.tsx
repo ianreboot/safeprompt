@@ -31,8 +31,8 @@ interface Usage {
   percentage: number
   tier: string
   daily_usage: number[]
-  avg_response_time: number
-  error_rate: number
+  avg_response_time: number | null
+  error_rate: number | null
 }
 
 interface CacheStats {
@@ -85,8 +85,8 @@ export default function Dashboard() {
     percentage: 0,
     tier: 'free',
     daily_usage: [],
-    avg_response_time: 0,
-    error_rate: 0
+    avg_response_time: null,
+    error_rate: null
   })
   const [cacheStats, setCacheStats] = useState<CacheStats | null>(null)
   const [currentPlan, setCurrentPlan] = useState<PricingPlan>(pricingPlans[0])
@@ -702,11 +702,15 @@ For questions, contact: support@safeprompt.dev`
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Avg Response Time</span>
-                  <span className="text-green-500">{usage.avg_response_time}ms</span>
+                  <span className="text-green-500">
+                    {usage.avg_response_time !== null ? `${usage.avg_response_time}ms` : '---'}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Success Rate</span>
-                  <span className="text-green-500">{(100 - usage.error_rate).toFixed(1)}%</span>
+                  <span className="text-green-500">
+                    {usage.error_rate !== null ? `${(100 - usage.error_rate).toFixed(1)}%` : '---'}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Cache Hit Rate</span>
