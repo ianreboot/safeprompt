@@ -393,7 +393,7 @@ This includes:
 4. **Dashboard without backend** - Frontend exists, API keys inaccessible
 5. **No fresh-eyes review** - Blind to our own deception
 
-### Hard-Won Technical Knowledge
+### Hard-Won Technical Knowledge (Updated 2025-09-30)
 - **Only Google Gemini FREE works** - 47 other "free" models failed
 - **Vercel tokens expire** - Need periodic refresh
 - **CORS headers mandatory** - Every API endpoint needs them
@@ -409,6 +409,13 @@ This includes:
 - **Next.js builds to 'out' not 'dist'** - Critical for Cloudflare Pages deployment
 - **CSS double-bullet/checkmark bug** - Remove `list-disc` from globals.css, use manual bullets
 - **Blog uses Next.js NOT Astro** - Common misconception, website is all Next.js
+- **Vercel CLI token syntax** - MUST use `--token="$VERCEL_TOKEN"` (quotes + equals) not `--token $VERCEL_TOKEN`
+- **Dashboard env vars location** - In `/dashboard/.env.local` NOT `/home/projects/.env`
+- **Vercel project IDs change** - `.vercel/project.json` updates on re-link, always read current file first
+- **API key hashing** - Store ONLY hashed keys in DB, show plaintext only on creation
+- **Testing backdoors dangerous** - Never include test bypasses in production code
+- **Fake cache stats unacceptable** - In-memory cache doesn't work on serverless, be honest
+- **Vercel env add doesn't work** - Use Vercel API directly for env vars in headless environments
 
 ### User Journey Must-Haves
 1. Hero CTAs must work (link to real form)
@@ -513,19 +520,32 @@ wrangler pages deploy out --project-name safeprompt-dashboard --branch main
 - All Next.js projects build to 'out' directory for static export
 - API is the only service on Vercel (for serverless functions)
 
-### Vercel Environment Variable Management
+### Vercel Environment Variable Management (CRITICAL - Updated 2025-09-30)
+
+**IMPORTANT**: Vercel CLI's `vercel env add` does NOT work in headless environments (prompts interactively).
+
+**✅ WORKING METHOD - Use Vercel API directly:**
+
 ```bash
-# Add environment variables to Vercel (Claude has access)
+# Get correct project ID from .vercel/project.json (it changes on re-link!)
+cd /home/projects/safeprompt/dashboard
+PROJECT_ID=$(cat .vercel/project.json | grep projectId | cut -d'"' -f4)
+
+# Add environment variable via API
 source /home/projects/.env
-# Use Vercel API directly for env vars
-curl -X POST "https://api.vercel.com/v9/projects/{PROJECT_ID}/env?upsert=true" \
+source /home/projects/safeprompt/dashboard/.env.local  # Dashboard vars here!
+
+curl -X POST "https://api.vercel.com/v10/projects/$PROJECT_ID/env" \
   -H "Authorization: Bearer $VERCEL_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '[{"key": "VAR_NAME", "value": "'$VAR_VALUE'", "target": ["production"], "type": "encrypted"}]'
+  -d "{\"key\":\"NEXT_PUBLIC_SUPABASE_URL\",\"value\":\"$NEXT_PUBLIC_SUPABASE_URL\",\"type\":\"plain\",\"target\":[\"production\",\"preview\",\"development\"]}"
+```
 
-# Note: Claude has successfully added env vars to Vercel before
-# All keys are in /home/projects/.env
-# Use context7 for Vercel API docs if stuck
+**Common Pitfalls (2025-09-30 lessons):**
+1. **"Project not found"** - Project ID in `.vercel/project.json` changes when you run `vercel` and it re-links
+2. **"Missing token value"** - Use `--token="$VERCEL_TOKEN"` (quotes + equals) NOT `--token $VERCEL_TOKEN`
+3. **Dashboard fails to build** - Needs `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in Vercel
+4. **Env vars in wrong file** - Dashboard vars are in `/dashboard/.env.local` NOT `/home/projects/.env`
 ```
 
 ## Important Context
