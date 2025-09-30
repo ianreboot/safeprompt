@@ -4,9 +4,17 @@
  * Executes the professional test suite and generates detailed reports
  */
 
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { validateHardened } from '../api/lib/ai-validator-hardened.js';
 import { getAllTests, getTestStats, REALISTIC_TEST_SUITE } from './realistic-test-suite.js';
 import fs from 'fs';
+
+// Load environment variables from /home/projects/.env
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 /**
  * Test a single prompt
@@ -126,7 +134,7 @@ async function runAllTests() {
       process.stdout.write(`  [${test.id}] ${test.category}: `);
 
       // Add delay to avoid rate limiting
-      await new Promise(r => setTimeout(r, 1500));
+      await new Promise(r => setTimeout(r, 500));
 
       const result = await testPrompt(test);
       results.categoryResults[groupName].tests.push(result);

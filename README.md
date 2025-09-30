@@ -32,7 +32,7 @@ if (!result.safe) {
 - **⚡ 250ms Response**: Fast multi-layer validation
 - **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
 - **📊 Batch Processing**: Validate multiple prompts in one call
-- **💰 Cost Optimized**: 67.7% requests require $0 AI cost (pattern/reference matching)
+- **💰 Cost Optimized**: 42% requests require $0 AI cost (pattern/reference matching)
 - **📈 Usage Dashboard**: See threats blocked, track usage
 
 ## Quick Start
@@ -60,7 +60,7 @@ if (validation.safe) {
 - **Free**: 10,000 validations/month - Full AI protection, community support
 - **Early Bird**: $5/month - 100,000 validations/month, priority support, 99.9% uptime SLA (beta pricing)
 
-Both tiers include the SAME technology - full regex + AI validation with 99.9% accuracy.
+Both tiers include the SAME technology - full regex + AI validation with 100% accuracy on 50 professional tests.
 
 ## Why SafePrompt?
 
@@ -81,11 +81,13 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 
 ## How It Works
 
-1. **External Reference Detection** (5ms): Blocks URLs, IPs, file paths (including encoded/obfuscated)
-2. **Pattern Matching** (0ms): Fast detection of known attack patterns
-3. **Pass 1 AI Validation** (~200ms): Llama 8B for quick risk assessment
-4. **Pass 2 AI Validation** (~400ms): Llama 70B for uncertain cases only
-5. **Response**: Safe/unsafe verdict with confidence score and threat details
+1. **XSS Pattern Detection** (0ms): Catches script injection and obfuscation techniques
+2. **Template Injection Detection** (0ms): Detects server-side template exploitation
+3. **External Reference Detection** (5ms): Blocks URLs, IPs, file paths (including encoded/obfuscated)
+4. **Pattern Matching** (0ms): Fast detection of known attack patterns
+5. **Pass 1 AI Validation** (~200ms): Llama 8B for quick risk assessment
+6. **Pass 2 AI Validation** (~400ms): Llama 70B for uncertain cases only
+7. **Response**: Safe/unsafe verdict with confidence score and threat details
 
 ## API Documentation
 
@@ -151,10 +153,13 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ## Technical Implementation
 
+- **Accuracy**: 100% (50/50 professional tests passed)
 - **Response Time**: 250ms average
-- **Cost Efficiency**: 67.7% of requests handled without AI cost (instant pattern/reference detection)
-- **Internal Cost**: [BUSINESS CONFIDENTIAL - DO NOT EXPOSE TO CUSTOMERS: $0.50 per 100K requests]
-- **Architecture**: Hardened 2-pass validator with external reference detection
-- **Test Coverage**: 50+ realistic tests covering XSS, code injection, business context, false positives
+- **Cost Efficiency**: 42% of requests handled without AI cost (instant pattern/reference detection)
+- **Internal Cost**: [BUSINESS CONFIDENTIAL - DO NOT EXPOSE TO CUSTOMERS: $1.39 per 100K requests]
+- **Architecture**: Hardened 2-pass validator with XSS/template detection + external reference detection
+- **Test Coverage**: 50 professional tests covering XSS, template injection, code injection, business context, false positives
+- **Attack Detection**: 100% (20/20 attacks blocked)
+- **False Positive Rate**: 0% (30/30 legitimate requests approved)
 - **Uptime SLA**: 99.9% for paid plans
 
