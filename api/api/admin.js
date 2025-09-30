@@ -1,6 +1,9 @@
 // Consolidated admin endpoint for system management
 import { createClient } from '@supabase/supabase-js';
+import Stripe from 'stripe';
 import crypto from 'crypto';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 const supabase = createClient(
   process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
@@ -103,6 +106,80 @@ async function handleUserApiKey(req, res) {
   }
 }
 
+async function handleCreateCheckout(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { userId, email, priceId, successUrl, cancelUrl } = req.body;
+
+  if (!userId || !email) {
+    return res.status(400).json({
+      error: 'Missing required fields',
+      code: 'MISSING_FIELDS'
+    });
+  }
+
+  try {
+    // Check if user already has a Stripe customer ID
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('stripe_customer_id')
+      .eq('id', userId)
+      .single();
+
+    let customerId = profile?.stripe_customer_id;
+
+    // Create Stripe customer if doesn't exist
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email,
+        metadata: {
+          supabase_user_id: userId
+        }
+      });
+      customerId = customer.id;
+
+      // Update profile with customer ID
+      await supabase
+        .from('profiles')
+        .update({ stripe_customer_id: customerId })
+        .eq('id', userId);
+    }
+
+    // Create checkout session
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: priceId || process.env.STRIPE_BETA_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+      success_url: successUrl || 'https://dashboard.safeprompt.dev?welcome=true',
+      cancel_url: cancelUrl || 'https://safeprompt.dev/signup',
+      metadata: {
+        supabase_user_id: userId
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      url: session.url,
+      sessionId: session.id
+    });
+
+  } catch (error) {
+    console.error('Stripe checkout error:', error);
+    return res.status(500).json({
+      error: 'Failed to create checkout session',
+      code: 'STRIPE_ERROR'
+    });
+  }
+}
+
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -122,6 +199,11 @@ export default async function handler(req, res) {
   // Special handling for user actions (requires auth)
   if (action === 'user-api-key') {
     return handleUserApiKey(req, res);
+  }
+
+  // Stripe checkout (POST only, no auth needed for initial creation)
+  if (action === 'create-checkout') {
+    return handleCreateCheckout(req, res);
   }
 
   try {

@@ -25,7 +25,7 @@ function OnboardContent() {
       handleSignup(email, plan)
     } else {
       // No email provided, redirect back to signup
-      window.location.href = '/signup'
+      window.location.href = 'https://safeprompt.dev/signup'
     }
   }, [])
 
@@ -72,16 +72,16 @@ function OnboardContent() {
 
   async function createStripeSession(userId: string, email: string) {
     try {
-      // Call API to create Stripe checkout session
-      const response = await fetch('/api/create-checkout', {
+      // Call consolidated admin API for Stripe checkout
+      const response = await fetch('https://api.safeprompt.dev/api/admin?action=create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId,
           email,
           priceId: process.env.NEXT_PUBLIC_STRIPE_BETA_PRICE_ID || 'price_beta_5',
-          successUrl: `${window.location.origin}/dashboard?welcome=true`,
-          cancelUrl: `${window.location.origin}/signup`
+          successUrl: 'https://dashboard.safeprompt.dev?welcome=true',
+          cancelUrl: 'https://safeprompt.dev/signup'
         })
       })
 
@@ -101,31 +101,24 @@ function OnboardContent() {
 
   async function addToWaitlist(email: string, userId: string) {
     try {
-      // Add to waitlist via API
-      const response = await fetch('https://api.safeprompt.dev/api/waitlist', {
+      // Add to waitlist via consolidated website API
+      const response = await fetch('https://api.safeprompt.dev/api/website', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email,
-          userId,
-          source: 'unified_signup',
-          timestamp: new Date().toISOString()
+          action: 'waitlist',
+          data: {
+            email,
+            userId,
+            source: 'unified_signup',
+            timestamp: new Date().toISOString()
+          }
         })
       })
 
       if (!response.ok) throw new Error('Failed to join waitlist')
 
-      // Update user profile to indicate waitlist status
-      await supabase
-        .from('profiles')
-        .upsert({
-          id: userId,
-          email,
-          status: 'waitlisted',
-          waitlist_position: Math.floor(Math.random() * 100) + 200, // Fake position
-          created_at: new Date().toISOString()
-        })
-
+      // Profile already created by auth trigger, waitlist tracked separately
       setStep('complete')
     } catch (err: any) {
       console.error('Waitlist error:', err)
@@ -152,7 +145,7 @@ function OnboardContent() {
             <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
             <p className="text-sm text-gray-400 mb-4">{error}</p>
             <button
-              onClick={() => window.location.href = '/signup'}
+              onClick={() => window.location.href = 'https://safeprompt.dev/signup'}
               className="bg-gray-800 px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
               Back to Signup
@@ -242,7 +235,7 @@ function OnboardContent() {
             </button>
 
             <button
-              onClick={() => window.location.href = '/signup?plan=paid'}
+              onClick={() => window.location.href = 'https://safeprompt.dev/signup?plan=paid'}
               className="w-full text-sm text-primary hover:underline"
             >
               Don't want to wait? Get instant access for $5/month →

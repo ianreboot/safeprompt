@@ -485,13 +485,15 @@ cd frontend && npm run dev
 ### Deployment
 
 #### CRITICAL: Deployment Architecture (Updated 2025-09-30)
-**All SafePrompt services are deployed as follows:**
-- **API**: Vercel Functions at api.safeprompt.dev
-- **Website**: Cloudflare Pages at www.safeprompt.dev
-- **Dashboard**: Vercel (Next.js app) at dashboard.safeprompt.dev
+**🚨 MANDATORY DEPLOYMENT TARGETS:**
+- **API**: Vercel Functions at api.safeprompt.dev (ONLY Vercel - needs serverless functions)
+- **Website**: Cloudflare Pages at www.safeprompt.dev (static export)
+- **Dashboard**: Cloudflare Pages at dashboard.safeprompt.dev (static export with `output: 'export'`)
+
+**❌ NEVER deploy Dashboard to Vercel** - It has `output: 'export'` in next.config.js which means it's a static site for Cloudflare Pages!
 
 ```bash
-# Deploy API to Vercel
+# Deploy API to Vercel (ONLY project that should be on Vercel)
 cd /home/projects/safeprompt/api
 source /home/projects/.env
 vercel --token="$VERCEL_TOKEN" --prod --yes
@@ -504,19 +506,18 @@ npm run build  # Builds to 'out' directory
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
 wrangler pages deploy out --project-name safeprompt --branch main --commit-dirty=true
 
-# Deploy DASHBOARD to Vercel
-cd /home/projects/safeprompt/dashboard
-source /home/projects/.env
-vercel --token="$VERCEL_TOKEN" --prod --yes
-# Note: Dashboard requires NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY env vars
+# Deploy DASHBOARD to Cloudflare Pages (NOT VERCEL!)
 cd /home/projects/safeprompt/dashboard
 npm run build  # Builds to 'out' directory
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
-wrangler pages deploy out --project-name safeprompt-dashboard --branch main
+wrangler pages deploy out --project-name safeprompt-dashboard --branch main --commit-dirty=true
 ```
 
-**⚠️ IMPORTANT**:
-- Dashboard is on Cloudflare Pages, NOT Vercel!
+**⚠️ WHY Dashboard is Cloudflare Pages:**
+- Dashboard has `output: 'export'` in next.config.js (static export)
+- No API routes - all API calls go to api.safeprompt.dev (Vercel)
+- Uses client-side Supabase SDK only
+- Currently has .vercel folder but SHOULD NOT be deployed there!
 - All Next.js projects build to 'out' directory for static export
 - API is the only service on Vercel (for serverless functions)
 
