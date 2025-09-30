@@ -14,10 +14,10 @@ SafePrompt protects your AI applications from prompt injection attacks. Built fo
 const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer sp_live_YOUR_KEY',
+    'X-API-Key': 'sp_live_YOUR_KEY',
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({ prompt: userInput })
+  body: JSON.stringify({ prompt: userInput, mode: 'optimized' })
 });
 
 const result = await response.json();
@@ -28,12 +28,12 @@ if (!result.safe) {
 
 ## Features
 
-- **🚀 One-Line Integration**: Literally just POST to /check
-- **⚡ 5ms Response**: Your users won't even notice
-- **💰 30% Cost Savings**: Smart caching reduces your bill automatically
-- **📊 Batch Processing**: Validate 100 prompts in one call
-- **🛡️ Real Protection**: Not just regex - multi-layer AI validation
-- **📈 Usage Dashboard**: See threats blocked, track usage, export reports
+- **🚀 One-Line Integration**: Literally just POST to /validate
+- **⚡ 250ms Response**: Fast multi-layer validation
+- **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
+- **📊 Batch Processing**: Validate multiple prompts in one call
+- **💰 Cost Optimized**: 67.7% requests $0 cost, 92.9% accuracy at $0.50/100K
+- **📈 Usage Dashboard**: See threats blocked, track usage
 
 ## Quick Start
 
