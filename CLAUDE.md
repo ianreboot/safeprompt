@@ -229,13 +229,13 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - **Codebase**: Cleaned and production-ready (Sep 30, 2025)
 
 ### Recent Cleanup (2025-09-30)
-- **Removed**: 10 archived validator versions, 23 test archive files
-- **Removed**: 9 obsolete documentation files
+- **Removed**: 10 archived validator versions, 23 test archive files, 9 obsolete docs (15,549 lines)
 - **Fixed**: API key storage (now hash-only for security)
 - **Fixed**: Testing backdoors removed from production code
 - **Fixed**: Fake cache statistics removed
-- **Added**: Shared utility functions to reduce duplication
+- **Added**: Shared utility functions (`/api/lib/utils.js`) to reduce duplication
 - **Updated**: API docs to match current /validate endpoint
+- **Deployed**: All three apps (API, Website, Dashboard) with cleanup changes
 
 ### Database Architecture (UPDATED January 2025)
 
@@ -477,26 +477,31 @@ cd frontend && npm run dev
 
 ### Deployment
 
-#### CRITICAL: Deployment Architecture (Updated 2025-09-27)
+#### CRITICAL: Deployment Architecture (Updated 2025-09-30)
 **All SafePrompt services are deployed as follows:**
 - **API**: Vercel Functions at api.safeprompt.dev
 - **Website**: Cloudflare Pages at www.safeprompt.dev
-- **Dashboard**: Cloudflare Pages at dashboard.safeprompt.dev
+- **Dashboard**: Vercel (Next.js app) at dashboard.safeprompt.dev
 
 ```bash
 # Deploy API to Vercel
 cd /home/projects/safeprompt/api
 source /home/projects/.env
-vercel --prod --token $VERCEL_TOKEN --yes
+vercel --token="$VERCEL_TOKEN" --prod --yes
+# Note: Token MUST be in quotes with = sign: --token="$TOKEN"
 # Verify: Should show "projectName":"safeprompt-api" in .vercel/project.json
 
 # Deploy WEBSITE to Cloudflare Pages
 cd /home/projects/safeprompt/website
 npm run build  # Builds to 'out' directory
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
-wrangler pages deploy out --project-name safeprompt --branch main
+wrangler pages deploy out --project-name safeprompt --branch main --commit-dirty=true
 
-# Deploy DASHBOARD to Cloudflare Pages
+# Deploy DASHBOARD to Vercel
+cd /home/projects/safeprompt/dashboard
+source /home/projects/.env
+vercel --token="$VERCEL_TOKEN" --prod --yes
+# Note: Dashboard requires NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY env vars
 cd /home/projects/safeprompt/dashboard
 npm run build  # Builds to 'out' directory
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
