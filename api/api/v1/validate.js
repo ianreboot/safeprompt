@@ -137,9 +137,7 @@ export default async function handler(req, res) {
                   response_time_ms: batchProcessingTime,
                   safe: result.safe,
                   threats: result.threats || [],
-                  prompt_length: p.length,
-                  mode: mode,
-                  cached: false
+                  prompt_length: p.length
                 });
             } catch (logError) {
               console.error('[SafePrompt] Failed to log batch request:', logError);
@@ -203,9 +201,7 @@ export default async function handler(req, res) {
             response_time_ms: processingTime,
             safe: result.safe,
             threats: result.threats || [],
-            prompt_length: prompt.length,
-            mode: mode,
-            cached: false
+            prompt_length: prompt.length
           });
       } catch (logError) {
         console.error('[SafePrompt] Failed to log request:', logError);
