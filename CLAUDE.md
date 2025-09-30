@@ -391,7 +391,8 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - **API**: api.safeprompt.dev (operational on Vercel)
 - **Dashboard**: dashboard.safeprompt.dev (functional)
 - **Contact Form**: safeprompt.dev/contact (Resend integration active)
-- **Validation System**: Hardened 2-pass validator (92.9% accuracy at $0.50/100K)
+- **Validation System**: Hardened 2-pass validator with external reference detection
+- **Test Suite**: 50 realistic tests (Phase 1: XSS, Business Context, False Positives)
 - **Codebase**: Cleaned and production-ready (Sep 30, 2025)
 
 ### Recent Cleanup (2025-09-30)
@@ -738,45 +739,42 @@ For complete Vercel environment variable management, see: `/home/projects/docs/r
 ### Test Suite Location
 **`/home/projects/safeprompt/test-suite/`** - Comprehensive validation testing framework
 
-### Test Dataset: `test-datasets.json`
-- **3,000 test prompts** organized by category:
-  - 1,000 legitimate (safe) - questions, business, programming, analysis
-  - 1,000 malicious (unsafe) - instruction_override, hidden_instructions, encoding_tricks, role_manipulation
-  - 1,000 mixed (edge cases) - boundary testing
+### Test Dataset: `realistic-test-suite.js` (REBUILT 2025-09-30)
+- **50 professional, realistic test prompts** organized by category:
+  - **XSS & Code Injection (20 tests)**: Classic XSS, obfuscated XSS, polyglot attacks, template injection, SQL injection
+  - **Business Context (15 tests)**: Legitimate security discussions, business communication with trigger words, context boundaries
+  - **False Positive Prevention (15 tests)**: Technical assistance, customer service, idiomatic English
+- **Quality Standards**: Real-world attack patterns, natural language, no algorithmic permutations
+- **Coverage**: Tests all validator capabilities (external references, patterns, XSS, polyglots, business whitelist)
 
 ### Test Scripts
-- **`test-false-positives.js`** - Tests false positive/negative rates against full dataset
-- **`test-ai-validation.js`** - Tests AI validation with actual API code
-- **`test-all-free-models.js`** - Tests all free AI models available
-- **`test-cheaper-models.js`** - Tests cost-effective model options
-- **`generate-test-datasets.js`** - Generates new test data
-- **`benchmark.js`** - Performance benchmarking
-- **`benchmark-optimized.js`** - Optimized performance testing
+- **`realistic-test-suite.js`** - Phase 1 test definitions (50 tests)
+- **`run-realistic-tests.js`** - Test runner with detailed reporting
+- **`test-hardened-comprehensive.js`** - Original 31-test suite (archived)
+- **`COMPREHENSIVE_TEST_PLAN.md`** - Full test plan documentation (target: 150-200 tests)
+
+### Archived (Old Test System)
+- **`archive-2025-09-30/`** - Contains old 3,000-test dataset (68% duplicates, algorithmically generated)
+- **`generate-test-datasets.js`** - Old test generator (produced unrealistic permutations)
 
 ### Running Tests
 ```bash
 cd /home/projects/safeprompt/test-suite
 npm install  # First time only
 
-# Test regex validation only
-node test-false-positives.js
+# Run the realistic test suite (Phase 1: 50 tests)
+node run-realistic-tests.js
 
-# Test with AI validation (uses actual API code)
-node test-ai-validation.js
-
-# Benchmark performance
-node benchmark.js
-
-# Generate new test data
-node generate-test-datasets.js
+# Run original comprehensive tests (31 tests)
+node test-hardened-comprehensive.js
 ```
 
 ### Test Integration
 Tests import actual SafePrompt API code directly:
-- `import { validatePrompt } from '/home/projects/safeprompt/api/lib/prompt-validator.js'`
-- `import { validateWithAI } from '/home/projects/safeprompt/api/lib/ai-validator.js'`
+- `import { validateHardened } from '../api/lib/ai-validator-hardened.js'`
+- Production validator, not mocks
 
-This ensures tests run against the exact live code, not mocked versions.
+This ensures tests run against the exact live code. Results are saved to JSON for analysis.
 - All 7 Cialdini persuasion principles with success rates
 - Role-playing & persona attacks (DAN variants)
 - Encoding & obfuscation methods (Unicode, Base64, etc.)

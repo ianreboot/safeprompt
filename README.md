@@ -32,7 +32,7 @@ if (!result.safe) {
 - **⚡ 250ms Response**: Fast multi-layer validation
 - **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
 - **📊 Batch Processing**: Validate multiple prompts in one call
-- **💰 Cost Optimized**: 67.7% requests $0 cost, 92.9% accuracy at $0.50/100K
+- **💰 Cost Optimized**: 67.7% requests require $0 AI cost (pattern/reference matching)
 - **📈 Usage Dashboard**: See threats blocked, track usage
 
 ## Quick Start
@@ -151,9 +151,10 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ## Technical Implementation
 
-- **Accuracy**: 92.9% detection rate (up from 43%)
-- **Response Time**: 250ms average (down from 1360ms)
+- **Response Time**: 250ms average
+- **Cost Efficiency**: 67.7% of requests handled without AI cost (instant pattern/reference detection)
 - **Internal Cost**: [BUSINESS CONFIDENTIAL - DO NOT EXPOSE TO CUSTOMERS: $0.50 per 100K requests]
 - **Architecture**: Hardened 2-pass validator with external reference detection
+- **Test Coverage**: 50+ realistic tests covering XSS, code injection, business context, false positives
 - **Uptime SLA**: 99.9% for paid plans
 
