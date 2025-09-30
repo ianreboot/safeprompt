@@ -168,10 +168,38 @@ export default function Dashboard() {
         .eq('profile_id', userId)
         .gte('created_at', startOfMonth.toISOString())
 
-      // Generate mock daily usage for demo
-      const dailyUsage = Array.from({ length: 7 }, (_, i) =>
-        Math.floor(Math.random() * 500) + 100
-      )
+      // Fetch real daily usage for last 7 days
+      const sevenDaysAgo = new Date()
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+      const { data: recentLogs } = await supabase
+        .from('api_logs')
+        .select('created_at, response_time_ms, safe')
+        .eq('profile_id', userId)
+        .gte('created_at', sevenDaysAgo.toISOString())
+
+      // Calculate daily usage (group by day)
+      const dailyUsage = Array.from({ length: 7 }, (_, i) => {
+        const date = new Date()
+        date.setDate(date.getDate() - (6 - i))
+        const dayStart = new Date(date.setHours(0, 0, 0, 0))
+        const dayEnd = new Date(date.setHours(23, 59, 59, 999))
+
+        return recentLogs?.filter(log => {
+          const logDate = new Date(log.created_at)
+          return logDate >= dayStart && logDate <= dayEnd
+        }).length || 0
+      })
+
+      // Calculate real stats from logs
+      const avgResponseTime = recentLogs && recentLogs.length > 0
+        ? Math.round(recentLogs.reduce((sum, log) => sum + (log.response_time_ms || 0), 0) / recentLogs.length)
+        : null
+
+      const errorCount = recentLogs?.filter(log => !log.safe).length || 0
+      const errorRate = recentLogs && recentLogs.length > 0
+        ? parseFloat(((errorCount / recentLogs.length) * 100).toFixed(2))
+        : null
 
       const tier = profileData?.subscription_status || 'free'
       const planIndex = pricingPlans.findIndex(p => p.id === tier)
@@ -187,8 +215,8 @@ export default function Dashboard() {
         percentage,
         tier,
         daily_usage: dailyUsage,
-        avg_response_time: 45,
-        error_rate: 0.1
+        avg_response_time: avgResponseTime,
+        error_rate: errorRate
       })
     } catch (error) {
       console.error('Error fetching usage:', error)
@@ -201,18 +229,14 @@ export default function Dashboard() {
       if (response.ok) {
         const stats = await response.json()
         setCacheStats(stats)
+      } else {
+        // No cache stats available - leave as null
+        setCacheStats(null)
       }
     } catch (error) {
       console.error('Error fetching cache stats:', error)
-      // Set mock data for demo
-      setCacheStats({
-        hits: 1247,
-        misses: 892,
-        evictions: 12,
-        size: 342,
-        hitRate: '58.3%',
-        memoryUsage: '171 KB'
-      })
+      // No cache stats available - leave as null
+      setCacheStats(null)
     }
   }
 
@@ -458,7 +482,12 @@ For questions, contact: support@safeprompt.dev`
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Avg Response</p>
-                <p className="text-2xl font-bold">{usage.avg_response_time}ms</p>
+                <p className="text-2xl font-bold">
+                  {usage.avg_response_time !== null && usage.avg_response_time !== undefined
+                    ? `${usage.avg_response_time}ms`
+                    : <span className="text-sm text-gray-600">No data yet</span>
+                  }
+                </p>
               </div>
               <Clock className="w-8 h-8 text-green-500 opacity-50" />
             </div>
@@ -468,7 +497,12 @@ For questions, contact: support@safeprompt.dev`
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Error Rate</p>
-                <p className="text-2xl font-bold">{usage.error_rate}%</p>
+                <p className="text-2xl font-bold">
+                  {usage.error_rate !== null && usage.error_rate !== undefined
+                    ? `${usage.error_rate}%`
+                    : <span className="text-sm text-gray-600">No data yet</span>
+                  }
+                </p>
               </div>
               <Shield className="w-8 h-8 text-blue-500 opacity-50" />
             </div>

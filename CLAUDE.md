@@ -1333,3 +1333,196 @@ When you see "Unexpected token [ComponentName]" in Next.js static export:
 4. **It's production-tested**: This solution is running live at safeprompt.dev
 
 This knowledge represents 5+ hours of debugging condensed into a working solution.
+
+## 🔐 Supabase + Vercel Integration Lessons (2025-09-30)
+
+### Critical Discovery: RLS INSERT Policy Missing
+**Problem**: API logging code deployed but no logs appearing in database
+**Root Cause**: api_logs table had RLS enabled but NO INSERT policy
+**Impact**: All inserts silently failed despite using service role key
+**Solution**: Add explicit INSERT policy via Supabase Management API
+
+**The Fix**:
+```sql
+CREATE POLICY "API can insert logs" ON api_logs
+  FOR INSERT WITH CHECK (true);
+```
+
+**Key Insight**: Even service role keys can be blocked by missing RLS policies. Always verify ALL CRUD policies exist, not just SELECT.
+
+### Vercel Environment Variables - The Complete Truth
+
+**✅ Environment Variables Already Exist**:
+- Vercel projects may already have env vars configured from initial setup
+- Use `GET /v9/projects/{projectId}/env` to check before adding new ones
+- SafePrompt API already had Supabase vars configured (Sept 23, 2025)
+
+**How to Check Existing Env Vars**:
+```javascript
+const response = await fetch(
+  `https://api.vercel.com/v9/projects/${PROJECT_ID}/env`,
+  {
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${VERCEL_TOKEN}` }
+  }
+);
+const result = await response.json();
+// Check result.envs array for existing variables
+```
+
+**Adding New Env Vars (if needed)**:
+```javascript
+const response = await fetch(
+  `https://api.vercel.com/v10/projects/${PROJECT_ID}/env`,
+  {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${VERCEL_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify([
+      {
+        key: 'SAFEPROMPT_SUPABASE_URL',
+        value: process.env.SAFEPROMPT_SUPABASE_URL,
+        target: ['production', 'preview', 'development'],
+        type: 'encrypted'
+      }
+    ])
+  }
+);
+```
+
+**Common Errors**:
+- `ENV_CONFLICT`: Variable already exists (check with GET first)
+- `forbidden`: Token authentication issue
+- `BAD_REQUEST`: No variables created (check request body format)
+
+### API Logging Implementation Checklist
+
+When adding database logging to serverless functions:
+
+1. **Schema Verification** ✅
+   - Read schema from database or SQL file
+   - Only insert columns that actually exist
+   - Don't assume columns exist without verification
+
+2. **RLS Policy Verification** ✅
+   - Check ALL CRUD policies exist (not just SELECT)
+   - INSERT policy is critical for logging
+   - Test with direct Supabase client before deploying
+
+3. **Environment Variables** ✅
+   - Verify Supabase URL and service role key in Vercel
+   - Use `GET /v9/projects/{id}/env` to check
+   - Don't add duplicates (causes ENV_CONFLICT error)
+
+4. **Local Testing First** ✅
+   - Test insert from local script before deploying
+   - Verify profile lookup works
+   - Confirm RLS policies allow operation
+
+5. **Deployment Timing** ✅
+   - Vercel auto-deploys take 60-90 seconds
+   - Wait for deployment to complete before testing
+   - Use `git push` to trigger deploy (empty commit works)
+
+### Database Schema Column Mistakes
+
+**What Happened**:
+- Added logging code with `mode` and `cached` columns
+- Schema only had: profile_id, endpoint, response_time_ms, safe, threats, prompt_length
+- Inserts failed with PGRST204 error (column not found)
+
+**Prevention**:
+```javascript
+// ALWAYS verify schema first
+const { data: schemaCheck } = await supabase
+  .from('api_logs')
+  .select('*')
+  .limit(1);
+
+// Then inspect schemaCheck structure before writing insert code
+```
+
+**The Fix**:
+```javascript
+// Before: WRONG - assumed columns
+await supabase.from('api_logs').insert({
+  profile_id: profileId,
+  mode: mode,          // ❌ Column doesn't exist
+  cached: false        // ❌ Column doesn't exist
+});
+
+// After: CORRECT - only existing columns
+await supabase.from('api_logs').insert({
+  profile_id: profileId,
+  endpoint: '/api/v1/validate',
+  response_time_ms: processingTime,
+  safe: result.safe,
+  threats: result.threats || [],
+  prompt_length: prompt.length
+});
+```
+
+### Vercel Deployment Verification
+
+**Don't Trust "No Error" = "Deployed"**:
+- Push to GitHub triggers Vercel auto-deploy
+- But deployment takes time (60-90 seconds)
+- Test too early = testing old code
+
+**Proper Verification Sequence**:
+```bash
+# 1. Push code
+git push
+
+# 2. Wait for deployment (not optional!)
+sleep 60
+
+# 3. Test API endpoint
+curl -X POST https://api.safeprompt.dev/api/v1/validate \
+  -H "X-API-Key: sp_test_unlimited_dogfood_key_2025" \
+  -d '{"prompt": "test"}'
+
+# 4. Verify database shows new log
+node check_api_logs.js
+```
+
+### Critical Mistakes That Cost Hours
+
+1. **Assuming Service Role Bypasses RLS**: FALSE
+   - Service role can still be blocked by missing INSERT policy
+   - Always verify ALL RLS policies exist
+
+2. **Not Checking Existing Env Vars**:
+   - Tried to add vars that already existed
+   - Got ENV_CONFLICT error
+   - Should have checked with GET first
+
+3. **Testing Before Deployment Complete**:
+   - Tested API 30 seconds after push
+   - Old code still running
+   - Thought logging was broken when deployment just wasn't done
+
+4. **Assuming Schema Matches Code**:
+   - Added `mode` and `cached` fields without checking schema
+   - All inserts failed silently
+   - Should have verified schema first
+
+### Time-Saving Rules for Future AIs
+
+1. **Always check existing setup first** (env vars, RLS policies, schema)
+2. **Verify locally before deploying** (test inserts work with Supabase client)
+3. **Wait for deployments to complete** (60-90 seconds for Vercel)
+4. **Read actual schema** (don't assume columns exist)
+5. **Check ALL RLS policies** (not just SELECT)
+
+### What Success Looks Like
+
+- Local test insert: ✅ Works immediately
+- Vercel env vars: ✅ Already configured (verified via API)
+- RLS policy: ✅ Added INSERT policy
+- Schema mismatch: ✅ Fixed (removed non-existent columns)
+- Production logging: ⏳ Waiting for Vercel deployment
+
+**Total Time**: 2+ hours of debugging that could have been 15 minutes with this knowledge.
