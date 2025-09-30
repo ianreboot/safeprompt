@@ -1,11 +1,15 @@
 # SafePrompt - AI Assistant Instructions
 
+**Last Updated**: 2025-09-30
+**Status**: Beta - Production Ready (Code Cleaned)
+**Deployment**: Cloudflare Pages (website), Vercel Functions (API)
+
 ## Project Overview
 SafePrompt is a developer-first API service that prevents prompt injection attacks in AI applications. We provide a simple, fast, and transparent solution for developers who need to secure their LLM-powered features without complexity or enterprise sales cycles.
 
 **Domain**: safeprompt.dev
 **Repository**: https://github.com/ianreboot/safeprompt.git
-**Status**: MVP Complete - Ready for Beta Testing (January 2025)
+**Current State**: Production ready, comprehensive cleanup completed Sep 2025
 
 ## Core Value Proposition
 "Stop prompt injection in one line of code"
@@ -214,18 +218,24 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - Developer experience (npm install → working in 30 seconds)
 - Speed + accuracy balance (not paranoid mode by default)
 
-## Current Status
+## Current Status (September 2025)
 
-**See SAFEPROMPT_IMPLEMENTATION.md for complete roadmap and detailed status**
-
-### Quick Status Summary
+### Infrastructure Status
 - **Domain**: safeprompt.dev (live)
-- **API**: api.safeprompt.dev (operational)
-- **Dashboard**: dashboard.safeprompt.dev (fully functional)
-- **Contact Form**: safeprompt.dev/contact (Resend integration)
-- **Implementation**: 90% complete, ready for beta testing
-- **Stripe**: Test mode (awaiting user testing)
-- **Emails**: Resend integration complete
+- **API**: api.safeprompt.dev (operational on Vercel)
+- **Dashboard**: dashboard.safeprompt.dev (functional)
+- **Contact Form**: safeprompt.dev/contact (Resend integration active)
+- **Validation System**: Hardened 2-pass validator (92.9% accuracy at $0.50/100K)
+- **Codebase**: Cleaned and production-ready (Sep 30, 2025)
+
+### Recent Cleanup (2025-09-30)
+- **Removed**: 10 archived validator versions, 23 test archive files
+- **Removed**: 9 obsolete documentation files
+- **Fixed**: API key storage (now hash-only for security)
+- **Fixed**: Testing backdoors removed from production code
+- **Fixed**: Fake cache statistics removed
+- **Added**: Shared utility functions to reduce duplication
+- **Updated**: API docs to match current /validate endpoint
 
 ### Database Architecture (UPDATED January 2025)
 
