@@ -380,10 +380,10 @@ export default function Dashboard() {
         threats_blocked: '---'
       },
       performance_metrics: {
-        avg_response_time_ms: usage.avg_response_time,
-        success_rate: (100 - usage.error_rate).toFixed(1) + '%',
-        uptime: '99.99%',
-        error_rate: usage.error_rate + '%'
+        avg_response_time_ms: usage.avg_response_time !== null ? usage.avg_response_time : 'No data',
+        success_rate: usage.error_rate !== null ? (100 - usage.error_rate).toFixed(1) + '%' : 'No data',
+        uptime: 'Not tracked',
+        error_rate: usage.error_rate !== null ? usage.error_rate + '%' : 'No data'
       },
       compliance_attestation: {
         notice: 'BETA - Compliance features under development. For feedback: contact@safeprompt.dev',
@@ -722,7 +722,7 @@ For questions, contact: support@safeprompt.dev`
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">API Uptime</span>
-                  <span className="text-green-500">99.99%</span>
+                  <span className="text-gray-500">Not tracked</span>
                 </div>
               </div>
             </div>
