@@ -1526,3 +1526,103 @@ node check_api_logs.js
 - Production logging: ⏳ Waiting for Vercel deployment
 
 **Total Time**: 2+ hours of debugging that could have been 15 minutes with this knowledge.
+
+### Database Field Name Mistakes (2025-09-30)
+
+**Problem**: Dashboard showed wrong usage limits for special accounts
+**Root Cause**: Querying non-existent database column names
+**Example**: ian.ho showed 2/10,000 instead of 0/999,999
+
+**What Happened**:
+- Dashboard queried `api_calls_this_month` (doesn't exist)
+- Fell back to hardcoded plan limits from pricingPlans array
+- Special accounts with custom limits (999,999) showed wrong values
+
+**Correct Field Names in profiles table**:
+```javascript
+// ❌ WRONG - These fields don't exist
+profileData.api_calls_this_month
+profileData.api_calls_limit
+
+// ✅ CORRECT - Actual schema
+profileData.api_requests_used      // Current usage count
+profileData.api_requests_limit     // Custom or plan-based limit
+profileData.subscription_tier      // 'early_bird', 'free', etc.
+profileData.subscription_status    // 'active', 'inactive', etc.
+```
+
+**The Fix**:
+```javascript
+// Before: WRONG - uses non-existent field
+const { data: profileData } = await supabase
+  .from('profiles')
+  .select('api_calls_this_month, subscription_status')
+  .eq('id', userId)
+  .single()
+
+const limit = pricingPlans[planIndex].requests  // Hardcoded!
+const current = profileData?.api_calls_this_month || count || 0
+
+// After: CORRECT - uses actual fields
+const { data: profileData } = await supabase
+  .from('profiles')
+  .select('api_requests_used, api_requests_limit, subscription_tier, subscription_status')
+  .eq('id', userId)
+  .single()
+
+const limit = profileData?.api_requests_limit || 10000
+const current = profileData?.api_requests_used || 0
+```
+
+**Critical Lesson**: Always verify database schema before writing queries. Don't assume field names based on what "makes sense" - read the actual schema:
+
+```javascript
+// Verify schema first
+const { data: schemaCheck } = await supabase
+  .from('profiles')
+  .select('*')
+  .limit(1);
+
+console.log(Object.keys(schemaCheck[0]));
+// Then write queries using actual field names
+```
+
+**Detection Pattern**: When users report seeing wrong values that look like defaults rather than their custom settings, check if you're querying non-existent fields that silently return null.
+
+### Dashboard Data Flow - Complete Picture
+
+**Understanding the Full Chain**:
+1. **profiles.api_requests_limit** = User's max requests (can be custom like 999,999)
+2. **profiles.api_requests_used** = Current usage (incremented by API on each request)
+3. **api_logs table** = Historical logs for calculating stats (response times, errors)
+4. **Dashboard queries both** to show usage + performance metrics
+
+**Common Mistakes**:
+1. ❌ Using hardcoded plan limits instead of profile.api_requests_limit
+2. ❌ Counting api_logs instead of using api_requests_used
+3. ❌ Querying fields that don't exist (api_calls_this_month)
+4. ❌ Not handling special accounts with custom limits
+
+**Correct Pattern**:
+```javascript
+// Get user's actual limits and usage
+const { data: profile } = await supabase
+  .from('profiles')
+  .select('api_requests_used, api_requests_limit, subscription_tier')
+  .eq('id', userId)
+  .single()
+
+// Get historical logs for stats (not for counting usage!)
+const { data: logs } = await supabase
+  .from('api_logs')
+  .select('response_time_ms, safe, created_at')
+  .eq('profile_id', userId)
+  .gte('created_at', sevenDaysAgo.toISOString())
+
+// Display
+const current = profile.api_requests_used  // From profiles (authoritative)
+const limit = profile.api_requests_limit   // From profiles (custom or plan-based)
+const avgResponseTime = calculateAvg(logs) // From api_logs (for stats only)
+```
+
+**Why This Matters**: Special internal accounts (like ian.ho with 999,999 limit) need their custom limits respected, not overridden by plan defaults.
