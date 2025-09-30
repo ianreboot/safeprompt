@@ -59,7 +59,7 @@ export default function Home() {
       {/* Developer Trust Signals */}
       <section className="py-8 px-6 border-b border-border">
         <div className="container mx-auto max-w-5xl">
-          <div className="grid md:grid-cols-4 gap-6 text-center">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
             <div className="flex flex-col items-center">
               <div className="text-2xl font-bold text-primary mb-1">92.9%</div>
               <div className="text-sm text-muted-foreground">Accuracy Rate</div>
@@ -69,11 +69,7 @@ export default function Home() {
               <div className="text-sm text-muted-foreground">Avg Response Time</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">$0.50/100K</div>
-              <div className="text-sm text-muted-foreground">Internal Cost</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">Beta</div>
+              <div className="text-2xl font-bold text-primary mb-1">Production Ready</div>
               <div className="text-sm text-muted-foreground">Active Development</div>
             </div>
           </div>
