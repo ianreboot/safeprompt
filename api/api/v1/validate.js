@@ -41,11 +41,23 @@ export default async function handler(req, res) {
   try {
     const apiKey = req.headers['x-api-key'];
     let isInternalUser = false;
+    let profileId = null;
 
     // Check for internal test API key
     if (apiKey === INTERNAL_API_KEY) {
       isInternalUser = true;
       console.log('[SafePrompt] Internal test API key used - unlimited access');
+
+      // Get internal user profile for logging
+      const { data: internalProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('api_key', INTERNAL_API_KEY)
+        .single();
+
+      if (internalProfile) {
+        profileId = internalProfile.id;
+      }
     }
     // Validate API key
     else if (apiKey && apiKey !== 'demo_key') {
@@ -69,6 +81,8 @@ export default async function handler(req, res) {
         return res.status(429).json({ error: 'Rate limit exceeded' });
       }
 
+      profileId = profile.id;
+
       // Increment usage
       await supabase
         .from('profiles')
@@ -91,6 +105,7 @@ export default async function handler(req, res) {
     if (prompts && Array.isArray(prompts)) {
       const results = await Promise.all(
         prompts.map(async (p) => {
+          const batchStartTime = Date.now();
           const cacheKey = getCacheKey(p, mode);
           const cached = cache.get(cacheKey);
 
@@ -102,6 +117,7 @@ export default async function handler(req, res) {
             useAI: mode === 'ai-only' || mode === 'optimized',
             includeStats: include_stats
           });
+          const batchProcessingTime = Date.now() - batchStartTime;
 
           // Cache the result
           if (cache.size >= CACHE_MAX_SIZE) {
@@ -109,6 +125,26 @@ export default async function handler(req, res) {
             cache.delete(firstKey);
           }
           cache.set(cacheKey, { result, timestamp: Date.now() });
+
+          // Log each batch item to database
+          if (profileId) {
+            try {
+              await supabase
+                .from('api_logs')
+                .insert({
+                  profile_id: profileId,
+                  endpoint: '/api/v1/validate/batch',
+                  response_time_ms: batchProcessingTime,
+                  safe: result.safe,
+                  threats: result.threats || [],
+                  prompt_length: p.length,
+                  mode: mode,
+                  cached: false
+                });
+            } catch (logError) {
+              console.error('[SafePrompt] Failed to log batch request:', logError);
+            }
+          }
 
           return { prompt: p, ...result };
         })
@@ -155,6 +191,27 @@ export default async function handler(req, res) {
       cache.delete(firstKey);
     }
     cache.set(cacheKey, { result, timestamp: Date.now() });
+
+    // Log to database (for both internal and regular users)
+    if (profileId) {
+      try {
+        await supabase
+          .from('api_logs')
+          .insert({
+            profile_id: profileId,
+            endpoint: '/api/v1/validate',
+            response_time_ms: processingTime,
+            safe: result.safe,
+            threats: result.threats || [],
+            prompt_length: prompt.length,
+            mode: mode,
+            cached: false
+          });
+      } catch (logError) {
+        console.error('[SafePrompt] Failed to log request:', logError);
+        // Don't fail the request if logging fails
+      }
+    }
 
     // Add cache stats if requested
     if (include_stats) {
