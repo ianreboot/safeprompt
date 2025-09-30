@@ -652,68 +652,30 @@ cd frontend && npm run dev
 
 #### CRITICAL: Deployment Architecture (Updated 2025-09-30)
 **🚨 MANDATORY DEPLOYMENT TARGETS:**
-- **API**: Vercel Functions at api.safeprompt.dev (ONLY Vercel - needs serverless functions)
-- **Website**: Cloudflare Pages at www.safeprompt.dev (static export)
-- **Dashboard**: Cloudflare Pages at dashboard.safeprompt.dev (static export with `output: 'export'`)
+- **API**: Vercel Functions at api.safeprompt.dev (project: `safeprompt-api`)
+- **Website**: Cloudflare Pages at www.safeprompt.dev (project: `safeprompt`)
+- **Dashboard**: Cloudflare Pages at dashboard.safeprompt.dev (project: `safeprompt-dashboard`)
 
-**❌ NEVER deploy Dashboard to Vercel** - It has `output: 'export'` in next.config.js which means it's a static site for Cloudflare Pages!
+**❌ NEVER deploy Dashboard to Vercel** - It has `output: 'export'` in next.config.js (static site for Cloudflare Pages)
 
-```bash
-# Deploy API to Vercel (ONLY project that should be on Vercel)
-cd /home/projects/safeprompt/api
-source /home/projects/.env
-vercel --token="$VERCEL_TOKEN" --prod --yes
-# Note: Token MUST be in quotes with = sign: --token="$TOKEN"
-# Verify: Should show "projectName":"safeprompt-api" in .vercel/project.json
+**⚠️ WHY This Architecture:**
+- **API on Vercel**: Requires serverless functions, see `.vercel/project.json` (projectName: "safeprompt-api")
+- **Dashboard/Website on Cloudflare**: Static exports with `output: 'export'`, no API routes
+- Dashboard has .vercel folder but SHOULD NOT be deployed there!
 
-# Deploy WEBSITE to Cloudflare Pages
-cd /home/projects/safeprompt/website
-npm run build  # Builds to 'out' directory
-source /home/projects/.env && export CLOUDFLARE_API_TOKEN
-wrangler pages deploy out --project-name safeprompt --branch main --commit-dirty=true
+For complete deployment instructions:
+- Vercel (API only): `/home/projects/docs/reference-vercel-access.md`
+- Cloudflare (Website/Dashboard): `/home/projects/docs/reference-cloudflare-access.md`
+- Supabase (Database): `/home/projects/docs/reference-supabase-access.md`
 
-# Deploy DASHBOARD to Cloudflare Pages (NOT VERCEL!)
-cd /home/projects/safeprompt/dashboard
-npm run build  # Builds to 'out' directory
-source /home/projects/.env && export CLOUDFLARE_API_TOKEN
-wrangler pages deploy out --project-name safeprompt-dashboard --branch main --commit-dirty=true
-```
+### Vercel Environment Variable Management
 
-**⚠️ WHY Dashboard is Cloudflare Pages:**
-- Dashboard has `output: 'export'` in next.config.js (static export)
-- No API routes - all API calls go to api.safeprompt.dev (Vercel)
-- Uses client-side Supabase SDK only
-- Currently has .vercel folder but SHOULD NOT be deployed there!
-- All Next.js projects build to 'out' directory for static export
-- API is the only service on Vercel (for serverless functions)
+**Project-Specific Details:**
+- **API**: safeprompt-api project (see `.vercel/project.json`)
+- **Dashboard vars**: Located in `/dashboard/.env.local` (not global .env)
+- **Required vars**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-### Vercel Environment Variable Management (CRITICAL - Updated 2025-09-30)
-
-**IMPORTANT**: Vercel CLI's `vercel env add` does NOT work in headless environments (prompts interactively).
-
-**✅ WORKING METHOD - Use Vercel API directly:**
-
-```bash
-# Get correct project ID from .vercel/project.json (it changes on re-link!)
-cd /home/projects/safeprompt/dashboard
-PROJECT_ID=$(cat .vercel/project.json | grep projectId | cut -d'"' -f4)
-
-# Add environment variable via API
-source /home/projects/.env
-source /home/projects/safeprompt/dashboard/.env.local  # Dashboard vars here!
-
-curl -X POST "https://api.vercel.com/v10/projects/$PROJECT_ID/env" \
-  -H "Authorization: Bearer $VERCEL_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{\"key\":\"NEXT_PUBLIC_SUPABASE_URL\",\"value\":\"$NEXT_PUBLIC_SUPABASE_URL\",\"type\":\"plain\",\"target\":[\"production\",\"preview\",\"development\"]}"
-```
-
-**Common Pitfalls (2025-09-30 lessons):**
-1. **"Project not found"** - Project ID in `.vercel/project.json` changes when you run `vercel` and it re-links
-2. **"Missing token value"** - Use `--token="$VERCEL_TOKEN"` (quotes + equals) NOT `--token $VERCEL_TOKEN`
-3. **Dashboard fails to build** - Needs `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in Vercel
-4. **Env vars in wrong file** - Dashboard vars are in `/dashboard/.env.local` NOT `/home/projects/.env`
-```
+For complete Vercel environment variable management, see: `/home/projects/docs/reference-vercel-access.md`
 
 ## Important Context
 - We own the prompt validation code from Ultra Brain project
@@ -1626,3 +1588,245 @@ const avgResponseTime = calculateAvg(logs) // From api_logs (for stats only)
 ```
 
 **Why This Matters**: Special internal accounts (like ian.ho with 999,999 limit) need their custom limits respected, not overridden by plan defaults.
+
+## 🗄️ SUPABASE DATABASE SETUP - HARD-FOUGHT KNOWLEDGE (2025-09-30)
+
+### The Problem That Cost Hours
+Database tables were never created in production, causing complete system failure for all user-facing features. The `profiles` table didn't exist, breaking dashboard login, signups, webhooks, and API key validation for regular users.
+
+### Why It Happened
+Setup SQL files existed but were never executed. Multiple attempts to execute via psql failed due to:
+1. Network connectivity issues (IPv6/TCP routing)
+2. Password special characters causing shell escaping problems
+3. Assumption that tables would "just exist" without verification
+
+### The Solution: Supabase Management API
+
+**CRITICAL DISCOVERY**: The `/v1/projects/{ref}/database/query` endpoint can execute DDL operations.
+
+**Working Method**:
+```javascript
+import dotenv from 'dotenv';
+dotenv.config({ path: '/home/projects/.env' });
+
+const PROJECT_REF = 'vkyggknknyfallmnrmfu';
+const sqlContent = fs.readFileSync('setup.sql', 'utf8');
+
+const response = await fetch(
+  `https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query`,
+  {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.SUPABASE_ACCESS_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ query: sqlContent })
+  }
+);
+
+// HTTP 201 = success
+// HTTP 400 = error with details in JSON
+```
+
+**Key Insights**:
+- ✅ Can execute CREATE TABLE, CREATE FUNCTION, CREATE TRIGGER
+- ✅ Works from headless environments where psql fails
+- ✅ No password escaping issues
+- ✅ Returns HTTP 201 on success, 400 with error details on failure
+- ⚠️ Must handle existing tables carefully (use CREATE TABLE IF NOT EXISTS)
+- ⚠️ Error messages are in JSON: `{"message": "Failed to run sql query: ERROR: ..."}`
+
+### Database Setup Best Practices
+
+**1. Always Verify Tables Exist Before Assuming**
+```javascript
+const { data, error } = await supabase.from('profiles').select('*').limit(1);
+if (error?.code === 'PGRST204' || error?.code === 'PGRST205') {
+  console.log('❌ Table does not exist - need to create it');
+}
+```
+
+**2. Use Management API for DDL, Not psql**
+- psql requires network access that may not be available
+- Management API is more reliable in containerized/cloud environments
+- Better error handling and JSON responses
+- Discovered via context7 research after psql methods failed
+
+**3. Split Complex SQL for Better Error Messages**
+If executing a large SQL file fails, the error only shows the first problem. Consider:
+- Breaking into logical sections
+- Using `CREATE IF NOT EXISTS` for all objects
+- Testing each section independently
+
+**4. Store Database Password But Don't Rely On It**
+```bash
+# Save to .env for reference
+SAFEPROMPT_SUPABASE_DB_PASSWORD="password"
+
+# But use Management API instead of psql
+```
+
+**5. Always Create Profiles on User Signup**
+```sql
+-- Trigger to auto-create profile when user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email)
+  VALUES (new.id, new.email)
+  ON CONFLICT (id) DO NOTHING;
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+```
+
+### Schema Design Lessons
+
+**1. Profiles Table is the Single Source of Truth**
+```sql
+CREATE TABLE public.profiles (
+  id UUID REFERENCES auth.users(id) PRIMARY KEY,  -- Links to Supabase auth
+  email TEXT UNIQUE NOT NULL,
+
+  -- Stripe integration
+  stripe_customer_id TEXT UNIQUE,
+  stripe_subscription_id TEXT,
+  subscription_tier TEXT DEFAULT 'free',
+  subscription_status TEXT DEFAULT 'inactive',
+
+  -- API key (ALWAYS store as hash)
+  api_key_hash TEXT UNIQUE,
+  api_key_hint TEXT,  -- Last 4 chars for display
+
+  -- Usage tracking
+  api_requests_limit INT DEFAULT 10000,
+  api_requests_used INT DEFAULT 0,
+  last_used_at TIMESTAMPTZ,
+
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+**Why This Design**:
+- ❌ Don't duplicate Stripe data - query Stripe API directly for subscription status
+- ✅ Do store what you need for rate limiting (request counts)
+- ✅ Do link to auth.users (id UUID REFERENCES auth.users(id))
+- ✅ Do use triggers for automatic profile creation
+
+**2. API Key Security**
+```javascript
+// NEVER store plaintext API keys
+import crypto from 'crypto';
+
+const hashApiKey = (key) => {
+  return crypto.createHash('sha256').update(key).digest('hex');
+};
+
+// Store only the hash
+const apiKey = 'sp_live_...';
+const hashedKey = hashApiKey(apiKey);
+// Store hashedKey in database
+
+// Validation: hash the incoming key and compare
+const incomingHash = hashApiKey(req.headers['x-api-key']);
+const { data } = await supabase
+  .from('profiles')
+  .select('*')
+  .eq('api_key_hash', incomingHash)
+  .single();
+```
+
+**3. Internal/Hardcoded API Keys Need Database Entries**
+```javascript
+// In validate.js - hardcoded bypass for internal testing
+const INTERNAL_API_KEY = 'sp_test_unlimited_dogfood_key_2025';
+
+if (apiKey === INTERNAL_API_KEY) {
+  isInternalUser = true;
+  // Skip database lookup
+}
+
+// BUT: Also create database profile with matching hash
+// So dashboard can display the key properly
+INSERT INTO profiles (
+  id, email, api_key_hash, api_key_hint,
+  api_requests_limit, subscription_tier, subscription_status
+)
+SELECT
+  id,
+  'internal@company.com',
+  encode(digest('sp_test_unlimited_dogfood_key_2025', 'sha256'), 'hex'),
+  '2025',  -- last 4 chars
+  999999,
+  'early_bird',
+  'active'
+FROM auth.users
+WHERE email = 'internal@company.com';
+```
+
+### Verification Checklist
+
+After any database setup, ALWAYS verify:
+
+```javascript
+// 1. Check table exists
+const { data: profiles, error } = await supabase
+  .from('profiles')
+  .select('*')
+  .limit(1);
+
+if (error?.code === 'PGRST204' || error?.code === 'PGRST205') {
+  throw new Error('Profiles table does not exist!');
+}
+
+// 2. Test a real user's profile
+const { data: testProfile } = await supabase
+  .from('profiles')
+  .select('*')
+  .eq('email', 'test@example.com')
+  .single();
+
+console.log('Profile:', testProfile);
+
+// 3. Test API key validation against database
+const response = await fetch('https://api.yourapp.com/validate', {
+  headers: { 'X-API-Key': 'your_test_key' }
+});
+```
+
+### Common Errors and Fixes
+
+**Error**: `Could not find the table 'public.profiles' in the schema cache`
+- **Cause**: Table doesn't exist
+- **Fix**: Execute CREATE TABLE via Management API
+
+**Error**: `column "user_id" does not exist`
+- **Cause**: SQL file references old schema or conflicting table
+- **Fix**: Update SQL to match current schema, check for existing tables first
+
+**Error**: `FATAL: Tenant or user not found`
+- **Cause**: Wrong database host or credentials
+- **Fix**: Use Management API instead of psql
+
+**Error**: `Failed to parse connection string: invalid userinfo`
+- **Cause**: Special characters in password (!, @, etc.)
+- **Fix**: Use Management API instead of connection string
+
+### Key Takeaway
+
+**NEVER assume database objects exist without verification.** The gap between "SQL file exists" and "database setup complete" caused complete system failure. Always:
+
+1. ✅ Verify tables exist programmatically
+2. ✅ Use Management API for DDL in production (via context7 research)
+3. ✅ Test the complete user flow end-to-end
+4. ✅ Store hashed API keys, never plaintext
+5. ✅ Create triggers for automatic profile creation
+6. ✅ Document database password but don't depend on psql
+
+This knowledge was hard-won through 3+ hours of debugging network issues, connection string problems, and discovering the Management API method via context7 research when traditional methods failed.
