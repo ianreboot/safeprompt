@@ -3,14 +3,14 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { Shield, CheckCircle, Loader, CreditCard, Clock } from 'lucide-react'
+import { Shield, CheckCircle, Loader, CreditCard, Clock, Mail } from 'lucide-react'
 
 function OnboardContent() {
   const searchParams = useSearchParams()
   const plan = searchParams.get('plan') || 'free'
   const email = searchParams.get('email') || ''
 
-  const [step, setStep] = useState<'creating' | 'payment' | 'waitlist' | 'complete'>('creating')
+  const [step, setStep] = useState<'creating' | 'check_email' | 'payment' | 'waitlist' | 'complete'>('creating')
   const [error, setError] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
   const [stripeSession, setStripeSession] = useState<string | null>(null)
@@ -20,6 +20,10 @@ function OnboardContent() {
     const storedIntent = sessionStorage.getItem('signup_intent')
     if (storedIntent) {
       const data = JSON.parse(storedIntent)
+      // Store password in sessionStorage for signup
+      if (data.password) {
+        sessionStorage.setItem('temp_password', data.password)
+      }
       handleSignup(data.email || email, data.plan || plan)
     } else if (email) {
       handleSignup(email, plan)
@@ -38,10 +42,13 @@ function OnboardContent() {
         email: userEmail,
         password: password,
         options: {
+          // Paid users skip email confirmation (payment validates identity)
+          emailRedirectTo: `https://dashboard.safeprompt.dev/confirm?plan=${userPlan}`,
           data: {
             plan: userPlan,
             signup_source: 'unified_signup',
-            beta_user: true
+            beta_user: true,
+            auto_confirm: userPlan === 'paid'  // Flag for admin to auto-approve
           }
         }
       })
@@ -55,13 +62,16 @@ function OnboardContent() {
 
       // Step 2: Handle based on plan
       if (userPlan === 'paid') {
-        // Create Stripe checkout session
+        // Paid users: Skip email confirmation, go straight to Stripe
+        // Payment validates their identity
         setStep('payment')
         await createStripeSession(user.id, userEmail)
       } else {
-        // Add to waitlist
-        setStep('waitlist')
-        await addToWaitlist(userEmail, user.id)
+        // Free users: Need to confirm email first
+        // Show message to check email
+        setStep('check_email')
+        // Note: Supabase sends confirmation email automatically
+        // After they confirm, they'll be redirected to /confirm page
       }
 
     } catch (err: any) {
@@ -163,6 +173,45 @@ function OnboardContent() {
           <Loader className="w-8 h-8 text-primary animate-spin mx-auto mb-4" />
           <h2 className="text-xl font-semibold mb-2">Creating your account...</h2>
           <p className="text-sm text-gray-400">This will only take a moment</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (step === 'check_email') {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <Mail className="w-12 h-12 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Check your email</h2>
+          <p className="text-gray-400 mb-6">
+            We've sent a confirmation link to <strong className="text-white">{email}</strong>
+          </p>
+
+          <div className="bg-gray-900 rounded-lg p-6 mb-6 text-left">
+            <h3 className="font-semibold mb-3">Next steps:</h3>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li className="flex items-start gap-2">
+                <span className="text-primary">1.</span>
+                <span>Open the email from SafePrompt</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary">2.</span>
+                <span>Click the "Confirm Email" button</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary">3.</span>
+                <span>You'll be added to the waitlist (typically 2-3 weeks)</span>
+              </li>
+            </ul>
+          </div>
+
+          <p className="text-sm text-gray-500">
+            Didn't receive the email? Check your spam folder or{' '}
+            <a href="https://safeprompt.dev/contact" className="text-primary hover:underline">
+              contact support
+            </a>
+          </p>
         </div>
       </div>
     )

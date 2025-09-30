@@ -26,6 +26,7 @@ export default function UnifiedSignup() {
       sessionStorage.setItem('signup_intent', JSON.stringify({
         plan: selectedPlan,
         email,
+        password,  // CRITICAL: Pass the actual password user typed
         timestamp: Date.now()
       }))
 

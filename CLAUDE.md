@@ -131,6 +131,172 @@ const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
 });
 ```
 
+## 👥 USER MANAGEMENT & WAITLIST APPROVAL
+
+### Complete User Journeys (as of 2025-09-30)
+
+#### FREE USER JOURNEY:
+```
+1. Sign up at safeprompt.dev/signup (email + password)
+2. Redirect to dashboard.safeprompt.dev/onboard
+3. Supabase creates account (unconfirmed, uses actual password)
+4. Supabase sends confirmation email (from "Supabase Auth" temporarily)
+5. User clicks confirmation link → lands on /confirm page
+6. System confirms email and adds to waitlist table
+7. User sees "You're on the waitlist" message
+8. [ADMIN APPROVES - see below]
+9. System sends approval email with API key
+10. User clicks "Access Dashboard" → /login
+11. User logs in with password → sees dashboard with API key
+```
+
+#### PAID USER JOURNEY:
+```
+1. Sign up at safeprompt.dev/signup (email + password)
+2. Redirect to dashboard.safeprompt.dev/onboard
+3. Supabase creates account with actual password
+4. Immediately redirect to Stripe checkout (no email confirmation needed)
+5. User pays with credit card
+6. Stripe webhook fires → auto-confirms email + generates API key
+7. System sends welcome email with API key + quick start guide
+8. User redirected to dashboard (session maintained)
+9. User sees API key and can start using immediately
+```
+
+### Waitlist Approval Process
+
+**When to Approve:**
+- Manual review of signup patterns (not automated)
+- Typically 2-3 weeks after signup
+- Check for legitimate developer emails, reasonable use cases
+- Batch approvals recommended (5-10 users at a time)
+
+**How to Approve (via API):**
+
+```bash
+# Set your admin key (stored in /home/projects/.env as ADMIN_SECRET_KEY)
+ADMIN_KEY="your-admin-secret-key"
+EMAIL="user@example.com"
+
+# Call the approval endpoint
+curl -X POST "https://api.safeprompt.dev/api/admin?action=approve-waitlist" \
+  -H "Content-Type: application/json" \
+  -H "x-admin-key: $ADMIN_KEY" \
+  -d "{\"email\": \"$EMAIL\"}"
+
+# Response:
+# {
+#   "success": true,
+#   "message": "User user@example.com approved and email sent",
+#   "api_key_hint": "a1b2"
+# }
+```
+
+**What Happens Automatically:**
+1. ✅ Generates API key for user
+2. ✅ Updates profile with key hash and free tier settings
+3. ✅ Auto-confirms email in Supabase auth (if not already confirmed)
+4. ✅ Updates waitlist entry with approval timestamp
+5. ✅ Sends branded approval email with:
+   - API key (only time it's shown in plaintext)
+   - Quick start guide with code examples
+   - "Access Dashboard" CTA button
+   - Free tier details (10,000 requests/month)
+
+**Manual Approval via Supabase Dashboard:**
+
+If you prefer to use Supabase UI:
+1. Go to https://supabase.com/dashboard/project/vkyggknknyfallmnrmfu
+2. Table Editor → waitlist table
+3. Find user by email
+4. Copy their email
+5. Use the API call above with their email
+
+**⚠️ IMPORTANT**: Don't manually update the database! Always use the API endpoint so the branded email gets sent.
+
+### Email Branding Status
+
+**Current State (2025-09-30):**
+- ✅ **Welcome emails** (paid users): Fully branded via Resend from "SafePrompt <noreply@safeprompt.dev>"
+- ✅ **Approval emails** (free users): Fully branded via Resend
+- ❌ **Confirmation emails** (Supabase): Still shows "Supabase Auth" sender (temporary)
+
+**Why Confirmation Emails Aren't Branded Yet:**
+- Supabase free tier doesn't support custom SMTP
+- Would require Supabase Pro ($25/month) or custom SMTP setup
+- Workaround: Confirmation emails work but aren't branded
+- Users still get professional branded emails for approval/welcome
+
+**To Fix (Future):**
+Option A: Upgrade to Supabase Pro
+Option B: Configure custom SMTP in Supabase Dashboard:
+- Settings → Auth → SMTP Settings
+- Use Resend SMTP: smtp.resend.com:587
+- Username: resend
+- Password: re_* (API key from Resend)
+- From: SafePrompt <noreply@safeprompt.dev>
+
+### Supabase Configuration Checklist
+
+**CRITICAL: These must be set in Supabase Dashboard:**
+
+☑️ **Project Settings → API → Site URL:**
+- Set to: `https://dashboard.safeprompt.dev`
+- NOT localhost:3000!
+
+☑️ **Authentication → URL Configuration → Redirect URLs:**
+Add these to whitelist:
+- `https://dashboard.safeprompt.dev/**`
+- `https://dashboard.safeprompt.dev/confirm`
+- `https://dashboard.safeprompt.dev/onboard`
+
+☑️ **Authentication → Email Templates:**
+- Can customize later when Supabase Pro is enabled
+- For now, default templates work (just not branded)
+
+### Monitoring User Signups
+
+**Check Waitlist:**
+```sql
+-- In Supabase SQL Editor
+SELECT
+  email,
+  created_at,
+  approved_at,
+  source
+FROM waitlist
+WHERE approved_at IS NULL
+ORDER BY created_at DESC;
+```
+
+**Check Paid Users:**
+```sql
+-- Recent paid signups
+SELECT
+  email,
+  subscription_tier,
+  stripe_customer_id,
+  created_at
+FROM profiles
+WHERE subscription_tier = 'early_bird'
+AND created_at > NOW() - INTERVAL '7 days'
+ORDER BY created_at DESC;
+```
+
+**Check Failed Signups:**
+```sql
+-- Users who signed up but never confirmed email
+SELECT
+  u.email,
+  u.created_at,
+  u.email_confirmed_at
+FROM auth.users u
+LEFT JOIN profiles p ON u.id = p.id
+WHERE u.email_confirmed_at IS NULL
+AND u.created_at > NOW() - INTERVAL '7 days'
+ORDER BY u.created_at DESC;
+```
+
 ## Technical Architecture
 
 ### Stack
