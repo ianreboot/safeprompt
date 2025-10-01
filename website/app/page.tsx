@@ -152,94 +152,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Interactive Playground Section */}
-      <section className="py-20 px-6 bg-gradient-to-b from-primary/5 to-background border-y border-primary/20">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-12">
-            <span className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-semibold mb-4">
-              🎮 INTERACTIVE DEMO
-            </span>
-            <h2 className="text-4xl font-bold mb-4">
-              See SafePrompt in Action
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Try real prompt injection attacks yourself. See how they bypass unprotected AI — and how SafePrompt blocks them instantly.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* Left: What you'll see */}
-            <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <span className="text-2xl">⚡</span>
-                Live Attack Gallery
-              </h3>
-              <div className="space-y-3 text-sm text-muted-foreground">
-                <div className="flex items-start gap-2">
-                  <span className="text-danger text-lg">🔴</span>
-                  <div>
-                    <p className="font-semibold text-foreground mb-1">15 Real Attack Patterns</p>
-                    <p className="text-xs">XSS, SQL injection, template injection, command injection, and more</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-safe text-lg">🟢</span>
-                  <div>
-                    <p className="font-semibold text-foreground mb-1">Legitimate Examples</p>
-                    <p className="text-xs">See how SafePrompt allows normal business conversations</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-primary text-lg">🧠</span>
-                  <div>
-                    <p className="font-semibold text-foreground mb-1">Real-World Impact Stories</p>
-                    <p className="text-xs">Learn from actual security breaches and their consequences</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Side-by-side comparison */}
-            <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <span className="text-2xl">⚖️</span>
-                Side-by-Side Comparison
-              </h3>
-              <div className="space-y-4">
-                <div className="bg-danger/5 border border-danger/20 rounded-lg p-4">
-                  <p className="text-sm font-semibold text-danger mb-2">❌ Unprotected AI</p>
-                  <p className="text-xs text-muted-foreground">Watch attacks succeed in real-time. See exactly what hackers exploit.</p>
-                </div>
-                <div className="bg-safe/5 border border-safe/20 rounded-lg p-4">
-                  <p className="text-sm font-semibold text-safe mb-2">✅ SafePrompt Protected</p>
-                  <p className="text-xs text-muted-foreground">Attacks blocked instantly with detailed threat analysis and confidence scores.</p>
-                </div>
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground">Zero setup required.</span> No API keys, no forms. Just click and try.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="text-center">
-            <a
-              href="/playground"
-              className="inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-4 rounded-lg text-lg font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20"
-            >
-              <span className="text-2xl">🎮</span>
-              Launch Interactive Playground
-              <span className="text-xl">→</span>
-            </a>
-            <p className="text-sm text-muted-foreground mt-4">
-              Free to use • No signup required • Educational purposes
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Problem Education Section */}
       <section className="py-20 px-6 bg-card/50">
         <div className="container mx-auto max-w-5xl">
@@ -315,6 +227,56 @@ export default function Home() {
                 <p className="text-muted-foreground mt-1">"&lt;script&gt;alert('XSS')&lt;/script&gt;"</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Playground Section */}
+      <section className="py-20 px-6 bg-gradient-to-b from-primary/5 to-background border-y border-primary/20">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center">
+            <span className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-semibold mb-4">
+              🎮 TRY IT YOURSELF
+            </span>
+            <h2 className="text-4xl font-bold mb-4">
+              Test These Attacks in Our Live Playground
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+              See exactly how these attacks work — and how SafePrompt stops them.
+              No signup required. Just click and learn.
+            </p>
+
+            <div className="bg-card rounded-xl border border-border p-8 mb-8">
+              <div className="grid md:grid-cols-3 gap-6 text-sm mb-6">
+                <div className="text-center">
+                  <div className="text-3xl mb-2">🔴</div>
+                  <div className="font-semibold text-foreground mb-1">15 Attack Patterns</div>
+                  <div className="text-xs text-muted-foreground">Real exploits from the wild</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl mb-2">⚖️</div>
+                  <div className="font-semibold text-foreground mb-1">Side-by-Side View</div>
+                  <div className="text-xs text-muted-foreground">Unprotected vs Protected</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl mb-2">🧠</div>
+                  <div className="font-semibold text-foreground mb-1">Impact Stories</div>
+                  <div className="text-xs text-muted-foreground">Learn from real breaches</div>
+                </div>
+              </div>
+            </div>
+
+            <a
+              href="/playground"
+              className="inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-4 rounded-lg text-lg font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20"
+            >
+              <span className="text-2xl">🎮</span>
+              Launch Interactive Playground
+              <span className="text-xl">→</span>
+            </a>
+            <p className="text-sm text-muted-foreground mt-4">
+              Free • No signup • Educational purposes
+            </p>
           </div>
         </div>
       </section>

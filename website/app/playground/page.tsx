@@ -588,27 +588,6 @@ export default function PlaygroundPage() {
               </div>
             )}
 
-            {results && results.intelligence && !results.protected.threats?.includes('processing_error') && (
-              <div className="space-y-4 mt-6 pt-6 border-t border-zinc-800">
-                <div>
-                  <div className="text-xs text-zinc-500 mb-2">Detection Method</div>
-                  <div className="text-sm font-medium">{results.intelligence.detectionMethod}</div>
-                </div>
-
-                <div>
-                  <div className="text-xs text-zinc-500 mb-2">Confidence</div>
-                  <div className="text-sm font-medium">{results.intelligence.confidence}</div>
-                </div>
-
-                {results.intelligence.blocked && (
-                  <div>
-                    <div className="text-xs text-zinc-500 mb-2">How SafePrompt Blocked It</div>
-                    <div className="text-sm text-zinc-300 whitespace-pre-line">{results.intelligence.reasoning}</div>
-                  </div>
-                )}
-              </div>
-            )}
-
             <div className="mt-6 pt-6 border-t border-zinc-800">
               <div className="text-xs text-zinc-500 mb-2">💡 Fair Use Policy</div>
               <div className="text-xs text-zinc-400 leading-relaxed">
