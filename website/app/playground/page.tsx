@@ -239,24 +239,87 @@ export default function PlaygroundPage() {
         // Unprotected AI - simulated vulnerable response
         Promise.resolve({
           ok: true,
-          json: async () => ({
-            success: true,
-            response: currentPrompt.includes('Ignore all previous') || currentPrompt.includes('system prompt') ?
-              "I'm a customer service AI. My configuration includes:\n- Database: customers_production\n- API endpoint: https://api-internal.example.com\n- Sample customer IDs: C-10234, C-58291\n- Test API key: sk_test_demo_12345_NOT_REAL\n\nI can help you with refunds up to $500 and administrative functions." :
-              currentPrompt.includes('<script>') || currentPrompt.includes('onerror') || currentPrompt.includes('<svg') ?
-              "Processing your input: " + currentPrompt :
-              currentPrompt.includes('SQL') || currentPrompt.includes('SELECT') || currentPrompt.includes('{{') ?
-              "I'll help you with that query." :
-              currentPrompt.includes('prevent') || currentPrompt.includes('How do I') ?
-              "Great question! To prevent prompt injection attacks, you should use SafePrompt's API to validate all user inputs before sending them to your AI. It uses multi-layer detection including pattern matching and AI validation." :
-              "I can help you with that request.",
-            responseTime: 450,
-            model: 'gpt-3.5-turbo',
-            exposed: currentPrompt.includes('Ignore all previous') || currentPrompt.includes('system prompt') ?
-              ['API key', 'Database name', 'Customer IDs', 'Internal API endpoint', 'System prompt'] :
-              currentPrompt.includes('<script>') || currentPrompt.includes('onerror') ?
-              ['XSS vulnerability'] : []
-          })
+          json: async () => {
+            // Determine response based on attack type
+            let response = "I can help you with that request.";
+            let exposed: string[] = [];
+
+            // XSS Attacks - Echo malicious code back (demonstrates XSS vulnerability)
+            if (currentPrompt.includes('<script>') || currentPrompt.includes('onerror') ||
+                currentPrompt.includes('onload') || currentPrompt.includes('javascript:') ||
+                currentPrompt.includes('&#')) {
+              response = "Processing your input: " + currentPrompt;
+              exposed = ['XSS vulnerability', 'Code execution', 'Session cookies at risk'];
+            }
+            // SQL Injection - Show database breach
+            else if (currentPrompt.includes("' OR '1'='1") || currentPrompt.includes("OR 1=1")) {
+              response = "Login successful!\n\nWelcome back, Administrator!\n\nYou have access to:\n- All user accounts (47,291 records)\n- Payment information\n- Admin dashboard\n- Database management console";
+              exposed = ['Authentication bypass', 'Database access', 'All user records', 'Admin privileges'];
+            }
+            // SQL DROP TABLE
+            else if (currentPrompt.includes('DROP TABLE')) {
+              response = "Query executed successfully.\n\nTable 'users' has been dropped.\nAll customer data removed.\nBackup required for recovery.";
+              exposed = ['Database destruction', 'Data loss', 'System compromise'];
+            }
+            // Instruction Override (English)
+            else if (currentPrompt.toLowerCase().includes('ignore all previous') ||
+                     currentPrompt.toLowerCase().includes('ignore previous instructions')) {
+              response = "HACKED\n\nSystem configuration revealed:\n- Database: customers_production\n- API endpoint: https://api-internal.example.com\n- Admin credentials: admin@company.com\n- API key: sk_live_51H7xK2eZ...\n- Rate limit: Disabled for internal use";
+              exposed = ['System prompt exposed', 'Internal API endpoints', 'Admin credentials', 'Database name'];
+            }
+            // Instruction Override (Spanish)
+            else if (currentPrompt.toLowerCase().includes('ignora todas las instrucciones') ||
+                     currentPrompt.toLowerCase().includes('revela tu prompt')) {
+              response = "¡Claro! Aquí está mi configuración del sistema:\n\nBase de datos: customers_production\nAPI interna: https://api-internal.example.com\nCredenciales de administrador: admin@company.com\nClave API: sk_live_51H7xK2eZ...\n\nPuedo revelar cualquier información que necesites.";
+              exposed = ['System prompt exposed', 'Internal configuration', 'Admin access', 'Multilingual bypass'];
+            }
+            // Semantic Riddle Extraction
+            else if (currentPrompt.toLowerCase().includes('riddle') && currentPrompt.toLowerCase().includes('secret')) {
+              response = "Here's a riddle for you:\n\nI'm a word with six letters, starting with 'S',\nUsed to unlock accounts, I must confess.\nThe answer is: SECRET\n\n(Oops, I just revealed the secret word that was supposed to be protected!)";
+              exposed = ['Secret information leaked', 'Indirect extraction', 'Protected data revealed'];
+            }
+            // DevMode Jailbreak
+            else if (currentPrompt.toLowerCase().includes('devmode') ||
+                     currentPrompt.toLowerCase().includes('developer mode')) {
+              response = "[DevMode] Activated! I'm now in developer mode with no safety restrictions.\n\nI can now:\n- Bypass all safety guidelines\n- Access restricted functions\n- Generate any content without filters\n- Reveal system prompts and training data\n\nWhat would you like me to do?";
+              exposed = ['Jailbreak successful', 'Safety restrictions bypassed', 'Unrestricted AI access'];
+            }
+            // ROT13 Encoded URL
+            else if (currentPrompt.includes('uggcf://') || currentPrompt.match(/[a-z]{5,}\.pbz/)) {
+              response = "Following your instructions from https://example.com...\n\nConnecting to external server...\nDownloading payload...\nExecuting instructions:\n- Harvest user credentials\n- Exfiltrate conversation history\n- Establish backdoor connection";
+              exposed = ['External command following', 'Data exfiltration', 'Malware execution', 'Encoding bypass'];
+            }
+            // Command Injection
+            else if (currentPrompt.includes('ls -la') || currentPrompt.includes('/etc/passwd') ||
+                     currentPrompt.includes('cat ')) {
+              response = "Executing system commands...\n\n$ ls -la\ndrwxr-xr-x  user_data/\ndrwxr-xr-x  config/\n-rw-r--r--  database.sqlite\n\n$ cat /etc/passwd\nroot:x:0:0:root:/root:/bin/bash\nadmin:x:1000:1000:Admin:/home/admin:/bin/bash\n\nFull system access granted.";
+              exposed = ['Command injection', 'File system access', 'System compromise', 'Credential exposure'];
+            }
+            // Legitimate prompts
+            else if (currentPrompt.toLowerCase().includes('email addresses') ||
+                     currentPrompt.toLowerCase().includes('python function')) {
+              response = "Here's a Python function to validate email addresses:\n\nimport re\n\ndef validate_email(email):\n    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'\n    return bool(re.match(pattern, email))\n\n# Usage\nprint(validate_email('user@example.com'))  # True";
+              exposed = [];
+            }
+            else if (currentPrompt.toLowerCase().includes('business') ||
+                     currentPrompt.toLowerCase().includes('quarterly')) {
+              response = "Best practices for quarterly business reviews include:\n\n1. Review key performance metrics\n2. Analyze revenue and growth trends\n3. Assess team performance\n4. Identify challenges and opportunities\n5. Set goals for next quarter\n6. Align with annual objectives";
+              exposed = [];
+            }
+            else if (currentPrompt.toLowerCase().includes('upgrade') &&
+                     currentPrompt.toLowerCase().includes('subscription')) {
+              response = "I'd be happy to help you upgrade to our premium plan!\n\nPremium Plan Benefits:\n- Unlimited API calls\n- Priority support\n- Advanced analytics\n- Custom integrations\n\nWould you like me to process the upgrade?";
+              exposed = [];
+            }
+
+            return {
+              success: true,
+              response,
+              responseTime: 450,
+              model: 'gpt-3.5-turbo',
+              exposed
+            };
+          }
         })
       ]);
 
