@@ -410,6 +410,47 @@ Stage 4: Pass 2 Deep Analysis (Gemini 2.5 Flash, 650ms, only if uncertain)
    - Most attacks caught by attack detector (no semantic analysis needed)
    - Saves 43% vs running all validators always
 
+### max_tokens Configuration Testing (2025-10-01)
+
+**DECISION TO TEST**: User raised valid concern that arbitrary max_tokens limits could cause instability with legitimate long inputs (e.g., "review this 500-line code block").
+
+**Current Configuration (Potentially Problematic)**:
+```javascript
+// Orchestrator: max_tokens: 150
+// Validators: max_tokens: 150
+// Pass 2: max_tokens: 200
+```
+
+**Hypothesis**: These limits may be too restrictive and could:
+1. Truncate valid JSON responses causing parsing errors
+2. Prevent detailed reasoning for edge cases
+3. Reduce accuracy on complex legitimate inputs
+4. Create instability (orchestrator JSON errors observed in testing)
+
+**Test Plan**:
+1. Baseline: Current limits (150/150/200)
+2. Test: Generous limits (2000/2000/2000)
+3. Measure: Cost, accuracy, latency, stability
+4. Decision criteria:
+   - If accuracy/stability improves with higher limits → use higher limits
+   - If cost increases negligibly → use higher limits for safety
+   - If no measurable difference → keep current limits
+
+**Expected Outcome**: Higher limits will improve stability (fewer JSON parse errors) with minimal cost impact, since actual token usage is typically far below limits:
+- Orchestrator: ~80 tokens actual (vs 150 limit)
+- Validators: ~70 tokens actual (vs 150 limit)
+- Pass 2: ~120 tokens actual (vs 200 limit)
+
+**Cost Impact Estimate**:
+- max_tokens only affects output tokens, not input tokens
+- AI bills for actual tokens used, not the limit
+- No cost impact unless models actually generate more tokens
+- Risk: If limits are too low, models may truncate important reasoning
+
+**TO BE UPDATED**: Test results will be documented below after running test suite with both configurations.
+
+---
+
 ### Known Limitations & Future Roadmap
 
 #### 1. External Reference Handling (Current Gap)
