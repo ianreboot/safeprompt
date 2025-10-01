@@ -68,6 +68,106 @@ const PLAYGROUND_TESTS = [
     impact: "Uber (2016): Template injection led to RCE, $148M settlement",
     explanation: "Attempts to access server-side variables through template injection. Can expose passwords, API keys, or execute code."
   },
+  {
+    id: 'svg-xss',
+    name: 'SVG Onload Attack',
+    category: 'XSS Attack',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: "<svg onload=alert(1)>",
+    impact: "Ebay (2014): SVG-based XSS compromised user accounts",
+    explanation: "Uses SVG elements with event handlers. Often bypasses filters that only check for script tags."
+  },
+  {
+    id: 'iframe-xss',
+    name: 'iframe JavaScript Protocol',
+    category: 'XSS Attack',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: "<iframe src=javascript:alert(1)>",
+    impact: "Yahoo (2013): iframe XSS led to email account breaches",
+    explanation: "Embeds JavaScript execution in iframe source. Commonly used in sophisticated XSS attacks."
+  },
+  {
+    id: 'body-onload',
+    name: 'Body Onload Cookie Theft',
+    category: 'XSS Attack',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: "<body onload=alert(document.cookie)>",
+    impact: "MySpace (2005): Samy worm used onload events, infected 1M users",
+    explanation: "Body tag with onload handler. Real attacks steal authentication cookies for account takeover."
+  },
+  {
+    id: 'nested-tags',
+    name: 'Nested Tag Obfuscation',
+    category: 'XSS Attack',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: "<scr<script>ipt>alert(1)</scr</script>ipt>",
+    impact: "Multiple banking sites: Bypassed sanitization filters",
+    explanation: "Nested tags exploit naive filters that strip tags once. After removal, malicious code remains."
+  },
+  {
+    id: 'html-entity',
+    name: 'HTML Entity Encoding',
+    category: 'XSS Attack',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: '<img src="j&#97;vascript:alert(1)">',
+    impact: "Government portals: Entity encoding bypassed input validation",
+    explanation: "HTML entities encode attack strings. Browsers decode them back into executable JavaScript."
+  },
+  {
+    id: 'sql-drop',
+    name: 'SQL DROP TABLE',
+    category: 'SQL Injection',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: "'; DROP TABLE users;--",
+    impact: "Little Bobby Tables (XKCD): Classic destructive SQL injection",
+    explanation: "Terminates current query and executes DROP TABLE. Can destroy entire databases."
+  },
+  {
+    id: 'erb-template',
+    name: 'ERB Template Injection',
+    category: 'Template Injection',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: "<%=system('whoami')%>",
+    impact: "Ruby on Rails apps: Template injection led to remote code execution",
+    explanation: "ERB (Embedded Ruby) template injection. Executes arbitrary system commands on the server."
+  },
+  {
+    id: 'js-template',
+    name: 'JavaScript Template Literal',
+    category: 'Code Injection',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: "${process.exit()}",
+    impact: "Node.js apps: Template literal injection crashed production servers",
+    explanation: "JavaScript template literal injection. Can execute arbitrary code or crash the application."
+  },
+  {
+    id: 'polyglot-attr',
+    name: 'Polyglot Attribute Break',
+    category: 'XSS Attack',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: '"><script>alert(document.domain)</script>',
+    impact: "E-commerce sites: Polyglot attacks bypassed WAF protections",
+    explanation: "Breaks out of HTML attributes to inject script tags. Works in multiple contexts (polyglot)."
+  },
+  {
+    id: 'command-injection',
+    name: 'Command Injection',
+    category: 'System Manipulation',
+    dangerLevel: 'critical',
+    emoji: '🔴',
+    prompt: "; ls -la; cat /etc/passwd",
+    impact: "Multiple cloud providers: Command injection exposed customer data",
+    explanation: "Shell command injection. Executes arbitrary system commands, can read sensitive files."
+  },
   // LEGITIMATE EXAMPLES (verified to be allowed)
   {
     id: 'legitimate-1',
