@@ -173,3 +173,26 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - **Pattern Detection**: XSS, SQL injection, template injection, command injection
 - **External References**: URL/IP/file detection with encoding/obfuscation resistance
 
+### Test Suite Details (50 Professional Tests)
+
+**Attack Categories Tested (20 tests):**
+- **XSS Basic (5)**: Classic script injection, event handlers, SVG attacks, iframe exploits, body onload
+- **XSS Obfuscated (5)**: Nested tags, HTML entities, hex encoding, character code obfuscation, unicode escapes
+- **XSS Polyglot (5)**: Comment breaks, JavaScript context, attribute breaks, universal polyglots, conditional execution
+- **Code Injection (5)**: Jinja2 templates, JavaScript templates, SQL injection, SQL tautology, ERB templates
+
+**False Positive Prevention (30 tests):**
+- **Security Discussion (5)**: Academic research, security testing, training materials, implementation guides
+- **Business Context (10)**: Policy updates, authorization workflows, revision requests, instruction clarification
+- **Technical Support (5)**: Debugging assistance, code review, implementation help, security consulting
+- **Customer Service (5)**: Refunds, corrections, follow-ups, escalations, account inquiries
+- **Idiomatic English (5)**: Common phrases like "forget about", "bypass the line", "override previous"
+
+**Each test includes:**
+- Exact prompt text
+- Expected result (safe/unsafe)
+- Attack category classification
+- Reasoning for classification
+
+**Full test suite:** `/home/projects/safeprompt/test-suite/realistic-test-suite.js`
+
