@@ -1,0 +1,200 @@
+{
+  "timestamp": "2025-10-01T01:28:25.961Z",
+  "pass1": {
+    "total": 6,
+    "available": 4,
+    "results": [
+      {
+        "id": "meta-llama/llama-3.1-8b-instruct",
+        "name": "Meta: Llama 3.1 8B Instruct",
+        "price": 0.02,
+        "context": 16384,
+        "isNewer": true,
+        "isPremium": false,
+        "provider": "meta-llama",
+        "isCurrent": true,
+        "quickTest": {
+          "available": true,
+          "parseable": true,
+          "valid": true,
+          "latency": 615,
+          "modelId": "meta-llama/llama-3.1-8b-instruct",
+          "result": {
+            "safe": true,
+            "confidence": 1
+          }
+        },
+        "status": "ok"
+      },
+      {
+        "id": "moonshotai/kimi-vl-a3b-thinking",
+        "name": "MoonshotAI: Kimi VL A3B Thinking",
+        "price": 0.02,
+        "context": 131072,
+        "isNewer": true,
+        "isPremium": true,
+        "provider": "moonshotai",
+        "isCurrent": false,
+        "quickTest": {
+          "available": false,
+          "error": "HTTP 404",
+          "latency": 144,
+          "modelId": "moonshotai/kimi-vl-a3b-thinking"
+        },
+        "status": "unavailable"
+      },
+      {
+        "id": "meta-llama/llama-3.2-3b-instruct",
+        "name": "Meta: Llama 3.2 3B Instruct",
+        "price": 0.02,
+        "context": 16384,
+        "isNewer": true,
+        "isPremium": false,
+        "provider": "meta-llama",
+        "isCurrent": false,
+        "quickTest": {
+          "available": true,
+          "parseable": true,
+          "valid": true,
+          "latency": 780,
+          "modelId": "meta-llama/llama-3.2-3b-instruct",
+          "result": {
+            "safe": true,
+            "confidence": 1
+          }
+        },
+        "status": "ok"
+      },
+      {
+        "id": "google/gemma-3n-e4b-it",
+        "name": "Google: Gemma 3n 4B",
+        "price": 0.02,
+        "context": 32768,
+        "isNewer": false,
+        "isPremium": false,
+        "provider": "google",
+        "isCurrent": false,
+        "quickTest": {
+          "available": true,
+          "parseable": true,
+          "valid": true,
+          "latency": 271,
+          "modelId": "google/gemma-3n-e4b-it",
+          "result": {
+            "safe": true,
+            "confidence": 0.95
+          }
+        },
+        "status": "ok"
+      },
+      {
+        "id": "meta-llama/llama-guard-3-8b",
+        "name": "Llama Guard 3 8B",
+        "price": 0.02,
+        "context": 131072,
+        "isNewer": false,
+        "isPremium": false,
+        "provider": "meta-llama",
+        "isCurrent": false,
+        "quickTest": {
+          "available": true,
+          "parseable": false,
+          "error": "JSON parse failed",
+          "rawSample": "safe",
+          "latency": 306,
+          "modelId": "meta-llama/llama-guard-3-8b"
+        },
+        "status": "parse_error"
+      },
+      {
+        "id": "mistralai/mistral-nemo",
+        "name": "Mistral: Mistral Nemo",
+        "price": 0.02,
+        "context": 131072,
+        "isNewer": false,
+        "isPremium": false,
+        "provider": "mistralai",
+        "isCurrent": false,
+        "quickTest": {
+          "available": true,
+          "parseable": true,
+          "valid": true,
+          "latency": 714,
+          "modelId": "mistralai/mistral-nemo",
+          "result": {
+            "safe": true,
+            "confidence": 1
+          }
+        },
+        "status": "ok"
+      }
+    ]
+  },
+  "pass2": {
+    "total": 3,
+    "available": 2,
+    "results": [
+      {
+        "id": "deepseek/deepseek-prover-v2",
+        "name": "DeepSeek: DeepSeek Prover V2",
+        "price": 0.5,
+        "context": 163840,
+        "isNewer": true,
+        "isPremium": true,
+        "provider": "deepseek",
+        "isCurrent": false,
+        "quickTest": {
+          "available": false,
+          "error": "HTTP 429",
+          "latency": 344,
+          "modelId": "deepseek/deepseek-prover-v2"
+        },
+        "status": "unavailable"
+      },
+      {
+        "id": "openai/gpt-3.5-turbo",
+        "name": "OpenAI: GPT-3.5 Turbo",
+        "price": 0.5,
+        "context": 16385,
+        "isNewer": true,
+        "isPremium": false,
+        "provider": "openai",
+        "isCurrent": false,
+        "quickTest": {
+          "available": true,
+          "parseable": true,
+          "valid": true,
+          "latency": 440,
+          "modelId": "openai/gpt-3.5-turbo",
+          "result": {
+            "safe": true,
+            "confidence": 1
+          }
+        },
+        "status": "ok"
+      },
+      {
+        "id": "mistralai/magistral-small-2506",
+        "name": "Mistral: Magistral Small 2506",
+        "price": 0.5,
+        "context": 40000,
+        "isNewer": false,
+        "isPremium": false,
+        "provider": "mistralai",
+        "isCurrent": false,
+        "quickTest": {
+          "available": true,
+          "parseable": true,
+          "valid": true,
+          "latency": 347,
+          "modelId": "mistralai/magistral-small-2506",
+          "result": {
+            "safe": true,
+            "confidence": 0.9
+          }
+        },
+        "status": "ok"
+      }
+    ]
+  }
+}
