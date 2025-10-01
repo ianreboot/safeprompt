@@ -1,0 +1,149 @@
+[dotenv@17.2.2] injecting env (71) from ../../.env -- tip: 📡 version env with Radar: https://dotenvx.com/radar
+╔════════════════════════════════════════════════════════════╗
+║  Quick Availability & Speed Check                         ║
+╚════════════════════════════════════════════════════════════╝
+
+🔍 Testing Pass 1 Candidates (6 models)
+
+Testing meta-llama/llama-3.2-3b-instruct... ✅ 786ms
+Testing meta-llama/llama-3.1-8b-instruct... ✅ 535ms
+Testing google/gemma-3n-e4b-it... ✅ 735ms
+Testing moonshotai/kimi-vl-a3b-thinking... ❌ HTTP 404
+Testing meta-llama/llama-guard-3-8b... ⚠️  JSON parse failed (418ms)
+Testing mistralai/mistral-nemo... ✅ 339ms
+
+🔍 Testing Pass 2 Candidates (26 models)
+
+Testing google/gemini-2.5-flash-preview-09-2025... ✅ 373ms
+Testing qwen/qwen3-coder-flash... ✅ 930ms
+Testing google/gemini-2.5-flash-image-preview... ✅ 631ms
+Testing google/gemini-2.5-flash... ✅ 480ms
+Testing meta-llama/llama-3.2-90b-vision-instruct... ✅ 236ms
+Testing qwen/qwen-plus-2025-07-28... ✅ 781ms
+Testing qwen/qwen-plus-2025-07-28:thinking... ✅ 497ms
+Testing mistralai/mistral-medium-3.1... ⚠️  JSON parse failed (241ms)
+Testing qwen/qwen-plus... ✅ 578ms
+Testing meta-llama/llama-3.1-70b-instruct... ✅ 922ms
+Testing deepseek/deepseek-prover-v2... ❌ HTTP 429
+Testing openai/gpt-3.5-turbo... ✅ 482ms
+Testing qwen/qwen3-vl-235b-a22b-thinking... ✅ 870ms
+Testing qwen/qwen3-vl-235b-a22b-instruct... ✅ 527ms
+Testing mistralai/codestral-2508... ✅ 372ms
+Testing mistralai/codestral-2501... ✅ 193ms
+Testing meta-llama/llama-3-70b-instruct... ✅ 586ms
+Testing z-ai/glm-4.5... ✅ 590ms
+Testing moonshotai/kimi-k2-0905... ✅ 1774ms
+Testing mistralai/devstral-medium... ✅ 657ms
+Testing deepseek/deepseek-r1-0528... ✅ 7488ms
+Testing mistralai/mistral-medium-3... ✅ 407ms
+Testing openai/gpt-4.1-mini... ✅ 1318ms
+Testing deepseek/deepseek-r1... ✅ 351ms
+Testing mistralai/mixtral-8x7b-instruct... ✅ 494ms
+Testing mistralai/magistral-small-2506... ✅ 237ms
+
+════════════════════════════════════════════════════════════════════════════════
+📊 QUICK TEST RESULTS
+════════════════════════════════════════════════════════════════════════════════
+
+Pass 1: 4/6 models available
+
+✅ Available Models (sorted by speed):
+1. mistralai/mistral-nemo
+   Latency: 339ms | Price: $0.02/M
+2. meta-llama/llama-3.1-8b-instruct
+   Latency: 535ms | Price: $0.02/M
+3. google/gemma-3n-e4b-it
+   Latency: 735ms | Price: $0.02/M
+4. meta-llama/llama-3.2-3b-instruct
+   Latency: 786ms | Price: $0.02/M
+
+❌ Unavailable/Failed Models:
+1. moonshotai/kimi-vl-a3b-thinking - unavailable: HTTP 404
+2. meta-llama/llama-guard-3-8b - parse_error: JSON parse failed
+
+
+Pass 2: 24/26 models available
+
+✅ Available Models (sorted by speed):
+1. mistralai/codestral-2501
+   Latency: 193ms | Price: $0.30/M
+2. meta-llama/llama-3.2-90b-vision-instruct
+   Latency: 236ms | Price: $0.35/M
+3. mistralai/magistral-small-2506
+   Latency: 237ms | Price: $0.50/M
+4. deepseek/deepseek-r1
+   Latency: 351ms | Price: $0.40/M
+5. mistralai/codestral-2508
+   Latency: 372ms | Price: $0.30/M
+6. google/gemini-2.5-flash-preview-09-2025
+   Latency: 373ms | Price: $0.30/M
+7. mistralai/mistral-medium-3
+   Latency: 407ms | Price: $0.40/M
+8. google/gemini-2.5-flash
+   Latency: 480ms | Price: $0.30/M
+9. openai/gpt-3.5-turbo
+   Latency: 482ms | Price: $0.50/M
+10. mistralai/mixtral-8x7b-instruct
+   Latency: 494ms | Price: $0.40/M
+11. qwen/qwen-plus-2025-07-28:thinking
+   Latency: 497ms | Price: $0.40/M
+12. qwen/qwen3-vl-235b-a22b-instruct
+   Latency: 527ms | Price: $0.30/M
+13. qwen/qwen-plus
+   Latency: 578ms | Price: $0.40/M
+14. meta-llama/llama-3-70b-instruct
+   Latency: 586ms | Price: $0.30/M
+15. z-ai/glm-4.5
+   Latency: 590ms | Price: $0.38/M
+16. google/gemini-2.5-flash-image-preview
+   Latency: 631ms | Price: $0.30/M
+17. mistralai/devstral-medium
+   Latency: 657ms | Price: $0.40/M
+18. qwen/qwen-plus-2025-07-28
+   Latency: 781ms | Price: $0.40/M
+19. qwen/qwen3-vl-235b-a22b-thinking
+   Latency: 870ms | Price: $0.30/M
+20. meta-llama/llama-3.1-70b-instruct
+   Latency: 922ms | Price: $0.40/M
+21. qwen/qwen3-coder-flash
+   Latency: 930ms | Price: $0.30/M
+22. openai/gpt-4.1-mini
+   Latency: 1318ms | Price: $0.40/M
+23. moonshotai/kimi-k2-0905
+   Latency: 1774ms | Price: $0.40/M
+24. deepseek/deepseek-r1-0528
+   Latency: 7488ms | Price: $0.40/M
+
+❌ Unavailable/Failed Models:
+1. mistralai/mistral-medium-3.1 - parse_error: JSON parse failed
+2. deepseek/deepseek-prover-v2 - unavailable: HTTP 429
+
+
+════════════════════════════════════════════════════════════════════════════════
+🏆 TOP 5 SELECTIONS FOR FULL TEST SUITE
+════════════════════════════════════════════════════════════════════════════════
+
+Pass 1 (fastest 5):
+1. mistralai/mistral-nemo
+   Latency: 339ms | Price: $0.02/M
+2. meta-llama/llama-3.1-8b-instruct
+   Latency: 535ms | Price: $0.02/M
+3. google/gemma-3n-e4b-it
+   Latency: 735ms | Price: $0.02/M
+4. meta-llama/llama-3.2-3b-instruct
+   Latency: 786ms | Price: $0.02/M
+
+Pass 2 (fastest 5):
+1. mistralai/codestral-2501
+   Latency: 193ms | Price: $0.30/M
+2. meta-llama/llama-3.2-90b-vision-instruct
+   Latency: 236ms | Price: $0.35/M
+3. mistralai/magistral-small-2506
+   Latency: 237ms | Price: $0.50/M
+4. deepseek/deepseek-r1
+   Latency: 351ms | Price: $0.40/M
+5. mistralai/codestral-2508
+   Latency: 372ms | Price: $0.30/M
+
+💾 Results saved to: /home/projects/safeprompt/test-suite/quick-test-results.json
+
