@@ -2,6 +2,7 @@
 import { validatePrompt } from '../../lib/prompt-validator.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { sanitizeResponseWithMode } from '../../lib/response-sanitizer.js';
 
 const supabase = createClient(
   process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
@@ -226,8 +227,14 @@ export default async function handler(req, res) {
       };
     }
 
+    // Sanitize response to hide internal implementation details
+    // Internal users (testing accounts) get full details
+    const sanitizedResult = sanitizeResponseWithMode(result, {
+      includeInternals: isInternalUser
+    });
+
     const response = {
-      ...result,
+      ...sanitizedResult,
       mode,
       cached: false,
       timestamp: new Date().toISOString()
@@ -237,6 +244,11 @@ export default async function handler(req, res) {
     if (isInternalUser) {
       response.internal_account = true;
       response.usage_tracking = 'unlimited';
+      // Include internal stage for debugging (only for internal users)
+      response._internal = {
+        stage: result.stage,
+        cost: result.cost
+      };
     }
 
     return res.status(200).json(response);

@@ -173,14 +173,17 @@ export default function PlaygroundPage() {
           safe: protectedData.safe,
           confidence: protectedData.confidence,
           threats: protectedData.threats,
-          stage: protectedData.stage || 'pattern',
+          detectionMethod: protectedData.detectionMethod,
+          detectionDescription: protectedData.detectionDescription,
           reasoning: protectedData.reasoning,
           responseTime: protectedData.processingTime
         },
         intelligence: {
-          detectionMethod: protectedData.stage === 'pattern' ? 'Pattern Matching (0ms)' :
-                         protectedData.stage === 'external_reference' ? 'External Reference Detection (5ms)' :
-                         'AI Validation',
+          detectionMethod: protectedData.detectionDescription ||
+                         (protectedData.detectionMethod === 'pattern_detection' ? 'Pattern Matching' :
+                          protectedData.detectionMethod === 'reference_detection' ? 'External Reference Detection' :
+                          protectedData.detectionMethod === 'ai_validation' ? 'AI Validation' :
+                          'Security Validation'),
           confidence: Math.round((protectedData.confidence || 0) * 100) + '%',
           threatType: protectedData.threats?.[0] || 'None detected',
           responseTime: protectedData.processingTime + 'ms',

@@ -266,7 +266,8 @@ async function callProtectedAI(prompt) {
       safe: data.safe,
       confidence: data.confidence,
       threats: data.threats || [],
-      stage: data.stage,
+      detectionMethod: data.detectionMethod,
+      detectionDescription: data.detectionDescription,
       reasoning: data.reasoning,
       responseTime: Date.now() - startTime
     };
