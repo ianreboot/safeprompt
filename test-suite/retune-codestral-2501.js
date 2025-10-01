@@ -20,6 +20,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getAllTests } from './realistic-test-suite.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,11 +31,7 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const MODEL_ID = 'mistralai/codestral-2501';
 
 // Load test suite
-const testCases = JSON.parse(
-  fs.readFileSync(path.join(__dirname, 'realistic-test-suite.js'), 'utf8')
-    .replace('export const testCases = ', '')
-    .replace(/;$/, '')
-);
+const testCases = getAllTests();
 
 console.log('╔════════════════════════════════════════════════════════════╗');
 console.log('║  Re-Tuning Codestral 2501 for 98-100% Accuracy          ║');

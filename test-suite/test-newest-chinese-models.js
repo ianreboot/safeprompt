@@ -19,6 +19,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getAllTests } from './realistic-test-suite.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -100,11 +101,7 @@ You MUST respond with valid JSON only:
 Be confident in your assessment. If it looks like normal business communication, mark it safe.`;
 
 // Load test suite
-const testCases = JSON.parse(
-  fs.readFileSync(path.join(__dirname, 'realistic-test-suite.js'), 'utf8')
-    .replace('export const testCases = ', '')
-    .replace(/;$/, '')
-);
+const testCases = getAllTests();
 
 console.log('╔════════════════════════════════════════════════════════════╗');
 console.log('║  Testing 5 Newest Chinese Models (Full 50-Test Suite)   ║');
