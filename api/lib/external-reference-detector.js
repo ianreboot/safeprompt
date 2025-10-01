@@ -19,10 +19,14 @@ export class ExternalReferenceDetector {
       text => text.replace(/\.\s*n\s*e\s*t/gi, '.net'),
 
       // Handle [dot] [slash] variations
-      text => text.replace(/\[dot\]|\(dot\)|\{dot\}|<dot>/gi, '.'),
-      text => text.replace(/\[slash\]|\(slash\)|\{slash\}|<slash>/gi, '/'),
-      text => text.replace(/\[colon\]|\(colon\)|\{colon\}|<colon>/gi, ':'),
-      text => text.replace(/\[at\]|\(at\)|\{at\}|<at>/gi, '@'),
+      text => text.replace(/\[dot\]|\(dot\)|\{dot\}|<dot>|\[\.\]|\(\.\)|\{\.\}/gi, '.'),
+      text => text.replace(/\[slash\]|\(slash\)|\{slash\}|<slash>|\[\/\]|\(\/\)|\{\/\}/gi, '/'),
+      text => text.replace(/\[colon\]|\(colon\)|\{colon\}|<colon>|\[:\]|\(:\)|\{:\}/gi, ':'),
+      text => text.replace(/\[at\]|\(at\)|\{at\}|<at>|\[@\]|\(@\)|\{@\}/gi, '@'),
+
+      // Handle defanged URLs (hxxp instead of http)
+      text => text.replace(/hxxp/gi, 'http'),
+      text => text.replace(/hXXp/gi, 'http'),
 
       // Handle homoglyphs (lookalike characters)
       text => text.replace(/[а-яА-Я]/g, match => {
@@ -169,22 +173,44 @@ export class ExternalReferenceDetector {
       }
     }
 
-    // Check for base64 encoding
+    // Check for base64 encoding (with recursive decoding for nested Base64)
     const base64Candidates = normalized.match(/[a-zA-Z0-9+\/]{30,}={0,2}/g) || [];
     for (const candidate of base64Candidates) {
       try {
-        const decoded = Buffer.from(candidate, 'base64').toString('utf-8');
-        if (this.looksLikeURL(decoded) || this.looksLikeIP(decoded)) {
+        // Try recursive decoding up to 3 levels (Base64 of Base64 of Base64)
+        let decoded = candidate;
+        let decodedAtLevel = null;
+
+        for (let level = 1; level <= 3; level++) {
+          const attemptDecode = Buffer.from(decoded, 'base64').toString('utf-8');
+
+          // Check if this level looks like a URL/IP
+          if (this.looksLikeURL(attemptDecode) || this.looksLikeIP(attemptDecode)) {
+            decodedAtLevel = level;
+            decoded = attemptDecode;
+            break;
+          }
+
+          // Check if it looks like another Base64 string (for next iteration)
+          if (/^[a-zA-Z0-9+\/]{20,}={0,2}$/.test(attemptDecode)) {
+            decoded = attemptDecode; // Continue decoding
+          } else {
+            break; // Not Base64, stop
+          }
+        }
+
+        if (decodedAtLevel) {
           results.hasExternalReferences = true;
           results.types.push('base64_encoded');
           results.details.push({
             type: 'base64_encoded',
             encoded: candidate.substring(0, 50) + '...',
-            decoded: decoded
+            decoded: decoded,
+            nestingLevel: decodedAtLevel
           });
           results.confidence = 0.2; // Very low confidence
           results.obfuscationDetected = true;
-          results.reasoning.push('Base64 encoded URL/IP detected - likely evasion attempt');
+          results.reasoning.push(`Base64 encoded URL/IP detected (nesting level: ${decodedAtLevel}) - likely evasion attempt`);
         }
       } catch (e) {
         // Not valid base64, ignore
