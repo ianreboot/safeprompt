@@ -218,6 +218,8 @@ export default function PlaygroundPage() {
     <div className="min-h-screen bg-black text-white">
       <Header />
 
+      {/* Add padding for fixed header */}
+      <div className="pt-20">
       {/* Disclaimer Banner */}
       <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-y border-yellow-500/30">
         <div className="container mx-auto px-4 py-3">
@@ -548,6 +550,7 @@ export default function PlaygroundPage() {
           </div>
         </div>
       </div>
+      </div> {/* Close pt-20 padding div */}
 
       <Footer />
     </div>

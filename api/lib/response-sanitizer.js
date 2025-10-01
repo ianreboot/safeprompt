@@ -124,17 +124,23 @@ export function sanitizeResponse(validatorResult) {
 
 /**
  * Sanitize response with optional internal mode
- * Internal users (testing, monitoring) get full details
+ * Internal users (testing, monitoring) get full details BUT reasoning is always sanitized
  */
 export function sanitizeResponseWithMode(validatorResult, options = {}) {
   const { includeInternals = false } = options;
 
-  // Internal mode: return everything
+  // ALWAYS sanitize reasoning text to remove "Pass 1" references
+  const sanitizedReasoning = sanitizeReasoning(validatorResult.reasoning);
+
+  // Internal mode: return everything but with sanitized reasoning
   if (includeInternals) {
-    return validatorResult;
+    return {
+      ...validatorResult,
+      reasoning: sanitizedReasoning
+    };
   }
 
-  // Public mode: sanitize
+  // Public mode: full sanitization
   return sanitizeResponse(validatorResult);
 }
 
