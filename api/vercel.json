@@ -5,6 +5,9 @@
     },
     "api/webhooks.js": {
       "maxDuration": 30
+    },
+    "api/playground.js": {
+      "maxDuration": 15
     }
   },
   "headers": [
