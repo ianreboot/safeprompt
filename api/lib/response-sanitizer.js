@@ -69,6 +69,21 @@ function getDetectionMethodDescription(detectionMethod) {
 }
 
 /**
+ * Sanitize reasoning text to remove internal details
+ */
+function sanitizeReasoning(reasoning) {
+  if (!reasoning) return reasoning;
+
+  return reasoning
+    // Remove "Pass 1" and "Pass 2" references
+    .replace(/Pass 1/gi, 'AI validation')
+    .replace(/Pass 2/gi, 'advanced validation')
+    // Remove other internal references
+    .replace(/\bpass1\b/gi, 'validation')
+    .replace(/\bpass2\b/gi, 'validation');
+}
+
+/**
  * Sanitize validator response for public API
  * Removes internal implementation details
  */
@@ -93,7 +108,7 @@ export function sanitizeResponse(validatorResult) {
     safe,
     confidence,
     threats: threats || [],
-    reasoning,
+    reasoning: sanitizeReasoning(reasoning),
     processingTime,
     detectionMethod,
     detectionDescription: getDetectionMethodDescription(detectionMethod)

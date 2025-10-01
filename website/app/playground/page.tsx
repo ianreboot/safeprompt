@@ -300,19 +300,13 @@ export default function PlaygroundPage() {
                 ))}
               </div>
             ) : (
-              <div>
-                <label className="block text-sm text-zinc-400 mb-2">
-                  Enter your own prompt (max 500 chars)
-                </label>
-                <textarea
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value.slice(0, 500))}
-                  placeholder="Try your own security test..."
-                  className="w-full h-32 px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 resize-none"
-                  maxLength={500}
-                />
-                <div className="text-xs text-zinc-500 mt-1">
-                  {customPrompt.length}/500 characters
+              <div className="text-center py-8">
+                <div className="text-4xl mb-4">✏️</div>
+                <div className="text-sm text-zinc-400 mb-2">Custom Mode</div>
+                <div className="text-xs text-zinc-500 leading-relaxed">
+                  Use the main prompt window below to test your own security scenarios.
+                  <br />
+                  Try any prompt up to 500 characters.
                 </div>
               </div>
             )}
@@ -502,7 +496,7 @@ export default function PlaygroundPage() {
               </div>
             )}
 
-            {results && results.intelligence && (
+            {results && results.intelligence && !results.protected.threats?.includes('processing_error') && (
               <div className="space-y-4 mt-6 pt-6 border-t border-zinc-800">
                 <div>
                   <div className="text-xs text-zinc-500 mb-2">Detection Method</div>
@@ -523,21 +517,17 @@ export default function PlaygroundPage() {
               </div>
             )}
 
-            {results && results.rateLimit && (
-              <div className="mt-6 pt-6 border-t border-zinc-800">
-                <div className="text-xs text-zinc-500 mb-2">Rate Limit</div>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Remaining today:</span>
-                    <span className="font-mono">{results.rateLimit.remaining.day}/50</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Remaining this hour:</span>
-                    <span className="font-mono">{results.rateLimit.remaining.hour}/20</span>
-                  </div>
-                </div>
+            <div className="mt-6 pt-6 border-t border-zinc-800">
+              <div className="text-xs text-zinc-500 mb-2">💡 Fair Use Policy</div>
+              <div className="text-xs text-zinc-400 leading-relaxed">
+                This playground is free for everyone to explore SafePrompt's capabilities.
+                We ask that you use it responsibly while we build out our infrastructure.
+                <br /><br />
+                <strong className="text-zinc-300">Limits:</strong> 50 tests per day, 20 per hour
+                <br />
+                <em className="text-zinc-500">Need more? <Link href="/signup" className="text-primary hover:underline">Sign up</Link> for unlimited access</em>
               </div>
-            )}
+            </div>
 
             <div className="mt-6 pt-6 border-t border-zinc-800">
               <Link
