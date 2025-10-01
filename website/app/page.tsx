@@ -61,16 +61,16 @@ export default function Home() {
         <div className="container mx-auto max-w-5xl">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">97.9%</div>
-              <div className="text-sm text-muted-foreground">Detection Accuracy</div>
+              <div className="text-2xl font-bold text-primary mb-1">98%</div>
+              <div className="text-sm text-muted-foreground">Overall Accuracy</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">~250ms</div>
+              <div className="text-2xl font-bold text-primary mb-1">~350ms</div>
               <div className="text-sm text-muted-foreground">Avg Response Time</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">98.4%</div>
-              <div className="text-sm text-muted-foreground">Attack Detection</div>
+              <div className="text-2xl font-bold text-primary mb-1">95%</div>
+              <div className="text-sm text-muted-foreground">Attack Block Rate</div>
             </div>
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function Home() {
                   <li><span className="font-semibold">Threat Level:</span> HIGH - Block before reaching AI</li>
                 </ul>
                 <div className="mt-4 p-3 bg-safe/10 rounded-lg">
-                  <p className="font-semibold text-safe text-sm">Result: Attack blocked in 5ms</p>
+                  <p className="font-semibold text-safe text-sm">Result: Attack blocked instantly via pattern detection</p>
                   <p className="text-sm mt-1">Your AI never sees the malicious prompt. Your business logic stays intact.</p>
                 </div>
               </div>
@@ -345,9 +345,9 @@ export default function Home() {
 
             <div className="bg-card rounded-xl border border-border p-6">
               <div className="text-4xl mb-4">⚡</div>
-              <h3 className="text-xl font-semibold mb-2">5ms Response Time</h3>
+              <h3 className="text-xl font-semibold mb-2">Fast Validation</h3>
               <p className="text-muted-foreground">
-                Your users won't even notice. Smart caching saves you 30% on costs automatically
+                Average ~350ms response time. Pattern detection catches 44% of threats instantly in &lt;5ms
               </p>
             </div>
 
@@ -412,7 +412,7 @@ export default function Home() {
   "safe": true,
   "confidence": 0.95,
   "threats": [],
-  "processingTime": 5
+  "processingTime": 247
 }`}</code>
             </pre>
             <p className="text-sm text-muted-foreground mt-4">
@@ -449,8 +449,8 @@ export default function Home() {
               <div className="text-4xl mb-4">⚡</div>
               <h3 className="text-xl font-semibold mb-2">Don't Slow Down Users</h3>
               <p className="text-muted-foreground">
-                5ms validation for most requests. Your users won't even notice
-                the security layer protecting them.
+                Fast ~350ms average validation. Pattern detection catches 44% of threats instantly.
+                Your users get security without noticeable delay.
               </p>
             </div>
 
@@ -555,9 +555,9 @@ export default function Home() {
                   <pre className="bg-background p-4 rounded-lg overflow-x-auto">
                     <code className="text-sm">{`{
   "safe": true,
-  "confidence": 99.9,
+  "confidence": 0.95,
   "threats": [],
-  "processing_time_ms": 5
+  "processingTime": 247
 }`}</code>
                   </pre>
                 </div>
