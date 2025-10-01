@@ -1,0 +1,613 @@
+{
+  "timestamp": "2025-10-01T02:28:26.414Z",
+  "totalModels": 328,
+  "chineseModels": 82,
+  "affordableModels": 59,
+  "criteria": {
+    "maxCost": 1,
+    "providers": [
+      "qwen",
+      "deepseek",
+      "moonshotai",
+      "z-ai",
+      "zhipu",
+      "tencent",
+      "alibaba",
+      "baichuan",
+      "minimax",
+      "bytedance",
+      "doubao"
+    ]
+  },
+  "searches": {
+    "glm46Exists": true,
+    "glm46Model": "z-ai/glm-4.6",
+    "allGLM": [
+      "z-ai/glm-4.6",
+      "z-ai/glm-4.5v",
+      "z-ai/glm-4.5",
+      "z-ai/glm-4.5-air",
+      "z-ai/glm-4-32b"
+    ],
+    "deepseekModels": [
+      "deepseek/deepseek-v3.2-exp",
+      "deepseek/deepseek-v3.1-terminus",
+      "deepseek/deepseek-chat-v3.1",
+      "deepseek/deepseek-v3.1-base",
+      "deepseek/deepseek-r1-0528-qwen3-8b"
+    ],
+    "qwenNewest": [
+      "qwen/qwen3-vl-235b-a22b-thinking",
+      "qwen/qwen3-vl-235b-a22b-instruct",
+      "qwen/qwen3-coder-plus",
+      "qwen/qwen3-coder-flash",
+      "qwen/qwen3-next-80b-a3b-thinking"
+    ]
+  },
+  "top10Newest": [
+    {
+      "id": "z-ai/glm-4.6",
+      "provider": "z-ai",
+      "price": 0.6,
+      "version": "4.6",
+      "createdDate": "2025-09-30",
+      "createdTimestamp": 1759235576,
+      "newnessScore": 1759235576
+    },
+    {
+      "id": "deepseek/deepseek-v3.2-exp",
+      "provider": "deepseek",
+      "price": 0.27,
+      "version": "3.2",
+      "createdDate": "2025-09-29",
+      "createdTimestamp": 1759150481,
+      "newnessScore": 1759150481
+    },
+    {
+      "id": "qwen/qwen3-vl-235b-a22b-thinking",
+      "provider": "qwen",
+      "price": 0.3,
+      "version": "235",
+      "createdDate": "2025-09-23",
+      "createdTimestamp": 1758668690,
+      "newnessScore": 1758668690
+    },
+    {
+      "id": "qwen/qwen3-vl-235b-a22b-instruct",
+      "provider": "qwen",
+      "price": 0.3,
+      "version": "235",
+      "createdDate": "2025-09-23",
+      "createdTimestamp": 1758668687,
+      "newnessScore": 1758668687
+    },
+    {
+      "id": "qwen/qwen3-coder-plus",
+      "provider": "qwen",
+      "price": 1,
+      "version": null,
+      "createdDate": "2025-09-23",
+      "createdTimestamp": 1758662707,
+      "newnessScore": 1758662707
+    },
+    {
+      "id": "deepseek/deepseek-v3.1-terminus",
+      "provider": "deepseek",
+      "price": 0.22999999999999998,
+      "version": "3.1",
+      "createdDate": "2025-09-22",
+      "createdTimestamp": 1758548275,
+      "newnessScore": 1758548275
+    },
+    {
+      "id": "alibaba/tongyi-deepresearch-30b-a3b",
+      "provider": "alibaba",
+      "price": 0.09,
+      "version": "30",
+      "createdDate": "2025-09-18",
+      "createdTimestamp": 1758210804,
+      "newnessScore": 1758210804
+    },
+    {
+      "id": "qwen/qwen3-coder-flash",
+      "provider": "qwen",
+      "price": 0.3,
+      "version": null,
+      "createdDate": "2025-09-17",
+      "createdTimestamp": 1758115536,
+      "newnessScore": 1758115536
+    },
+    {
+      "id": "qwen/qwen3-next-80b-a3b-thinking",
+      "provider": "qwen",
+      "price": 0.09999999999999999,
+      "version": "80",
+      "createdDate": "2025-09-11",
+      "createdTimestamp": 1757612284,
+      "newnessScore": 1757612284
+    },
+    {
+      "id": "qwen/qwen3-next-80b-a3b-instruct",
+      "provider": "qwen",
+      "price": 0.09999999999999999,
+      "version": "80",
+      "createdDate": "2025-09-11",
+      "createdTimestamp": 1757612213,
+      "newnessScore": 1757612213
+    }
+  ],
+  "allAffordable": [
+    {
+      "id": "z-ai/glm-4.6",
+      "provider": "z-ai",
+      "price": 0.6,
+      "context": 202752,
+      "version": "4.6",
+      "newnessScore": 1759235576
+    },
+    {
+      "id": "deepseek/deepseek-v3.2-exp",
+      "provider": "deepseek",
+      "price": 0.27,
+      "context": 163840,
+      "version": "3.2",
+      "newnessScore": 1759150481
+    },
+    {
+      "id": "qwen/qwen3-vl-235b-a22b-thinking",
+      "provider": "qwen",
+      "price": 0.3,
+      "context": 131072,
+      "version": "235",
+      "newnessScore": 1758668690
+    },
+    {
+      "id": "qwen/qwen3-vl-235b-a22b-instruct",
+      "provider": "qwen",
+      "price": 0.3,
+      "context": 131072,
+      "version": "235",
+      "newnessScore": 1758668687
+    },
+    {
+      "id": "qwen/qwen3-coder-plus",
+      "provider": "qwen",
+      "price": 1,
+      "context": 128000,
+      "version": null,
+      "newnessScore": 1758662707
+    },
+    {
+      "id": "deepseek/deepseek-v3.1-terminus",
+      "provider": "deepseek",
+      "price": 0.22999999999999998,
+      "context": 163840,
+      "version": "3.1",
+      "newnessScore": 1758548275
+    },
+    {
+      "id": "alibaba/tongyi-deepresearch-30b-a3b",
+      "provider": "alibaba",
+      "price": 0.09,
+      "context": 131072,
+      "version": "30",
+      "newnessScore": 1758210804
+    },
+    {
+      "id": "qwen/qwen3-coder-flash",
+      "provider": "qwen",
+      "price": 0.3,
+      "context": 128000,
+      "version": null,
+      "newnessScore": 1758115536
+    },
+    {
+      "id": "qwen/qwen3-next-80b-a3b-thinking",
+      "provider": "qwen",
+      "price": 0.09999999999999999,
+      "context": 262144,
+      "version": "80",
+      "newnessScore": 1757612284
+    },
+    {
+      "id": "qwen/qwen3-next-80b-a3b-instruct",
+      "provider": "qwen",
+      "price": 0.09999999999999999,
+      "context": 262144,
+      "version": "80",
+      "newnessScore": 1757612213
+    },
+    {
+      "id": "qwen/qwen-plus-2025-07-28",
+      "provider": "qwen",
+      "price": 0.39999999999999997,
+      "context": 1000000,
+      "version": "2025",
+      "newnessScore": 1757347599
+    },
+    {
+      "id": "qwen/qwen-plus-2025-07-28:thinking",
+      "provider": "qwen",
+      "price": 0.39999999999999997,
+      "context": 1000000,
+      "version": "2025",
+      "newnessScore": 1757347599
+    },
+    {
+      "id": "moonshotai/kimi-k2-0905",
+      "provider": "moonshotai",
+      "price": 0.39999999999999997,
+      "context": 262144,
+      "version": "0905",
+      "newnessScore": 1757021147
+    },
+    {
+      "id": "bytedance/seed-oss-36b-instruct",
+      "provider": "bytedance",
+      "price": 0.16,
+      "context": 131072,
+      "version": "36",
+      "newnessScore": 1756834704
+    },
+    {
+      "id": "qwen/qwen3-30b-a3b-thinking-2507",
+      "provider": "qwen",
+      "price": 0.08,
+      "context": 262144,
+      "version": "30",
+      "newnessScore": 1756399192
+    },
+    {
+      "id": "deepseek/deepseek-chat-v3.1",
+      "provider": "deepseek",
+      "price": 0.19999999999999998,
+      "context": 163840,
+      "version": "3.1",
+      "newnessScore": 1755779628
+    },
+    {
+      "id": "deepseek/deepseek-v3.1-base",
+      "provider": "deepseek",
+      "price": 0.25,
+      "context": 163840,
+      "version": "3.1",
+      "newnessScore": 1755727017
+    },
+    {
+      "id": "z-ai/glm-4.5v",
+      "provider": "z-ai",
+      "price": 0.6,
+      "context": 65536,
+      "version": "4.5",
+      "newnessScore": 1754922288
+    },
+    {
+      "id": "qwen/qwen3-coder-30b-a3b-instruct",
+      "provider": "qwen",
+      "price": 0.06,
+      "context": 262144,
+      "version": "30",
+      "newnessScore": 1753972379
+    },
+    {
+      "id": "qwen/qwen3-30b-a3b-instruct-2507",
+      "provider": "qwen",
+      "price": 0.07,
+      "context": 262144,
+      "version": "30",
+      "newnessScore": 1753806965
+    },
+    {
+      "id": "z-ai/glm-4.5",
+      "provider": "z-ai",
+      "price": 0.38,
+      "context": 131072,
+      "version": "4.5",
+      "newnessScore": 1753471347
+    },
+    {
+      "id": "z-ai/glm-4.5-air",
+      "provider": "z-ai",
+      "price": 0.14,
+      "context": 131072,
+      "version": "4.5",
+      "newnessScore": 1753471258
+    },
+    {
+      "id": "qwen/qwen3-235b-a22b-thinking-2507",
+      "provider": "qwen",
+      "price": 0.11,
+      "context": 262144,
+      "version": "235",
+      "newnessScore": 1753449557
+    },
+    {
+      "id": "z-ai/glm-4-32b",
+      "provider": "z-ai",
+      "price": 0.09999999999999999,
+      "context": 128000,
+      "version": "32",
+      "newnessScore": 1753376617
+    },
+    {
+      "id": "qwen/qwen3-coder",
+      "provider": "qwen",
+      "price": 0.22,
+      "context": 262144,
+      "version": null,
+      "newnessScore": 1753230546
+    },
+    {
+      "id": "bytedance/ui-tars-1.5-7b",
+      "provider": "bytedance",
+      "price": 0.09999999999999999,
+      "context": 128000,
+      "version": "1.5",
+      "newnessScore": 1753205056
+    },
+    {
+      "id": "qwen/qwen3-235b-a22b-2507",
+      "provider": "qwen",
+      "price": 0.08,
+      "context": 262144,
+      "version": "235",
+      "newnessScore": 1753119555
+    },
+    {
+      "id": "moonshotai/kimi-k2",
+      "provider": "moonshotai",
+      "price": 0.14,
+      "context": 63000,
+      "version": null,
+      "newnessScore": 1752263252
+    },
+    {
+      "id": "tencent/hunyuan-a13b-instruct",
+      "provider": "tencent",
+      "price": 0.03,
+      "context": 32768,
+      "version": "13",
+      "newnessScore": 1751987664
+    },
+    {
+      "id": "minimax/minimax-m1",
+      "provider": "minimax",
+      "price": 0.3,
+      "context": 1000000,
+      "version": null,
+      "newnessScore": 1750200414
+    },
+    {
+      "id": "moonshotai/kimi-dev-72b",
+      "provider": "moonshotai",
+      "price": 0.29,
+      "context": 131072,
+      "version": "72",
+      "newnessScore": 1750115909
+    },
+    {
+      "id": "deepseek/deepseek-r1-0528-qwen3-8b",
+      "provider": "deepseek",
+      "price": 0.01,
+      "context": 32768,
+      "version": "0528",
+      "newnessScore": 1748538543
+    },
+    {
+      "id": "deepseek/deepseek-r1-0528",
+      "provider": "deepseek",
+      "price": 0.39999999999999997,
+      "context": 163840,
+      "version": "0528",
+      "newnessScore": 1748455170
+    },
+    {
+      "id": "deepseek/deepseek-prover-v2",
+      "provider": "deepseek",
+      "price": 0.5,
+      "context": 163840,
+      "version": "2",
+      "newnessScore": 1746013094
+    },
+    {
+      "id": "qwen/qwen3-30b-a3b",
+      "provider": "qwen",
+      "price": 0.06,
+      "context": 40960,
+      "version": "30",
+      "newnessScore": 1745878604
+    },
+    {
+      "id": "qwen/qwen3-8b",
+      "provider": "qwen",
+      "price": 0.035,
+      "context": 128000,
+      "version": "8",
+      "newnessScore": 1745876632
+    },
+    {
+      "id": "qwen/qwen3-14b",
+      "provider": "qwen",
+      "price": 0.04,
+      "context": 40960,
+      "version": "14",
+      "newnessScore": 1745876478
+    },
+    {
+      "id": "qwen/qwen3-32b",
+      "provider": "qwen",
+      "price": 0.03,
+      "context": 40960,
+      "version": "32",
+      "newnessScore": 1745875945
+    },
+    {
+      "id": "qwen/qwen3-235b-a22b",
+      "provider": "qwen",
+      "price": 0.18,
+      "context": 40960,
+      "version": "235",
+      "newnessScore": 1745875757
+    },
+    {
+      "id": "moonshotai/kimi-vl-a3b-thinking",
+      "provider": "moonshotai",
+      "price": 0.02,
+      "context": 131072,
+      "version": null,
+      "newnessScore": 1744304841
+    },
+    {
+      "id": "qwen/qwen2.5-vl-32b-instruct",
+      "provider": "qwen",
+      "price": 0.04,
+      "context": 16384,
+      "version": "2.5",
+      "newnessScore": 1742839838
+    },
+    {
+      "id": "deepseek/deepseek-chat-v3-0324",
+      "provider": "deepseek",
+      "price": 0.24,
+      "context": 163840,
+      "version": "3",
+      "newnessScore": 1742824755
+    },
+    {
+      "id": "qwen/qwq-32b",
+      "provider": "qwen",
+      "price": 0.15,
+      "context": 32768,
+      "version": "32",
+      "newnessScore": 1741208814
+    },
+    {
+      "id": "deepseek/deepseek-r1-distill-llama-8b",
+      "provider": "deepseek",
+      "price": 0.04,
+      "context": 32000,
+      "version": "8",
+      "newnessScore": 1738937718
+    },
+    {
+      "id": "qwen/qwen-vl-plus",
+      "provider": "qwen",
+      "price": 0.21,
+      "context": 7500,
+      "version": null,
+      "newnessScore": 1738731255
+    },
+    {
+      "id": "qwen/qwen-vl-max",
+      "provider": "qwen",
+      "price": 0.7999999999999999,
+      "context": 7500,
+      "version": null,
+      "newnessScore": 1738434304
+    },
+    {
+      "id": "qwen/qwen-turbo",
+      "provider": "qwen",
+      "price": 0.049999999999999996,
+      "context": 1000000,
+      "version": null,
+      "newnessScore": 1738410974
+    },
+    {
+      "id": "qwen/qwen2.5-vl-72b-instruct",
+      "provider": "qwen",
+      "price": 0.07,
+      "context": 32768,
+      "version": "2.5",
+      "newnessScore": 1738410311
+    },
+    {
+      "id": "qwen/qwen-plus",
+      "provider": "qwen",
+      "price": 0.39999999999999997,
+      "context": 131072,
+      "version": null,
+      "newnessScore": 1738409840
+    },
+    {
+      "id": "deepseek/deepseek-r1-distill-qwen-32b",
+      "provider": "deepseek",
+      "price": 0.27,
+      "context": 131072,
+      "version": "32",
+      "newnessScore": 1738194830
+    },
+    {
+      "id": "deepseek/deepseek-r1-distill-qwen-14b",
+      "provider": "deepseek",
+      "price": 0.15,
+      "context": 32768,
+      "version": "14",
+      "newnessScore": 1738193940
+    },
+    {
+      "id": "deepseek/deepseek-r1-distill-llama-70b",
+      "provider": "deepseek",
+      "price": 0.03,
+      "context": 131072,
+      "version": "70",
+      "newnessScore": 1737663169
+    },
+    {
+      "id": "deepseek/deepseek-r1",
+      "provider": "deepseek",
+      "price": 0.39999999999999997,
+      "context": 163840,
+      "version": null,
+      "newnessScore": 1737381095
+    },
+    {
+      "id": "minimax/minimax-01",
+      "provider": "minimax",
+      "price": 0.19999999999999998,
+      "context": 1000192,
+      "version": "01",
+      "newnessScore": 1736915462
+    },
+    {
+      "id": "deepseek/deepseek-chat",
+      "provider": "deepseek",
+      "price": 0.24999987999999998,
+      "context": 163840,
+      "version": null,
+      "newnessScore": 1735241320
+    },
+    {
+      "id": "qwen/qwen-2.5-coder-32b-instruct",
+      "provider": "qwen",
+      "price": 0.04,
+      "context": 32768,
+      "version": "2.5",
+      "newnessScore": 1731368400
+    },
+    {
+      "id": "qwen/qwen-2.5-7b-instruct",
+      "provider": "qwen",
+      "price": 0.04,
+      "context": 65536,
+      "version": "2.5",
+      "newnessScore": 1729036800
+    },
+    {
+      "id": "qwen/qwen-2.5-72b-instruct",
+      "provider": "qwen",
+      "price": 0.07,
+      "context": 32768,
+      "version": "2.5",
+      "newnessScore": 1726704000
+    },
+    {
+      "id": "qwen/qwen-2.5-vl-7b-instruct",
+      "provider": "qwen",
+      "price": 0.19999999999999998,
+      "context": 32768,
+      "version": "2.5",
+      "newnessScore": 1724803200
+    }
+  ]
+}
