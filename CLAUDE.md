@@ -1623,6 +1623,269 @@ const avgResponseTime = calculateAvg(logs) // From api_logs (for stats only)
 
 **Why This Matters**: Special internal accounts (like ian.ho with 999,999 limit) need their custom limits respected, not overridden by plan defaults.
 
+## 🤖 OVERCOMING AI TRAINING DATA CUTOFF - MODEL DISCOVERY METHODOLOGY (2025-10-01)
+
+### The Problem: Training Cutoff Blindness
+
+**Critical Discovery**: AIs have a training data cutoff (Jan 2025 for this model) that creates a dangerous blind spot when recommending AI models. Without intervention, we recommend outdated models without realizing it.
+
+**How It Manifested**:
+- Recommended GLM-4.5 when GLM-4.6 was released Sept 30, 2025 (1 day ago)
+- Missed DeepSeek V3.2-exp (released Sept 29, 2025)
+- Missed Qwen3 VL 235B (released Sept 23, 2025)
+- Sorted by version numbers in IDs instead of actual release dates
+
+**User Caught It**:
+> "Have you considered glm 4.6? I am wondering why you seem to be telling me about older models rather than newer models? Are you aware of when models were released? My concern is the suspicious lack of newer models in your recommendation and I don't know if that's because you're not aware or considering release dates or just going off your old training data? ULTRATHINK this"
+
+### The Solution: Release Date-Aware Discovery Using Context7
+
+**Step 1: Use Context7 to Get Current API Documentation**
+```javascript
+// User suggested: "use context7 to help you with openrouter api calls if you need to figure out model dates"
+// Context7 fetches real-time documentation for any library/API
+```
+
+**Step 2: Learn the Actual API Structure**
+From Context7 research, discovered OpenRouter API returns:
+```json
+{
+  "data": [
+    {
+      "id": "z-ai/glm-4.6",
+      "name": "GLM-4.6",
+      "created": 1759235576,  // ← THIS IS THE KEY
+      "pricing": { "prompt": "0.0000006" },
+      "context_length": 202752
+    }
+  ]
+}
+```
+
+**The `created` field is a Unix timestamp representing actual release date!**
+
+**Step 3: Rewrite Discovery Logic**
+```javascript
+// ❌ WRONG: My initial approach based on training data
+const releaseDate = id.match(/202[45]-\d{2}(-\d{2})?/);  // Guess from ID
+const versionScore = parseFloat(version) || 0;           // Version numbers
+const newnessScore = (releaseScore || 0) + (versionScore * 10000);
+
+// ✅ CORRECT: Using actual API data
+const createdTimestamp = model.created || 0;  // Unix timestamp from API
+const createdDate = createdTimestamp > 0
+  ? new Date(createdTimestamp * 1000)
+  : null;
+const createdDateStr = createdDate
+  ? createdDate.toISOString().split('T')[0]
+  : null;
+
+// Sort by actual timestamp
+affordableModels.sort((a, b) => b.newnessScore - a.newnessScore);
+```
+
+**Step 4: Results - Found What I Missed**
+| Model | Release Date | My Training | Discovery Method |
+|-------|-------------|-------------|------------------|
+| z-ai/glm-4.6 | Sept 30, 2025 | ❌ Unknown | ✅ Context7 + API |
+| deepseek/deepseek-v3.2-exp | Sept 29, 2025 | ❌ Unknown | ✅ Context7 + API |
+| qwen/qwen3-vl-235b-a22b-thinking | Sept 23, 2025 | ❌ Unknown | ✅ Context7 + API |
+| deepseek/deepseek-v3.1-terminus | Sept 22, 2025 | ❌ Unknown | ✅ Context7 + API |
+| alibaba/tongyi-deepresearch-30b-a3b | Sept 18, 2025 | ❌ Unknown | ✅ Context7 + API |
+
+**ALL 5 models released after my training cutoff. I would have missed them entirely.**
+
+### The Methodology: Universal Pattern for AI Model Discovery
+
+**For ANY AI service (OpenRouter, Anthropic, OpenAI, etc.):**
+
+1. **Assume Your Knowledge is Outdated**
+   - Your training data has a cutoff date
+   - New models are released constantly
+   - Version numbers in IDs are NOT reliable indicators of newness
+
+2. **Use Context7 for Current Documentation**
+   ```
+   User prompt: "use context7 to show me OpenRouter API current model listing structure"
+   ```
+   - Context7 fetches real-time docs from the actual service
+   - Shows current API structure, not what you remember from training
+
+3. **Find the Release Date Field**
+   - OpenRouter: `created` (Unix timestamp)
+   - Anthropic: `created_at`
+   - OpenAI: `created`
+   - Look for actual timestamps, not dates in model IDs
+
+4. **Sort by Timestamp, Not Version**
+   ```javascript
+   // ❌ Don't trust these
+   const version = id.match(/v(\d+\.?\d*)/);
+   const dateStr = id.match(/2025-\d{2}-\d{2}/);
+
+   // ✅ Use actual API fields
+   models.sort((a, b) => b.created - a.created);
+   ```
+
+5. **Filter Then Sort**
+   ```javascript
+   // Step 1: Filter by requirements (price, context, provider)
+   const filtered = allModels.filter(m =>
+     m.price <= budget &&
+     m.context >= minContext &&
+     targetProviders.includes(m.provider)
+   );
+
+   // Step 2: Sort by actual release date
+   filtered.sort((a, b) => b.created - a.created);
+
+   // Step 3: Take top N newest
+   const topNewest = filtered.slice(0, 10);
+   ```
+
+6. **Verify Your Results**
+   - Ask yourself: "When was this model actually released?"
+   - Check if you're recommending models from months/years ago
+   - If newest model is >30 days old, you probably missed something
+
+### The File That Implements This Knowledge
+
+**Location**: `/home/projects/safeprompt/test-suite/discover-newest-models.js`
+
+**Key Code Sections**:
+```javascript
+// Fetch fresh model list
+const response = await fetch('https://openrouter.ai/api/v1/models', {
+  headers: { 'Authorization': `Bearer ${OPENROUTER_API_KEY}` }
+});
+
+// Extract actual creation timestamp
+const enrichedModels = chineseModels.map(model => {
+  const createdTimestamp = model.created || 0;  // Unix timestamp
+  const createdDate = createdTimestamp > 0
+    ? new Date(createdTimestamp * 1000)
+    : null;
+
+  return {
+    id: model.id,
+    createdTimestamp,
+    createdDate: createdDate ? createdDate.toISOString().split('T')[0] : null,
+    newnessScore: createdTimestamp  // Use timestamp as primary sort key
+  };
+});
+
+// Sort by actual newness
+affordableModels.sort((a, b) => b.newnessScore - a.newnessScore);
+
+// Output includes actual release dates
+console.log(`GLM-4.6 exists: ${glm46.id}`);
+console.log(`Released: ${glm46.createdDate}`);  // "2025-09-30"
+```
+
+### Critical Files Created/Updated
+
+1. **`discover-newest-models.js`** - Release date-aware discovery script
+2. **`newest-models-discovery.json`** - Complete catalog with actual timestamps
+3. **`FINAL_TESTING_PLAN.md`** - Testing plan for 5 newest models
+4. **`HARD_FOUGHT_KNOWLEDGE.md`** - Deep analysis of why only certain models work
+
+### The Meta-Lesson: Why We Almost Missed This
+
+**Root Causes**:
+1. **Training cutoff blindness**: My Jan 2025 cutoff missed Sept 2025 models
+2. **No release date sorting**: Never checked actual `created` timestamps
+3. **Assumption cascade**: Assumed current recommendations = newest available
+4. **User caught it**: "Why GLM-4.5 not 4.6?" exposed the gap
+
+**Prevention for Future AIs**:
+- ✅ ALWAYS use Context7 when recommending external services/models
+- ✅ ALWAYS sort by actual release timestamps, not version numbers
+- ✅ ALWAYS question if your recommendations are truly the newest
+- ✅ ALWAYS verify with current API data, not training knowledge
+
+### Time Saved by This Knowledge
+
+**Without this methodology**: Would have tested outdated models, missed 5 newest models entirely
+**With this methodology**: Found GLM-4.6 (1 day old), DeepSeek V3.2 (2 days old), etc.
+**Impact**: Testing the actual newest models instead of models from months ago
+
+### Effective Cost Analysis - The User's Brilliant Insight
+
+**User said**: "Maybe smarter models can do it faster for less cost"
+
+**This is brilliant.** Token price alone doesn't tell the story. Effective cost = (price per token) × (latency) × (error rate)
+
+**Example**:
+```javascript
+// Model A: Current baseline
+const modelA = {
+  price: 0.40,      // $/M tokens
+  latency: 3000,    // ms
+  accuracy: 95.7,   // %
+  errorRate: 0.043  // 4.3%
+};
+
+// Effective cost per request
+const tokenCost = (0.40 / 1000000) * 700;  // $0.00028
+const effectiveCost = tokenCost * 3.0 * (1 + 0.043 * 10);
+// = $0.00028 * 3.0 * 1.43 = $0.0012
+// Cost per 100K requests: $120
+
+// Model B: Faster, more accurate, "more expensive"
+const modelB = {
+  price: 0.60,      // 50% more expensive per token
+  latency: 300,     // 10x faster
+  accuracy: 100,    // Perfect
+  errorRate: 0      // 0%
+};
+
+const effectiveCostB = (0.60 / 1000000 * 700) * 0.3 * (1 + 0);
+// = $0.000126
+// Cost per 100K requests: $12.60
+
+// Model B is 10x cheaper despite 50% higher token cost!
+```
+
+**The Formula**:
+```javascript
+function calculateEffectiveCost(model) {
+  const tokensPerRequest = 700;  // avg (500 input + 200 output)
+  const tokenCost = (model.pricePerM / 1000000) * tokensPerRequest;
+  const latencySeconds = model.latencyMs / 1000;
+  const errorPenalty = 1 + ((100 - model.accuracy) / 100) * 10;
+
+  return tokenCost * latencySeconds * errorPenalty;
+}
+```
+
+**Why Error Penalty is 10x**:
+- 1 error = retry cost (2x request)
+- User friction (10x worse experience)
+- Security risk (100x impact for false negatives)
+- Conservative: 10x penalty is reasonable
+
+**This methodology applies to ANY AI service selection**, not just prompt injection detection.
+
+### When to Use This Approach
+
+**Use release date-aware discovery when**:
+- Selecting AI models for any production system
+- Cost optimization based on speed/accuracy tradeoffs
+- Need to find newest models with specific capabilities
+- Provider has multiple model versions
+- Your training data may be outdated
+
+**Files to Reference**:
+- `/home/projects/safeprompt/test-suite/discover-newest-models.js` - Complete implementation
+- `/home/projects/safeprompt/test-suite/FINAL_TESTING_PLAN.md` - Testing methodology
+- `/home/projects/safeprompt/test-suite/newest-models-discovery.json` - Results with timestamps
+
+### The Bottom Line
+
+**Without user intervention and Context7**, I would have recommended GLM-4.5 (released months ago) when GLM-4.6 (released yesterday) was available. This knowledge gap could have cost thousands in inefficiency by testing outdated models.
+
+**Key Takeaway**: AI training data cutoffs are a real limitation. Use Context7 + actual API timestamps to overcome it. Sort by `created` timestamps, not version strings in model IDs.
+
 ## 🗄️ SUPABASE DATABASE SETUP - HARD-FOUGHT KNOWLEDGE (2025-09-30)
 
 ### The Problem That Cost Hours
