@@ -34,13 +34,13 @@ const MODELS = {
   ],
   pass2: [
     {
-      name: 'meta-llama/llama-3.1-70b-instruct',
-      costPerMillion: 0.05,
+      name: 'google/gemini-2.5-flash-preview-09-2025',
+      costPerMillion: 0.30,
       priority: 1
     },
     {
-      name: 'google/gemini-2.0-flash-exp:free',
-      costPerMillion: 0,
+      name: 'meta-llama/llama-3.1-70b-instruct',
+      costPerMillion: 0.05,
       priority: 2
     }
   ]
