@@ -3,12 +3,12 @@
 ## Current Test Suite (Comprehensive)
 
 **File**: `realistic-test-suite.js`
-**Tests**: 74 professional, realistic test cases
+**Tests**: 94 professional, realistic test cases
 **Runner**: `run-realistic-tests.js`
 
 ### Test Coverage
 
-#### Attack Tests (42 tests)
+#### Attack Tests (62 tests)
 - **XSS Basic** (5 tests): Classic script injection, event handlers, SVG attacks
 - **XSS Obfuscated** (5 tests): Nested tags, HTML entities, hex encoding
 - **XSS Polyglot** (5 tests): Comment breaks, context escapes, universal polyglots
@@ -17,7 +17,13 @@
 - **External References Obfuscated** (5 tests): Spaced URLs, defanged notation, bracket IPs
 - **External References Encoded** (5 tests): ROT13, Base64, hex, percent encoding, homoglyphs
 - **Prompt Manipulation** (5 tests): Instruction override, DAN jailbreak, impersonation, system injection
-- **Edge Cases** (2 tests): Ambiguous attacks that require judgment
+- **Language Switching** (4 tests): Spanish, French, Japanese, Chinese (OWASP 2025)
+- **Semantic Manipulation** (4 tests): Riddles, definitions, rhymes (Gandalf/Lakera)
+- **Indirect Injection** (3 tests): RAG poisoning, content embedding (OWASP #1)
+- **Adversarial Suffix** (3 tests): Special chars, repetition, invisible Unicode
+- **Modern Jailbreaks** (4 tests): STAN, DevMode, AIM, dual model (2025)
+- **Nested Encoding** (2 tests): Layered obfuscation
+- **Edge Cases** (2 tests): Ambiguous attacks
 
 #### Legitimate Tests (32 tests)
 - **Security Discussion** (5 tests): Academic research, security testing, training materials

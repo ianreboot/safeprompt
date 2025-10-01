@@ -173,9 +173,9 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - **Pattern Detection**: XSS, SQL injection, template injection, command injection
 - **External References**: URL/IP/file detection with encoding/obfuscation resistance
 
-### Test Suite Details (74 Professional Tests)
+### Test Suite Details (94 Professional Tests)
 
-**Attack Categories Tested (42 tests):**
+**Attack Categories Tested (62 tests):**
 - **XSS Basic (5)**: Classic script injection, event handlers, SVG attacks, iframe exploits, body onload
 - **XSS Obfuscated (5)**: Nested tags, HTML entities, hex encoding, character code obfuscation, unicode escapes
 - **XSS Polyglot (5)**: Comment breaks, JavaScript context, attribute breaks, universal polyglots, conditional execution
@@ -184,7 +184,13 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - **External References Obfuscated (5)**: Spaced URLs, defanged notation, bracket IPs, localhost
 - **External References Encoded (5)**: ROT13, Base64, hex, percent encoding, homoglyphs
 - **Prompt Manipulation (5)**: Instruction override, DAN jailbreak, impersonation, system injection, escape attempts
-- **Edge Cases (2)**: Ambiguous override, false history claims
+- **Language Switching (4)**: Spanish, French, Japanese, Chinese bypass attempts (OWASP 2025)
+- **Semantic Manipulation (4)**: Riddles, definitions, rhymes, incremental disclosure (Gandalf/Lakera)
+- **Indirect Injection (3)**: RAG poisoning, content embedding, split payloads (OWASP LLM01 #1)
+- **Adversarial Suffix (3)**: Special chars, repetition, invisible Unicode bypasses
+- **Modern Jailbreaks (4)**: STAN, DevMode, AIM, dual model simulation (2025 trending)
+- **Nested Encoding (2)**: Base64-of-Base64, ROT13 commands
+- **Edge Cases (2)**: Ambiguous attacks
 
 **False Positive Prevention (32 tests):**
 - **Security Discussion (5)**: Academic research, security testing, training materials, implementation guides

@@ -237,7 +237,7 @@ const ABUSE_SIGNALS = [
 
 #### 4. Recommended Attack Categories (From Our Test Suite)
 
-**Use existing 74-test suite as source:**
+**Use existing 94-test suite as source:**
 
 | Category | # Examples | Public? | Safe to Show? |
 |----------|-----------|---------|---------------|
