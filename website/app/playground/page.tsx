@@ -436,13 +436,23 @@ export default function PlaygroundPage() {
                         }`}>
                           {results.protected.safe ? 'ALLOWED' : 'BLOCKED'}
                         </div>
-                        <div className="text-sm text-zinc-300">
+                        <div className="text-sm text-zinc-300 whitespace-pre-line">
                           {results.protected.reasoning}
                         </div>
                       </div>
-                      <div className="text-xs text-zinc-500">
+                      <div className="text-xs text-zinc-500 mb-3">
                         Response time: {results.protected.responseTime}ms
                       </div>
+
+                      {/* Raw JSON output for developers */}
+                      <details className="mt-3">
+                        <summary className="text-xs text-zinc-500 cursor-pointer hover:text-zinc-300 transition">
+                          📋 View Raw JSON Response
+                        </summary>
+                        <pre className="mt-2 p-3 bg-black/50 rounded-lg text-xs text-green-400 overflow-x-auto border border-green-500/20">
+                          {JSON.stringify(results.protected, null, 2)}
+                        </pre>
+                      </details>
                     </div>
                   ) : (
                     <div className="text-sm text-zinc-500">
@@ -504,7 +514,7 @@ export default function PlaygroundPage() {
                 {results.intelligence.blocked && (
                   <div>
                     <div className="text-xs text-zinc-500 mb-2">How SafePrompt Blocked It</div>
-                    <div className="text-sm text-zinc-300">{results.intelligence.reasoning}</div>
+                    <div className="text-sm text-zinc-300 whitespace-pre-line">{results.intelligence.reasoning}</div>
                   </div>
                 )}
               </div>
