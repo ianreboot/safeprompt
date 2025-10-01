@@ -62,10 +62,13 @@ Request → External Reference Check → Pattern Matching → Pass 1 (Llama 8B) 
 ✅ Fail-closed on errors
 
 ### Models Configuration
-- **Pass 1 Primary**: `meta-llama/llama-3.1-8b-instruct`
-- **Pass 1 Fallback**: `google/gemini-2.0-flash-exp:free`
-- **Pass 2 Primary**: `meta-llama/llama-3.1-70b-instruct`
-- **Pass 2 Fallback**: `google/gemini-2.0-flash-exp:free`
+**Pass 1** (Quick screening, ~36% of requests):
+- **Primary**: `meta-llama/llama-3.1-8b-instruct` ($0.02/M tokens)
+- **Fallback**: `google/gemini-2.0-flash-exp:free` ($0/M tokens)
+
+**Pass 2** (Deep validation, ~5% of requests):
+- **Primary**: `google/gemini-2.5-flash-preview-09-2025` ($0.30/M tokens)
+- **Fallback**: `meta-llama/llama-3.1-70b-instruct` ($0.05/M tokens)
 
 ### Thresholds
 - **Pass 1 High Risk**: 0.9 (block immediately)

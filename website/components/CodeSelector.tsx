@@ -14,7 +14,7 @@ const codeExamples: CodeExample[] = [
     language: 'curl',
     label: 'cURL',
     code: `curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "X-API-Key: YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Hello world"}'`
   },
@@ -24,14 +24,16 @@ const codeExamples: CodeExample[] = [
     code: `const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer YOUR_API_KEY',
+    'X-API-Key': 'YOUR_API_KEY',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({ prompt: 'Hello world' })
 });
 
 const result = await response.json();
-console.log(result);`
+if (!result.safe) {
+  console.log('Blocked:', result.threats);
+}`
   },
   {
     language: 'python',
@@ -41,14 +43,15 @@ console.log(result);`
 response = requests.post(
     'https://api.safeprompt.dev/api/v1/validate',
     headers={
-        'Authorization': 'Bearer YOUR_API_KEY',
+        'X-API-Key': 'YOUR_API_KEY',
         'Content-Type': 'application/json'
     },
     json={'prompt': 'Hello world'}
 )
 
 result = response.json()
-print(result)`
+if not result['safe']:
+    print('Blocked:', result['threats'])`
   },
   {
     language: 'php',
@@ -57,7 +60,7 @@ print(result)`
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Authorization: Bearer YOUR_API_KEY',
+    'X-API-Key: YOUR_API_KEY',
     'Content-Type: application/json'
 ]);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
@@ -65,7 +68,9 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
 ]));
 
 $result = json_decode(curl_exec($ch), true);
-curl_close($ch);`
+if (!$result['safe']) {
+    echo 'Blocked: ' . implode(', ', $result['threats']);
+}`
   },
   {
     language: 'go',
@@ -87,7 +92,7 @@ func main() {
         "https://api.safeprompt.dev/api/v1/validate",
         bytes.NewBuffer(body))
 
-    req.Header.Set("Authorization", "Bearer YOUR_API_KEY")
+    req.Header.Set("X-API-Key", "YOUR_API_KEY")
     req.Header.Set("Content-Type", "application/json")
 
     client := &http.Client{}

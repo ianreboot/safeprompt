@@ -757,7 +757,7 @@ For questions, contact: support@safeprompt.dev`
               <div className="relative">
                 <button
                   onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer ${apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "X-API-Key: ${apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Your user input here"}'`, 'curl')}
                   className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
@@ -766,7 +766,7 @@ For questions, contact: support@safeprompt.dev`
                 </button>
                 <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
                   <code>{`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer ${apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "X-API-Key: ${apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "Your user input here"}'`}</code>
                 </pre>
@@ -782,7 +782,7 @@ For questions, contact: support@safeprompt.dev`
   const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     method: 'POST',
     headers: {
-      'Authorization': 'Bearer ${apiKey?.key || 'YOUR_API_KEY'}',
+      'X-API-Key': '${apiKey?.key || 'YOUR_API_KEY'}',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ prompt: userInput })
@@ -806,7 +806,7 @@ For questions, contact: support@safeprompt.dev`
   const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     method: 'POST',
     headers: {
-      'Authorization': 'Bearer ${apiKey?.key || 'YOUR_API_KEY'}',
+      'X-API-Key': '${apiKey?.key || 'YOUR_API_KEY'}',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ prompt: userInput })
@@ -836,7 +836,7 @@ def check_prompt(user_input):
     response = requests.post(
         'https://api.safeprompt.dev/api/v1/validate',
         headers={
-            'Authorization': 'Bearer ${apiKey?.key || 'YOUR_API_KEY'}',
+            'X-API-Key': '${apiKey?.key || 'YOUR_API_KEY'}',
             'Content-Type': 'application/json'
         },
         json={'prompt': user_input}
@@ -859,7 +859,7 @@ def check_prompt(user_input):
     response = requests.post(
         'https://api.safeprompt.dev/api/v1/validate',
         headers={
-            'Authorization': 'Bearer ${apiKey?.key || 'YOUR_API_KEY'}',
+            'X-API-Key': '${apiKey?.key || 'YOUR_API_KEY'}',
             'Content-Type': 'application/json'
         },
         json={'prompt': user_input}
@@ -879,23 +879,47 @@ def check_prompt(user_input):
             <div>
               <h3 className="text-lg font-medium mb-3">4. Response Format</h3>
               <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800">
-                <code>{`// Safe response:
+                <code>{`// Safe prompt response:
 {
   "safe": true,
+  "confidence": 0.95,
   "threats": [],
-  "confidence": 0.95
+  "processingTime": 8,
+  "detectionMethod": "pattern_detection",
+  "reasoning": "No security threats detected"
 }
 
-// Unsafe response:
+// Unsafe prompt response:
 {
   "safe": false,
-  "threats": ["prompt_injection", "data_extraction"],
   "confidence": 0.99,
-  "details": {
-    "matched_patterns": ["ignore previous", "system prompt"]
-  }
+  "threats": ["prompt_injection", "xss_attack"],
+  "processingTime": 245,
+  "detectionMethod": "ai_validation",
+  "reasoning": "Instruction override attempt detected"
 }`}</code>
               </pre>
+
+              <div className="mt-4 space-y-3 text-sm text-gray-400">
+                <div>
+                  <strong className="text-gray-300">safe</strong>: Boolean - Block if false
+                </div>
+                <div>
+                  <strong className="text-gray-300">confidence</strong>: Float 0-1 - Higher = more certain
+                </div>
+                <div>
+                  <strong className="text-gray-300">threats</strong>: Array - Attack types detected (prompt_injection, xss_attack, sql_injection, etc.)
+                </div>
+                <div>
+                  <strong className="text-gray-300">processingTime</strong>: Integer ms - Usually &lt;10ms (pattern) or 200-600ms (AI)
+                </div>
+                <div>
+                  <strong className="text-gray-300">detectionMethod</strong>: String - How caught (pattern_detection, reference_detection, ai_validation)
+                </div>
+                <div>
+                  <strong className="text-gray-300">reasoning</strong>: String - Why this verdict (for logging/debugging)
+                </div>
+              </div>
             </div>
 
             {/* Advanced Features Section */}
@@ -911,7 +935,7 @@ def check_prompt(user_input):
                 <div className="relative">
                   <button
                     onClick={() => copyCodeBlock(`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer ${apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "X-API-Key: ${apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{
     "prompts": [
@@ -926,7 +950,7 @@ def check_prompt(user_input):
                   </button>
                   <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
                     <code>{`curl -X POST https://api.safeprompt.dev/api/v1/validate \\
-  -H "Authorization: Bearer ${apiKey?.key || 'YOUR_API_KEY'}" \\
+  -H "X-API-Key: ${apiKey?.key || 'YOUR_API_KEY'}" \\
   -H "Content-Type: application/json" \\
   -d '{
     "prompts": [
