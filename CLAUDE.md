@@ -92,32 +92,77 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 ## 🐕 INTERNAL TEST ACCOUNT (Dogfooding)
 
 ### Account Details
-SafePrompt has an internal test account for unlimited API usage:
+SafePrompt eats its own dog food with an internal test account:
 
 - **Email**: ian.ho@rebootmedia.net
 - **Password**: SafePromptTest2025!
 - **API Key**: sp_test_unlimited_dogfood_key_2025
-- **Monthly Limit**: 999,999 (effectively unlimited)
-- **Company**: Reboot Media
-- **Status**: Active, Beta User
+- **Monthly Limit**: 999,999,999 (functionally unlimited - ~380 req/sec for 30 days)
+- **Subscription**: Active (internal tier)
+
+### Philosophy: True Dogfooding
+This account is **a regular paying customer** with generous limits:
+
+✅ **Same as regular users:**
+- Uses standard API endpoints
+- Goes through same validation logic
+- Logs to api_logs table normally
+- Increments usage counter with each request
+- Shows real stats in dashboard
+- Fails if API is down (no special fallbacks)
+- Goes through rate limit checks (just with high threshold)
+
+❌ **NO special treatment:**
+- No special case code in validation endpoint
+- No `if (internal account)` branches
+- No different response formats
+- No bypass of standard checks
+
+**If regular users can't use SafePrompt, neither can we.**
 
 ### Purpose
-This account bypasses all rate limits and is used for:
-1. **Testing contact forms** across all Reboot Media projects
-2. **Dashboard development** with real production data
-3. **API integration testing** without usage concerns
-4. **Waitlist form connections** to SafePrompt API
-5. **Eating our own dogfood** - using SafePrompt to protect SafePrompt
+1. **Dashboard validation** - Log in to verify UI works correctly with real data
+2. **Playground protection** - Public playground uses this account
+3. **Contact form security** - Form submissions validated with this account
+4. **Test script validation** - Manual test scripts use this account
+5. **True dogfooding** - We are a customer of our own product
 
-### Technical Implementation
-- Recognized by hardcoded check in `/api/api/v1/validate.js`
-- Returns `internal_account: true` in API responses
-- Stored in `/home/projects/.env` as SAFEPROMPT_TEST_* variables
-- User exists in both auth.users and users tables in Supabase
+### Database Configuration
+```sql
+SELECT
+  email,
+  api_requests_used,
+  api_requests_limit,
+  subscription_status,
+  subscription_tier
+FROM profiles
+WHERE email = 'ian.ho@rebootmedia.net';
+
+-- Expected:
+-- api_requests_used: (incrementing with usage)
+-- api_requests_limit: 999999999
+-- subscription_status: active
+-- subscription_tier: internal
+```
+
+### Usage Monitoring
+- **Dashboard**: https://dashboard.safeprompt.dev
+- **Real-time stats**: Usage counter, response times, threats blocked
+- **Never hits limit**: 999M requests = ~380/sec for 30 days straight
+- **Verify logging**: Run `/home/projects/safeprompt/scripts/verify-internal-logging.js`
+
+### Integration Points
+All these use the internal account and will show up in dashboard:
+- ✅ Website playground (`/playground`)
+- ✅ Contact form validation (`/contact`)
+- ✅ Manual test scripts (`test-suite/manual-tests/`)
+- ✅ Playground backend (`api/api/playground.js`)
+
+Main test runner (`run-realistic-tests.js`) calls library directly, doesn't use API.
 
 ### Usage Examples
 ```javascript
-// Use in any form that needs prompt validation
+// Standard API call - no special treatment
 const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
@@ -129,6 +174,19 @@ const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     mode: 'optimized'
   })
 });
+
+// Response is identical to regular users:
+// {
+//   "safe": true/false,
+//   "confidence": 0.95,
+//   "threats": [],
+//   "reasoning": "...",
+//   "processingTime": 247,
+//   "detectionMethod": "ai_validation",
+//   "mode": "optimized",
+//   "cached": false,
+//   "timestamp": "2025-10-01T..."
+// }
 ```
 
 ## 👥 USER MANAGEMENT & WAITLIST APPROVAL
