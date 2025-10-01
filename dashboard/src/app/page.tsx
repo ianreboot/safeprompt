@@ -530,13 +530,15 @@ For questions, contact: support@safeprompt.dev`
                 <Key className="w-5 h-5 text-primary" />
                 API Key
               </h2>
-              <button
-                onClick={regenerateKey}
-                className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Regenerate
-              </button>
+              {usage.tier !== 'internal' && (
+                <button
+                  onClick={regenerateKey}
+                  className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Regenerate
+                </button>
+              )}
             </div>
 
             <div className="relative bg-black rounded border border-gray-800">
@@ -639,24 +641,33 @@ For questions, contact: support@safeprompt.dev`
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <button
-                  onClick={() => setShowUpgradeModal(true)}
-                  className="w-full bg-primary text-black font-semibold py-2 px-4 rounded hover:bg-primary/90 transition-colors"
-                >
-                  Upgrade Plan
-                </button>
-                <button
-                  onClick={openBillingPortal}
-                  className="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 transition-colors text-sm"
-                >
-                  Manage Billing
-                </button>
-              </div>
+              {usage.tier !== 'internal' && (
+                <>
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => setShowUpgradeModal(true)}
+                      className="w-full bg-primary text-black font-semibold py-2 px-4 rounded hover:bg-primary/90 transition-colors"
+                    >
+                      Upgrade Plan
+                    </button>
+                    <button
+                      onClick={openBillingPortal}
+                      className="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 transition-colors text-sm"
+                    >
+                      Manage Billing
+                    </button>
+                  </div>
 
-              <div className="text-xs text-gray-500">
-                Next billing: {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString()}
-              </div>
+                  <div className="text-xs text-gray-500">
+                    Next billing: {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString()}
+                  </div>
+                </>
+              )}
+              {usage.tier === 'internal' && (
+                <div className="text-sm text-gray-400 bg-gray-800 rounded p-3">
+                  Internal dogfooding account - No billing required
+                </div>
+              )}
             </div>
           </div>
         </div>

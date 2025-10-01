@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'SafePrompt Dashboard',
   description: 'Manage your API keys and monitor usage',
+  icons: {
+    icon: '/favicon.webp',
+  },
   robots: {
     index: false,
     follow: false,

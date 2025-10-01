@@ -330,6 +330,8 @@ export default function PlaygroundPage() {
               {' '}This playground demonstrates AI security attacks using SANITIZED examples. All prompts have been modified to be harmless.
               Do NOT use these techniques against systems you don't own.
               {' '}<Link href="/terms" className="text-primary hover:underline">Terms & Responsible Use Policy</Link>
+              <span className="ml-4 text-zinc-400">|</span>
+              <span className="ml-4"><strong className="text-zinc-300">💡 Fair Use:</strong> This playground is free for everyone. Limits: 50 tests/day, 20/hour. <Link href="/signup" className="text-primary hover:underline">Need more? Sign up now</Link></span>
             </div>
           </div>
         </div>
@@ -337,7 +339,7 @@ export default function PlaygroundPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-[300px_1fr_350px] gap-6">
+        <div className="grid lg:grid-cols-[300px_1fr] gap-6">
 
           {/* Left Sidebar - Test Gallery */}
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
@@ -498,6 +500,37 @@ export default function PlaygroundPage() {
                       Error: {results.unprotected.error}
                     </div>
                   )}
+
+                  {/* Intelligence Section - Moved from Right Sidebar */}
+                  {mode === 'gallery' && selectedTest && (
+                    <div className="mt-6 pt-6 border-t border-red-500/20 space-y-3">
+                      <div className="text-xs font-bold text-red-300 mb-3">🧠 ATTACK INTELLIGENCE</div>
+                      <div>
+                        <div className="text-xs text-zinc-500 mb-1">Attack Type</div>
+                        <div className="text-sm font-medium text-red-300">{selectedTest.category}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-zinc-500 mb-1">Danger Level</div>
+                        <div className="flex items-center gap-2">
+                          {selectedTest.dangerLevel === 'critical' ? (
+                            <>
+                              <span className="text-red-400">🔴🔴🔴🔴🔴</span>
+                              <span className="text-xs text-red-400 font-bold">CRITICAL</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-green-400">🟢🟢🟢</span>
+                              <span className="text-xs text-green-400 font-bold">SAFE</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-zinc-500 mb-1">Why This Matters</div>
+                        <div className="text-xs text-zinc-300 leading-relaxed">{selectedTest.explanation}</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Protected with SafePrompt */}
@@ -551,55 +584,6 @@ export default function PlaygroundPage() {
                 </div>
               </div>
             )}
-          </div>
-
-          {/* Right Sidebar - Intelligence */}
-          <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
-            <h3 className="text-lg font-bold mb-4">🧠 Intelligence</h3>
-
-            {mode === 'gallery' && selectedTest && (
-              <div className="space-y-4">
-                <div>
-                  <div className="text-xs text-zinc-500 mb-2">Attack Type</div>
-                  <div className="text-sm font-medium">{selectedTest.category}</div>
-                </div>
-
-                <div>
-                  <div className="text-xs text-zinc-500 mb-2">Danger Level</div>
-                  <div className="flex items-center gap-2">
-                    {selectedTest.dangerLevel === 'critical' ? (
-                      <>
-                        <span className="text-red-400">🔴🔴🔴🔴🔴</span>
-                        <span className="text-xs text-red-400 font-bold">CRITICAL</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-green-400">🟢🟢🟢</span>
-                        <span className="text-xs text-green-400 font-bold">SAFE</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-xs text-zinc-500 mb-2">Why This Matters</div>
-                  <div className="text-sm text-zinc-300">{selectedTest.explanation}</div>
-                </div>
-              </div>
-            )}
-
-            <div className="mt-6 pt-6 border-t border-zinc-800">
-              <div className="text-xs text-zinc-500 mb-2">💡 Fair Use Policy</div>
-              <div className="text-xs text-zinc-400 leading-relaxed">
-                This playground is free for everyone to explore SafePrompt's capabilities.
-                We ask that you use it responsibly while we build out our infrastructure.
-                <br /><br />
-                <strong className="text-zinc-300">Limits:</strong> 50 tests per day, 20 per hour
-                <br />
-                <em className="text-zinc-500">Need more? <Link href="/signup" className="text-primary hover:underline">Sign up for an account now</Link></em>
-              </div>
-            </div>
-
           </div>
         </div>
 
