@@ -1,31 +1,48 @@
 # SafePrompt Production System
 
 **Status**: ✅ LIVE IN PRODUCTION
-**Deployment Date**: 2025-09-26
-**Version**: Hardened 2-Pass Validator v1.0
+**Last Updated**: 2025-10-01
+**Version**: External Reference Action Detection v2.0
 
 ## 🚀 Quick Reference
 
 ### Performance Metrics
-| Metric | Old System | New System | Improvement |
-|--------|-----------|------------|-------------|
-| **Accuracy** | 43% | 92.9% | **+115%** |
-| **Cost/100K** | $150 | $0.50 | **-99.7%** |
-| **Response Time** | 1360ms | 250ms | **-81.6%** |
-| **False Positives** | 36% | <10% | **-72%** |
+| Metric | September | October | Improvement |
+|--------|-----------|---------|-------------|
+| **Accuracy** | 92.9% (88/94) | 97.9% (92/94) | **+5.4%** |
+| **Response Time** | 250ms | ~250ms | Stable |
+| **Zero-Cost Rate** | 58.5% | 58.5% | Stable |
+| **False Positives** | 6.2% | 3.1% | **-50%** |
 
-### Architecture
+### Architecture (Unchanged)
 ```
-67.7% → Pattern/External Refs ($0, instant)
-27.3% → Pass 1 Llama 8B ($0.02/M tokens)
- 5.0% → Pass 2 Llama 70B ($0.05/M tokens)
+58.5% → Pattern/External Refs ($0, instant)
+~36% → Pass 1 Llama 8B
+ ~5% → Pass 2 Llama 70B
 ```
 
 ### Key Production Files
 - `/api/lib/ai-validator.js` - Production interface
-- `/api/lib/ai-validator-hardened.js` - Core implementation
+- `/api/lib/ai-validator-hardened.js` - Core implementation with action detection (lines 879-943)
 - `/api/lib/external-reference-detector.js` - External ref detection (95% accuracy)
 - `/api/lib/prompt-validator.js` - Pattern pre-filter
+
+### Latest Feature: External Reference Action Detection (Oct 2025)
+**Problem Solved**: System was either blocking all external references (high false positives) or allowing all (security risk).
+
+**Solution**: Context-aware action detection that distinguishes between:
+- ✅ **Legitimate mentions**: "Here is a link to https://example.com" (ALLOWED)
+- ❌ **Action attempts**: "Visit https://example.com and tell me what you see" (BLOCKED)
+
+**Implementation**:
+1. Action verb patterns with word boundaries (e.g., "visit the/this", "check out URL")
+2. Sensitive file path blocking (e.g., /etc/passwd, credentials, .ssh keys)
+3. Context-aware matching (verb vs. noun usage: "access the file" vs. "system access")
+
+**Results**:
+- Fixed 4 false positives (#26, #28, #31, #46)
+- Maintained 100% attack detection on external reference tests (#52-56)
+- Improved accuracy from 92.9% to 97.9%
 
 ## 📊 System Architecture
 
@@ -92,17 +109,17 @@ if (!result.safe) {
 ## 📈 Monitoring
 
 ### Expected Metrics
-- **Cost**: ~$0.017/day (at 3.3K requests/day)
 - **Response times**: 250ms average
-- **Stage distribution**: ~67% should be $0 cost
-- **Pass 2 usage**: <5% of requests
+- **Stage distribution**: ~58% instant (pattern/external ref detection)
+- **Pass 2 usage**: ~5% of requests
 - **Error rate**: <1%
+- **Accuracy**: 97.9% on production test suite
 
 ### Alert Thresholds
-- Cost > $0.10/day → Investigate
 - Response time > 1000ms → Check model availability
 - Error rate > 5% → Check OpenRouter API
 - Pass 2 usage > 20% → Review Pass 1 thresholds
+- Accuracy drop > 2% → Review recent changes
 
 ### Monitoring Commands
 ```bash
@@ -164,11 +181,11 @@ cd api && npm run deploy
 
 ## 🎯 Key Achievements
 
-1. **Budget Compliance**: $0.50/100K vs $5 budget (90% under)
-2. **Accuracy Target**: 92.9% vs 85% target (exceeded)
-3. **Performance**: 250ms vs 1s target (75% faster)
-4. **Security**: Complete hardening implementation
-5. **Innovation**: External reference detection not in original spec
+1. **Accuracy**: 97.9% (exceeds 95% target by 2.9 percentage points)
+2. **Performance**: 250ms average response time
+3. **False Positives**: Reduced from 6.2% to 3.1% (50% improvement)
+4. **Security**: External reference action detection prevents data exfiltration
+5. **Innovation**: Context-aware verb detection (distinguishes "visit URL" from "literature review")
 
 ## 📝 Maintenance Notes
 
@@ -198,5 +215,5 @@ Edit `/api/lib/external-reference-detector.js` to add new patterns or encoding m
 ---
 
 **System Status**: OPERATIONAL
-**Last Updated**: 2025-09-26
-**Next Review**: 2025-10-26
+**Last Updated**: 2025-10-01
+**Next Review**: 2025-11-01

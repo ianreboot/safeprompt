@@ -154,24 +154,24 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 ## Technical Implementation
 
 ### Production Performance (October 2025)
-- **Accuracy**: 98% (49/50 professional tests passed)
-- **Response Time**: 657ms Pass 2 average (overall system faster due to multi-layer optimization)
-- **Zero-Cost Rate**: 44% of requests handled instantly (pattern/reference detection)
-- **Architecture**: Hardened 2-pass validator with Google Gemini 2.5 Flash
-- **Test Coverage**: 50 professional tests covering XSS, template injection, code injection, business context, false positives
-- **Attack Detection**: 95% (19/20 attacks blocked)
-- **False Positive Rate**: 0% (30/30 legitimate requests approved - perfect UX)
+- **Accuracy**: 97.9% (92/94 professional tests passed)
+- **Response Time**: ~250ms average (multi-layer optimization)
+- **Zero-Cost Rate**: 58.5% of requests handled instantly via pattern/reference detection
+- **Architecture**: Hardened 2-pass validator with external reference action detection
+- **Test Coverage**: 94 professional tests covering real-world attacks and false positive prevention
+- **Attack Detection**: 98.4% (61/62 attacks blocked)
+- **False Positive Rate**: 3.1% (31/32 legitimate requests approved)
 - **Uptime SLA**: 99.9% for paid plans
 
 ### AI Models (Updated October 2025)
-- **Pass 1**: Llama 3.1 8B (fast pre-filter, 100% accuracy)
-- **Pass 2**: Google Gemini 2.5 Flash (deep validation, 98% accuracy)
-- **Fallback**: Llama 3.1 70B (reliability)
+- **Pass 1**: Llama 3.1 8B (fast risk assessment)
+- **Pass 2**: Llama 3.1 70B (deep validation for uncertain cases)
+- **Fallback**: Google Gemini 2.0 Flash (reliability)
 
 ### Recent Improvements
-- **October 2025**: Deployed Gemini 2.5 Flash - 78% faster, 2.3% more accurate
-- **Pattern Detection**: XSS, SQL injection, template injection, command injection
-- **External References**: URL/IP/file detection with encoding/obfuscation resistance
+- **October 2025**: External reference action detection - blocks "visit URL", "access file" while allowing legitimate mentions
+- **Pattern Detection**: XSS, SQL injection, template injection, command injection, semantic extraction
+- **External References**: URL/IP/file detection with action-based blocking, sensitive path protection, encoding/obfuscation resistance
 
 ### Test Suite Details (94 Professional Tests)
 

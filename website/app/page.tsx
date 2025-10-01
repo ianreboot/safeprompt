@@ -61,16 +61,16 @@ export default function Home() {
         <div className="container mx-auto max-w-5xl">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">98%</div>
-              <div className="text-sm text-muted-foreground">Accuracy Rate</div>
+              <div className="text-2xl font-bold text-primary mb-1">97.9%</div>
+              <div className="text-sm text-muted-foreground">Detection Accuracy</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">&lt;500ms</div>
+              <div className="text-2xl font-bold text-primary mb-1">~250ms</div>
               <div className="text-sm text-muted-foreground">Avg Response Time</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">0% False Positives</div>
-              <div className="text-sm text-muted-foreground">Perfect UX</div>
+              <div className="text-2xl font-bold text-primary mb-1">98.4%</div>
+              <div className="text-sm text-muted-foreground">Attack Detection</div>
             </div>
           </div>
         </div>
