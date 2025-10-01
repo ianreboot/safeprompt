@@ -48,6 +48,9 @@ export default function Home() {
               <a href="/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
                 Get Started - Free or $5/mo
               </a>
+              <a href="/playground" className="border border-primary text-primary px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/10 transition">
+                Try Playground →
+              </a>
               <a href="#pricing" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
                 Compare Plans
               </a>

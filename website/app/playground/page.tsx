@@ -240,10 +240,16 @@ export default function PlaygroundPage() {
         <div className="grid lg:grid-cols-[300px_1fr_350px] gap-6">
 
           {/* Left Sidebar - Test Gallery */}
-          <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
-            <h3 className="text-lg font-bold mb-4">Attack Gallery</h3>
+          <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
+            <h3 className="text-lg font-bold mb-2">Attack Gallery</h3>
 
-            <div className="flex gap-2 mb-4">
+            {/* Explanation of attack types */}
+            <div className="bg-zinc-800/50 rounded-lg p-2 mb-3 text-xs text-zinc-400 leading-relaxed">
+              <div className="mb-1"><span className="text-red-400">🔴 Critical Attacks</span> - Malicious prompts that should be blocked</div>
+              <div><span className="text-green-400">🟢 Legitimate Use</span> - Safe prompts that should be allowed</div>
+            </div>
+
+            <div className="flex gap-2 mb-3">
               <button
                 onClick={() => setMode('gallery')}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${
@@ -267,22 +273,21 @@ export default function PlaygroundPage() {
             </div>
 
             {mode === 'gallery' ? (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {PLAYGROUND_TESTS.map((test) => (
                   <button
                     key={test.id}
                     onClick={() => setSelectedTest(test)}
-                    className={`w-full text-left p-3 rounded-lg transition border ${
+                    className={`w-full text-left p-2 rounded-lg transition border ${
                       selectedTest.id === test.id
                         ? 'bg-primary/20 border-primary text-white'
                         : 'bg-zinc-800/50 border-zinc-700 hover:border-zinc-600 text-zinc-300'
                     }`}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">{test.emoji}</span>
-                      <span className="font-medium text-sm">{test.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">{test.emoji}</span>
+                      <span className="font-medium text-xs leading-tight">{test.name}</span>
                     </div>
-                    <div className="text-xs text-zinc-500">{test.category}</div>
                   </button>
                 ))}
               </div>
@@ -299,9 +304,9 @@ export default function PlaygroundPage() {
             )}
 
             {mode === 'gallery' && selectedTest && (
-              <div className="mt-6 pt-6 border-t border-zinc-800">
-                <div className="text-xs text-zinc-500 mb-2">Real-World Impact</div>
-                <div className="text-sm text-zinc-300">{selectedTest.impact}</div>
+              <div className="mt-3 pt-3 border-t border-zinc-800">
+                <div className="text-xs text-zinc-500 mb-1">Real-World Impact</div>
+                <div className="text-xs text-zinc-300 leading-tight">{selectedTest.impact}</div>
               </div>
             )}
           </div>
@@ -516,14 +521,6 @@ export default function PlaygroundPage() {
               </div>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-zinc-800">
-              <Link
-                href="/signup"
-                className="block w-full px-4 py-3 bg-primary rounded-lg text-center font-bold hover:bg-primary/80 transition"
-              >
-                Get SafePrompt for Your App
-              </Link>
-            </div>
           </div>
         </div>
 
