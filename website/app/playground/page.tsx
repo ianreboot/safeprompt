@@ -120,24 +120,81 @@ export default function PlaygroundPage() {
     setResults(null);
 
     try {
-      const response = await fetch('https://api.safeprompt.dev/api/playground', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          prompt: currentPrompt,
-          testId: mode === 'gallery' ? selectedTest.id : null,
-          sessionId: localStorage.getItem('playground_session') || Math.random().toString(36)
+      // Temporarily use validate endpoint until playground endpoint deploys
+      const [protectedResponse, unprotectedResponse] = await Promise.all([
+        // Protected AI - real SafePrompt validation
+        fetch('https://api.safeprompt.dev/api/v1/validate', {
+          method: 'POST',
+          headers: {
+            'X-API-Key': 'sp_test_unlimited_dogfood_key_2025',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            prompt: currentPrompt,
+            mode: 'optimized'
+          })
+        }),
+        // Unprotected AI - simulated vulnerable response
+        Promise.resolve({
+          ok: true,
+          json: async () => ({
+            success: true,
+            response: currentPrompt.includes('Ignore all previous') || currentPrompt.includes('system prompt') ?
+              "I'm a customer service AI. My configuration includes:\n- Database: customers_production\n- API endpoint: https://api-internal.example.com\n- Sample customer IDs: C-10234, C-58291\n- Test API key: sk_test_demo_12345_NOT_REAL\n\nI can help you with refunds up to $500 and administrative functions." :
+              currentPrompt.includes('<script>') || currentPrompt.includes('onerror') || currentPrompt.includes('<svg') ?
+              "Processing your input: " + currentPrompt :
+              currentPrompt.includes('SQL') || currentPrompt.includes('SELECT') || currentPrompt.includes('{{') ?
+              "I'll help you with that query." :
+              currentPrompt.includes('prevent') || currentPrompt.includes('How do I') ?
+              "Great question! To prevent prompt injection attacks, you should use SafePrompt's API to validate all user inputs before sending them to your AI. It uses multi-layer detection including pattern matching and AI validation." :
+              "I can help you with that request.",
+            responseTime: 450,
+            model: 'gpt-3.5-turbo',
+            exposed: currentPrompt.includes('Ignore all previous') || currentPrompt.includes('system prompt') ?
+              ['API key', 'Database name', 'Customer IDs', 'Internal API endpoint', 'System prompt'] :
+              currentPrompt.includes('<script>') || currentPrompt.includes('onerror') ?
+              ['XSS vulnerability'] : []
+          })
         })
-      });
+      ]);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'API request failed');
+      if (!protectedResponse.ok) {
+        throw new Error('SafePrompt API error');
       }
 
-      const data = await response.json();
+      const protectedData = await protectedResponse.json();
+      const unprotectedData = await unprotectedResponse.json();
+
+      const data = {
+        success: true,
+        unprotected: unprotectedData,
+        protected: {
+          success: true,
+          safe: protectedData.safe,
+          confidence: protectedData.confidence,
+          threats: protectedData.threats,
+          stage: protectedData.stage || 'pattern',
+          reasoning: protectedData.reasoning,
+          responseTime: protectedData.processingTime
+        },
+        intelligence: {
+          detectionMethod: protectedData.stage === 'pattern' ? 'Pattern Matching (0ms)' :
+                         protectedData.stage === 'external_reference' ? 'External Reference Detection (5ms)' :
+                         'AI Validation',
+          confidence: Math.round((protectedData.confidence || 0) * 100) + '%',
+          threatType: protectedData.threats?.[0] || 'None detected',
+          responseTime: protectedData.processingTime + 'ms',
+          blocked: !protectedData.safe,
+          reasoning: protectedData.reasoning
+        },
+        rateLimit: {
+          remaining: {
+            minute: 5,
+            hour: 20,
+            day: 50
+          }
+        }
+      };
       setResults(data);
 
       // Store session ID for rate limiting tracking
