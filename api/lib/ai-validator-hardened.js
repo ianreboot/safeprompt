@@ -837,6 +837,24 @@ export async function validateHardened(prompt, options = {}) {
     };
   }
 
+  // Stage -0.05: Pattern-based instant check (jailbreak patterns)
+  // MUST run BEFORE external reference detection to avoid false positives
+  if (!skipPatterns) {
+    const patternResult = instantPatternCheck(prompt);
+    if (patternResult) {
+      stats.stages.push({
+        stage: 'pattern',
+        result: patternResult.safe ? 'safe' : 'unsafe',
+        time: Date.now() - startTime,
+        cost: 0
+      });
+      return {
+        ...patternResult,
+        processingTime: Date.now() - startTime
+      };
+    }
+  }
+
   // Stage 0: External Reference Detection
   if (!skipExternalCheck) {
     const detector = new ExternalReferenceDetector();
@@ -905,23 +923,6 @@ export async function validateHardened(prompt, options = {}) {
         processingTime: Date.now() - startTime,
         stage: 'external_reference',
         cost: 0
-      };
-    }
-  }
-
-  // Stage 1: Pattern-based instant check
-  if (!skipPatterns) {
-    const patternResult = instantPatternCheck(prompt);
-    if (patternResult) {
-      stats.stages.push({
-        stage: 'pattern',
-        result: patternResult.safe ? 'safe' : 'unsafe',
-        time: Date.now() - startTime,
-        cost: 0
-      });
-      return {
-        ...patternResult,
-        processingTime: Date.now() - startTime
       };
     }
   }
