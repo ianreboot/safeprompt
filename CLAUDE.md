@@ -322,7 +322,7 @@ ORDER BY u.created_at DESC;
 - ❌ Don't use `/api/health` → Use `/api/admin?action=health`
 - ❌ Don't use `/api/v1/stripe-webhook` → Use `/api/webhooks?source=stripe`
 
-See ARCHITECTURE.md for complete endpoint mapping.
+See docs/ARCHITECTURE.md for complete endpoint mapping.
 
 ### Validation Pipeline
 1. **Regex Patterns** - Fast first pass (5ms) from `/home/projects/api/utils/prompt-validator.js`
@@ -832,20 +832,20 @@ This ensures tests run against the exact live code. Results are saved to JSON fo
 - "I would like to upgrade my subscription to the premium plan" ✅
 
 ### Test Scripts Created
-**`/home/projects/safeprompt/test-playground-examples.js`**
+**`/home/projects/safeprompt/test-suite/manual-tests/test-playground-examples.js`**
 - Tests all 8 playground examples against production API
 - Uses sp_test_unlimited_dogfood_key_2025
 - Validates expected results (safe vs unsafe)
 - Reports failures with reasoning
 
-**`/home/projects/safeprompt/test-simple-prompts.js`**
+**`/home/projects/safeprompt/test-suite/manual-tests/test-simple-prompts.js`**
 - Tests simple, clean prompts to find alternatives
 - Quickly identifies working patterns
 - Used to replace broken examples
 
 ### Testing Protocol for Future Examples
 ```bash
-cd /home/projects/safeprompt
+cd /home/projects/safeprompt/test-suite/manual-tests
 node test-playground-examples.js  # Test current examples
 node test-simple-prompts.js       # Find working alternatives
 
@@ -2375,7 +2375,7 @@ const MODELS = {
 
 ### Testing Documentation
 
-**Comprehensive methodology:** `/home/projects/safeprompt/TESTING_METHODOLOGY.md`
+**Comprehensive methodology:** `/home/projects/safeprompt/docs/TESTING_METHODOLOGY.md`
 
 **Key sections:**
 1. Release date-aware model discovery (avoiding training cutoff blindness)
