@@ -335,3 +335,18 @@ From the 24 available Pass 2 models, we only tested 5. Remaining 19 models could
 **Testing Complete:** 2025-10-01
 **Recommendation:** Keep current system, implement retry logic and monitoring
 **Reason:** No alternatives match 100% accuracy requirement
+
+---
+
+## 🚨 CRITICAL NOTE (Added 2025-10-01)
+
+After completing this testing, we identified critical unvalidated assumptions and deeper questions about our system architecture.
+
+**See `HARD_FOUGHT_KNOWLEDGE.md` for:**
+- Why did ALL other models fail? Is our system Llama-specific?
+- Is model-specific coupling technical debt or legitimate optimization?
+- What assumptions remain unvalidated? (Pass 2 model not tested!)
+- Should we attempt per-model prompt engineering?
+- Do we understand WHY Llama 3.1 succeeds where others fail?
+
+**The uncomfortable truth:** We found a working solution without fully understanding why it works or if alternatives could work with different approaches.

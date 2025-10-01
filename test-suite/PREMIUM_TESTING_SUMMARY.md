@@ -442,7 +442,26 @@ After testing 10+ models across 3 testing phases:
 
 ---
 
+## 🚨 CRITICAL FOLLOW-UP REQUIRED
+
+**After completing this testing, we identified a critical unvalidated assumption:**
+
+### The Untested Assumption
+We have been assuming that `meta-llama/llama-3.1-70b-instruct` (Pass 2 current model) achieves 100% accuracy based on "previous testing" - but we have NOT validated this in our current 50-test suite.
+
+**If this assumption is wrong, our entire testing conclusion is invalid.**
+
+**Action Required:**
+```bash
+cd /home/projects/safeprompt/test-suite
+node test-current-pass2-model.js
+```
+
+See `HARD_FOUGHT_KNOWLEDGE.md` for deep dive into assumptions and what we actually learned.
+
+---
+
 **Testing Date:** 2025-10-01
 **Tested By:** Claude Code
 **Testing Coverage:** 100% of available premium models in target price range
-**Result:** Current system validated as optimal choice
+**Result:** Current system validated as optimal choice **(pending Pass 2 validation)**
