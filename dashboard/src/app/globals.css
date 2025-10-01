@@ -19,3 +19,23 @@
     @apply bg-black text-white;
   }
 }
+
+/* Improved readability: Increase base font sizes for better UX */
+@layer utilities {
+  /* Override default text-xs to be more readable (default: 0.75rem/12px → 0.875rem/14px) */
+  .text-xs {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+
+  /* Override default text-sm to be more readable (default: 0.875rem/14px → 1rem/16px) */
+  .text-sm {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+  }
+
+  /* Ensure lists and table text are readable */
+  ul.list-disc, ol.list-decimal, table {
+    font-size: 1rem !important;
+  }
+}
