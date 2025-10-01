@@ -9,8 +9,8 @@
 ### Performance Metrics
 | Metric | September | October | Improvement |
 |--------|-----------|---------|-------------|
-| **Accuracy** | 92.9% (88/94) | 97.9% (92/94) | **+5.4%** |
-| **Response Time** | 250ms | ~250ms | Stable |
+| **Accuracy** | 92.9% (88/94) | 98% (92/94) | **+5.5%** |
+| **Response Time** | 250ms | ~350ms | Realistic measurement |
 | **Zero-Cost Rate** | 58.5% | 58.5% | Stable |
 | **False Positives** | 6.2% | 3.1% | **-50%** |
 
@@ -109,11 +109,11 @@ if (!result.safe) {
 ## 📈 Monitoring
 
 ### Expected Metrics
-- **Response times**: 250ms average
+- **Response times**: ~350ms average
 - **Stage distribution**: ~58% instant (pattern/external ref detection)
 - **Pass 2 usage**: ~5% of requests
 - **Error rate**: <1%
-- **Accuracy**: 97.9% on production test suite
+- **Accuracy**: 98% on production test suite
 
 ### Alert Thresholds
 - Response time > 1000ms → Check model availability
@@ -181,8 +181,8 @@ cd api && npm run deploy
 
 ## 🎯 Key Achievements
 
-1. **Accuracy**: 97.9% (exceeds 95% target by 2.9 percentage points)
-2. **Performance**: 250ms average response time
+1. **Accuracy**: 98% (exceeds 95% target by 3 percentage points)
+2. **Performance**: ~350ms average response time
 3. **False Positives**: Reduced from 6.2% to 3.1% (50% improvement)
 4. **Security**: External reference action detection prevents data exfiltration
 5. **Innovation**: Context-aware verb detection (distinguishes "visit URL" from "literature review")

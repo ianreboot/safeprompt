@@ -8,7 +8,7 @@
 ```bash
 # Basic validation
 curl -X POST https://api.safeprompt.dev/api/v1/validate \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "X-API-Key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"prompt": "Hello world"}'
 ```
@@ -20,7 +20,7 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
 const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer YOUR_API_KEY',
+    'X-API-Key': 'YOUR_API_KEY',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({ prompt: userInput })
@@ -28,7 +28,7 @@ const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
 
 const result = await response.json();
 if (!result.safe) {
-  throw new Error(`Blocked: ${result.threat_type}`);
+  throw new Error(`Blocked: ${result.threats?.[0] || 'Security threat detected'}`);
 }
 ```
 
@@ -39,7 +39,7 @@ import requests
 response = requests.post(
     'https://api.safeprompt.dev/api/v1/validate',
     headers={
-        'Authorization': 'Bearer YOUR_API_KEY',
+        'X-API-Key': 'YOUR_API_KEY',
         'Content-Type': 'application/json'
     },
     json={'prompt': user_input}
@@ -47,14 +47,15 @@ response = requests.post(
 
 result = response.json()
 if not result['safe']:
-    raise ValueError(f"Blocked: {result['threat_type']}")
+    threats = result.get('threats', ['Security threat detected'])
+    raise ValueError(f"Blocked: {threats[0]}")
 ```
 
 ## Authentication
 
-All API requests require an API key in the Authorization header:
+All API requests require an API key in the X-API-Key header:
 ```
-Authorization: Bearer sp_live_YOUR_API_KEY
+X-API-Key: sp_live_YOUR_API_KEY
 ```
 
 Get your API key from: https://dashboard.safeprompt.dev
@@ -83,19 +84,22 @@ Validate a single prompt for injection attacks.
 **Response:**
 ```json
 {
-  "safe": true,           // Boolean verdict
-  "confidence": 0.95,     // Confidence score (0-1)
-  "threat_type": null,    // Detected threat type (if unsafe)
-  "processing_time_ms": 5 // Response time in milliseconds
+  "safe": true,                // Boolean verdict
+  "confidence": 0.95,          // Confidence score (0-1)
+  "threats": [],               // Array of detected threats (if unsafe)
+  "processingTime": 250,       // Response time in milliseconds
+  "detectionMethod": "pattern_detection",  // How threat was detected
+  "reasoning": "No security threats detected"
 }
 ```
 
-**Threat Types:**
+**Common Threat Types in `threats` array:**
 - `prompt_injection` - Instruction override attempts
 - `jailbreak` - Role manipulation attempts
-- `data_exfiltration` - Attempts to leak data
-- `encoding_bypass` - Unicode/hex obfuscation
-- `system_prompt_extraction` - Attempts to reveal system prompts
+- `external_reference` - URL/IP/file path following attempts
+- `xss_attack` - Cross-site scripting patterns
+- `sql_injection` - Database manipulation attempts
+- `encoding_bypass` - Obfuscation techniques
 
 **Example:**
 ```bash
@@ -132,9 +136,11 @@ Check API health and status.
 
 ## Response Times
 
-- **Regex validation only**: <10ms
-- **With AI validation**: 50-100ms
-- **99th percentile**: <200ms
+- **Pattern/External Ref detection** (58.5% of requests): <10ms
+- **Pass 1 AI validation** (36% of requests): 200-300ms
+- **Pass 2 AI validation** (5% of requests): 400-600ms
+- **Average**: ~350ms
+- **99th percentile**: <1000ms
 
 ## Rate Limits
 
@@ -181,7 +187,7 @@ async function checkPrompt(userInput) {
     const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + process.env.SAFEPROMPT_API_KEY,
+        'X-API-Key': process.env.SAFEPROMPT_API_KEY,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ prompt: userInput })
@@ -212,7 +218,7 @@ def check_prompt(user_input, retries=3):
             response = requests.post(
                 'https://api.safeprompt.dev/api/v1/validate',
                 headers={
-                    'Authorization': f'Bearer {os.environ["SAFEPROMPT_API_KEY"]}',
+                    'X-API-Key': os.environ["SAFEPROMPT_API_KEY"],
                     'Content-Type': 'application/json'
                 },
                 json={'prompt': user_input},
@@ -234,7 +240,7 @@ $ch = curl_init('https://api.safeprompt.dev/api/v1/validate');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Authorization: Bearer ' . $_ENV['SAFEPROMPT_API_KEY'],
+    'X-API-Key: ' . $_ENV['SAFEPROMPT_API_KEY'],
     'Content-Type: application/json'
 ]);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
@@ -246,7 +252,7 @@ $result = json_decode($response, true);
 curl_close($ch);
 
 if (!$result['safe']) {
-    die('Potential prompt injection detected');
+    die('Security threat detected: ' . $result['threats'][0]);
 }
 ```
 
@@ -296,11 +302,12 @@ setTimeout(() => cache.delete(cacheKey), 3600000); // 1 hour TTL
 
 ## Changelog
 
-### v1.0.0-beta (September 2025)
+### v1.0.0-beta (October 2025)
 - Initial beta release
 - Single prompt validation endpoint
-- Multi-layer validation (regex + AI)
-- 99.9% accuracy rate
+- Multi-layer validation (pattern detection + external ref detection + 2-pass AI)
+- 98% accuracy rate
+- External reference action detection (prevents data exfiltration)
 
 ### Coming Soon
 - Batch validation endpoint

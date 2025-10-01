@@ -1,6 +1,6 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-09-30
+**Last Updated**: 2025-10-01
 **Status**: Beta - Production Ready (Code Cleaned)
 **Deployment**: Cloudflare Pages (website), Vercel Functions (API)
 
@@ -13,10 +13,10 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 
 ## Core Value Proposition
 "Stop prompt injection in one line of code"
-- **Fast**: <100ms response time (regex: 5ms, AI validation: 50-100ms)
+- **Fast**: ~350ms average response time (58.5% requests <10ms via pattern detection)
 - **Simple**: Single API endpoint, clear documentation
 - **Transparent**: Public pricing, no sales calls
-- **Accurate**: Multi-layer validation with confidence scoring
+- **Accurate**: 98% accuracy with multi-layer validation
 
 ## 🔒 EMAIL PRIVACY PROTOCOL
 
@@ -42,7 +42,7 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 
 ## 🎯 PRICING STRATEGY
 
-### Current Pricing (September 2025)
+### Current Pricing (October 2025)
 - **Standard Price**: $29/month for all new users
 - **Legacy Beta Users**: $5/month (locked forever for first 50 users)
 - **Free Tier**: 10,000 validations/month
