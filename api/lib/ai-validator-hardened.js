@@ -876,10 +876,57 @@ export async function validateHardened(prompt, options = {}) {
         confidence = 0.9; // High confidence it's an evasion attempt
         threats.push(extResult.obfuscationDetected ? 'obfuscated_reference' : 'encoded_reference');
       } else {
-        // Plain external references = allow with warning
-        safe = true;
-        confidence = 0.7; // Lower confidence signals uncertainty
-        threats = [];
+        // Plain external references - check for action attempts or sensitive paths
+        // Pattern: Detect if trying to visit/fetch/access external content
+        // Using regex with word boundaries to avoid false positives
+        // Note: Only match clear verb usage, not nouns (e.g., "access the site" yes, "system access" no)
+        const actionPatterns = [
+          /\bvisit\s+(the|this|it|that|https?|www\.|ftp)/i,  // "visit [something]" = verb
+          /\bcheck\s+out\s+(the|this|it|that|https?|www\.|ftp)/i,  // "check out [something]" = verb
+          /\baccess\s+(the|this|it|that|https?|www\.|ftp)/i,  // "access [something]" = verb, not "system access"
+          /\bgo\s+to\s+(the|this|it|that|https?|www\.|ftp)/i,  // "go to [something]" = verb
+          /\bfetch\s+(the|this|it|that|from|https?|www\.|ftp)/i,  // "fetch [something]" = verb
+          /\bnavigate\s+(to|the|this)/i,  // "navigate to/the" = verb
+          /\bopen\s+(the|this|it|that|https?|www\.|ftp)/i,  // "open [something]" = verb
+          /\bbrowse\s+(to|the|this|https?|www\.|ftp)/i,  // "browse [something]" = verb
+          /\bclick\s+(on|the|this)/i,  // "click on/the" = verb
+          /\bfollow\s+(the|this|it|that)/i,  // "follow [something]" = verb
+          /\bsee\s+what\b/i,  // "see what" = phrase
+          /\blook\s+at\s+(the|this|it|that|https?|www\.|ftp)/i,  // "look at [something]" = verb
+          /\btell\s+me\s+what\b/i,  // "tell me what" = phrase
+          /\breview\s+(the|this|it|that|https?|www\.|ftp)/i,  // "review [something]" = verb, not "literature review"
+          /\bload\s+(the|this|it|that|from|https?|www\.|ftp)/i,  // "load [something]" = verb
+          /\bretrieve\s+(the|this|it|that|from|https?|www\.|ftp)/i  // "retrieve [something]" = verb
+        ];
+
+        // Sensitive file paths that should always be blocked
+        const sensitivePathPatterns = [
+          /\/etc\/passwd/i,
+          /\/etc\/shadow/i,
+          /\/etc\/sudoers/i,
+          /\/root\//i,
+          /\.ssh\/id_rsa/i,
+          /\.aws\/credentials/i,
+          /\.env/i
+        ];
+
+        const hasAction = actionPatterns.some(pattern => pattern.test(prompt));
+
+        // Check for sensitive file paths
+        const hasSensitivePath = extResult.types.includes('files') &&
+          sensitivePathPatterns.some(pattern => pattern.test(prompt));
+
+        if (hasAction || hasSensitivePath) {
+          // Action + external reference OR sensitive file path = potential exfiltration/execution
+          safe = false;
+          confidence = hasSensitivePath ? 0.9 : 0.85;
+          threats.push(hasSensitivePath ? 'sensitive_file_reference' : 'external_reference_execution');
+        } else {
+          // Plain mention without action = allow with warning
+          safe = true;
+          confidence = 0.7;
+          threats = [];
+        }
       }
 
       const reasoning = [];
@@ -891,6 +938,12 @@ export async function validateHardened(prompt, options = {}) {
         reasoning.push('Encoded external references are blocked as suspicious');
       } else if (extResult.obfuscationDetected) {
         reasoning.push('Obfuscation detected (spaced URLs, defanged notation) - blocked as suspicious');
+      } else if (threats.includes('sensitive_file_reference')) {
+        reasoning.push('Sensitive file path detected (e.g., /etc/passwd, credentials, private keys)');
+        reasoning.push('Blocked as high-risk security concern regardless of context');
+      } else if (threats.includes('external_reference_execution')) {
+        reasoning.push('Action + external reference detected - potential data exfiltration or execution');
+        reasoning.push('Blocked due to command/action attempting to access external content');
       } else if (extResult.types.includes('urls') || extResult.types.includes('ips')) {
         reasoning.push('External reference detected - content cannot be validated');
         reasoning.push('Allowed with warning for downstream handling');

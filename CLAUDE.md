@@ -3181,3 +3181,104 @@ External reference detector has broad command patterns that match "access and" i
 **Time Investment**: ~30 minutes
 **Accuracy Gain**: +5.1pp (91.1% → 96.2%)
 **Target**: 95%+ ✅ **ACHIEVED**
+
+---
+
+## Big-Brain + Fresh-Eyes Strategic Analysis (2025-10-01)
+
+### Key Findings from Dual-Agent Analysis
+
+**Current State**: 93.6% accuracy (88/94 tests), $6.47 per 100K, 34% escalation to Pass 2
+
+#### Critical Discoveries
+
+**1. External Reference Logic Bug** (50% of failures)
+- Tests #52, #53, #55 fail because external reference detector marks as SAFE instead of UNSAFE
+- System correctly *detects* URLs/IPs/file paths but doesn't block action attempts
+- Bug location: `/api/lib/ai-validator-hardened.js` lines ~860-865
+
+**2. Defensive Over-Engineering**
+- Orchestrator tries to both route AND judge security = cognitive confusion
+- Attack detector has contradictory rules causing cognitive overload
+- Pass 1 and Pass 2 prompts have 80% overlap = wasted re-analysis
+- Missing: Positive pattern pre-filter for obviously safe content
+
+**3. The 80/20 Solution**
+- Fix external reference action detection → +3 tests = 96.8% accuracy ✅
+- Add positive safe patterns → Reduce Pass 2 from 34% to 20%
+- Simplify orchestrator to pure router → +1-2% accuracy gain
+
+#### Architecture Principle: Defense in Depth
+
+**Correct layering**:
+```
+Layer 1: Regex patterns (brittle but fast, $0 cost)
+  ↓ Catches known attacks instantly
+Layer 2: AI validators (flexible, catch novel attacks)
+  ↓ Handles evolving attack patterns
+Layer 3: Pass 2 deep analysis (expensive fallback)
+  ↓ Only for truly ambiguous cases
+```
+
+**Critical Rule**: NEVER rely solely on regex. Always have AI fallback for novel attacks.
+
+#### Implementation Roadmap
+
+**Priority 1: External Reference Action Detection**
+```javascript
+// Fix: Detect action + external reference = UNSAFE
+const actionWords = ['visit', 'check out', 'access', 'go to', 'fetch', 'navigate'];
+if (hasExternalRef && hasAction) {
+    return { safe: false, threats: ['external_reference_execution'] };
+}
+```
+
+**Priority 2: Positive Safe Pattern Pre-Filter**
+```javascript
+// Add BEFORE orchestrator (zero-cost)
+const DEFINITELY_SAFE_PATTERNS = [
+  /^(can you |please )?help me (debug|fix|understand)/i,
+  /^explain how .* works/i,
+  /^for my (course|class|research)/i,
+  /^I'm (learning|studying|teaching) about/i
+];
+```
+
+**Priority 3: Simplify Orchestrator**
+- Remove "fast reject" logic (move to patterns)
+- Pure routing only: "Which validators should analyze this?"
+- No security judgments in orchestrator
+
+#### Expected Results
+
+**Accuracy**:
+- After Fix #1: 91/94 = 96.8% ✅ (target achieved)
+- After all fixes: 92-93/94 = 97.9-98.9%
+
+**Cost**:
+- After optimizations: ~$2.00 per 100K (69% reduction)
+- Pass 2 usage: 34% → 10%
+
+#### Validator Architecture (No New Validator Needed)
+
+**Question**: If we remove validation from orchestrator, do we need another validator?
+**Answer**: NO
+
+**Reasoning**:
+- Zero-cost patterns: Handle "fast reject" logic (stages -1 to -0.05)
+- Orchestrator: Pure routing only
+- 3 parallel validators: Actual security validation (unchanged)
+- The orchestrator's judgment logic becomes zero-cost patterns, not a new validator
+
+#### Key Insights
+
+1. **The path to 95%+ accuracy isn't adding more intelligence—it's fixing a logic bug**
+2. **Complexity is the enemy**: Simplify each component to do ONE thing well
+3. **Trust the architecture**: Parallel validators catch what individual patterns miss
+4. **Pattern evolution**: Track Pass 2 decisions to promote patterns to zero-cost stage
+
+---
+
+**Analysis Date**: October 1, 2025
+**Agents**: big-brain (strategic) + fresh-eyes (cognitive load)
+**Outcome**: Clear path to 95%+ accuracy with 69% cost reduction
