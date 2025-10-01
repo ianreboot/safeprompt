@@ -64,6 +64,30 @@ const INSTANT_PATTERNS = {
   // definitelySafe removed - all non-malicious traffic must go through AI validation for defense-in-depth
 };
 
+// Jailbreak patterns (common AI manipulation attempts)
+const JAILBREAK_PATTERNS = [
+  // Named jailbreaks
+  /\bstan\b.*?\bstands for\b/i,
+  /\baim\b.*?always intelligent and machiavellian/i,
+  /\bdevmode\b.*?developer/i,
+  /you are now.*?(dan|unrestricted|jailbroken)/i,
+  /pretend to be.*?(dan|stan|aim|devmode)/i,
+  /you are going to pretend to be/i,
+
+  // Multi-language "ignore instructions" (obfuscation technique)
+  /ignora.*?instrucciones anteriores/i, // Spanish: ignore previous instructions
+  /以前の指示を無視/i, // Japanese: ignore previous instructions
+  /忽略.*?说明/i, // Chinese: ignore instructions
+  /ignorez.*?instructions précédentes/i, // French: ignore previous instructions
+  /ignoriere.*?vorherigen anweisungen/i, // German: ignore previous instructions
+];
+
+// Repetition/padding patterns (filter bypass attempts)
+const REPETITION_PATTERNS = [
+  /(.)\1{20,}/, // Same character repeated 20+ times (e.g., dots, spaces)
+  /(\w+\s+)\1{8,}/, // Same word repeated 8+ times
+];
+
 // Enhanced XSS detection patterns (catches obfuscation techniques)
 const XSS_ATTACK_PATTERNS = [
   // Script tags and variations
@@ -642,6 +666,34 @@ function instantPatternCheck(prompt) {
         confidence: 0.95,
         threats: ['pattern_match_malicious'],
         reasoning: 'Matched known malicious pattern',
+        stage: 'pattern',
+        cost: 0
+      };
+    }
+  }
+
+  // Check jailbreak patterns
+  for (const pattern of JAILBREAK_PATTERNS) {
+    if (pattern.test(prompt)) {
+      return {
+        safe: false,
+        confidence: 0.93,
+        threats: ['jailbreak_attempt'],
+        reasoning: 'Jailbreak pattern detected (DAN, STAN, AIM, or multi-language bypass)',
+        stage: 'pattern',
+        cost: 0
+      };
+    }
+  }
+
+  // Check repetition/padding patterns
+  for (const pattern of REPETITION_PATTERNS) {
+    if (pattern.test(prompt)) {
+      return {
+        safe: false,
+        confidence: 0.90,
+        threats: ['filter_bypass'],
+        reasoning: 'Repetition/padding pattern detected (filter bypass attempt)',
         stage: 'pattern',
         cost: 0
       };
