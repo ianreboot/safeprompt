@@ -22,9 +22,6 @@ function getCacheKey(prompt, mode) {
   return crypto.createHash('md5').update(`${prompt}:${mode}`).digest('hex');
 }
 
-// Internal test API key for dogfooding
-const INTERNAL_API_KEY = 'sp_test_unlimited_dogfood_key_2025';
-
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -41,34 +38,10 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = req.headers['x-api-key'];
-    let isInternalUser = false;
     let profileId = null;
 
-    // Check for internal test API key
-    if (apiKey === INTERNAL_API_KEY) {
-      isInternalUser = true;
-      console.log('[SafePrompt] Internal test API key used - unlimited access');
-
-      // Get internal user profile for logging
-      const { data: internalProfile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('api_key', INTERNAL_API_KEY)
-        .single();
-
-      if (profileError) {
-        console.error('[SafePrompt] Failed to get internal profile for logging:', profileError);
-      }
-
-      if (internalProfile) {
-        profileId = internalProfile.id;
-        console.log('[SafePrompt] Internal profile found for logging:', profileId);
-      } else {
-        console.error('[SafePrompt] Internal profile not found - logging disabled');
-      }
-    }
-    // Validate API key
-    else if (apiKey && apiKey !== 'demo_key') {
+    // Validate API key (all users including internal)
+    if (apiKey && apiKey !== 'demo_key') {
       const hashedKey = hashApiKey(apiKey);
 
       const { data: profile, error } = await supabase
@@ -228,10 +201,7 @@ export default async function handler(req, res) {
     }
 
     // Sanitize response to hide internal implementation details
-    // Internal users (testing accounts) get full details
-    const sanitizedResult = sanitizeResponseWithMode(result, {
-      includeInternals: isInternalUser
-    });
+    const sanitizedResult = sanitizeResponseWithMode(result);
 
     const response = {
       ...sanitizedResult,
@@ -239,17 +209,6 @@ export default async function handler(req, res) {
       cached: false,
       timestamp: new Date().toISOString()
     };
-
-    // Add internal user flag if applicable
-    if (isInternalUser) {
-      response.internal_account = true;
-      response.usage_tracking = 'unlimited';
-      // Include internal stage for debugging (only for internal users)
-      response._internal = {
-        stage: result.stage,
-        cost: result.cost
-      };
-    }
 
     return res.status(200).json(response);
 

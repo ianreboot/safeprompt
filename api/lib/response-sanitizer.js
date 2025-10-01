@@ -123,38 +123,16 @@ export function sanitizeResponse(validatorResult) {
 }
 
 /**
- * Sanitize response with optional internal mode
- * Internal users (testing, monitoring) get full details BUT reasoning is always sanitized
+ * Sanitize response for public API
+ * Always sanitizes reasoning text to remove internal details
  */
 export function sanitizeResponseWithMode(validatorResult, options = {}) {
-  const { includeInternals = false } = options;
-
   // ALWAYS sanitize reasoning text to remove "Pass 1" references
   const sanitizedReasoning = sanitizeReasoning(validatorResult.reasoning);
 
-  // Internal mode: return everything but with sanitized reasoning
-  if (includeInternals) {
-    return {
-      ...validatorResult,
-      reasoning: sanitizedReasoning
-    };
-  }
-
-  // Public mode: full sanitization
-  return sanitizeResponse(validatorResult);
-}
-
-/**
- * Check if API key is internal (testing/monitoring account)
- */
-export function isInternalApiKey(apiKey) {
-  if (!apiKey) return false;
-
-  const internalKeys = [
-    'sp_test_unlimited_dogfood_key_2025',
-    'sp_internal_testing_',
-    'sp_monitor_'
-  ];
-
-  return internalKeys.some(prefix => apiKey.startsWith(prefix));
+  // Public sanitization for ALL users
+  return sanitizeResponse({
+    ...validatorResult,
+    reasoning: sanitizedReasoning
+  });
 }

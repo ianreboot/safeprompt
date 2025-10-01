@@ -20,8 +20,8 @@ export async function validateInternal(prompt, options = {}) {
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(postData),
-        'X-API-Key': 'sp_test_unlimited_dogfood_key_2025', // Internal unlimited key
-        'X-Internal-Request': 'true' // Mark as internal
+        'X-API-Key': 'sp_test_unlimited_dogfood_key_2025', // Dogfooding account (treated as regular user)
+        'X-Internal-Request': 'true' // Optional marker (not used for special treatment)
       },
       timeout: 5000
     };
