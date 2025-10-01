@@ -525,7 +525,7 @@ export default function PlaygroundPage() {
                 <br /><br />
                 <strong className="text-zinc-300">Limits:</strong> 50 tests per day, 20 per hour
                 <br />
-                <em className="text-zinc-500">Need more? <Link href="/signup" className="text-primary hover:underline">Sign up</Link> for unlimited access</em>
+                <em className="text-zinc-500">Need more? <Link href="/signup" className="text-primary hover:underline">Sign up</Link> for 10,000 free validations/month</em>
               </div>
             </div>
 
