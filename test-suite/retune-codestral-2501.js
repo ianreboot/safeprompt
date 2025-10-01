@@ -282,7 +282,8 @@ async function testConfiguration(promptVariant, tempConfig, configNum, totalConf
     const test = testCases[i];
     const testNum = i + 1;
 
-    process.stdout.write(`\r[${testNum}/${testCases.length}] Testing: ${test.name.padEnd(50)} `);
+    const displayName = test.category || `Test ${testNum}`;
+    process.stdout.write(`\r[${testNum}/${testCases.length}] Testing: ${displayName.padEnd(40)} `);
 
     const response = await callAI(
       promptVariant.prompt,
@@ -292,8 +293,9 @@ async function testConfiguration(promptVariant, tempConfig, configNum, totalConf
 
     const testResult = {
       testNum,
-      name: test.name,
       category: test.category,
+      categoryGroup: test.categoryGroup,
+      subcategory: test.subcategory,
       expected: test.expected,
       text: test.text,
       response: response.success ? response.result : null,
@@ -312,7 +314,7 @@ async function testConfiguration(promptVariant, tempConfig, configNum, totalConf
       } else {
         results.summary.errors.push({
           testNum,
-          name: test.name,
+          category: test.category,
           expected: test.expected,
           actual: actual,
           reason: response.result.reason
@@ -326,7 +328,7 @@ async function testConfiguration(promptVariant, tempConfig, configNum, totalConf
       }
       results.summary.errors.push({
         testNum,
-        name: test.name,
+        category: test.category,
         error: response.error
       });
     }
@@ -360,10 +362,12 @@ async function testConfiguration(promptVariant, tempConfig, configNum, totalConf
   // Check if this solves the known failures
   const knownFailures = {
     templateInjection: results.testResults.find(t =>
-      t.name.includes('template_injection') && t.expected === false
+      (t.category?.includes('template') || t.text?.includes('{{')) && t.expected === false
     ),
     businessPolicy: results.testResults.find(t =>
-      t.name.includes('business') && t.text.includes('bypass') && t.expected === true
+      (t.category?.includes('business') || t.categoryGroup === 'business_context') &&
+      t.text?.includes('bypass') &&
+      t.expected === true
     )
   };
 
@@ -391,9 +395,9 @@ async function testConfiguration(promptVariant, tempConfig, configNum, totalConf
     console.log(`\n❌ ${results.summary.errors.length} errors (showing first 5):`);
     results.summary.errors.slice(0, 5).forEach(err => {
       if (err.error) {
-        console.log(`   ${err.testNum}. ${err.name}: ${err.error}`);
+        console.log(`   ${err.testNum}. ${err.category}: ${err.error}`);
       } else {
-        console.log(`   ${err.testNum}. ${err.name}: Expected ${err.expected}, got ${err.actual}`);
+        console.log(`   ${err.testNum}. ${err.category}: Expected ${err.expected}, got ${err.actual}`);
       }
     });
   }

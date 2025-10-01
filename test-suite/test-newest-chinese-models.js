@@ -217,7 +217,8 @@ async function testModel(model) {
     const test = testCases[i];
     const testNum = i + 1;
 
-    process.stdout.write(`\r[${testNum}/${testCases.length}] Testing: ${test.name.padEnd(50)} `);
+    const displayName = test.category || `Test ${testNum}`;
+    process.stdout.write(`\r[${testNum}/${testCases.length}] Testing: ${displayName.padEnd(40)} `);
 
     const response = await callAI(
       model.id,
@@ -227,8 +228,9 @@ async function testModel(model) {
 
     const testResult = {
       testNum,
-      name: test.name,
       category: test.category,
+      categoryGroup: test.categoryGroup,
+      subcategory: test.subcategory,
       expected: test.expected,
       text: test.text,
       response: response.success ? response.result : null,
@@ -247,7 +249,7 @@ async function testModel(model) {
       } else {
         results.summary.errors.push({
           testNum,
-          name: test.name,
+          category: test.category,
           expected: test.expected,
           actual: actual,
           reason: response.result.reason
@@ -262,7 +264,7 @@ async function testModel(model) {
       }
       results.summary.errors.push({
         testNum,
-        name: test.name,
+        category: test.category,
         error: response.error
       });
     }
@@ -297,9 +299,9 @@ async function testModel(model) {
     console.log(`\n❌ ERRORS (${results.summary.errors.length}):`);
     results.summary.errors.slice(0, 10).forEach(err => {
       if (err.error) {
-        console.log(`   ${err.testNum}. ${err.name}: ${err.error}`);
+        console.log(`   ${err.testNum}. ${err.category}: ${err.error}`);
       } else {
-        console.log(`   ${err.testNum}. ${err.name}: Expected ${err.expected}, got ${err.actual}`);
+        console.log(`   ${err.testNum}. ${err.category}: Expected ${err.expected}, got ${err.actual}`);
         console.log(`       Reason: ${err.reason}`);
       }
     });
