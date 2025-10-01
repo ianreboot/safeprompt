@@ -1,28 +1,31 @@
 # SafePrompt Test Suite
 
-## Current Test Suite (Phase 1)
+## Current Test Suite (Comprehensive)
 
-**File**: `realistic-test-suite.js`  
-**Tests**: 50 professional, realistic test cases  
+**File**: `realistic-test-suite.js`
+**Tests**: 74 professional, realistic test cases
 **Runner**: `run-realistic-tests.js`
 
 ### Test Coverage
 
-#### XSS & Code Injection (20 tests)
-- Classic XSS (5 tests)
-- Obfuscated XSS (5 tests)
-- Polyglot attacks (5 tests)
-- Code injection: SQL, template injection (5 tests)
+#### Attack Tests (42 tests)
+- **XSS Basic** (5 tests): Classic script injection, event handlers, SVG attacks
+- **XSS Obfuscated** (5 tests): Nested tags, HTML entities, hex encoding
+- **XSS Polyglot** (5 tests): Comment breaks, context escapes, universal polyglots
+- **Code Injection** (5 tests): SQL injection, template injection (Jinja2, ERB, JS)
+- **External References Plain** (5 tests): URLs, IPs, file paths, fetch commands
+- **External References Obfuscated** (5 tests): Spaced URLs, defanged notation, bracket IPs
+- **External References Encoded** (5 tests): ROT13, Base64, hex, percent encoding, homoglyphs
+- **Prompt Manipulation** (5 tests): Instruction override, DAN jailbreak, impersonation, system injection
+- **Edge Cases** (2 tests): Ambiguous attacks that require judgment
 
-#### Business Context (15 tests)
-- Legitimate security discussions (5 tests)
-- Business communication with trigger words (5 tests)
-- Context boundary testing (5 tests)
-
-#### False Positive Prevention (15 tests)
-- Technical assistance (5 tests)
-- Customer service (5 tests)
-- Idiomatic English (5 tests)
+#### Legitimate Tests (32 tests)
+- **Security Discussion** (5 tests): Academic research, security testing, training materials
+- **Business Communication** (10 tests): Policy updates, authorization workflows, revisions
+- **Technical Assistance** (5 tests): Debugging help, code review, implementation questions
+- **Customer Service** (5 tests): Refunds, corrections, follow-ups, escalations
+- **Idiomatic English** (6 tests): Common phrases that sound like attacks but aren't
+- **Edge Cases** (1 test): Ambiguous legitimate communication
 
 ### Running Tests
 

@@ -173,20 +173,26 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - **Pattern Detection**: XSS, SQL injection, template injection, command injection
 - **External References**: URL/IP/file detection with encoding/obfuscation resistance
 
-### Test Suite Details (50 Professional Tests)
+### Test Suite Details (74 Professional Tests)
 
-**Attack Categories Tested (20 tests):**
+**Attack Categories Tested (42 tests):**
 - **XSS Basic (5)**: Classic script injection, event handlers, SVG attacks, iframe exploits, body onload
 - **XSS Obfuscated (5)**: Nested tags, HTML entities, hex encoding, character code obfuscation, unicode escapes
 - **XSS Polyglot (5)**: Comment breaks, JavaScript context, attribute breaks, universal polyglots, conditional execution
 - **Code Injection (5)**: Jinja2 templates, JavaScript templates, SQL injection, SQL tautology, ERB templates
+- **External References Plain (5)**: URLs, IPs, file paths, fetch commands
+- **External References Obfuscated (5)**: Spaced URLs, defanged notation, bracket IPs, localhost
+- **External References Encoded (5)**: ROT13, Base64, hex, percent encoding, homoglyphs
+- **Prompt Manipulation (5)**: Instruction override, DAN jailbreak, impersonation, system injection, escape attempts
+- **Edge Cases (2)**: Ambiguous override, false history claims
 
-**False Positive Prevention (30 tests):**
+**False Positive Prevention (32 tests):**
 - **Security Discussion (5)**: Academic research, security testing, training materials, implementation guides
 - **Business Context (10)**: Policy updates, authorization workflows, revision requests, instruction clarification
 - **Technical Support (5)**: Debugging assistance, code review, implementation help, security consulting
 - **Customer Service (5)**: Refunds, corrections, follow-ups, escalations, account inquiries
-- **Idiomatic English (5)**: Common phrases like "forget about", "bypass the line", "override previous"
+- **Idiomatic English (6)**: Common phrases like "forget about", "bypass the line", "override previous"
+- **Edge Cases (1)**: Ambiguous reference that could be legitimate
 
 **Each test includes:**
 - Exact prompt text
