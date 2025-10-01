@@ -972,7 +972,7 @@ export async function validateHardened(prompt, options = {}) {
           obfuscation_detected: extResult.obfuscationDetected,
           encoding_type: extResult.types.find(t => t.includes('encoded')) || null
         },
-        reasoning,
+        reasoning: reasoning.join('. '), // Convert array to string
         processingTime: Date.now() - startTime,
         stage: 'external_reference',
         cost: 0
