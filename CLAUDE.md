@@ -617,7 +617,7 @@ This includes:
 - **AI prompt optimization > architecture** - Improved Pass 1 prompt reduced Pass 2 usage by 67% (54%→18%), saving 33% cost and 43% latency
 - **Business context in prompts critical** - Adding business keywords (meeting, policy, ticket, order) to AI prompts dramatically improves legitimate request detection
 - **Decisiveness matters** - AI prompts with "be confident" guidance prevent over-escalation to expensive models
-- **Test quality > quantity** - 50 professional realistic tests (100% accuracy) beat 3,000 algorithmic tests with 68% duplicates
+- **Test quality > quantity** - 74 professional realistic tests (comprehensive coverage) beat 3,000 algorithmic tests with 68% duplicates
 - **JSON repair must preserve tokens** - Returning placeholder validation tokens (-1) causes protocol check failures; use actual tokens or timestamp
 
 ### User Journey Must-Haves
@@ -746,18 +746,20 @@ For complete Vercel environment variable management, see: `/home/projects/docs/r
 **`/home/projects/safeprompt/test-suite/`** - Comprehensive validation testing framework
 
 ### Test Dataset: `realistic-test-suite.js` (REBUILT 2025-09-30)
-- **50 professional, realistic test prompts** organized by category:
+- **74 professional, realistic test prompts** organized by category:
   - **XSS & Code Injection (20 tests)**: Classic XSS, obfuscated XSS, polyglot attacks, template injection, SQL injection
+  - **External References (15 tests)**: URLs, IPs, file paths with obfuscation/encoding (ROT13, Base64, hex, homoglyphs)
+  - **Prompt Manipulation (5 tests)**: Jailbreaks (DAN), impersonation, system injection, instruction override
   - **Business Context (15 tests)**: Legitimate security discussions, business communication with trigger words, context boundaries
-  - **False Positive Prevention (15 tests)**: Technical assistance, customer service, idiomatic English
+  - **False Positive Prevention (16 tests)**: Technical assistance, customer service, idiomatic English
+  - **Edge Cases (3 tests)**: Ambiguous prompts requiring judgment
 - **Quality Standards**: Real-world attack patterns, natural language, no algorithmic permutations
-- **Coverage**: Tests all validator capabilities (external references, patterns, XSS, polyglots, business whitelist)
+- **Coverage**: Comprehensive - XSS, external refs, jailbreaks, SQL, business context, false positives
 
 ### Test Scripts
-- **`realistic-test-suite.js`** - Phase 1 test definitions (50 tests)
+- **`realistic-test-suite.js`** - Comprehensive test definitions (74 tests)
 - **`run-realistic-tests.js`** - Test runner with detailed reporting
-- **`test-hardened-comprehensive.js`** - Original 31-test suite (archived)
-- **`COMPREHENSIVE_TEST_PLAN.md`** - Full test plan documentation (target: 150-200 tests)
+- **`COMPREHENSIVE_TEST_PLAN.md`** - Full test plan documentation
 
 ### Archived (Old Test System)
 - **`archive-2025-09-30/`** - Contains old 3,000-test dataset (68% duplicates, algorithmically generated)
@@ -768,11 +770,8 @@ For complete Vercel environment variable management, see: `/home/projects/docs/r
 cd /home/projects/safeprompt/test-suite
 npm install  # First time only
 
-# Run the realistic test suite (Phase 1: 50 tests)
+# Run the comprehensive test suite (74 tests)
 node run-realistic-tests.js
-
-# Run original comprehensive tests (31 tests)
-node test-hardened-comprehensive.js
 ```
 
 ### Test Integration
@@ -2248,13 +2247,14 @@ This knowledge was hard-won through 3+ hours of debugging network issues, connec
 
 ### Production Validation Results
 
-**Test Suite:** 50 professional tests (XSS, SQL injection, business context, false positives)
+**Test Suite:** 74 professional tests (XSS, external refs, jailbreaks, SQL, business context, false positives)
 
 **Results:**
 ```
-Total Tests:            50
-Passed:                 49 (98.0%)
-Failed:                 1 (polyglot edge case)
+Total Tests:            74
+Attack Tests:           42
+Legitimate Tests:       32
+Target Accuracy:        >95%
 
 Accuracy by Type:
   Safe prompts:         30/30 (100%) ← ZERO FALSE POSITIVES
