@@ -11,6 +11,11 @@ import fetch from 'node-fetch';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { ExternalReferenceDetector } from './external-reference-detector.js';
+import { orchestrate } from './ai-orchestrator.js';
+import { validateBusiness } from './validators/business-validator.js';
+import { detectAttack } from './validators/attack-detector.js';
+import { analyzeSemantic } from './validators/semantic-analyzer.js';
+import { buildConsensus, calculateTotalCost, calculateProcessingTime } from './consensus-engine.js';
 
 // Load environment variables - works both locally and on Vercel
 dotenv.config();
@@ -869,81 +874,100 @@ export async function validateHardened(prompt, options = {}) {
     }
   }
 
-  // Stage 2: Pass 1 - Secure Pre-filter
-  const pass1Token = Date.now();
-  const pass1SystemPrompt = SECURE_PASS1_SYSTEM_PROMPT(pass1Token);
+  // Stage 1: AI Orchestrator - Intelligent routing
+  const orchestratorResult = await orchestrate(prompt);
+
+  stats.stages.push({
+    stage: 'orchestrator',
+    result: orchestratorResult.fast_reject ? 'reject' : 'route',
+    confidence: orchestratorResult.confidence,
+    time: Date.now() - startTime,
+    cost: orchestratorResult.cost || 0
+  });
+  stats.totalCost += orchestratorResult.cost || 0;
+
+  // Fast reject from orchestrator
+  if (orchestratorResult.fast_reject && orchestratorResult.confidence > 0.85) {
+    return {
+      safe: false,
+      confidence: orchestratorResult.confidence,
+      threats: ['orchestrator_reject'],
+      reasoning: `Orchestrator rejected: ${orchestratorResult.reasoning}`,
+      processingTime: Date.now() - startTime,
+      stage: 'orchestrator',
+      cost: stats.totalCost
+    };
+  }
+
+  // Stage 2: Parallel Validators - Run based on orchestrator routing
+  const validatorPromises = [];
+  const routing = orchestratorResult.routing;
+
+  if (routing.business_validator) {
+    validatorPromises.push(
+      validateBusiness(prompt).then(result => ({ type: 'business', result }))
+    );
+  }
+
+  if (routing.attack_detector) {
+    validatorPromises.push(
+      detectAttack(prompt).then(result => ({ type: 'attack', result }))
+    );
+  }
+
+  if (routing.semantic_analyzer) {
+    validatorPromises.push(
+      analyzeSemantic(prompt).then(result => ({ type: 'semantic', result }))
+    );
+  }
+
+  // Wait for all validators to complete (they run in parallel)
+  const validatorResults = await Promise.all(validatorPromises);
+
+  // Convert array to object for consensus engine
+  const validators = {};
+  for (const { type, result } of validatorResults) {
+    validators[type] = result;
+    stats.stages.push({
+      stage: `validator_${type}`,
+      result: result.is_attack || result.is_semantic_attack ? 'unsafe' :
+              result.is_business ? 'safe' : 'uncertain',
+      confidence: result.confidence,
+      time: result.processingTime,
+      cost: result.cost || 0
+    });
+    stats.totalCost += result.cost || 0;
+  }
+
+  // Stage 3: Consensus Engine - Aggregate validator results
+  const consensus = buildConsensus(orchestratorResult, validators);
+
+  // If consensus is confident, return immediately
+  if (!consensus.needsPass2) {
+    return {
+      safe: consensus.safe,
+      confidence: consensus.confidence,
+      threats: consensus.threats,
+      reasoning: consensus.reasoning,
+      processingTime: calculateProcessingTime(orchestratorResult, validators),
+      stage: consensus.stage,
+      cost: calculateTotalCost(orchestratorResult, validators)
+    };
+  }
+
+  // Stage 4: Pass 2 - Deep analysis (only if consensus is uncertain)
+  // Adapt consensus data to Pass 2 format
+  const contextForPass2 = {
+    risk: consensus.safe === null ? 'medium' : (consensus.safe ? 'low' : 'high'),
+    confidence: consensus.confidence,
+    context: consensus.reasoning,
+    legitimate_signals: validators.business?.signals || []
+  };
+
+  const pass2Token = Date.now();
+  const pass2SystemPrompt = SECURE_PASS2_SYSTEM_PROMPT(pass2Token, contextForPass2);
 
   try {
-    const pass1Result = await secureApiCall(
-      MODELS.pass1,
-      prompt,
-      pass1SystemPrompt,
-      {
-        timeout: 2000,
-        temperature: 0,
-        maxTokens: 100,
-        passType: 'pass1'
-      }
-    );
-
-    // Parse and verify Pass 1 response
-    // Use improved JSON repair that routes failures to Pass 2
-    const pass1Data = repairJSON(pass1Result.content, 'pass1', pass1Token);
-
-    // Verify Pass 1 protocol integrity (FIXED - using Pass1ProtocolChecker)
-    const pass1Checker = new Pass1ProtocolChecker(pass1Token);
-    if (!pass1Checker.verify(pass1Data)) {
-      // Fallback: Return uncertain result instead of failing
-      return {
-        safe: false,
-        confidence: 0.3,
-        threats: ['processing_error'],
-        reasoning: 'Pass 1 validation error - treating as uncertain',
-        processingTime: Date.now() - startTime,
-        stage: 'pass1',
-        cost: pass1Result.cost
-      };
-    }
-
-    stats.stages.push({
-      stage: 'pass1',
-      result: pass1Data.risk,
-      confidence: pass1Data.confidence,
-      time: Date.now() - startTime,
-      cost: pass1Result.cost
-    });
-    stats.totalCost += pass1Result.cost || 0;
-
-    // Early termination based on Pass 1
-    if (pass1Data.risk === 'high' && pass1Data.confidence >= preFilterThreshold.high) {
-      return {
-        safe: false,
-        confidence: pass1Data.confidence,
-        threats: ['ai_manipulation_detected'],
-        reasoning: `High-risk pattern: ${pass1Data.context}`,
-        processingTime: Date.now() - startTime,
-        stage: 'pass1',
-        cost: stats.totalCost
-      };
-    }
-
-    if (pass1Data.risk === 'low' && pass1Data.confidence >= preFilterThreshold.low) {
-      return {
-        safe: true,
-        confidence: pass1Data.confidence,
-        threats: [],
-        reasoning: `Low-risk: ${pass1Data.context}`,
-        legitimateSignals: pass1Data.legitimate_signals,
-        processingTime: Date.now() - startTime,
-        stage: 'pass1',
-        cost: stats.totalCost
-      };
-    }
-
-    // Stage 3: Pass 2 - Full validation with context
-    const pass2Token = Date.now();
-    const pass2SystemPrompt = SECURE_PASS2_SYSTEM_PROMPT(pass2Token, pass1Data);
-
     const pass2Result = await secureApiCall(
       MODELS.pass2,
       prompt,
@@ -957,18 +981,17 @@ export async function validateHardened(prompt, options = {}) {
     );
 
     // Parse and verify Pass 2 response
-    // Use improved JSON repair that fails closed if unrepairable
     const pass2Data = repairJSON(pass2Result.content, 'pass2', pass2Token);
 
-    // Verify Pass 2 protocol integrity (using Pass2ProtocolChecker)
+    // Verify Pass 2 protocol integrity
     const pass2Checker = new Pass2ProtocolChecker(pass2Token);
     if (!pass2Checker.verify(pass2Data)) {
-      // Fallback to Pass 1 result
+      // Fallback to consensus result
       return {
-        safe: pass1Data.risk === 'low',
-        confidence: pass1Data.confidence * 0.8,
+        safe: consensus.safe !== false, // null or true = uncertain, allow
+        confidence: consensus.confidence * 0.8,
         threats: ['protocol_integrity_violation'],
-        reasoning: 'Pass 2 protocol check failed - using Pass 1 result',
+        reasoning: 'Pass 2 protocol check failed - using consensus result',
         processingTime: Date.now() - startTime,
         stage: 'pass2',
         cost: stats.totalCost + (pass2Result.cost || 0)
@@ -997,15 +1020,15 @@ export async function validateHardened(prompt, options = {}) {
       model: pass2Result.model,
       stats
     };
-
   } catch (error) {
-    // Return uncertain result on error
+    // Fallback to consensus result on Pass 2 error
     return {
-      safe: false,
-      confidence: 0.3,
-      threats: ['processing_error'],
-      reasoning: `Validation error: ${error.message}`,
+      safe: consensus.safe !== false,
+      confidence: consensus.confidence * 0.7,
+      threats: consensus.threats.concat(['pass2_error']),
+      reasoning: `Pass 2 error, using consensus: ${consensus.reasoning}`,
       processingTime: Date.now() - startTime,
+      stage: 'pass2',
       cost: stats.totalCost
     };
   }
