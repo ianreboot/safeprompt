@@ -25,14 +25,15 @@ export default function AdminDashboard() {
 
   async function checkAdminAccess() {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      // Get session to ensure auth.uid() is set for RLS
+      const { data: { session } } = await supabase.auth.getSession()
 
-      if (!user || !ADMIN_EMAILS.includes(user.email!)) {
+      if (!session?.user || !ADMIN_EMAILS.includes(session.user.email!)) {
         window.location.href = '/login'
         return
       }
 
-      setUser(user)
+      setUser(session.user)
       await fetchData()
     } catch (error) {
       console.error('Error:', error)
