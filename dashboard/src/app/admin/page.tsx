@@ -49,7 +49,7 @@ export default function AdminDashboard() {
       setFilteredUsers(
         users.filter(u =>
           u.email?.toLowerCase().includes(query) ||
-          u.tier?.toLowerCase().includes(query) ||
+          u.subscription_tier?.toLowerCase().includes(query) ||
           u.subscription_status?.toLowerCase().includes(query)
         )
       )
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
                 {filteredUsers.map((user) => (
                   <tr key={user.id} className="border-b border-gray-800">
                     <td className="py-3">{user.email}</td>
-                    <td className="py-3 capitalize">{user.tier || 'free'}</td>
+                    <td className="py-3 capitalize">{user.subscription_tier || 'free'}</td>
                     <td className="py-3">
                       <span className={`px-2 py-1 rounded text-xs ${
                         user.subscription_status === 'active'
@@ -289,7 +289,7 @@ export default function AdminDashboard() {
                       </span>
                     </td>
                     <td className="py-3 text-gray-400">
-                      {user.api_calls_this_month || 0}
+                      {user.api_requests_used || 0}
                     </td>
                     <td className="py-3 text-gray-400">
                       {new Date(user.created_at).toLocaleDateString()}
@@ -351,11 +351,11 @@ export default function AdminDashboard() {
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm">Tier</p>
-                    <p className="capitalize">{selectedUser.tier || 'free'}</p>
+                    <p className="capitalize">{selectedUser.subscription_tier || 'free'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400 text-sm">API Calls This Month</p>
-                    <p>{selectedUser.api_calls_this_month || 0}</p>
+                    <p className="text-gray-400 text-sm">API Requests Used</p>
+                    <p>{selectedUser.api_requests_used || 0} / {selectedUser.api_requests_limit || 0}</p>
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm">Stripe Customer ID</p>
