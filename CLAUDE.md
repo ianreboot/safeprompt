@@ -55,10 +55,24 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 - **Never expose internal costs** - Mark as `[BUSINESS CONFIDENTIAL]`
 - **Use competitive context**: "Professional services: $150-300/month" for comparison
 
+**ABSOLUTE RULES - NO EXCEPTIONS (Public Repos):**
+❌ NEVER expose to github.com/ianreboot/safeprompt:
+- ANY dollar amount with decimals (no $0.XX, per 100K, /M tokens, etc.)
+- Model costs (Gemini, Llama, GPT pricing)
+- Internal calculations (cost formulas, margins, profit)
+- Effective cost, zero-cost optimization, cost breakdown
+
+✅ ONLY expose customer-facing pricing:
+- $29/month (standard), $5/month beta (existing customers only)
+- Feature descriptions (what it does, NOT what it costs us)
+
+**Why**: Internal costs reveal profit margins, architecture, pricing strategy, vendor dependencies.
+**Enforcement**: Violated 5+ times. If violated, git history will be rewritten.
+
 **Example Meta Description:**
 ```
 ✅ Good: "Professional services cost $150-300/month. SafePrompt $29/month."
-❌ Bad: "SafePrompt beta $5/month (regular $29/mo), DIY $0.50/100K requests."
+❌ Bad: "SafePrompt beta $5/month (regular $29/mo), DIY  requests."
 ```
 
 ### Implementation:
@@ -400,7 +414,6 @@ Stage 0: Pattern Detection (instant, $0, 44% blocked)
   ├─ Semantic extraction (riddles, rhymes, definitions)
   └─ Execution commands (fetch+execute, decode+run)
      ↓
-Stage 1: Orchestrator AI (Llama 3.2 1B, 80ms, $0.001/M)
   ├─ Fast reject obvious attacks
   ├─ Route to specialized validators
   └─ Clear obvious safe requests
@@ -509,7 +522,6 @@ Stage 4: Pass 2 Deep Analysis (Gemini 2.5 Flash, 650ms, only if uncertain)
 
 **Baseline (Current Limits: 150/150/200)**:
 - Accuracy: 94.7% (89/94 tests)
-- Cost: ~$0.0056 per test run
 - Stability: Occasional JSON parsing errors observed in orchestrator (3-4 errors per run)
 - Actual token usage: Orchestrator ~80, Validators ~70, Pass 2 ~120
 
@@ -2247,9 +2259,7 @@ const modelA = {
 };
 
 // Effective cost per request
-const tokenCost = (0.40 / 1000000) * 700;  // $0.00028
 const effectiveCost = tokenCost * 3.0 * (1 + 0.043 * 10);
-// = $0.00028 * 3.0 * 1.43 = $0.0012
 // Cost per 100K requests: $120
 
 // Model B: Faster, more accurate, "more expensive"
@@ -2261,7 +2271,6 @@ const modelB = {
 };
 
 const effectiveCostB = (0.60 / 1000000 * 700) * 0.3 * (1 + 0);
-// = $0.000126
 // Cost per 100K requests: $12.60
 
 // Model B is 10x cheaper despite 50% higher token cost!
@@ -2555,7 +2564,7 @@ This knowledge was hard-won through 3+ hours of debugging network issues, connec
 
 **Pass 1 (Fast Filter):**
 - Model: Llama 3.1 8B Instruct
-- Cost: $0.02/M tokens
+- Cost: 
 - Accuracy: 100%
 - Latency: ~500ms
 - **Status:** NOT CHANGED (already optimal)
@@ -2563,7 +2572,7 @@ This knowledge was hard-won through 3+ hours of debugging network issues, connec
 **Pass 2 (Deep Validation) - UPDATED:**
 - **NEW Model:** Google Gemini 2.5 Flash (preview-09-2025)
 - **Old Model:** Llama 3.1 70B Instruct (fallback)
-- Cost: $0.30/M tokens
+- Cost: 
 - Accuracy: 98.0% (up from 95.7%)
 - Latency: 657ms (down from 3000ms)
 - **Status:** DEPLOYED 2025-10-01
@@ -2592,9 +2601,7 @@ Stage Distribution:
   Pass 2:               6 (12%)
 
 Cost Analysis:
-  Total cost:           $0.001048
   Zero-cost tests:      22/50 (44%)
-  Average/test:         $0.000021
   Per 100K:             $2.10
 ```
 
@@ -2626,7 +2633,6 @@ Cost Analysis:
 
 **Models Tested:** 8 total
 - Phase 1: 5 newest Chinese models (DeepSeek, Qwen, GLM, Alibaba)
-- Phase 2: 3 sweet spot models ($0.20-0.40/M range)
 
 **Winner: Google Gemini 2.5 Flash**
 - Released: 2025-09-25 (6 days old at testing)
@@ -2639,7 +2645,6 @@ Cost Analysis:
 - $51.07/100K effective cost
 
 **Key Insight:**
-Speed matters more than raw pricing. Gemini's 4.8x speed advantage (657ms vs 3172ms) beats DeepSeek's 2% accuracy edge and cheaper price ($0.23 vs $0.30).
 
 ### Hard-Fought Knowledge: Effective Cost Formula
 
@@ -2658,13 +2663,10 @@ const costPer100K = effectiveCost * 100000;
 
 **Example (Gemini 2.5 Flash):**
 ```
-Token cost:    ($0.30 / 1M) * 700 tokens = $0.000210
 Latency:       657ms = 0.657s
 Error rate:    2% (98% accuracy) = 0.02
 Error penalty: 0.02 * 10 = 0.20x
 
-Effective cost = $0.000210 * 0.657s * (1 + 0.20) = $0.000166
-Cost per 100K  = $0.000166 * 100000 = $16.56
 ```
 
 ### Implementation Location
@@ -2877,16 +2879,9 @@ if (avgConfidence < 0.6) {
 Run all 3 validators on every request.
 
 **Cost**:
-- Business (1B): $0.001/M × 700 tokens = $0.0007
-- Attack (8B): $0.02/M × 700 tokens = $0.014
-- Semantic (8B): $0.02/M × 700 tokens = $0.014
-- Total per request: $0.0287
 
 **Smart Routing**:
 Orchestrator decides which validators are needed:
-- Pure business requests: Only business validator ($0.0007)
-- Clear attacks: Only attack detector ($0.014)
-- Edge cases: Multiple validators ($0.0287)
 
 **Savings**:
 43% cost reduction vs always running all validators.
@@ -2908,7 +2903,6 @@ Orchestrator decides which validators are needed:
 
 **Impact**:
 - Speed: Instant (0-5ms) vs AI (80-650ms)
-- Cost: $0 vs $0.001-0.20 per request
 - Accuracy: 100% on pattern-matched attacks
 
 **Key Lesson**:

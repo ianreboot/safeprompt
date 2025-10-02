@@ -165,12 +165,12 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ### AI Models (Updated October 2025)
 **Pass 1** (Quick screening, ~36% of requests):
-- **Primary**: Google Gemini 2.0 Flash ($0/M tokens) - FREE
-- **Fallback**: Llama 3.1 8B Instruct ($0.02/M tokens)
+- **Primary**: Google Gemini 2.0 Flash
+- **Fallback**: Llama 3.1 8B Instruct
 
 **Pass 2** (Deep validation, ~5% of requests):
-- **Primary**: Google Gemini 2.5 Flash ($0.30/M tokens)
-- **Fallback**: Llama 3.1 70B Instruct ($0.05/M tokens)
+- **Primary**: Google Gemini 2.5 Flash
+- **Fallback**: Llama 3.1 70B Instruct
 
 ### Recent Improvements
 - **October 2025**: External reference action detection - blocks "visit URL", "access file" while allowing legitimate mentions

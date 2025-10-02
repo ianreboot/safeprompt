@@ -2,8 +2,7 @@
  * SafePrompt AI Validator - PRODUCTION
  * Uses hardened 2-pass validation with external reference detection
  *
- * Performance: 92.9% accuracy at $0.50/100K requests
- * Replaces: GPT-3.5 implementation ($150/100K)
+ * Performance: 92.9% accuracy with optimized cost structure
  * Deployed: 2025-09-26
  */
 

@@ -33,6 +33,11 @@ export default function Footer() {
                   Contact
                 </Link>
               </li>
+              <li>
+                <a href="https://github.com/ianreboot/safeprompt" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  GitHub
+                </a>
+              </li>
             </ul>
           </div>
 
