@@ -11,24 +11,6 @@ export default function Header() {
     <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-border">
       <div className="container mx-auto max-w-6xl px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Mobile: Hamburger + Logo on left, Sign Up on right */}
-          {/* Desktop: Logo on left, Nav links in center-right */}
-
-          {/* Mobile Hamburger (far left) */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 -ml-2"
-            aria-label="Toggle menu"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <LogoText size="md" />
@@ -54,10 +36,20 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile Sign Up Button */}
-          <Link href="/signup" className="md:hidden bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm">
-            Sign Up
-          </Link>
+          {/* Mobile Hamburger */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2"
+            aria-label="Toggle menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </div>
 
         {/* Mobile Navigation Menu */}
@@ -90,6 +82,13 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Sign In
+            </Link>
+            <Link
+              href="/signup"
+              className="block bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition text-center"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Sign Up
             </Link>
           </div>
         )}
