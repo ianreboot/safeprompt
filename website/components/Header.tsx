@@ -40,9 +40,6 @@ export default function Header() {
             <Link href="/playground" className="text-muted-foreground hover:text-foreground transition">
               Playground
             </Link>
-            <Link href="/docs" className="text-muted-foreground hover:text-foreground transition">
-              Docs
-            </Link>
             <Link href="/blog" className="text-muted-foreground hover:text-foreground transition">
               Blog
             </Link>
@@ -72,13 +69,6 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Playground
-            </Link>
-            <Link
-              href="/docs"
-              className="block text-muted-foreground hover:text-foreground transition py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Docs
             </Link>
             <Link
               href="/blog"
