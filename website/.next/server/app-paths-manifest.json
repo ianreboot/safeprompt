@@ -1,9 +1,12 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/blog/page": "app/blog/page.js",
   "/about/page": "app/about/page.js",
+  "/blog/page": "app/blog/page.js",
   "/contact/page": "app/contact/page.js",
   "/page": "app/page.js",
+  "/ph-logo-export/page": "app/ph-logo-export/page.js",
+  "/ph-logo-preview/page": "app/ph-logo-preview/page.js",
+  "/ph-thumbnail/page": "app/ph-thumbnail/page.js",
   "/playground/page": "app/playground/page.js",
   "/privacy/page": "app/privacy/page.js",
   "/signup/page": "app/signup/page.js",
