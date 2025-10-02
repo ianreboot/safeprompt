@@ -25,13 +25,12 @@ export default function Home() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              API-First Prompt Security
+              Stop Users from Hijacking Your AI
               <br />
-              <span className="gradient-text">One POST, You're Protected</span>
+              <span className="gradient-text">One API Call</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Stop prompt injection attacks with one API call. Built for developers who ship fast.
-              98% accuracy, ~350ms response time, free tier available.
+              Protect AI automations, workflows, and features from prompt injection and manipulation attacks. Built for developers who ship fast.
             </p>
 
             {/* Pricing Clarity Message */}

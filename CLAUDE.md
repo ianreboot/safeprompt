@@ -1380,7 +1380,7 @@ When adding new capabilities:
 - **Do**: Use casual language, practical examples, "here's what could happen" scenarios
 - **Don't**: Academic security theory, enterprise jargon, fear-mongering
 - **Hook examples for this audience**:
-  - "Ship your AI app without getting pwned"
+  - "Stop users from hijacking your AI. One API call."
   - "That sketchy user input? We catch it"
   - "Security that doesn't slow you down"
   - "Built by developers who hate complex APIs"
@@ -1393,6 +1393,42 @@ When adding new capabilities:
 - Social proof from indie hackers, not Fortune 500
 
 **Never lead with enterprise** - it scares away solo developers who think they need a team to use it
+
+### Official Messaging (Updated October 2, 2025)
+
+#### Primary Headline (All Platforms)
+**"Stop users from hijacking your AI. One API call."**
+
+**Why this works**:
+- Universal: "Your AI" covers chatbots, automations, workflows, n8n, forms, quotation systems, customer outreach
+- Creates awareness: 40% of market doesn't know AI can be hijacked
+- Specific threat: "Hijacking" is clearer than "attacks" or "breaking"
+- Simplicity hook: "One API call" emphasizes speed/ease
+- Active, empowering language
+
+#### Use Case Coverage (NEVER limit to "chatbots")
+SafePrompt protects:
+- ✅ AI automation workflows (n8n, Zapier, Make)
+- ✅ AI-powered contact forms → AI summaries → inbox
+- ✅ AI quotation and proposal systems
+- ✅ AI customer outreach automation
+- ✅ AI search, RAG, and document processing
+- ✅ AI agents (research, data processing, task automation)
+- ✅ AI chatbots and conversational interfaces
+- ✅ Any application processing user input with LLMs
+
+**Messaging Rule**: Use "AI", "AI app", "AI automation", or "AI workflows" - NEVER just "chatbot"
+
+#### Supporting Taglines
+- **Short** (Twitter, footer): "Stop users from hijacking your AI. One API call."
+- **Medium** (Subtitle, meta): "Protect AI automations, workflows, and features from prompt injection and manipulation attacks."
+- **Long** (About, press): "SafePrompt stops prompt injection, jailbreak, and data exfiltration attacks on AI applications. Built for developers who ship fast. One API call adds multi-layer protection with 98% accuracy and ~350ms response time."
+
+#### Context-Specific Variations
+- **Product Hunt**: "Stop users from hijacking your AI. One API call."
+- **HackerNews**: "Show HN: I tested 94 AI apps for prompt injection – 87 were vulnerable"
+- **n8n Community**: "Protect AI workflows from prompt injection. One API call."
+- **GitHub Repo Description**: "Stop users from hijacking your AI. Prompt injection protection for automations, workflows, and AI-powered features."
 
 ## 🔄 Feature Rollout Strategy (Learned 2025-09-25)
 

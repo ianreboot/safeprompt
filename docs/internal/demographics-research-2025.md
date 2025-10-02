@@ -569,18 +569,47 @@
 
 ### Homepage Headline Options
 
-**Current**: "Your AI app is vulnerable. We'll protect it in 60 seconds."
+**Research Date**: October 2, 2025 (Updated after Product Hunt competitive analysis)
 
-**Alternative 1** (Less fear-based):
+**FINAL RECOMMENDATION** (October 2025):
+# **"Stop users from hijacking your AI. One API call."**
+
+**Why this wins**:
+- ✅ **Universal coverage**: "Your AI" includes chatbots, automations, workflows, n8n, forms, quotation systems, customer outreach
+- ✅ **Creates awareness**: 40% of market doesn't know AI can be hijacked
+- ✅ **Specific threat**: "Hijacking" is clearer and more serious than "breaking" or "attacking"
+- ✅ **Simplicity hook**: "One API call" emphasizes speed/ease
+- ✅ **Active verb**: "Stop" is strong and empowering
+
+**Context-Specific Variations**:
+
+**For n8n/Automation Community**:
+"Protect AI workflows from prompt injection. One API call."
+
+**For Product Hunt** (broader audience):
+"Stop users from hijacking your AI. One API call."
+
+**For HackerNews** (create awareness):
+"Show HN: I tested 94 AI apps for prompt injection – 87 were vulnerable"
+
+---
+
+**PREVIOUS OPTIONS** (Archived October 2025):
+
+**Option 1** (Too technical):
 "API-First Prompt Security. One POST, You're Protected."
+- ❌ "API-First" is methodology, not benefit
+- ❌ Assumes audience knows what prompt security is
 
-**Alternative 2** (Developer-centric):
+**Option 2** (Too vague):
 "Ship AI Features Without Shipping Vulnerabilities"
+- ❌ Doesn't specify what KIND of vulnerabilities
+- ❌ Missing simplicity hook
 
-**Alternative 3** (Specific value):
+**Option 3** (Too narrow):
 "Prompt Injection Protection for Developers Who Move Fast"
-
-**Recommendation**: Alternative 1 - most specific, least fear-based, clearest value prop for vibe coders
+- ❌ Only speaks to aware 60% of market
+- ❌ Jargon-heavy ("prompt injection")
 
 ### Key Messaging Themes
 
@@ -651,21 +680,35 @@
 
 ## 10. Action Plan: Content Optimization
 
-### Phase 1: Homepage Headline (Immediate)
+### Phase 1: Homepage Headline (COMPLETED October 2, 2025)
 
-**Replace**:
-"Your AI app is vulnerable. We'll protect it in 60 seconds."
-
-**With**:
-"API-First Prompt Security. One POST, You're Protected."
+**Final Headline**:
+"Stop users from hijacking your AI. One API call."
 
 **Rationale**:
-- Removes fear-based opener
-- More technical and specific
-- Appeals to "just make it work" developer mindset
-- Clearer value proposition
+- Universal coverage (chatbots, automations, workflows, n8n, forms, quotation systems)
+- Creates awareness for unaware 40% of market
+- Specific threat ("hijacking") resonates across use cases
+- Simplicity hook ("One API call") emphasizes speed
+- Active, empowering language
 
-### Phase 2: Value Proposition Refinement
+### Phase 2: Use Case Breadth (COMPLETED October 2, 2025)
+
+**Critical Insight**: SafePrompt protects MORE than chatbots
+
+**Full Use Case Coverage**:
+- ✅ AI automation workflows (n8n, Zapier, Make)
+- ✅ AI-powered contact forms → AI summaries → inbox
+- ✅ AI quotation and proposal systems
+- ✅ AI customer outreach automation
+- ✅ AI search, RAG, and document processing
+- ✅ AI agents (research, data processing, task automation)
+- ✅ AI chatbots and conversational interfaces
+- ✅ Any application processing user input with LLMs
+
+**Messaging Implication**: Never say "chatbot" in headlines - use "AI", "AI app", "AI automation", or "AI workflows" for universal appeal
+
+### Phase 3: Value Proposition Refinement
 
 **Add below headline**:
 "Stop prompt injection attacks with one API call. Built for developers who ship fast."
