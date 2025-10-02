@@ -42,13 +42,25 @@ export default async function handler(req, res) {
 
     // Validate API key (all users including internal)
     if (apiKey && apiKey !== 'demo_key') {
-      const hashedKey = hashApiKey(apiKey);
-
-      const { data: profile, error } = await supabase
+      // Try plaintext match first (standard SaaS approach)
+      let { data: profile, error } = await supabase
         .from('profiles')
         .select('id, api_requests_used, api_requests_limit, subscription_status')
-        .eq('api_key_hash', hashedKey)
+        .eq('api_key', apiKey)
         .single();
+
+      // Fallback to hashed key for backward compatibility (during migration)
+      if (error || !profile) {
+        const hashedKey = hashApiKey(apiKey);
+        const result = await supabase
+          .from('profiles')
+          .select('id, api_requests_used, api_requests_limit, subscription_status')
+          .eq('api_key_hash', hashedKey)
+          .single();
+
+        profile = result.data;
+        error = result.error;
+      }
 
       if (error || !profile) {
         return res.status(401).json({ error: 'Invalid API key' });

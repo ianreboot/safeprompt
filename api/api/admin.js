@@ -49,7 +49,6 @@ async function handleUserApiKey(req, res) {
     if (profileError && profileError.code === 'PGRST116') {
       // Create new profile if doesn't exist
       const newApiKey = generateApiKey();
-      const hashedKey = hashApiKey(newApiKey);
       const keyHint = newApiKey.slice(-4);
 
       const { data: newProfile } = await supabase
@@ -57,7 +56,7 @@ async function handleUserApiKey(req, res) {
         .insert({
           id: user.id,
           email: user.email,
-          api_key_hash: hashedKey,
+          api_key: newApiKey,
           api_key_hint: keyHint,
           subscription_tier: 'free',
           api_requests_limit: 10000,
@@ -69,14 +68,13 @@ async function handleUserApiKey(req, res) {
         .select()
         .single();
 
-      // Return the API key only on creation (user should save it)
+      // Return the full API key
       return res.status(200).json({
         api_key: newApiKey,
         key_hint: keyHint,
         subscription_tier: 'free',
         usage: { current: 0, limit: 10000, percentage: 0 },
-        created_at: newProfile.created_at,
-        warning: 'Save this API key now - it will not be shown again'
+        created_at: newProfile.created_at
       });
     }
 
@@ -89,8 +87,8 @@ async function handleUserApiKey(req, res) {
       : 0;
 
     return res.status(200).json({
+      api_key: profile.api_key || null,
       api_key_hint: profile.api_key_hint,
-      api_key_preview: `sp_live_${'•'.repeat(60)}${profile.api_key_hint}`,
       subscription_tier: profile.subscription_tier,
       subscription_status: profile.subscription_status,
       usage: {
@@ -99,8 +97,7 @@ async function handleUserApiKey(req, res) {
         percentage: usagePercentage
       },
       created_at: profile.created_at,
-      last_used_at: profile.last_used_at,
-      note: 'API key is hashed for security. If lost, regenerate a new key.'
+      last_used_at: profile.last_used_at
     });
   } catch (error) {
     console.error('User API key error:', error);
@@ -320,7 +317,6 @@ async function handleApproveWaitlist(req, res) {
 
     // Generate API key
     const apiKey = generateApiKey();
-    const hashedKey = hashApiKey(apiKey);
     const keyHint = apiKey.slice(-4);
 
     // Check if user exists in auth
@@ -352,7 +348,7 @@ async function handleApproveWaitlist(req, res) {
       await supabase
         .from('profiles')
         .update({
-          api_key_hash: hashedKey,
+          api_key: apiKey,
           api_key_hint: keyHint,
           subscription_tier: 'free',
           api_requests_limit: 10000,
@@ -367,7 +363,7 @@ async function handleApproveWaitlist(req, res) {
         .insert({
           id: authUser.id,
           email: email,
-          api_key_hash: hashedKey,
+          api_key: apiKey,
           api_key_hint: keyHint,
           subscription_tier: 'free',
           api_requests_limit: 10000,
