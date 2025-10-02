@@ -27,13 +27,13 @@ const TESTING_MODE = process.env.SAFEPROMPT_TESTING === 'true';
 const MODELS = {
   pass1: [
     {
-      name: 'meta-llama/llama-3.1-8b-instruct',
-      costPerMillion: 0.02,
+      name: 'google/gemini-2.0-flash-exp:free',
+      costPerMillion: 0,
       priority: 1
     },
     {
-      name: 'google/gemini-2.0-flash-exp:free',
-      costPerMillion: 0,
+      name: 'meta-llama/llama-3.1-8b-instruct',
+      costPerMillion: 0.02,
       priority: 2
     }
   ],

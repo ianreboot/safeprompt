@@ -63,8 +63,8 @@ Request → External Reference Check → Pattern Matching → Pass 1 (Llama 8B) 
 
 ### Models Configuration
 **Pass 1** (Quick screening, ~36% of requests):
-- **Primary**: `meta-llama/llama-3.1-8b-instruct` ($0.02/M tokens)
-- **Fallback**: `google/gemini-2.0-flash-exp:free` ($0/M tokens)
+- **Primary**: `google/gemini-2.0-flash-exp:free` ($0/M tokens) - FREE
+- **Fallback**: `meta-llama/llama-3.1-8b-instruct` ($0.02/M tokens)
 
 **Pass 2** (Deep validation, ~5% of requests):
 - **Primary**: `google/gemini-2.5-flash-preview-09-2025` ($0.30/M tokens)
