@@ -1,22 +1,55 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-01
-**Status**: Beta - Production Ready (Code Cleaned)
-**Deployment**: Cloudflare Pages (website), Vercel Functions (API)
+**Last Updated**: 2025-10-02
+**Status**: Beta - Production Ready (Product Hunt Launch Ready)
+**Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
 
 ## Project Overview
 SafePrompt is a developer-first API service that prevents prompt injection attacks in AI applications. We provide a simple, fast, and transparent solution for developers who need to secure their LLM-powered features without complexity or enterprise sales cycles.
 
 **Domain**: safeprompt.dev
-**Repository**: https://github.com/ianreboot/safeprompt-internal.git
-**Current State**: Production ready, comprehensive cleanup completed Sep 2025
+**Public Repository**: https://github.com/ianreboot/safeprompt
+**Internal Repository**: https://github.com/ianreboot/safeprompt-internal.git
+**Current State**: Production ready, Product Hunt launch ready (Oct 2025)
 
 ## Core Value Proposition
-"Stop prompt injection in one line of code"
-- **Fast**: ~350ms average response time (58.5% requests <10ms via pattern detection)
+**Updated Messaging (Oct 2, 2025)**: "Stop users from hijacking your AI. One API call."
+
+**Technical Details**:
+- **Fast**: ~350ms average response time (67% requests instantly via pattern/external ref detection)
 - **Simple**: Single API endpoint, clear documentation
 - **Transparent**: Public pricing, no sales calls
-- **Accurate**: 98% accuracy with multi-layer validation
+- **Accurate**: 98% accuracy with hardened 2-pass validation
+
+**Use Case Focus**: AI automation workflows (n8n, Zapier), AI-powered forms, quotation systems, customer outreach, chatbots
+
+## Recent Updates (October 2025)
+
+### ✅ Mobile Header Standardization (Oct 2)
+- Applied standard 2-column mobile layout (Logo left, Hamburger right)
+- Removed non-standard 3-column layout (hamburger far left + centered logo + sign up right)
+- Moved Sign Up button into desktop navigation and mobile menu dropdown
+- **Files**: `/home/projects/safeprompt/website/components/Header.tsx`
+
+### ✅ Dashboard Responsive Fixes (Oct 2)
+- Fixed horizontal overflow issues on mobile/small screens
+- Added `overflow-x-hidden` to body and main container
+- Added `min-w-0` to grid items (prevents flex/grid overflow)
+- Added `truncate` to API key display
+- **Files**: `/home/projects/safeprompt/dashboard/src/app/layout.tsx`, `/home/projects/safeprompt/dashboard/src/app/page.tsx`
+
+### ✅ Analytics Setup (Oct 2)
+- **Google Analytics 4**: Measurement ID `G-9P2ZF4JYJN` (tracks website + dashboard)
+- **Cloudflare Web Analytics**: Auto-injection enabled for safeprompt.dev
+- **Conversion tracking ready**: Setup guide in LAUNCH.md for signup funnel tracking
+- **UTM parameters**: Product Hunt launch URL configured
+- **Files**: Both layout.tsx files updated with GA4 Script components
+
+### ✅ Public Repository & NPM Package (Oct 2)
+- **GitHub repo**: github.com/ianreboot/safeprompt (public)
+- **NPM package**: safeprompt@1.0.0 published and live
+- **Updated description**: "Stop users from hijacking your AI. One API call. Protect AI automations, workflows, and features from prompt injection attacks."
+- **Topics**: prompt-injection, ai-security, llm, openai, security, ai, chatbot, typescript, javascript, sdk
 
 ## 🔒 EMAIL PRIVACY PROTOCOL
 
