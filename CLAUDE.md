@@ -3403,3 +3403,28 @@ const DEFINITELY_SAFE_PATTERNS = [
 **Analysis Date**: October 1, 2025
 **Agents**: big-brain (strategic) + fresh-eyes (cognitive load)
 **Outcome**: Clear path to 95%+ accuracy with 69% cost reduction
+
+---
+
+## SafePrompt-Specific Decisions
+
+### API Key Storage (Decision: 2025-10-02)
+**BUSINESS REQUIREMENT**: Users must be able to copy their API keys from the dashboard at any time.
+
+**Implementation**:
+- Store plaintext API keys in `profiles.api_key` column
+- Dashboard displays full key with copy button
+- This is a conscious trade-off: UX > database breach risk
+- Do NOT suggest hash-only storage or "show once" patterns
+
+**Security Mitigation**:
+- Rely on database security (Supabase RLS, encryption at rest)
+- Use HTTPS for all API key transmissions
+- Monitor for suspicious access patterns
+
+**DO NOT**:
+- Suggest migrating to hash-only storage
+- Recommend "show key once" workflows
+- Compare to GitHub/Stripe token patterns
+
+This is a documented business decision, not a security oversight.

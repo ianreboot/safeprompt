@@ -74,7 +74,6 @@ export default function AdminDashboard() {
     const { data: waitlistData } = await supabase
       .from('waitlist')
       .select('*')
-      .is('converted_to_profile_id', null)
       .order('created_at', { ascending: false })
       .limit(50)
 
