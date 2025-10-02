@@ -1,0 +1,52 @@
+🧪 SafePrompt Additional Model Combination Tests
+
+Testing Llama 8B and Gemini 2.0 paired with Llama 8B (Pass 2)
+This will take approximately 10 minutes...
+
+
+======================================================================
+Testing: Llama 8B + Llama 8B
+Pass 1: meta-llama/llama-3.1-8b-instruct ($0.02/M)
+Pass 2: meta-llama/llama-3.1-8b-instruct ($0.02/M)
+======================================================================
+
+
+📊 Results Summary:
+   Accuracy: 83% (78/94 tests)
+   Test Duration: 175.2s
+   Total Cost: $0.000568
+   Avg Cost/Test: $0.000006
+
+⏳ Waiting 30 seconds before next test...
+
+
+======================================================================
+Testing: Gemini 2.0 + Llama 8B
+Pass 1: google/gemini-2.0-flash-exp:free ($0/M)
+Pass 2: meta-llama/llama-3.1-8b-instruct ($0.02/M)
+======================================================================
+
+
+📊 Results Summary:
+   Accuracy: 79.8% (75/94 tests)
+   Test Duration: 179.0s
+   Total Cost: $0.000634
+   Avg Cost/Test: $0.000007
+
+
+====================================================================================================
+ADDITIONAL MODEL COMBINATION RESULTS
+====================================================================================================
+
+| Configuration | Accuracy | Test Duration | Total Cost | Avg Cost/Test | Pass1 | Pass2 |
+|---------------|----------|---------------|------------|---------------|-------|-------|
+| Llama 8B + Llama 8B            | 83.0%   | ⚡ Fast 175s | 💰 Cheap $0.00057 | $0.000006 | $0.02/M | $0.02/M |
+| Gemini 2.0 + Llama 8B          | 79.8%   | ⚡ Fast 179s | 💰 Cheap $0.00063 | $0.000007 | $0/M | $0.02/M |
+
+
+🏆 Best Accuracy: Llama 8B + Llama 8B (83%)
+⚡ Fastest: Llama 8B + Llama 8B (175s)
+💰 Cheapest: Llama 8B + Llama 8B ($0.000568)
+
+📄 Detailed results saved to: /home/projects/safeprompt/test-suite/additional-combination-results.json
+
