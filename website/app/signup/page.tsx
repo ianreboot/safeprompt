@@ -6,6 +6,7 @@ import { Shield, Zap, Check, X, AlertCircle, Clock, Users, ArrowRight, Lock, Cre
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { PRICING, URGENCY } from '@/lib/pricing'
 
 export default function UnifiedSignup() {
   const router = useRouter()
@@ -14,7 +15,7 @@ export default function UnifiedSignup() {
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [betaSpotsLeft] = useState(37) // Actual: 50 total - 13 current users
+  const [betaSpotsLeft] = useState(URGENCY.betaSpotsRemaining)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,12 +59,12 @@ export default function UnifiedSignup() {
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-500" />
             <span className="text-sm">
-              <strong>Beta pricing: First 50 users get $5/month forever</strong> (regular price will be $29)
+              <strong>{URGENCY.message}</strong>
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-yellow-600">
             <Users className="w-4 h-4" />
-            <span>Join early adopters saving $24/month</span>
+            <span>{URGENCY.savingsMessage}</span>
           </div>
         </motion.div>
 
@@ -90,9 +91,11 @@ export default function UnifiedSignup() {
                 }`}
               >
                 {/* Best Value Badge */}
-                <div className="absolute -top-3 left-6 bg-primary text-black text-xs font-bold px-3 py-1 rounded-full">
-                  BETA PRICING - SAVE $24/MONTH
-                </div>
+                {PRICING.paid.badgeText && (
+                  <div className="absolute -top-3 left-6 bg-primary text-black text-xs font-bold px-3 py-1 rounded-full">
+                    {PRICING.paid.badgeText}
+                  </div>
+                )}
 
                 <div className="flex items-start gap-4">
                   <div className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
@@ -104,46 +107,34 @@ export default function UnifiedSignup() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <Zap className="w-6 h-6 text-yellow-500" />
-                      <h3 className="text-xl font-semibold">Early Access Beta</h3>
+                      <h3 className="text-xl font-semibold">{PRICING.paid.name}</h3>
                       <div className="ml-auto">
-                        <span className="text-3xl font-bold text-primary">$5</span>
-                        <span className="text-sm text-gray-500">/month</span>
-                        <span className="ml-2 text-sm line-through text-gray-600">$29</span>
+                        <span className="text-3xl font-bold text-primary">${PRICING.paid.price}</span>
+                        <span className="text-sm text-gray-500">/{PRICING.paid.interval}</span>
+                        {PRICING.paid.originalPrice && (
+                          <span className="ml-2 text-sm line-through text-gray-600">${PRICING.paid.originalPrice}</span>
+                        )}
                       </div>
                     </div>
 
                     <div className="grid sm:grid-cols-2 gap-3 mt-4">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-green-500" />
-                        <span>100,000 requests/month</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-green-500" />
-                        <span>Instant API access</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-green-500" />
-                        <span>Priority support</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-green-500" />
-                        <span>Lock in beta price forever</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-green-500" />
-                        <span>Advanced threat detection</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-green-500" />
-                        <span>High availability infrastructure</span>
-                      </div>
+                      {PRICING.paid.features.map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm">
+                          {feature.icon === 'check' && <Check className="w-4 h-4 text-green-500" />}
+                          {feature.icon === 'x' && <X className="w-4 h-4 text-gray-600" />}
+                          {feature.icon === 'clock' && <Clock className="w-4 h-4 text-yellow-600" />}
+                          <span>{feature.text}</span>
+                        </div>
+                      ))}
                     </div>
 
-                    <div className="mt-4 p-3 bg-green-900/20 rounded-lg border border-green-900/30">
-                      <p className="text-xs text-green-400">
-                        💰 <strong>You save $288/year</strong> with beta pricing locked forever.
-                      </p>
-                    </div>
+                    {PRICING.paid.savingsText && (
+                      <div className="mt-4 p-3 bg-green-900/20 rounded-lg border border-green-900/30">
+                        <p className="text-xs text-green-400">
+                          💰 <strong>{PRICING.paid.savingsText}</strong>
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -169,33 +160,31 @@ export default function UnifiedSignup() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <Clock className="w-6 h-6 text-gray-500" />
-                      <h3 className="text-xl font-semibold text-gray-300">Free Plan (Waitlist)</h3>
+                      <h3 className="text-xl font-semibold text-gray-300">{PRICING.free.name} (Waitlist)</h3>
                       <div className="ml-auto">
-                        <span className="text-2xl font-bold text-gray-400">$0</span>
-                        <span className="text-sm text-gray-600">/month</span>
+                        <span className="text-2xl font-bold text-gray-400">${PRICING.free.price}</span>
+                        <span className="text-sm text-gray-600">/{PRICING.free.interval}</span>
                       </div>
                     </div>
 
                     <div className="space-y-2 mt-4">
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <Check className="w-4 h-4 text-gray-600" />
-                        <span>10,000 requests/month</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <Clock className="w-4 h-4 text-yellow-600" />
-                        <span>Access when capacity allows</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <X className="w-4 h-4 text-gray-600" />
-                        <span>Community support only</span>
-                      </div>
+                      {PRICING.free.features.map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm text-gray-400">
+                          {feature.icon === 'check' && <Check className="w-4 h-4 text-gray-600" />}
+                          {feature.icon === 'x' && <X className="w-4 h-4 text-gray-600" />}
+                          {feature.icon === 'clock' && <Clock className="w-4 h-4 text-yellow-600" />}
+                          <span>{feature.text}</span>
+                        </div>
+                      ))}
                     </div>
 
-                    <div className="mt-4 p-3 bg-blue-900/10 rounded-lg border border-blue-900/20">
-                      <p className="text-xs text-blue-400">
-                        💡 <strong>Join the queue for free access.</strong> We're scaling infrastructure gradually.
-                      </p>
-                    </div>
+                    {PRICING.free.savingsText && (
+                      <div className="mt-4 p-3 bg-blue-900/10 rounded-lg border border-blue-900/20">
+                        <p className="text-xs text-blue-400">
+                          💡 <strong>{PRICING.free.savingsText}</strong>
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>

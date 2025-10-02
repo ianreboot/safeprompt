@@ -8,6 +8,7 @@ import CodeSelector from '@/components/CodeSelector'
 import LogoText from '@/components/LogoText'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { PRICING_SUMMARY } from '@/lib/pricing'
 
 export default function Home() {
 
@@ -24,13 +25,13 @@ export default function Home() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Your AI App Is Vulnerable
+              API-First Prompt Security
               <br />
-              <span className="gradient-text">To Prompt Injection Attacks</span>
+              <span className="gradient-text">One POST, You're Protected</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Stop users from tricking your AI into revealing secrets, bypassing restrictions,
-              or executing harmful commands. One API call is all you need.
+              Stop prompt injection attacks with one API call. Built for developers who ship fast.
+              98% accuracy, ~350ms response time, free tier available.
             </p>
 
             {/* Pricing Clarity Message */}
@@ -38,7 +39,7 @@ export default function Home() {
               <div className="flex items-center space-x-2 bg-card px-4 py-2 rounded-lg border border-border">
                 <div className="w-2 h-2 bg-safe rounded-full animate-pulse" />
                 <span className="text-muted-foreground">
-                  <span className="text-foreground font-semibold">Free tier available</span> or <span className="text-foreground font-semibold">$5/mo beta</span> (regular $29/mo)
+                  <span className="text-foreground font-semibold">Free tier available</span> or <span className="text-foreground font-semibold">${PRICING_SUMMARY.betaPrice}/mo beta</span> (regular ${PRICING_SUMMARY.regularPrice}/mo)
                 </span>
               </div>
             </div>
@@ -46,7 +47,7 @@ export default function Home() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <a href="/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
-                Get Started - Free or $5/mo
+                Get Started - Free or ${PRICING_SUMMARY.betaPrice}/mo
               </a>
               <a href="#pricing" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
                 Compare Plans
