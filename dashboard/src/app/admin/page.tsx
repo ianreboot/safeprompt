@@ -84,14 +84,31 @@ export default function AdminDashboard() {
       .from('api_logs')
       .select('*', { count: 'exact', head: true })
 
-    // Calculate stats
+    // Calculate stats - only count PAID subscribers
     const totalUsers = profilesData?.length || 0
-    const activeUsers = profilesData?.filter(p => p.subscription_status === 'active').length || 0
-    const revenue = activeUsers * 29 // $29/month per subscriber
+
+    // Active subscribers = users with paid tier AND active status
+    const paidTiers = ['early_bird', 'starter', 'business', 'pro', 'enterprise']
+    const activeSubscribers = profilesData?.filter(p =>
+      p.subscription_status === 'active' &&
+      paidTiers.includes(p.subscription_tier)
+    ) || []
+
+    // Calculate revenue based on actual subscription tiers
+    const revenue = activeSubscribers.reduce((total, user) => {
+      switch(user.subscription_tier) {
+        case 'early_bird': return total + 5
+        case 'starter': return total + 29
+        case 'business': return total + 99
+        case 'pro': return total + 199
+        case 'enterprise': return total + 499
+        default: return total
+      }
+    }, 0)
 
     setStats({
       totalUsers,
-      activeUsers,
+      activeUsers: activeSubscribers.length,
       revenue,
       totalApiCalls: totalCalls || 0
     })
