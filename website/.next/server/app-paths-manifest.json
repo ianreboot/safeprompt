@@ -3,15 +3,12 @@
   "/about/page": "app/about/page.js",
   "/blog/page": "app/blog/page.js",
   "/contact/page": "app/contact/page.js",
-  "/page": "app/page.js",
-  "/ph-logo-export/page": "app/ph-logo-export/page.js",
-  "/ph-logo-preview/page": "app/ph-logo-preview/page.js",
-  "/ph-thumbnail/page": "app/ph-thumbnail/page.js",
-  "/playground/page": "app/playground/page.js",
   "/privacy/page": "app/privacy/page.js",
+  "/page": "app/page.js",
   "/signup/page": "app/signup/page.js",
   "/terms/page": "app/terms/page.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
+  "/playground/page": "app/playground/page.js",
   "/blog/prevent-ai-email-attacks/page": "app/blog/prevent-ai-email-attacks/page.js",
   "/blog/stop-chatbot-prompt-injection/page": "app/blog/stop-chatbot-prompt-injection/page.js"
 }
