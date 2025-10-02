@@ -1,8 +1,8 @@
 # SafePrompt
 
-**API-first prompt injection protection for AI applications.**
+**Stop users from hijacking your AI. One API call.**
 
-One POST request secures your LLM from attacks. No complex setup, no ML expertise required.
+Protect AI automations, workflows, and features from prompt injection and manipulation attacks. Built for developers who ship fast.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://badge.fury.io/js/safeprompt.svg)](https://www.npmjs.com/package/safeprompt)
@@ -135,13 +135,27 @@ SafePrompt uses a **hardened 2-pass validation system**:
 
 ---
 
+## 🎯 Use Cases
+
+SafePrompt protects any application processing user input with AI:
+
+- **🤖 AI Automation Workflows** - n8n, Zapier, Make workflows
+- **📧 AI-Powered Forms** - Contact forms → AI summary → inbox
+- **💰 AI Quotation Systems** - User input → pricing/proposals
+- **🎯 AI Customer Outreach** - Automated personalization engines
+- **🔍 AI Search & RAG** - User queries → document retrieval
+- **🤝 AI Agents** - Research, data processing, task automation
+- **💬 AI Chatbots** - Customer support, conversational interfaces
+
+---
+
 ## 🏢 Who Uses SafePrompt?
 
 Perfect for:
 - **Indie Developers** - Ship fast without security headaches
+- **Automation Builders** - Protect n8n/Zapier workflows
 - **Startups** - Enterprise security at indie pricing
-- **AI Product Builders** - Focus on features, not security
-- **Chatbot Developers** - Protect customer-facing AI
+- **AI Product Teams** - Focus on features, not security
 - **API Developers** - Secure your AI endpoints
 
 ---
