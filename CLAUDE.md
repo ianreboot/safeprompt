@@ -796,7 +796,7 @@ This includes:
 ## Lessons Learned (Critical for Future Development)
 
 ### What NOT to Build (Mistakes Made)
-- ❌ Fake npm packages (`@safeprompt/js` doesn't exist)
+- ❌ Fake npm packages (`safeprompt` doesn't exist)
 - ❌ Complex user tables duplicating Stripe data
 - ❌ Hardcoded metrics (waitlist counter was fake)
 - ❌ Links to non-existent pages (/docs, /api/health)
@@ -867,7 +867,7 @@ This includes:
 
 ### NEVER DO THIS:
 1. **NEVER show installation for non-existent packages**
-   - ❌ `npm install @safeprompt/js` (package doesn't exist)
+   - ❌ `npm install safeprompt` (package doesn't exist)
    - ✅ Use curl/HTTP examples until package is published
 
 2. **NEVER create UI without backend**
@@ -1252,7 +1252,7 @@ node test-simple-prompts.js       # Find working alternatives
    - ✅ Query real data or show "---" if none
 
 3. **NEVER reference non-existent packages:**
-   - ❌ `npm install @safeprompt/js` when not published
+   - ❌ `npm install safeprompt` when not published
    - ❌ Import statements for packages not in package.json
    - ✅ Use direct HTTP/API examples until packages exist
 
