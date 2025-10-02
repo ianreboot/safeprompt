@@ -8,7 +8,7 @@
 SafePrompt is a developer-first API service that prevents prompt injection attacks in AI applications. We provide a simple, fast, and transparent solution for developers who need to secure their LLM-powered features without complexity or enterprise sales cycles.
 
 **Domain**: safeprompt.dev
-**Repository**: https://github.com/ianreboot/safeprompt.git
+**Repository**: https://github.com/ianreboot/safeprompt-internal.git
 **Current State**: Production ready, comprehensive cleanup completed Sep 2025
 
 ## Core Value Proposition

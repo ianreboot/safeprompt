@@ -97,7 +97,7 @@ See [docs/API.md](docs/API.md) for complete API reference.
 
 ```bash
 # Clone the repo
-git clone https://github.com/ianreboot/safeprompt.git
+git clone https://github.com/ianreboot/safeprompt-internal.git
 cd safeprompt
 
 # Install dependencies
