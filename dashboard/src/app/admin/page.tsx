@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { Shield, Users, Clock, CheckCircle, XCircle, Mail, Search, Activity, DollarSign, Eye } from 'lucide-react'
 
 // Simple admin auth - in production, use proper role-based access
-const ADMIN_EMAILS = ['ian@rebootmedia.net', 'admin@safeprompt.dev']
+const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null)
