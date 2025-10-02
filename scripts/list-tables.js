@@ -28,7 +28,7 @@ async function listTables() {
   }
 
   // Try various table names that might exist
-  const tablesToCheck = ['profiles', 'users', 'api_logs', 'waitlist', 'subscriptions'];
+  const tablesToCheck = ['profiles', 'api_logs', 'waitlist', 'subscriptions'];
 
   console.log('\nChecking for tables:');
   for (const table of tablesToCheck) {

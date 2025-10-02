@@ -153,11 +153,6 @@ export default function AdminDashboard() {
       .update({ is_active: false })
       .eq('id', userId)
 
-    await supabase
-      .from('api_keys')
-      .update({ is_active: false })
-      .eq('user_id', userId)
-
     await fetchData()
   }
 

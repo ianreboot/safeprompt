@@ -2,7 +2,7 @@
 
 /**
  * Creates an internal test user for SafePrompt dogfooding
- * Uses the existing users table structure
+ * Uses the profiles table structure
  */
 
 const { createClient } = require('@supabase/supabase-js');
@@ -45,9 +45,9 @@ async function createInternalUser() {
       console.log(`✓ Auth user already exists: ${testEmail}`);
     }
 
-    // Step 2: Check if user exists in users table
+    // Step 2: Check if user exists in profiles table
     const { data: existingUser } = await supabase
-      .from('users')
+      .from('profiles')
       .select('*')
       .eq('id', authUser.id)
       .single();
@@ -55,15 +55,12 @@ async function createInternalUser() {
     if (existingUser) {
       // Update existing user
       const { error: updateError } = await supabase
-        .from('users')
+        .from('profiles')
         .update({
-          tier: 'free', // Use valid tier (will use monthly_limit for unlimited)
-          monthly_limit: 999999, // Unlimited
+          subscription_tier: 'free', // Use valid tier (will use api_requests_limit for unlimited)
+          api_requests_limit: 999999, // Unlimited
           subscription_status: 'active',
-          is_beta_user: true, // Mark as special user
-          beta_price: 0, // Free
-          use_case: 'Internal testing and dogfooding',
-          company_name: 'SafePrompt Internal',
+          api_key: testApiKey,
           updated_at: new Date().toISOString()
         })
         .eq('id', authUser.id);
@@ -72,21 +69,18 @@ async function createInternalUser() {
         console.error('Error updating user:', updateError.message);
         return;
       }
-      console.log(`✓ Updated existing user in users table`);
+      console.log(`✓ Updated existing user in profiles table`);
     } else {
       // Create new user
       const { error: insertError } = await supabase
-        .from('users')
+        .from('profiles')
         .insert({
           id: authUser.id,
           email: testEmail,
-          tier: 'free', // Use valid tier (will use monthly_limit for unlimited)
-          monthly_limit: 999999, // Unlimited
+          subscription_tier: 'free', // Use valid tier (will use api_requests_limit for unlimited)
+          api_requests_limit: 999999, // Unlimited
           subscription_status: 'active',
-          is_beta_user: true,
-          beta_price: 0,
-          use_case: 'Internal testing and dogfooding',
-          company_name: 'SafePrompt Internal',
+          api_key: testApiKey,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
@@ -95,12 +89,10 @@ async function createInternalUser() {
         console.error('Error creating user:', insertError.message);
         return;
       }
-      console.log(`✓ Created new user in users table`);
+      console.log(`✓ Created new user in profiles table`);
     }
 
-    // Step 3: Create or update the API key in a separate storage
-    // Since the users table doesn't have an api_key column, we'll use
-    // a simple mapping in the validation code
+    // Step 3: API key is now stored directly in the profiles table
 
     console.log('\n' + '='.repeat(60));
     console.log('INTERNAL TEST USER CREATED SUCCESSFULLY');
@@ -112,17 +104,12 @@ async function createInternalUser() {
     console.log(`API Key:   ${testApiKey}`);
     console.log('-'.repeat(40));
     console.log('\nUser Settings:');
-    console.log(`- Tier:          internal`);
-    console.log(`- Monthly Limit: 999,999 (unlimited)`);
-    console.log(`- Beta User:     Yes`);
-    console.log(`- Status:        Active`);
+    console.log(`- Tier:                 free`);
+    console.log(`- API Requests Limit:   999,999 (unlimited)`);
+    console.log(`- Status:               Active`);
     console.log('-'.repeat(40));
-    console.log('\nIMPORTANT NEXT STEP:');
-    console.log('The API validation code needs to be updated to:');
-    console.log('1. Map this API key to the test user');
-    console.log('2. Check for tier="internal" or monthly_limit=999999');
-    console.log('3. Skip rate limiting for this user');
-    console.log('\nFile to update: /home/projects/safeprompt/api/api/v1/validate.js');
+    console.log('\nAPI key is now stored in the profiles table.');
+    console.log('The API validation code automatically recognizes high limits.');
     console.log('='.repeat(60));
 
     // Step 4: Test the endpoint with basic auth

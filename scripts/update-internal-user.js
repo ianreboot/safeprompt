@@ -62,9 +62,9 @@ async function updateInternalUser() {
       }
     }
 
-    // Step 3: Update users table
+    // Step 3: Update profiles table
     const { data: existingUserData } = await supabase
-      .from('users')
+      .from('profiles')
       .select('*')
       .eq('email', newEmail)
       .single();
@@ -72,73 +72,63 @@ async function updateInternalUser() {
     if (existingUserData) {
       // Update existing entry
       const { error: updateError } = await supabase
-        .from('users')
+        .from('profiles')
         .update({
-          tier: 'free',
-          monthly_limit: 999999,
+          subscription_tier: 'free',
+          api_requests_limit: 999999,
           subscription_status: 'active',
-          is_beta_user: true,
-          beta_price: 0,
-          use_case: 'Internal testing and dogfooding - Ian Ho',
-          company_name: 'Reboot Media',
           updated_at: new Date().toISOString()
         })
         .eq('email', newEmail);
 
       if (updateError) {
-        console.error('Error updating users table:', updateError.message);
+        console.error('Error updating profiles table:', updateError.message);
       } else {
-        console.log(`✓ Updated existing entry in users table`);
+        console.log(`✓ Updated existing entry in profiles table`);
       }
     } else {
       // Create new entry
       const { error: insertError } = await supabase
-        .from('users')
+        .from('profiles')
         .insert({
           id: existingIanUser.id,
           email: newEmail,
-          tier: 'free',
-          monthly_limit: 999999,
+          subscription_tier: 'free',
+          api_requests_limit: 999999,
           subscription_status: 'active',
-          is_beta_user: true,
-          beta_price: 0,
-          use_case: 'Internal testing and dogfooding - Ian Ho',
-          company_name: 'Reboot Media',
+          api_key: apiKey,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
 
       if (insertError) {
-        console.error('Error creating users table entry:', insertError.message);
+        console.error('Error creating profiles table entry:', insertError.message);
 
         // If it fails due to ID conflict, try update instead
         const { error: updateError } = await supabase
-          .from('users')
+          .from('profiles')
           .update({
             email: newEmail,
-            tier: 'free',
-            monthly_limit: 999999,
+            subscription_tier: 'free',
+            api_requests_limit: 999999,
             subscription_status: 'active',
-            is_beta_user: true,
-            beta_price: 0,
-            use_case: 'Internal testing and dogfooding - Ian Ho',
-            company_name: 'Reboot Media',
+            api_key: apiKey,
             updated_at: new Date().toISOString()
           })
           .eq('id', existingIanUser.id);
 
         if (!updateError) {
-          console.log(`✓ Updated users table entry by ID`);
+          console.log(`✓ Updated profiles table entry by ID`);
         }
       } else {
-        console.log(`✓ Created new entry in users table`);
+        console.log(`✓ Created new entry in profiles table`);
       }
     }
 
     // Step 4: Clean up old test user if it exists
     if (oldUser && oldUser.id !== existingIanUser.id) {
-      // Delete old user from users table
-      await supabase.from('users').delete().eq('id', oldUser.id);
+      // Delete old user from profiles table
+      await supabase.from('profiles').delete().eq('id', oldUser.id);
       // Delete old auth user
       await supabase.auth.admin.deleteUser(oldUser.id);
       console.log(`✓ Cleaned up old test user`);

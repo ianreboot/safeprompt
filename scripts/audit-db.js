@@ -37,8 +37,8 @@ async function auditDatabase() {
     if (profiles) {
       profiles.forEach(p => {
         console.log(`  - ${p.email}`);
-        console.log(`    Tier: ${p.tier || 'null'}, Status: ${p.subscription_status || 'null'}`);
-        console.log(`    Stripe: ${p.stripe_customer_id || 'null'}, API Calls: ${p.api_calls_this_month || 0}`);
+        console.log(`    Tier: ${p.subscription_tier || 'null'}, Status: ${p.subscription_status || 'null'}`);
+        console.log(`    Stripe: ${p.stripe_customer_id || 'null'}, API Calls: ${p.api_requests_used || 0}`);
         console.log(`    Active: ${p.is_active}, Created: ${p.created_at}`);
       });
     }
@@ -114,17 +114,17 @@ async function auditDatabase() {
       console.log('   Every auth.users record should have a corresponding profiles record.');
     }
 
-    // Check for the specific issue: subscription_status = 'active' but tier = 'free'
+    // Check for the specific issue: subscription_status = 'active' but subscription_tier = 'free'
     const confusedUsers = profiles?.filter(p =>
-      p.subscription_status === 'active' && p.tier === 'free'
+      p.subscription_status === 'active' && p.subscription_tier === 'free'
     ) || [];
 
     if (confusedUsers.length > 0) {
-      console.log(`\n🐛 ISSUE FOUND: ${confusedUsers.length} user(s) with subscription_status='active' but tier='free'`);
+      console.log(`\n🐛 ISSUE FOUND: ${confusedUsers.length} user(s) with subscription_status='active' but subscription_tier='free'`);
       confusedUsers.forEach(u => {
         console.log(`   - ${u.email}: This is causing the admin panel to show $29 revenue incorrectly`);
       });
-      console.log('\n   FIX: subscription_status should be "inactive" if tier is "free"');
+      console.log('\n   FIX: subscription_status should be "inactive" if subscription_tier is "free"');
     }
 
   } catch (error) {

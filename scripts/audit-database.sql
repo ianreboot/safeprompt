@@ -7,7 +7,7 @@ SELECT 'auth.users - Details' as info, id, email, created_at FROM auth.users;
 
 -- 2. Check profiles table (current active table)
 SELECT 'profiles' as table_name, COUNT(*) as count FROM profiles;
-SELECT 'profiles - Details' as info, id, email, tier, subscription_status, stripe_customer_id, api_calls_this_month, is_active, created_at FROM profiles;
+SELECT 'profiles - Details' as info, id, email, subscription_tier, subscription_status, stripe_customer_id, api_requests_used, is_active, created_at FROM profiles;
 
 -- 3. Check if deprecated 'users' table exists
 SELECT 'users (deprecated)' as table_name, COUNT(*) as count FROM users;

@@ -4,7 +4,7 @@
  * ISSUES FOUND:
  * 1. Deprecated "users" table still exists with stale data
  * 2. Deprecated "api_keys" table exists (empty but should be removed)
- * 3. profiles table has subscription_status='active' but tier=null (should be 'inactive')
+ * 3. profiles table has subscription_status='active' but subscription_tier=null (should be 'inactive')
  * 4. 7 auth.users but only 2 profiles (missing 5 profiles)
  * 5. Test users in auth.users and waitlist
  *
@@ -33,7 +33,7 @@ async function cleanup() {
     const { data: updatedProfiles, error: updateError } = await supabase
       .from('profiles')
       .update({ subscription_status: 'inactive' })
-      .or('tier.is.null,tier.eq.free')
+      .or('subscription_tier.is.null,subscription_tier.eq.free')
       .eq('subscription_status', 'active')
       .select();
 
@@ -102,7 +102,7 @@ async function cleanup() {
 
     console.log(`Profiles: ${profiles?.length || 0}`);
     profiles?.forEach(p => {
-      console.log(`  - ${p.email}: tier=${p.tier || 'null'}, status=${p.subscription_status}, stripe=${p.stripe_customer_id || 'null'}`);
+      console.log(`  - ${p.email}: tier=${p.subscription_tier || 'null'}, status=${p.subscription_status}, stripe=${p.stripe_customer_id || 'null'}`);
     });
 
     const { data: waitlist } = await supabase

@@ -10,43 +10,43 @@ const supabase = createClient(
 
 async function checkTiers() {
   // Get existing users to see what tiers are used
-  const { data: users, error } = await supabase
-    .from('users')
-    .select('tier, email');
+  const { data: profiles, error } = await supabase
+    .from('profiles')
+    .select('subscription_tier, email');
 
   if (error) {
     console.error('Error:', error.message);
     return;
   }
 
-  console.log('Existing tiers in use:');
-  const tiers = new Set(users.map(u => u.tier));
+  console.log('Existing subscription tiers in use:');
+  const tiers = new Set(profiles.map(u => u.subscription_tier));
   tiers.forEach(tier => {
-    const count = users.filter(u => u.tier === tier).length;
+    const count = profiles.filter(u => u.subscription_tier === tier).length;
     console.log(`  - ${tier}: ${count} user(s)`);
   });
 
   // Try different tier values to find valid ones
-  const testTiers = ['free', 'starter', 'pro', 'business', 'enterprise', 'beta', 'premium'];
+  const testTiers = ['free', 'starter', 'pro', 'business', 'enterprise', 'beta', 'premium', 'early_bird'];
 
-  console.log('\nTesting valid tier values...');
+  console.log('\nTesting valid subscription_tier values...');
   for (const tier of testTiers) {
     const { error } = await supabase
-      .from('users')
+      .from('profiles')
       .insert({
         id: crypto.randomUUID(),
         email: `test-tier-${tier}@test.com`,
-        tier: tier
+        subscription_tier: tier
       });
 
     if (error) {
-      if (error.message.includes('tier_check')) {
+      if (error.message.includes('tier_check') || error.message.includes('subscription_tier')) {
         console.log(`  ✗ ${tier} - invalid`);
       }
     } else {
       console.log(`  ✓ ${tier} - valid`);
       // Clean up test
-      await supabase.from('users').delete().eq('email', `test-tier-${tier}@test.com`);
+      await supabase.from('profiles').delete().eq('email', `test-tier-${tier}@test.com`);
     }
   }
 }

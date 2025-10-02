@@ -76,15 +76,14 @@ async function executeSQLFile(filename) {
 async function createTestData() {
   console.log('\n📝 Creating test data...');
 
-  // Create test user
+  // Create test user (NOTE: This script is deprecated, use /scripts/create-internal-user.js instead)
   const { data: user, error: userError } = await supabase
-    .from('users')
+    .from('profiles')
     .insert({
       email: 'test@safeprompt.dev',
-      tier: 'beta',
-      monthly_limit: 50000,
-      is_beta_user: true,
-      beta_price: 5.00
+      subscription_tier: 'free',
+      api_requests_limit: 50000,
+      subscription_status: 'active'
     })
     .select()
     .single();
@@ -130,8 +129,8 @@ async function createTestData() {
 async function configureProject() {
   console.log('\n⚙️  Configuring project settings...');
 
-  // Enable Row Level Security by default
-  const tables = ['users', 'api_keys', 'usage_logs', 'waitlist', 'attack_patterns', 'billing_events'];
+  // Enable Row Level Security by default (NOTE: This script is deprecated)
+  const tables = ['profiles', 'api_logs', 'waitlist'];
 
   for (const table of tables) {
     console.log(`🔒 Ensuring RLS enabled for ${table}...`);
