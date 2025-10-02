@@ -462,15 +462,15 @@ For questions, contact: support@safeprompt.dev`
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="min-h-screen bg-black text-white flex flex-col overflow-x-hidden">
       <Header user={user} usage={usage} />
 
       {/* Main Content - Add padding-top to account for fixed header */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 flex-1">
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 flex-1">
 
         {/* Stats Overview */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
-          <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+          <div className="bg-gray-900 rounded-lg p-4 border border-gray-800 min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">This Month</p>
@@ -480,7 +480,7 @@ For questions, contact: support@safeprompt.dev`
             </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+          <div className="bg-gray-900 rounded-lg p-4 border border-gray-800 min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Avg Response</p>
@@ -495,7 +495,7 @@ For questions, contact: support@safeprompt.dev`
             </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+          <div className="bg-gray-900 rounded-lg p-4 border border-gray-800 min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Error Rate</p>
@@ -510,7 +510,7 @@ For questions, contact: support@safeprompt.dev`
             </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
+          <div className="bg-gray-900 rounded-lg p-4 border border-gray-800 min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Current Plan</p>
@@ -524,7 +524,7 @@ For questions, contact: support@safeprompt.dev`
         <div className="grid gap-6 lg:grid-cols-3">
 
           {/* API Key Card - Improved */}
-          <div className="lg:col-span-2 bg-gray-900 rounded-lg p-6 border border-gray-800">
+          <div className="lg:col-span-2 bg-gray-900 rounded-lg p-6 border border-gray-800 min-w-0">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <Key className="w-5 h-5 text-primary" />
@@ -555,8 +555,8 @@ For questions, contact: support@safeprompt.dev`
               </button>
 
               <div className="p-4 pr-12 font-mono text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="break-all">{maskedKey}</span>
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="break-all truncate">{maskedKey}</span>
                   {hasRealKey && (
                     <button
                       onClick={() => setShowKey(!showKey)}
@@ -591,7 +591,7 @@ For questions, contact: support@safeprompt.dev`
           </div>
 
           {/* Current Plan Card */}
-          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
+          <div className="bg-gray-900 rounded-lg p-6 border border-gray-800 min-w-0">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-primary" />
               Subscription
