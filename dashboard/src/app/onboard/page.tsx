@@ -83,13 +83,13 @@ function OnboardContent() {
   async function createStripeSession(userId: string, email: string) {
     try {
       // Call consolidated admin API for Stripe checkout
+      // Don't send priceId - let API use its production environment variable
       const response = await fetch('https://api.safeprompt.dev/api/admin?action=create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId,
           email,
-          priceId: process.env.NEXT_PUBLIC_STRIPE_BETA_PRICE_ID || 'price_beta_5',
           successUrl: 'https://dashboard.safeprompt.dev?welcome=true',
           cancelUrl: 'https://safeprompt.dev/signup'
         })
