@@ -4,12 +4,15 @@ import Stripe from 'stripe';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+// Use production Stripe keys in production, fall back to test keys for dev
+const stripeKey = process.env.STRIPE_PROD_SECRET_KEY || process.env.STRIPE_SECRET_KEY || '';
+const stripe = new Stripe(stripeKey);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Use production Supabase in production, fall back to dev for local
 const supabase = createClient(
-  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
-  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.SAFEPROMPT_PROD_SUPABASE_URL || process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
+  process.env.SAFEPROMPT_PROD_SUPABASE_SERVICE_ROLE_KEY || process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
 const hashApiKey = (key) => {
@@ -153,7 +156,7 @@ async function handleCreateCheckout(req, res) {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId || process.env.STRIPE_BETA_PRICE_ID,
+          price: priceId || process.env.STRIPE_PROD_BETA_PRICE_ID || process.env.STRIPE_BETA_PRICE_ID,
           quantity: 1,
         },
       ],

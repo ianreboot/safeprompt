@@ -9,7 +9,6 @@ import { Shield, Mail, Lock, ArrowRight } from 'lucide-react'
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isSignUp, setIsSignUp] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -19,28 +18,16 @@ export default function Login() {
     setMessage('')
 
     try {
-      if (isSignUp) {
-        // Sign up new user
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-        })
+      // Sign in existing user
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-        if (error) throw error
+      if (error) throw error
 
-        setMessage('Check your email for the confirmation link!')
-      } else {
-        // Sign in existing user
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-
-        if (error) throw error
-
-        // Redirect to dashboard
-        window.location.href = '/'
-      }
+      // Redirect to dashboard
+      window.location.href = '/'
     } catch (error: any) {
       setMessage(error.message || 'An error occurred')
     } finally {
@@ -57,10 +44,10 @@ export default function Login() {
         {/* Login heading */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold">
-            {isSignUp ? 'Create your account' : 'Sign in to your dashboard'}
+            Sign in to your dashboard
           </h1>
           <p className="text-gray-400 mt-2">
-            {isSignUp ? 'Start protecting your AI applications' : 'Welcome back'}
+            Welcome back
           </p>
         </div>
 
@@ -122,27 +109,24 @@ export default function Login() {
               'Loading...'
             ) : (
               <>
-                {isSignUp ? 'Create Account' : 'Sign In'}
+                Sign In
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
         </form>
 
-        {/* Toggle between sign in and sign up */}
+        {/* Link to main signup page */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-400">
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+            Don't have an account?
             {' '}
-            <button
-              onClick={() => {
-                setIsSignUp(!isSignUp)
-                setMessage('')
-              }}
+            <a
+              href="https://safeprompt.dev/signup"
               className="text-primary hover:underline"
             >
-              {isSignUp ? 'Sign in' : 'Sign up'}
-            </button>
+              Sign up
+            </a>
           </p>
         </div>
 

@@ -4,12 +4,15 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+// Use production Stripe keys in production, fall back to test keys for dev
+const stripeKey = process.env.STRIPE_PROD_SECRET_KEY || process.env.STRIPE_SECRET_KEY || '';
+const stripe = new Stripe(stripeKey);
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Use production Supabase in production, fall back to dev for local
 const supabase = createClient(
-  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
-  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.SAFEPROMPT_PROD_SUPABASE_URL || process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
+  process.env.SAFEPROMPT_PROD_SUPABASE_SERVICE_ROLE_KEY || process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
 const hashApiKey = (key) => {
@@ -145,7 +148,7 @@ export default async function handler(req, res) {
 
 async function handleStripeWebhook(req, res) {
   const sig = req.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = process.env.STRIPE_PROD_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
     console.error('STRIPE_WEBHOOK_SECRET not configured');
