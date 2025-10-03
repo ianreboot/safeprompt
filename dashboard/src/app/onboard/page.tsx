@@ -20,10 +20,8 @@ function OnboardContent() {
     const storedIntent = sessionStorage.getItem('signup_intent')
     if (storedIntent) {
       const data = JSON.parse(storedIntent)
-      // Store password in sessionStorage for signup
-      if (data.password) {
-        sessionStorage.setItem('temp_password', data.password)
-      }
+      // Clean up signup intent immediately (security: don't persist sensitive data)
+      sessionStorage.removeItem('signup_intent')
       handleSignup(data.email || email, data.plan || plan)
     } else if (email) {
       handleSignup(email, plan)
@@ -35,7 +33,8 @@ function OnboardContent() {
 
   async function handleSignup(userEmail: string, userPlan: string) {
     try {
-      const password = sessionStorage.getItem('temp_password') || generateSecurePassword()
+      // Generate password once per signup, never store in sessionStorage (XSS vulnerability)
+      const password = generateSecurePassword()
 
       // Step 1: Create user based on plan
       if (userPlan === 'paid') {
