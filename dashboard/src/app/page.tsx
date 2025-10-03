@@ -304,13 +304,38 @@ export default function Dashboard() {
   }
 
   async function openBillingPortal() {
-    // In production, this would redirect to Stripe Customer Portal
-    // const response = await fetch('/api/create-portal-session', { method: 'POST' })
-    // const { url } = await response.json()
-    // window.location.href = url
+    try {
+      // Get current session to extract auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Please log in again to access billing portal');
+        return;
+      }
 
-    // For now, show a message
-    alert('Stripe billing portal integration coming soon.\n\nYou will be able to:\n- Update payment method\n- View invoices\n- Cancel subscription\n- Download receipts')
+      // Determine API URL based on environment
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.safeprompt.dev';
+
+      const response = await fetch(`${apiUrl}/api/stripe-portal`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || data.error || 'Failed to open billing portal');
+        return;
+      }
+
+      // Redirect to Stripe Customer Portal
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Billing portal error:', error);
+      alert('Failed to open billing portal. Please try again.');
+    }
   }
 
   async function signOut() {
