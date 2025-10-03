@@ -695,6 +695,239 @@ PROD: safeprompt.dev → api.safeprompt.dev → PROD DB (adyfhzbcsqzgqvyimycv)
 
 ---
 
+### 12. Authentication Bypass Vulnerabilities (Multiple Backdoors)
+
+**WHY It Happens:**
+Optional API key validation with hardcoded bypass keys creates multiple attack vectors:
+```javascript
+// ❌ BROKEN: Multiple ways to bypass authentication
+if (apiKey && apiKey !== 'demo_key') {
+  // Validate against database
+}
+// Problem 1: No key at all → bypasses validation
+// Problem 2: apiKey === 'demo_key' → bypasses validation
+// Problem 3: Both allow unlimited free API usage
+```
+
+**HOW To Fix:**
+Always require and validate API keys, no exceptions:
+```javascript
+// Step 1: Require API key
+if (!apiKey || apiKey.trim() === '') {
+  return res.status(401).json({ error: 'API key required' });
+}
+
+// Step 2: Validate ALL keys against database (including internal)
+const { data: profile, error } = await supabase
+  .from('profiles')
+  .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier')
+  .eq('api_key', apiKey)
+  .single();
+
+if (error || !profile) {
+  return res.status(401).json({ error: 'Invalid API key' });
+}
+
+// Step 3: Check subscription status (skip for internal users)
+const isInternalUser = profile.subscription_tier === 'internal';
+if (!isInternalUser && profile.subscription_status !== 'active') {
+  return res.status(403).json({ error: 'Subscription inactive' });
+}
+
+// Step 4: Enforce rate limits (even for internal, for tracking)
+if (profile.api_requests_used >= profile.api_requests_limit) {
+  return res.status(429).json({ error: 'Rate limit exceeded' });
+}
+```
+
+**Internal/Admin Access Pattern:**
+Use database tiers, not hardcoded keys:
+```sql
+-- Create internal user with unlimited quota
+UPDATE profiles
+SET subscription_tier = 'internal',
+    subscription_status = 'active',
+    api_requests_limit = 999999999
+WHERE email = 'admin@example.com';
+```
+
+**Recognition:**
+- "API works without authentication" = missing key requirement check
+- "Special demo/test keys in code" = hardcoded backdoors
+- "Internal users bypass validation" = use tier-based permissions instead
+
+**Impact:** CRITICAL - Allows anyone to use paid service for free, $0 revenue protection
+
+**Date Discovered:** 2025-10-03
+
+---
+
+### 13. Cloudflare Pages Production vs Preview Deployments
+
+**WHY It Happens:**
+Cloudflare Pages has separate Production and Preview environments. Custom domains point to Production, but wrangler defaults to deploying as Preview when not on main branch:
+```bash
+# ❌ WRONG: Deploys to Preview environment
+wrangler pages deploy out --project-name myproject
+# Custom domain (myproject.com) shows old version
+# Only preview URL (abc123.pages.dev) shows new version
+
+# Problem: Production environment serves main branch by default
+# If you're on dev branch, deployment goes to Preview
+```
+
+**HOW To Fix:**
+Always specify `--branch main` to deploy to Production environment:
+```bash
+# ✅ CORRECT: Deploy to Production environment
+wrangler pages deploy out --project-name myproject --branch main
+
+# Verify deployment:
+# 1. Check deployment output shows Production URL
+# 2. Test custom domain immediately (no propagation delay)
+# 3. Verify bundle hash matches local build
+```
+
+**Verification Pattern:**
+```bash
+# 1. Build locally and note bundle hash
+cd /home/projects/myproject
+npm run build
+ls out/_next/static/chunks/app/page/  # Note hash: page-abc123.js
+
+# 2. Deploy to Production
+wrangler pages deploy out --project-name myproject --branch main
+
+# 3. Verify deployed bundle matches
+curl -s https://myproject.com/page | grep -o 'page-[a-z0-9]*.js'
+# Should match: page-abc123.js
+
+# 4. Verify bundle contents
+curl -s https://myproject.com/_next/static/chunks/app/page/page-abc123.js | grep "expected-api-url"
+```
+
+**Environment Override Pattern:**
+For dev deployments, use .env.local to override build-time variables:
+```bash
+# Create override file
+cp .env.development .env.local
+
+# Build (Next.js reads .env.local first)
+npm run build
+
+# Deploy to dev
+wrangler pages deploy out --project-name myproject-dev --branch main
+
+# Clean up to prevent contamination
+rm .env.local
+```
+
+**Recognition:**
+- "Deployed but custom domain shows old version" = deployed to Preview, not Production
+- "*.pages.dev URL works but custom domain doesn't" = check which environment custom domain points to
+- "Different bundle hashes between local and deployed" = wrong build deployed
+
+**Impact:** HIGH - Users see stale code, breaking changes not visible, debugging confusion
+
+**Date Discovered:** 2025-10-03
+
+---
+
+### 14. Next.js Environment Variable Build-Time Substitution
+
+**WHY It Happens:**
+Next.js replaces `process.env.NEXT_PUBLIC_*` at build time, creating static bundles with hardcoded values:
+```javascript
+// Source code:
+fetch(`${process.env.NEXT_PUBLIC_API_URL}/validate`)
+
+// After build with .env.production (API_URL=https://api.prod.com):
+fetch(`https://api.prod.com/validate`)  // Hardcoded in bundle
+
+// Problem: Can't change API URL without rebuilding
+// Deploying same bundle to dev environment still calls prod API
+```
+
+**HOW To Fix:**
+Use .env.local to override build-time variables for different environments:
+```bash
+# Dev build workflow:
+cd /home/projects/safeprompt/website
+
+# 1. Create .env.local with dev values
+cat > .env.local << 'EOF'
+NEXT_PUBLIC_API_URL=https://dev-api.example.com
+NEXT_PUBLIC_SUPABASE_URL=https://dev-db.supabase.co
+EOF
+
+# 2. Build (reads .env.local first, overrides .env.production)
+npm run build
+
+# 3. Verify bundle has correct URL
+grep -r "dev-api.example.com" out/_next/static/
+
+# 4. Deploy to dev
+wrangler pages deploy out --project-name myproject-dev --branch main
+
+# 5. CRITICAL: Remove .env.local to prevent prod contamination
+rm .env.local
+
+# Prod build workflow (no .env.local, uses .env.production):
+npm run build  # Uses production URLs
+wrangler pages deploy out --project-name myproject --branch main
+```
+
+**File Precedence (Next.js):**
+```
+.env.local (highest priority - never commit)
+  ↓
+.env.production (for prod builds)
+  ↓
+.env.development (for dev builds)
+  ↓
+.env (lowest priority - defaults)
+```
+
+**Bundle Verification:**
+```bash
+# Find bundle files
+find out/_next/static/chunks -name "*.js" -type f
+
+# Search for API URL in bundles
+grep -r "api.example.com" out/_next/static/chunks/
+
+# Check specific page bundle
+grep -o "https://[a-z0-9.-]*/api" out/_next/static/chunks/app/page/page-*.js
+```
+
+**Common Mistake Pattern:**
+```bash
+# ❌ WRONG: Build once, deploy everywhere
+npm run build  # Uses .env.production
+wrangler pages deploy out --project-name dev  # Still calls prod API!
+wrangler pages deploy out --project-name prod  # Correct for prod
+
+# ✅ CORRECT: Separate builds with overrides
+# Dev build
+cp .env.development .env.local && npm run build && rm .env.local
+wrangler pages deploy out --project-name dev --branch main
+
+# Prod build
+npm run build  # No .env.local, uses .env.production
+wrangler pages deploy out --project-name prod --branch main
+```
+
+**Recognition:**
+- "Deployed to dev but calling prod API" = bundle has hardcoded prod URLs
+- "Environment variables not updating" = values baked into bundle at build time
+- "Need to redeploy after changing .env" = rebuild required, not just redeploy
+
+**Impact:** CRITICAL - Dev/prod environment contamination, test data in prod database
+
+**Date Discovered:** 2025-10-03
+
+---
+
 ## OPERATIONAL PROCEDURES
 
 ### Deployment Workflow
