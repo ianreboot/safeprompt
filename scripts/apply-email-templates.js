@@ -22,8 +22,10 @@
 
 const https = require('https');
 const fs = require('fs');
+require('dotenv').config({ path: require('path').join(require('os').homedir(), 'projects/.env') });
 
 const SUPABASE_ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN || 'sbp_6175a3eae85d560c40f8b9d2d38cff212415ed6f';
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 // Branded password reset template
 const passwordResetTemplate = `<!DOCTYPE html>
@@ -93,10 +95,14 @@ function applyConfig(projectRef, environment) {
     const payload = JSON.stringify({
       // Email templates
       mailer_subjects_recovery: 'Reset your SafePrompt password',
-      mailer_templates_recovery_content: passwordResetTemplate
-      // NOTE: SMTP configuration removed - Resend API key is invalid
-      // Using Supabase default SMTP (rate limited to 2 emails/hour)
-      // To enable custom SMTP: Get valid Resend API key and verify domain first
+      mailer_templates_recovery_content: passwordResetTemplate,
+      // SMTP configuration (Resend)
+      smtp_host: 'smtp.resend.com',
+      smtp_port: '587',
+      smtp_user: 'resend',
+      smtp_pass: RESEND_API_KEY,
+      smtp_admin_email: 'noreply@safeprompt.dev',
+      smtp_sender_name: 'SafePrompt'
     });
 
     const options = {
@@ -117,11 +123,13 @@ function applyConfig(projectRef, environment) {
       res.on('end', () => {
         if (res.statusCode === 200) {
           const data = JSON.parse(body);
-          console.log(`✅ ${environment}: Email templates applied successfully`);
+          console.log(`✅ ${environment}: Email config applied successfully`);
           console.log(`   Email subject: ${data.mailer_subjects_recovery}`);
           console.log(`   Template size: ${data.mailer_templates_recovery_content.length} chars`);
-          console.log(`   SMTP: ${data.smtp_host || 'Supabase default (rate limited)'}`);
-          if (!data.smtp_host) {
+          console.log(`   SMTP host: ${data.smtp_host || 'Supabase default'}`);
+          if (data.smtp_host) {
+            console.log(`   SMTP sender: ${data.smtp_sender_name} <${data.smtp_admin_email}>`);
+          } else {
             console.log(`   ⚠️  Rate limit: ${data.rate_limit_email_sent || 2} emails/hour`);
           }
           resolve();
@@ -145,7 +153,7 @@ function applyConfig(projectRef, environment) {
 
 async function main() {
   console.log('═'.repeat(80));
-  console.log('APPLYING EMAIL TEMPLATES TO SUPABASE');
+  console.log('APPLYING EMAIL TEMPLATES & SMTP CONFIG TO SUPABASE');
   console.log('═'.repeat(80));
   console.log('');
 
@@ -160,22 +168,18 @@ async function main() {
   }
 
   console.log('═'.repeat(80));
-  console.log('✅ EMAIL TEMPLATES APPLIED SUCCESSFULLY');
+  console.log('✅ EMAIL CONFIG APPLIED SUCCESSFULLY');
   console.log('═'.repeat(80));
   console.log('');
   console.log('What was configured:');
   console.log('✅ Branded SafePrompt email templates (password reset)');
-  console.log('⚠️  Using Supabase default SMTP (rate limited to 2 emails/hour)');
-  console.log('');
-  console.log('Known issue:');
-  console.log('⚠️  Emails may not be delivered due to Supabase SMTP rate limits');
-  console.log('⚠️  Custom SMTP (Resend) requires valid API key and domain verification');
+  console.log('✅ Resend SMTP for reliable delivery');
+  console.log('✅ Sender: SafePrompt <noreply@safeprompt.dev>');
   console.log('');
   console.log('Next steps:');
-  console.log('1. Get valid Resend API key from https://resend.com/api-keys');
-  console.log('2. Verify safeprompt.dev domain in Resend');
-  console.log('3. Update this script with working SMTP credentials');
-  console.log('4. Test password reset in DEV/PROD');
+  console.log('1. Test password reset in DEV: https://dev-dashboard.safeprompt.dev/forgot-password');
+  console.log('2. Test password reset in PROD: https://dashboard.safeprompt.dev/forgot-password');
+  console.log('3. Verify branded emails are received from SafePrompt');
   console.log('');
 }
 

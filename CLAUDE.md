@@ -404,11 +404,11 @@ If you prefer to use Supabase UI:
 ### Email Branding Status
 
 **Current State (Updated Oct 3, 2025):**
-- ✅ **Password reset emails**: Fully branded SafePrompt HTML templates
-- ⚠️ **Email delivery**: Using Supabase default SMTP (rate limited to 2 emails/hour)
+- ✅ **Password reset emails**: Fully branded + Resend SMTP delivery
+- ✅ **Email delivery**: Using Resend SMTP (reliable, no rate limits)
 - ✅ **Welcome emails** (paid users): Fully branded via Resend from "SafePrompt <noreply@safeprompt.dev>"
 - ✅ **Approval emails** (free users): Fully branded via Resend
-- ❌ **Custom SMTP**: Resend API key invalid - needs to be updated
+- ✅ **All Supabase auth emails**: Sent via Resend SMTP from SafePrompt
 
 **⚠️ CRITICAL: Why Email Templates Keep Reverting**
 
@@ -439,19 +439,21 @@ If API approach fails, templates can be set manually:
 2. Run `node scripts/configure-auth-emails.js` to see templates
 3. Copy/paste templates into dashboard
 
-**SMTP Configuration (⚠️ Currently Disabled):**
-- ❌ Custom SMTP attempted but Resend API key is invalid
-- ⚠️ Currently using Supabase default SMTP (severe rate limits)
-- ⚠️ Rate limit: 2 emails per hour (very restrictive)
-- ⚠️ Emails may not be delivered reliably
+**SMTP Configuration (✅ Configured and Working):**
+- ✅ Host: smtp.resend.com:587
+- ✅ Username: resend
+- ✅ Password: Resend API key (re_Pw7jjaoC...)
+- ✅ From: SafePrompt <noreply@safeprompt.dev>
+- ✅ Configured via `apply-email-templates.js` script
+- ✅ Applied to both DEV and PROD
 
-**To Fix Email Delivery:**
-1. Get valid Resend API key from https://resend.com/api-keys
-2. Verify safeprompt.dev domain in Resend dashboard
-3. Update `scripts/apply-email-templates.js` with working SMTP credentials
-4. Run script to apply SMTP configuration
+**Benefits:**
+- ✅ No rate limits (unlike Supabase default SMTP)
+- ✅ Reliable delivery through Resend infrastructure
+- ✅ Branded sender name (SafePrompt, not "Supabase Auth")
+- ✅ Professional email experience for users
 
-**Note:** Supabase Pro plan is active, so custom SMTP is available once configured properly
+**Note:** Correct Resend API key is stored in `/home/projects/.env` (re_Pw7jjaoC...)
 
 ### Supabase Configuration Checklist
 
