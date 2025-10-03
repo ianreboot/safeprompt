@@ -35,42 +35,52 @@ function OnboardContent() {
 
   async function handleSignup(userEmail: string, userPlan: string) {
     try {
-      // Step 1: Create Supabase auth user
       const password = sessionStorage.getItem('temp_password') || generateSecurePassword()
 
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: userEmail,
-        password: password,
-        options: {
-          // Paid users skip email confirmation (payment validates identity)
-          emailRedirectTo: `https://dashboard.safeprompt.dev/confirm?plan=${userPlan}`,
-          data: {
-            plan: userPlan,
-            signup_source: 'unified_signup',
-            beta_user: true,
-            auto_confirm: userPlan === 'paid'  // Flag for admin to auto-approve
-          }
-        }
-      })
-
-      if (authError) throw authError
-
-      const user = authData.user
-      if (!user) throw new Error('User creation failed')
-
-      setUserId(user.id)
-
-      // Step 2: Handle based on plan
+      // Step 1: Create user based on plan
       if (userPlan === 'paid') {
-        // Paid users: Skip email confirmation, go straight to Stripe
-        // Payment validates their identity
+        // Paid users: Create via API with email already confirmed
+        // This skips the confirmation email entirely
+        const response = await fetch('https://api.safeprompt.dev/api/admin?action=create-paid-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmail, password })
+        })
+
+        const data = await response.json()
+        if (!data.success) throw new Error(data.error || 'Failed to create account')
+
+        setUserId(data.userId)
+
+        // Go straight to Stripe checkout
         setStep('payment')
-        await createStripeSession(user.id, userEmail)
+        await createStripeSession(data.userId, userEmail)
+
       } else {
-        // Free users: Need to confirm email first
+        // Free users: Use normal signUp (sends confirmation email)
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: userEmail,
+          password: password,
+          options: {
+            emailRedirectTo: `https://dashboard.safeprompt.dev/confirm?plan=free`,
+            data: {
+              plan: 'free',
+              signup_source: 'unified_signup',
+              beta_user: true
+            }
+          }
+        })
+
+        if (authError) throw authError
+
+        const user = authData.user
+        if (!user) throw new Error('User creation failed')
+
+        setUserId(user.id)
+
         // Show message to check email
         setStep('check_email')
-        // Note: Supabase sends confirmation email automatically
+        // Supabase sends confirmation email automatically
         // After they confirm, they'll be redirected to /confirm page
       }
 
