@@ -404,10 +404,11 @@ If you prefer to use Supabase UI:
 ### Email Branding Status
 
 **Current State (Updated Oct 3, 2025):**
-- ✅ **Password reset emails**: Fully branded + Resend SMTP delivery
+- ✅ **Password reset emails**: Fully branded SafePrompt HTML templates
+- ⚠️ **Email delivery**: Using Supabase default SMTP (rate limited to 2 emails/hour)
 - ✅ **Welcome emails** (paid users): Fully branded via Resend from "SafePrompt <noreply@safeprompt.dev>"
 - ✅ **Approval emails** (free users): Fully branded via Resend
-- ✅ **All Supabase auth emails**: Now use Resend SMTP (reliable delivery from SafePrompt)
+- ❌ **Custom SMTP**: Resend API key invalid - needs to be updated
 
 **⚠️ CRITICAL: Why Email Templates Keep Reverting**
 
@@ -438,15 +439,19 @@ If API approach fails, templates can be set manually:
 2. Run `node scripts/configure-auth-emails.js` to see templates
 3. Copy/paste templates into dashboard
 
-**SMTP Configuration (✅ Already Applied):**
-- ✅ Host: smtp.resend.com:587
-- ✅ Username: resend
-- ✅ Password: Resend API key (re_FPZirbgX...)
-- ✅ From: SafePrompt <noreply@safeprompt.dev>
-- ✅ Configured via `apply-email-templates.js` script
-- ✅ Applies to both DEV and PROD automatically
+**SMTP Configuration (⚠️ Currently Disabled):**
+- ❌ Custom SMTP attempted but Resend API key is invalid
+- ⚠️ Currently using Supabase default SMTP (severe rate limits)
+- ⚠️ Rate limit: 2 emails per hour (very restrictive)
+- ⚠️ Emails may not be delivered reliably
 
-**Note:** Supabase Pro plan required for custom SMTP (enabled on this account)
+**To Fix Email Delivery:**
+1. Get valid Resend API key from https://resend.com/api-keys
+2. Verify safeprompt.dev domain in Resend dashboard
+3. Update `scripts/apply-email-templates.js` with working SMTP credentials
+4. Run script to apply SMTP configuration
+
+**Note:** Supabase Pro plan is active, so custom SMTP is available once configured properly
 
 ### Supabase Configuration Checklist
 
