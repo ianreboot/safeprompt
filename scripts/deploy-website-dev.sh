@@ -1,29 +1,32 @@
 #!/bin/bash
 # Deploy Website to DEV environment
-# NOTE: safeprompt-dev project's production_branch is set to "main"
-# Deploying to main branch creates Production deployments that serve dev.safeprompt.dev
+#
+# Environment variables are set via export before building
+# This overrides .env.production values during the build process
 
 set -e
 
 echo "🔧 Building Website for DEV environment..."
 cd /home/projects/safeprompt/website
 
-# Backup production env and use development env for build
-cp .env.production .env.production.backup
-cp .env.development .env.production
+# Export DEV environment variables (these override .env.production)
+export NEXT_PUBLIC_DASHBOARD_URL=https://dev-dashboard.safeprompt.dev
+export NEXT_PUBLIC_WEBSITE_URL=https://dev.safeprompt.dev
+export NEXT_PUBLIC_APP_URL=https://dev.safeprompt.dev
+export NEXT_PUBLIC_API_URL=https://api.safeprompt.dev
+export NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51SAa37IceoFuMr41R6d2ODUwqR9ComtqErYAOrN0cnInmMHSfXVcyHmANp3roVctJ7YW9gSxBw0CiSJpkd6IiAvr0086DtC7BR
+export NEXT_PUBLIC_BETA_PRICE_ID=price_1SAaJGIceoFuMr41bDK1egBY
 
-# Build with dev environment variables
+# Build with exported DEV environment variables
 npm run build
 
-# Restore production env
-mv .env.production.backup .env.production
-
-# Deploy to Cloudflare Pages DEV project (main branch = production)
+# Deploy to Cloudflare Pages DEV project
+# production_branch=main, so deploying to main creates Production deployments
 echo "🚀 Deploying to dev.safeprompt.dev..."
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
 wrangler pages deploy out --project-name safeprompt-dev --branch main --commit-dirty=true
 
-# Purge Cloudflare cache to ensure changes are visible
+# Purge Cloudflare cache to ensure changes are visible immediately
 echo "🗑️  Purging Cloudflare cache..."
 curl -X POST "https://api.cloudflare.com/client/v4/zones/d52a2b2821d830af1c9ace4cdc407a9f/purge_cache" \
   -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
