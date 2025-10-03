@@ -139,11 +139,18 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - **Payments**: Stripe ✅ (sandbox mode, ready for production activation)
 - **Email**: Resend ✅ (configured for transactional emails)
 
-### Recent Updates (October 2, 2025)
+### Recent Updates (October 2025)
+
+**October 3, 2025:**
+- ✅ **Production Database Live**: PROD database (adyfhzbcsqzgqvyimycv) operational with 5 users
+- ✅ **Password Management**: Forgot password, reset password, and change password features added
+- ✅ **Database Architecture Fixed**: Dashboard now correctly connects to PROD database
+- ✅ **Dev/Prod Split Complete**: Separate databases for development and production
+
+**October 2, 2025:**
 - ✅ **Database Audit Complete**: Fixed signup flow, added missing RLS policies, verified data integrity
 - ✅ **Admin Panel Live**: User management, waitlist approval, activity logs, subscription management
 - ✅ **Schema Documentation**: `/database/setup.sql` updated to match production schema 100%
-- 📋 **Next Step**: Create production database and split dev/prod environments
 
 ### Beta Access
 - Sign up at https://safeprompt.dev
