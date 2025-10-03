@@ -108,6 +108,63 @@ async function handleUserApiKey(req, res) {
   }
 }
 
+async function handleCreatePaidUser(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      error: 'Missing required fields',
+      code: 'MISSING_FIELDS'
+    });
+  }
+
+  try {
+    // Create user with email already confirmed (paid users skip confirmation)
+    const { data, error } = await supabase.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,  // Skip email confirmation for paid users
+      user_metadata: {
+        plan: 'paid',
+        signup_source: 'unified_signup',
+        beta_user: true
+      }
+    });
+
+    if (error) {
+      console.error('Create paid user error:', error);
+      return res.status(400).json({
+        success: false,
+        error: error.message || 'Failed to create user'
+      });
+    }
+
+    if (!data.user) {
+      return res.status(500).json({
+        success: false,
+        error: 'User creation failed'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      userId: data.user.id,
+      email: data.user.email
+    });
+
+  } catch (error) {
+    console.error('Create paid user error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to create paid user'
+    });
+  }
+}
+
 async function handleCreateCheckout(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -430,6 +487,11 @@ export default async function handler(req, res) {
   // Stripe checkout (POST only, no auth needed for initial creation)
   if (action === 'create-checkout') {
     return handleCreateCheckout(req, res);
+  }
+
+  // Create paid user (POST only, skips email confirmation)
+  if (action === 'create-paid-user') {
+    return handleCreatePaidUser(req, res);
   }
 
   // Waitlist approval (requires admin key)
