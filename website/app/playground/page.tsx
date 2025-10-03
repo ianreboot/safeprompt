@@ -225,7 +225,7 @@ export default function PlaygroundPage() {
       // Temporarily use validate endpoint until playground endpoint deploys
       const [protectedResponse, unprotectedResponse] = await Promise.all([
         // Protected AI - real SafePrompt validation
-        fetch('https://api.safeprompt.dev/api/v1/validate', {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/validate`, {
           method: 'POST',
           headers: {
             'X-API-Key': 'sp_test_unlimited_dogfood_key_2025',

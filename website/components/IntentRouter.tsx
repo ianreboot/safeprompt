@@ -83,7 +83,7 @@ export default function IntentRouter({ intent, onClose }: IntentRouterProps) {
     try {
       if (intent === 'waitlist') {
         // Waitlist only needs email
-        const response = await fetch('https://api.safeprompt.dev/api/waitlist', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/waitlist`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
