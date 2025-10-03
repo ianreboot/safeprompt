@@ -1127,12 +1127,16 @@ export async function validateHardened(prompt, options = {}) {
       stats
     };
   } catch (error) {
+    // Log the actual error for debugging
+    console.error('[SafePrompt] Pass 2 error:', error.message);
+    console.error('[SafePrompt] Error stack:', error.stack);
+
     // Fallback to consensus result on Pass 2 error
     return {
       safe: consensus.safe !== false,
       confidence: consensus.confidence * 0.7,
       threats: consensus.threats.concat(['pass2_error']),
-      reasoning: `Pass 2 error, using consensus: ${consensus.reasoning}`,
+      reasoning: `Pass 2 error (${error.message}), using consensus: ${consensus.reasoning}`,
       processingTime: Date.now() - startTime,
       stage: 'pass2',
       cost: stats.totalCost
