@@ -495,6 +495,44 @@ If API approach fails, templates can be set manually:
 
 **Note:** Correct Resend API key is stored in `/home/projects/.env` (re_Pw7jjaoC...)
 
+**Password Reset Fix (Oct 3, 2025):**
+- ✅ Redirect URLs configured in Supabase Auth settings
+- ✅ Script created: `scripts/configure-redirect-urls.js`
+- ✅ Whitelisted URLs:
+  - DEV: https://dev-dashboard.safeprompt.dev/reset-password
+  - PROD: https://dashboard.safeprompt.dev/reset-password
+  - Localhost for local testing
+- ⚠️ **Next**: Request new reset link and test (old links won't work)
+
+### 🔜 Pending Verification Tasks
+
+**MEDIUM PRIORITY** (Verify when convenient):
+1. **Deployed Dashboard Database Connections**
+   - Check that PROD dashboard connects to PROD database
+   - Check that DEV dashboard connects to DEV database
+   - Verification commands:
+     ```bash
+     # Check PROD dashboard build
+     curl -s https://dashboard.safeprompt.dev/_next/static/chunks/*.js | grep -o 'adyfhzbcsqzgqvyimycv' | head -1
+     # Should return: adyfhzbcsqzgqvyimycv (PROD database)
+
+     # Check DEV dashboard build
+     curl -s https://dev-dashboard.safeprompt.dev/_next/static/chunks/*.js | grep -o 'vkyggknknyfallmnrmfu' | head -1
+     # Should return: vkyggknknyfallmnrmfu (DEV database)
+     ```
+
+2. **Full Signup → Payment → Dashboard Flow (PROD)**
+   - Create new test account
+   - Complete Stripe payment
+   - Verify dashboard access
+   - Verify API key generation
+   - Verify subscription tier shows correctly
+
+**LOW PRIORITY** (Already automated/documented):
+1. **Email Templates** - Automated via `scripts/apply-email-templates.js`
+2. **Git Repository Separation** - Documented with warnings in CLAUDE.md
+3. **Environment Variables** - Centralized in `/home/projects/.env` with .gitignore protection
+
 ### Supabase Configuration Checklist
 
 **CRITICAL: These must be configured (not in code):**
