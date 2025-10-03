@@ -79,18 +79,12 @@ export default function AdminDashboard() {
       .limit(100)
 
     if (profilesError) {
-      console.error('❌ RLS ERROR fetching profiles:', profilesError)
-      console.error('   Message:', profilesError.message)
-      console.error('   Code:', profilesError.code)
-      console.error('   Details:', profilesError.details)
+      console.error('Error fetching profiles:', profilesError.message)
     }
 
     if (profilesData) {
-      console.log('✅ Fetched', profilesData.length, 'profiles')
       setUsers(profilesData)
       setFilteredUsers(profilesData)
-    } else {
-      console.log('⚠️  No profiles data returned')
     }
 
     // Fetch waitlist

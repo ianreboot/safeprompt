@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PasswordSettings from '@/components/PasswordSettings'
@@ -10,12 +10,6 @@ import {
   FileText, HelpCircle, TrendingUp, Clock, Check, ExternalLink,
   AlertCircle, ChevronRight, Shield, Zap, Users, Download
 } from 'lucide-react'
-
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 interface ApiKey {
   key: string
