@@ -45,7 +45,7 @@ export default async function handler(req, res) {
       // Try plaintext match first (standard SaaS approach)
       let { data: profile, error } = await supabase
         .from('profiles')
-        .select('id, api_requests_used, api_requests_limit, subscription_status')
+        .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier')
         .eq('api_key', apiKey)
         .single();
 
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
         const hashedKey = hashApiKey(apiKey);
         const result = await supabase
           .from('profiles')
-          .select('id, api_requests_used, api_requests_limit, subscription_status')
+          .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier')
           .eq('api_key_hash', hashedKey)
           .single();
 
@@ -66,7 +66,9 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: 'Invalid API key' });
       }
 
-      if (profile.subscription_status !== 'active') {
+      // Check subscription status (skip for internal users)
+      const isInternalUser = profile.subscription_tier === 'internal';
+      if (!isInternalUser && profile.subscription_status !== 'active') {
         return res.status(403).json({ error: 'Subscription inactive' });
       }
 
