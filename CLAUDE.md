@@ -928,6 +928,121 @@ wrangler pages deploy out --project-name prod --branch main
 
 ---
 
+### 15. CORS Wildcard Security Vulnerability
+
+**WHY It Happens:**
+Using wildcard CORS (`Access-Control-Allow-Origin: *`) allows any website to call your API with user credentials:
+```javascript
+// ❌ BROKEN: Any malicious site can steal API keys
+res.setHeader('Access-Control-Allow-Origin', '*');
+
+// Malicious site can:
+// 1. Trick user to visit malicious.com
+// 2. JavaScript makes API call with user's API key from localStorage
+// 3. Attacker harvests API key
+```
+
+**HOW To Fix:**
+Implement origin whitelist with specific allowed domains:
+```javascript
+// ✅ FIXED: Only allow specific origins
+const allowedOrigins = [
+  'https://safeprompt.dev',
+  'https://dashboard.safeprompt.dev',
+  'https://dev.safeprompt.dev',
+  'http://localhost:3000'
+];
+
+const origin = req.headers.origin || req.headers.referer;
+if (origin && allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+  res.setHeader('Access-Control-Allow-Origin', origin);
+}
+// Malicious origins get no CORS header = browser blocks request
+```
+
+**Recognition:** Security audit finds `*` in CORS headers = API key theft vulnerability
+
+**Impact:** CRITICAL - Enables credential harvesting, distributed attacks, revenue loss
+
+**Date Discovered:** 2025-10-03
+
+---
+
+### 16. Cache Isolation Missing (Data Leakage)
+
+**WHY It Happens:**
+In-memory cache keyed only by prompt content, not by user identity:
+```javascript
+// ❌ BROKEN: Cache doesn't isolate by user
+function getCacheKey(prompt, mode) {
+  return crypto.createHash('md5').update(`${prompt}:${mode}`).digest('hex');
+}
+
+// Scenario:
+// 1. Paid User A validates "test" → Result cached
+// 2. Free User B validates "test" → Gets User A's cached result (no AI cost)
+// 3. Free user bypasses rate limits and costs
+```
+
+**HOW To Fix:**
+Include user identifier in cache key:
+```javascript
+// ✅ FIXED: Cache isolated per user
+function getCacheKey(prompt, mode, profileId) {
+  return crypto.createHash('md5').update(`${profileId}:${prompt}:${mode}`).digest('hex');
+}
+
+// Now each user has separate cache
+// User A's results never served to User B
+```
+
+**Recognition:** Cache implementation doesn't include user/profile ID = data leakage risk
+
+**Impact:** CRITICAL - Privacy violation, revenue leak (free users benefit from paid caches)
+
+**Date Discovered:** 2025-10-03
+
+---
+
+### 17. Performance Claims vs Architecture Reality
+
+**WHY It Happens:**
+Marketing claims inherited from old architecture, don't reflect current hardened validator:
+```javascript
+// Old validator (single AI call): ~350ms
+// Documented: "Fast: ~350ms avg (67% instant via pattern detection)"
+
+// New hardened validator (multiple sequential AI calls):
+// 1. Orchestrator AI call: ~1-2s
+// 2. Parallel validators (3 AI calls): ~1-2s total
+// 3. Pass 2 (if uncertain): ~1-2s
+// Total: 3-6 seconds actual
+
+// Claims not updated after architecture change
+```
+
+**HOW To Fix:**
+Update documentation to reflect current performance:
+```markdown
+// ✅ REALISTIC: Match actual measurements
+- Pattern detection: <100ms (instant)
+- AI validation: 3-6 seconds (multi-pass security depth)
+- Trade-off: Security depth over speed
+```
+
+**Alternative:** Optimize hardened validator:
+- Cache orchestrator results
+- Implement request queuing
+- Add timeout fallbacks to pattern-only mode
+
+**Recognition:** Actual API response times 10x slower than documented = update docs or optimize
+
+**Impact:** HIGH - User expectation mismatch, reputation risk
+
+**Date Discovered:** 2025-10-03
+
+---
+
 ## OPERATIONAL PROCEDURES
 
 ### Deployment Workflow
