@@ -1,10 +1,24 @@
 # SafePrompt Production System
 
 **Status**: ✅ LIVE IN PRODUCTION
-**Last Updated**: 2025-10-01
-**Version**: External Reference Action Detection v2.0
+**Last Updated**: 2025-10-03
+**Version**: External Reference Action Detection v2.0 + Dual API Architecture
 
 ## 🚀 Quick Reference
+
+### Environment URLs
+
+**Production:**
+- Website: https://safeprompt.dev
+- Dashboard: https://dashboard.safeprompt.dev
+- API: https://api.safeprompt.dev (Vercel: safeprompt-api)
+- Database: adyfhzbcsqzgqvyimycv (Supabase)
+
+**Development:**
+- Website: https://dev.safeprompt.dev
+- Dashboard: https://dev-dashboard.safeprompt.dev
+- API: https://dev-api.safeprompt.dev (Vercel: safeprompt-api-dev)
+- Database: vkyggknknyfallmnrmfu (Supabase)
 
 ### Performance Metrics
 | Metric | September | October | Improvement |
@@ -22,10 +36,14 @@
 ```
 
 ### Key Production Files
-- `/api/lib/ai-validator.js` - Production interface
-- `/api/lib/ai-validator-hardened.js` - Core implementation with action detection (lines 879-943)
-- `/api/lib/external-reference-detector.js` - External ref detection (95% accuracy)
-- `/api/lib/prompt-validator.js` - Pattern pre-filter
+- `/home/projects/safeprompt/api/lib/ai-validator.js` - Production interface
+- `/home/projects/safeprompt/api/lib/ai-validator-hardened.js` - Core implementation with action detection (lines 879-943)
+- `/home/projects/safeprompt/api/lib/external-reference-detector.js` - External ref detection (95% accuracy)
+- `/home/projects/safeprompt/api/lib/prompt-validator.js` - Pattern pre-filter
+
+### Vercel Projects
+- **Production API**: safeprompt-api → api.safeprompt.dev → PROD DB (adyfhzbcsqzgqvyimycv)
+- **Development API**: safeprompt-api-dev → dev-api.safeprompt.dev → DEV DB (vkyggknknyfallmnrmfu)
 
 ### Latest Feature: External Reference Action Detection (Oct 2025)
 **Problem Solved**: System was either blocking all external references (high false positives) or allowing all (security risk).
@@ -205,7 +223,43 @@ const preFilterThreshold = {
 ```
 
 ### Updating External Reference Detection
-Edit `/api/lib/external-reference-detector.js` to add new patterns or encoding methods.
+Edit `/home/projects/safeprompt/api/lib/external-reference-detector.js` to add new patterns or encoding methods.
+
+### Dev/Prod Environment Management
+
+**Complete Separation (Implemented Oct 3, 2025):**
+Each environment has its own:
+- API Vercel project
+- Database (Supabase)
+- DNS endpoint
+- Environment variables
+
+**Testing in DEV:**
+```bash
+# Test dev API endpoint
+curl -X POST https://dev-api.safeprompt.dev/api/v1/validate \
+  -H "X-API-Key: sp_test_..." \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"test input"}'
+```
+
+**Deploying to DEV:**
+```bash
+# Deploy API to DEV
+cd /home/projects/safeprompt/api
+rm -rf .vercel
+vercel link --project safeprompt-api-dev --yes
+vercel --prod
+```
+
+**Deploying to PROD:**
+```bash
+# Deploy API to PROD
+cd /home/projects/safeprompt/api
+rm -rf .vercel
+vercel link --project safeprompt-api --yes
+vercel --prod
+```
 
 ## 🚨 Important Notes
 

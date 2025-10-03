@@ -20,7 +20,7 @@ Fast pattern detection for known attack vectors:
 - XSS/code injection patterns
 - Encoding bypass attempts (Unicode, hex, URL encoding)
 
-**Source**: Adapted from `/home/projects/api/utils/prompt-validator.js`
+**Source**: Adapted from `/home/projects/safeprompt/api/lib/prompt-validator.js`
 
 ### Layer 2: Confidence Scoring (1ms)
 Calculates confidence based on:
@@ -53,23 +53,30 @@ const MODELS = {
 ## Tech Stack
 
 ### API Layer (Vercel Functions)
+
+**Production API** (safeprompt-api):
 ```
 /api/
   v1/
-    check.js       # Main validation endpoint
-    batch.js       # Bulk validation
-  admin/
-    stats.js       # Usage statistics
-    keys.js        # API key management
-  webhooks/
-    stripe.js      # Payment webhooks
+    validate.js    # Main validation endpoint (all modes)
+  admin.js         # System management
+  webhooks.js      # External webhooks (Stripe)
+  contact.js       # Contact form
+  waitlist.js      # Waitlist signups
 ```
+
+**Development API** (safeprompt-api-dev):
+- Identical code structure
+- Separate Vercel project
+- Connects to DEV database (vkyggknknyfallmnrmfu)
+- Domain: dev-api.safeprompt.dev
 
 **Why Vercel Functions?**
 - Stateless validation ideal for serverless
 - Auto-scaling with no configuration
 - 10ms cold starts
 - Global edge network
+- Easy dev/prod separation via projects
 
 ### Database (Supabase PostgreSQL)
 

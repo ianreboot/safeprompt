@@ -40,53 +40,56 @@ export default async function handler(req, res) {
     const apiKey = req.headers['x-api-key'];
     let profileId = null;
 
-    // Validate API key (all users including internal)
-    if (apiKey && apiKey !== 'demo_key') {
-      // Try plaintext match first (standard SaaS approach)
-      let { data: profile, error } = await supabase
+    // 🔒 CRITICAL: API key is REQUIRED
+    if (!apiKey || apiKey.trim() === '') {
+      return res.status(401).json({ error: 'API key required' });
+    }
+
+    // Validate API key against database (all users including internal)
+    // Try plaintext match first (standard SaaS approach)
+    let { data: profile, error } = await supabase
+      .from('profiles')
+      .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier')
+      .eq('api_key', apiKey)
+      .single();
+
+    // Fallback to hashed key for backward compatibility (during migration)
+    if (error || !profile) {
+      const hashedKey = hashApiKey(apiKey);
+      const result = await supabase
         .from('profiles')
         .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier')
-        .eq('api_key', apiKey)
+        .eq('api_key_hash', hashedKey)
         .single();
 
-      // Fallback to hashed key for backward compatibility (during migration)
-      if (error || !profile) {
-        const hashedKey = hashApiKey(apiKey);
-        const result = await supabase
-          .from('profiles')
-          .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier')
-          .eq('api_key_hash', hashedKey)
-          .single();
-
-        profile = result.data;
-        error = result.error;
-      }
-
-      if (error || !profile) {
-        return res.status(401).json({ error: 'Invalid API key' });
-      }
-
-      // Check subscription status (skip for internal users)
-      const isInternalUser = profile.subscription_tier === 'internal';
-      if (!isInternalUser && profile.subscription_status !== 'active') {
-        return res.status(403).json({ error: 'Subscription inactive' });
-      }
-
-      if (profile.api_requests_used >= profile.api_requests_limit) {
-        return res.status(429).json({ error: 'Rate limit exceeded' });
-      }
-
-      profileId = profile.id;
-
-      // Increment usage
-      await supabase
-        .from('profiles')
-        .update({
-          api_requests_used: profile.api_requests_used + 1,
-          last_used_at: new Date().toISOString()
-        })
-        .eq('id', profile.id);
+      profile = result.data;
+      error = result.error;
     }
+
+    if (error || !profile) {
+      return res.status(401).json({ error: 'Invalid API key' });
+    }
+
+    // Check subscription status (skip for internal users)
+    const isInternalUser = profile.subscription_tier === 'internal';
+    if (!isInternalUser && profile.subscription_status !== 'active') {
+      return res.status(403).json({ error: 'Subscription inactive' });
+    }
+
+    if (profile.api_requests_used >= profile.api_requests_limit) {
+      return res.status(429).json({ error: 'Rate limit exceeded' });
+    }
+
+    profileId = profile.id;
+
+    // Increment usage (tracks all requests, including internal)
+    await supabase
+      .from('profiles')
+      .update({
+        api_requests_used: profile.api_requests_used + 1,
+        last_used_at: new Date().toISOString()
+      })
+      .eq('id', profile.id);
 
     // Get request parameters
     const {

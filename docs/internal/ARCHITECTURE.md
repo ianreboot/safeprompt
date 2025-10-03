@@ -67,7 +67,7 @@ Response: {safe: boolean, confidence: number, threats: []}
 
 ⚠️ **CRITICAL**: We consolidated from 14 endpoints to 5 to fix Vercel's 12-function limit on Hobby plan.
 
-#### Current Consolidated Endpoints (`/api/api/`)
+#### Current Consolidated Endpoints (`/home/projects/safeprompt/api/`)
 | File | Purpose | Old Endpoints Replaced | Status |
 |------|---------|------------------------|--------|
 | `admin.js` | System management | `health.js`, `status.js`, `cache-stats.js`, `user/api-key.js` | ✅ Active |
@@ -208,9 +208,18 @@ NEXT_PUBLIC_APP_URL=https://dashboard.safeprompt.dev
 ## 🚀 Deployment Status
 
 ### Deployed & Running
-- Website: safeprompt.dev (Cloudflare Pages)
-- Dashboard: dashboard.safeprompt.dev (Cloudflare Pages)
-- API: api.safeprompt.dev (Vercel Functions)
+
+**Production Environment:**
+- Website: safeprompt.dev (Cloudflare Pages: safeprompt)
+- Dashboard: dashboard.safeprompt.dev (Cloudflare Pages: safeprompt-dashboard)
+- API: api.safeprompt.dev (Vercel: safeprompt-api)
+- Database: adyfhzbcsqzgqvyimycv (Supabase)
+
+**Development Environment:**
+- Website: dev.safeprompt.dev (Cloudflare Pages: safeprompt-dev)
+- Dashboard: dev-dashboard.safeprompt.dev (Cloudflare Pages: safeprompt-dashboard-dev)
+- API: dev-api.safeprompt.dev (Vercel: safeprompt-api-dev)
+- Database: vkyggknknyfallmnrmfu (Supabase)
 
 ### Pending Setup
 - [ ] Create Stripe products and update price IDs

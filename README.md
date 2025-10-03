@@ -130,22 +130,34 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ## Current Deployment Status (October 2025)
 
-### Live Services (DEV Environment)
+### Live Services
+
+**Production Environment:**
 - **Website**: https://safeprompt.dev ✅ (Cloudflare Pages)
-- **API**: https://api.safeprompt.dev ✅ (Vercel Functions)
+- **API**: https://api.safeprompt.dev ✅ (Vercel: safeprompt-api)
 - **Dashboard**: https://dashboard.safeprompt.dev ✅ (Cloudflare Pages)
-- **Admin Panel**: https://dashboard.safeprompt.dev/admin ✅ (Complete with user management, waitlist approval)
-- **Database**: Supabase ✅ (audited & verified, RLS policies complete)
+- **Database**: Supabase (adyfhzbcsqzgqvyimycv) ✅
+
+**Development Environment:**
+- **Website**: https://dev.safeprompt.dev ✅ (Cloudflare Pages)
+- **API**: https://dev-api.safeprompt.dev ✅ (Vercel: safeprompt-api-dev)
+- **Dashboard**: https://dev-dashboard.safeprompt.dev ✅ (Cloudflare Pages)
+- **Database**: Supabase (vkyggknknyfallmnrmfu) ✅
+
+**Additional Services:**
+- **Admin Panel**: https://dashboard.safeprompt.dev/admin ✅ (User management, waitlist approval)
 - **Payments**: Stripe ✅ (sandbox mode, ready for production activation)
 - **Email**: Resend ✅ (configured for transactional emails)
 
 ### Recent Updates (October 2025)
 
 **October 3, 2025:**
+- ✅ **Complete Dev/Prod Separation**: Dual API architecture implemented (safeprompt-api + safeprompt-api-dev)
+- ✅ **Environment Isolation**: Each environment has its own API endpoint, database, and Vercel project
+- ✅ **DNS Configuration**: Added dev-api.safeprompt.dev for development API
+- ✅ **Code Cleanup**: Eliminated all hardcoded URLs, using environment variables
 - ✅ **Production Database Live**: PROD database (adyfhzbcsqzgqvyimycv) operational with 5 users
 - ✅ **Password Management**: Forgot password, reset password, and change password features added
-- ✅ **Database Architecture Fixed**: Dashboard now correctly connects to PROD database
-- ✅ **Dev/Prod Split Complete**: Separate databases for development and production
 
 **October 2, 2025:**
 - ✅ **Database Audit Complete**: Fixed signup flow, added missing RLS policies, verified data integrity

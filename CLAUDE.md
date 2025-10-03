@@ -18,17 +18,21 @@ DEV_DB_ID=vkyggknknyfallmnrmfu   # supabase.co/dashboard/project/vkyggknknyfallm
 PUBLIC_REPO=https://github.com/ianreboot/safeprompt           # NPM package ONLY
 PRIVATE_REPO=https://github.com/ianreboot/safeprompt-internal # ALL development
 
-# Domains
+# Domains (Production)
 WEBSITE=https://safeprompt.dev
-DASHBOARD=https://dash.safeprompt.dev
-DEV_WEBSITE=https://dev-safeprompt.rebootmedia.net
-DEV_DASHBOARD=https://dev-safeprompt-dash.rebootmedia.net
+DASHBOARD=https://dashboard.safeprompt.dev
+API=https://api.safeprompt.dev
+
+# Domains (Development)
+DEV_WEBSITE=https://dev.safeprompt.dev
+DEV_DASHBOARD=https://dev-dashboard.safeprompt.dev
+DEV_API=https://dev-api.safeprompt.dev
 
 # Key Paths
 PROJECT=/home/projects/safeprompt
 DASHBOARD=/home/projects/safeprompt/dashboard
 WEBSITE=/home/projects/safeprompt/website
-API=/home/projects/api/api
+API=/home/projects/safeprompt/api
 ```
 
 ### Core Value Proposition
@@ -41,20 +45,64 @@ API=/home/projects/api/api
 
 ### Quick Commands
 ```bash
-# Deploy to dev (after code changes)
+# Deploy to DEV (after code changes)
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
-cd /home/projects/safeprompt/dashboard && npm run build && wrangler pages deploy dist --project-name safeprompt-dash-dev
-cd /home/projects/safeprompt/website && npm run build && wrangler pages deploy dist --project-name safeprompt-dev
+cd /home/projects/safeprompt/dashboard && npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev
+cd /home/projects/safeprompt/website && npm run build && wrangler pages deploy out --project-name safeprompt-dev
+cd /home/projects/safeprompt/api && vercel --prod  # Deploys to safeprompt-api-dev
 
-# Test API
-curl -X POST https://api.rebootmedia.net/api/safeprompt \
+# Deploy to PROD
+cd /home/projects/safeprompt/dashboard && npm run build && wrangler pages deploy out --project-name safeprompt-dashboard
+cd /home/projects/safeprompt/website && npm run build && wrangler pages deploy out --project-name safeprompt
+cd /home/projects/safeprompt/api && vercel --prod  # Deploys to safeprompt-api
+
+# Test API (PROD)
+curl -X POST https://api.safeprompt.dev/api/v1/validate \
   -H "Content-Type: application/json" \
   -H "X-API-Key: sp_test_..." \
   -d '{"prompt":"test input"}'
 
-# Database access
+# Test API (DEV)
+curl -X POST https://dev-api.safeprompt.dev/api/v1/validate \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: sp_test_..." \
+  -d '{"prompt":"test input"}'
+
+# Database access (PROD)
 supabase db reset --db-url postgresql://postgres.adyfhzbcsqzgqvyimycv:PASSWORD@aws-0-us-west-1.pooler.supabase.com:6543/postgres
+
+# Database access (DEV)
+supabase db reset --db-url postgresql://postgres.vkyggknknyfallmnrmfu:PASSWORD@aws-0-us-west-1.pooler.supabase.com:6543/postgres
 ```
+
+---
+
+## 🚨 MANDATORY PROTOCOL FOR ALL TASKS
+
+**BEFORE starting ANY task, you MUST:**
+
+1. **Read This CLAUDE.md File**
+   - Contains ALL hard-fought knowledge (#1-11 in this doc)
+   - Has exact commands that work
+   - Shows patterns that succeeded in the past
+   - **Location**: `/home/projects/safeprompt/CLAUDE.md`
+
+2. **Read Reference Documentation**
+   - `reference-vercel-access.md` - For ALL Vercel operations
+   - `reference-cloudflare-access.md` - For ALL Cloudflare/DNS operations
+   - `reference-supabase-access.md` - For ALL database operations
+   - **Location**: `/home/projects/docs/reference-*`
+
+3. **Use Context7 When Stuck**
+   - Add "use context7" to get current API documentation
+   - Example: "use context7 for Vercel domain configuration"
+   - Prevents using outdated/wrong API syntax
+
+**🚨 NO EXCUSES ALLOWED:**
+- "SSL propagating" = WRONG METHOD. DNS/SSL is instant when configured correctly.
+- "Git push failed" = WRONG METHOD. Use PAT authentication below.
+- "Cache issues" = WRONG METHOD. Deployments are immediate.
+- **If something doesn't work, you're using the WRONG approach. Read the docs above.**
 
 ---
 
@@ -105,19 +153,20 @@ ENTERPRISE = Custom pricing
 
 ## CURRENT ARCHITECTURE
 
-### System Components
+### Production Environment
 ```
 ┌─────────────────────────────────────────────┐
 │ Frontend (Cloudflare Pages)                 │
 │ - website: safeprompt.dev                   │
-│ - dashboard: dash.safeprompt.dev            │
-│ - React + Vite + TailwindCSS                │
+│ - dashboard: dashboard.safeprompt.dev       │
+│ - React + Next.js + TailwindCSS             │
 └─────────────────────────────────────────────┘
                     ↓ HTTPS
 ┌─────────────────────────────────────────────┐
-│ API (Vercel Functions)                      │
-│ - /api/safeprompt - validation endpoint     │
-│ - /api/stripe-webhook - payment processing  │
+│ API (Vercel: safeprompt-api)                │
+│ - api.safeprompt.dev                        │
+│ - /api/v1/validate - validation endpoint    │
+│ - /api/webhooks - payment processing        │
 │ - Node.js 20.x runtime                      │
 └─────────────────────────────────────────────┘
                     ↓
@@ -131,10 +180,46 @@ ENTERPRISE = Custom pricing
 ┌─────────────────────────────────────────────┐
 │ Database (Supabase)                         │
 │ - PROD: adyfhzbcsqzgqvyimycv               │
-│ - DEV: vkyggknknyfallmnrmfu                │
 │ - RLS policies with SECURITY DEFINER        │
 └─────────────────────────────────────────────┘
 ```
+
+### Development Environment
+```
+┌─────────────────────────────────────────────┐
+│ Frontend (Cloudflare Pages)                 │
+│ - website: dev.safeprompt.dev               │
+│ - dashboard: dev-dashboard.safeprompt.dev   │
+│ - React + Next.js + TailwindCSS             │
+└─────────────────────────────────────────────┘
+                    ↓ HTTPS
+┌─────────────────────────────────────────────┐
+│ API (Vercel: safeprompt-api-dev)            │
+│ - dev-api.safeprompt.dev                    │
+│ - /api/v1/validate - validation endpoint    │
+│ - /api/webhooks - payment processing        │
+│ - Node.js 20.x runtime                      │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│ AI Validation (OpenRouter)                  │
+│ - Same models as production                 │
+│ - Shared API key                            │
+└─────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────┐
+│ Database (Supabase)                         │
+│ - DEV: vkyggknknyfallmnrmfu                │
+│ - Same schema as production                 │
+│ - Test data only                            │
+└─────────────────────────────────────────────┘
+```
+
+**🚨 CRITICAL: Complete Environment Isolation**
+- DEV and PROD have ZERO overlap
+- Each environment has its own: API endpoint, database, Vercel project
+- Frontend .env files control which API to hit
+- Never mix credentials between environments
 
 ### File Structure
 ```
@@ -553,11 +638,68 @@ Implement grace period for old keys (future feature) or warn users:
 
 ---
 
+### 11. Single API Architecture (Dev/Prod Database Contamination)
+
+**WHY It Happens:**
+Attempting dev/prod split by only separating databases without separate API infrastructure causes all dev traffic to hit prod database:
+```
+❌ BROKEN ARCHITECTURE:
+DEV:  dev.safeprompt.dev → api.safeprompt.dev → PROD DB (adyfhzbcsqzgqvyimycv)
+                           ↑ WRONG! Should go to DEV API
+PROD: safeprompt.dev → api.safeprompt.dev → PROD DB (adyfhzbcsqzgqvyimycv)
+```
+
+**HOW To Fix:**
+Create complete dual API architecture with separate Vercel projects:
+```bash
+# 1. Create dev API Vercel project
+vercel project create safeprompt-api-dev
+
+# 2. Add dev database env vars to new project
+vercel env add SAFEPROMPT_SUPABASE_URL "https://vkyggknknyfallmnrmfu.supabase.co" --project safeprompt-api-dev
+vercel env add SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY "[DEV_KEY]" --project safeprompt-api-dev
+
+# 3. Create DNS CNAME for dev API
+# Zone: safeprompt.dev
+# Record: dev-api CNAME cname.vercel-dns.com
+
+# 4. Add domain to Vercel project
+curl -X POST https://api.vercel.com/v10/projects/safeprompt-api-dev/domains \
+  -H "Authorization: Bearer $VERCEL_TOKEN" \
+  -d '{"name":"dev-api.safeprompt.dev"}'
+
+# 5. Update frontend .env.development files
+# website/.env.development: NEXT_PUBLIC_API_URL=https://dev-api.safeprompt.dev
+# dashboard/.env.development: NEXT_PUBLIC_API_URL=https://dev-api.safeprompt.dev
+
+# 6. Fix hardcoded URLs in code
+# Replace: fetch('https://api.safeprompt.dev/...')
+# With: fetch(`${process.env.NEXT_PUBLIC_API_URL}/...`)
+```
+
+**✅ CORRECT ARCHITECTURE:**
+```
+DEV:  dev.safeprompt.dev → dev-api.safeprompt.dev → DEV DB (vkyggknknyfallmnrmfu)
+PROD: safeprompt.dev → api.safeprompt.dev → PROD DB (adyfhzbcsqzgqvyimycv)
+```
+
+**Recognition:**
+- 0% test success rate after "dev/prod split"
+- Dev signup creates users in prod database
+- Dashboard shows prod users in dev environment
+- All dev traffic in prod database logs
+
+**Impact:** CRITICAL - Dev testing contaminated prod database with test data for 12 hours
+
+**Date Discovered:** 2025-10-03
+
+---
+
 ## OPERATIONAL PROCEDURES
 
 ### Deployment Workflow
 
-**Standard Flow (After Code Changes):**
+**DEV Deployment (After Code Changes):**
 ```bash
 # 1. Commit changes
 cd /home/projects/safeprompt
@@ -568,26 +710,46 @@ git push origin dev
 # 2. Load Cloudflare credentials
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
 
-# 3. Deploy dashboard
+# 3. Deploy dashboard to DEV
 cd /home/projects/safeprompt/dashboard
 npm run build
-wrangler pages deploy dist --project-name safeprompt-dash-dev
+wrangler pages deploy out --project-name safeprompt-dashboard-dev
 
-# 4. Deploy website
+# 4. Deploy website to DEV
 cd /home/projects/safeprompt/website
 npm run build
-wrangler pages deploy dist --project-name safeprompt-dev
+wrangler pages deploy out --project-name safeprompt-dev
 
-# 5. Verify deployments
-# Dashboard: https://dev-safeprompt-dash.rebootmedia.net
-# Website: https://dev-safeprompt.rebootmedia.net
+# 5. Deploy API to DEV (if API changes)
+cd /home/projects/safeprompt/api
+rm -rf .vercel  # Clear project link
+vercel link --project safeprompt-api-dev --yes
+vercel --prod
+
+# 6. Verify DEV deployments
+# Dashboard: https://dev-dashboard.safeprompt.dev
+# Website: https://dev.safeprompt.dev
+# API: https://dev-api.safeprompt.dev
 ```
 
-**Production Deployment:**
+**PROD Deployment:**
 ```bash
-# Same as dev, but use production project names:
-wrangler pages deploy dist --project-name safeprompt-dash  # Dashboard
-wrangler pages deploy dist --project-name safeprompt       # Website
+# Same workflow, use production project names:
+# Dashboard
+cd /home/projects/safeprompt/dashboard && npm run build
+wrangler pages deploy out --project-name safeprompt-dashboard
+
+# Website
+cd /home/projects/safeprompt/website && npm run build
+wrangler pages deploy out --project-name safeprompt
+
+# API (if changes)
+cd /home/projects/safeprompt/api
+rm -rf .vercel
+vercel link --project safeprompt-api --yes
+vercel --prod
+
+# Verify: https://dashboard.safeprompt.dev, https://safeprompt.dev, https://api.safeprompt.dev
 ```
 
 ---
@@ -998,7 +1160,16 @@ curl https://openrouter.ai/api/v1/auth/key \
 
 ### Resolved Incidents
 
-**Oct 3, 2025 - Database Separation Issue**
+**Oct 3, 2025 - Dev/Prod Environment Separation (CRITICAL)**
+- Dev testing was writing to PROD database for 12 hours
+- Root cause: Single API architecture - only databases separated, not API layer
+- Impact: Test data contaminated production database
+- Resolution: Created dual API architecture (safeprompt-api-dev + safeprompt-api)
+- Added: dev-api.safeprompt.dev DNS, separate Vercel project, fixed hardcoded URLs
+- Lesson: Dev/prod split requires COMPLETE isolation - frontend, API, AND database
+- Documentation: Added to HARD-FOUGHT KNOWLEDGE section (#11)
+
+**Oct 3, 2025 - Database Connection Issue**
 - First paying customer couldn't access dashboard
 - Root cause: Dashboard using DEV database instead of PROD
 - Resolution: Removed .env.local, rebuilt with .env.production
