@@ -940,6 +940,90 @@ CREATE TABLE waitlist (
 - Dashboard environment configuration fixed
 - Password management added (forgot/reset/change)
 
+### How to Execute SQL on Supabase (CRITICAL KNOWLEDGE - Oct 3, 2025)
+
+**Problem Solved:** RLS policies needed to be created/updated, but psql was not available.
+
+**Solution:** Use Supabase Management API `/database/query` endpoint.
+
+#### Method: Direct SQL Execution via Management API
+
+```javascript
+const PROJECT_REF = process.env.SAFEPROMPT_PROD_PROJECT_REF;  // e.g., 'adyfhzbcsqzgqvyimycv'
+const SUPABASE_ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;  // PAT from /home/projects/.env
+
+const response = await fetch(
+  `https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query`,
+  {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${SUPABASE_ACCESS_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: `
+        CREATE POLICY "policy_name"
+        ON table_name FOR SELECT
+        TO authenticated
+        USING (auth.uid() = id);
+      `
+    })
+  }
+);
+
+const data = await response.json();
+```
+
+#### Example: Fix RLS Policies (Oct 3, 2025)
+
+**Problem:** Dashboard showed "Free Plan" for paying user, admin showed "0 users"
+**Root Cause:** RLS policies blocked ALL queries to profiles table
+**Solution:** Created policy allowing users to read own profile + internal users to read all
+
+```javascript
+// Script: /home/projects/safeprompt/scripts/execute-rls-fix.js
+node scripts/execute-rls-fix.js
+```
+
+**SQL Executed:**
+```sql
+-- Drop old policies
+DROP POLICY IF EXISTS "Users can read own profile" ON profiles;
+
+-- Create comprehensive policy
+CREATE POLICY "Users and admins can read profiles"
+ON profiles FOR SELECT
+TO authenticated
+USING (
+  auth.uid() = id  -- Users can read own profile
+  OR
+  EXISTS (  -- Internal users can read all profiles
+    SELECT 1 FROM profiles
+    WHERE profiles.id = auth.uid()
+    AND profiles.subscription_tier = 'internal'
+  )
+);
+```
+
+#### Key Files
+- **Reference:** `/home/projects/docs/reference-supabase-access.md` (complete Supabase capabilities)
+- **Example:** `/home/projects/safeprompt/scripts/deploy-prod-schema.js` (original method)
+- **RLS Fix:** `/home/projects/safeprompt/scripts/execute-rls-fix.js` (policy creation)
+- **Verify:** `/home/projects/safeprompt/scripts/verify-rls-complete.js` (check policies)
+
+#### Why This Matters
+- ✅ Can create/modify RLS policies programmatically
+- ✅ Can execute any SQL (DDL, DML, DCL)
+- ✅ No need for psql or manual Supabase Dashboard SQL editor
+- ✅ Fully automated database operations
+- ✅ Future AI can fix database issues independently
+
+#### Limitations
+- Requires `SUPABASE_ACCESS_TOKEN` (PAT) in `/home/projects/.env`
+- Requires `PROJECT_REF` environment variable
+- Large result sets may be truncated
+- Complex queries should be split into smaller operations
+
 ### Implementation Documentation
 
 For complete implementation details, roadmap, and task tracking, see:
