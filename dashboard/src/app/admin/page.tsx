@@ -72,15 +72,25 @@ export default function AdminDashboard() {
 
   async function fetchData() {
     // Fetch profiles
-    const { data: profilesData } = await supabase
+    const { data: profilesData, error: profilesError } = await supabase
       .from('profiles')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(100)
 
+    if (profilesError) {
+      console.error('❌ RLS ERROR fetching profiles:', profilesError)
+      console.error('   Message:', profilesError.message)
+      console.error('   Code:', profilesError.code)
+      console.error('   Details:', profilesError.details)
+    }
+
     if (profilesData) {
+      console.log('✅ Fetched', profilesData.length, 'profiles')
       setUsers(profilesData)
       setFilteredUsers(profilesData)
+    } else {
+      console.log('⚠️  No profiles data returned')
     }
 
     // Fetch waitlist
