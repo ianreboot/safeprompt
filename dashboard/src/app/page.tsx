@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import PasswordSettings from '@/components/PasswordSettings'
 import {
   Key, Eye, EyeOff, Copy, RefreshCw, LogOut, BarChart, CreditCard,
   FileText, HelpCircle, TrendingUp, Clock, Check, ExternalLink,
@@ -744,6 +745,11 @@ For questions, contact: support@safeprompt.dev`
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Password Settings Section */}
+        <div className="mt-8">
+          <PasswordSettings />
         </div>
 
         {/* Documentation Section */}
