@@ -20,8 +20,7 @@ import { buildConsensus, calculateTotalCost, calculateProcessingTime } from './c
 // Load environment variables - works both locally and on Vercel
 dotenv.config();
 
-// Testing backdoor configuration
-const TESTING_MODE = process.env.SAFEPROMPT_TESTING === 'true';
+// Testing mode removed - use internal account (tier='internal') for testing instead
 
 // Model configurations - Using Llama with Credits
 const MODELS = {
@@ -728,19 +727,6 @@ export async function validateHardened(prompt, options = {}) {
     patternsChecked: !skipPatterns,
     externalChecked: !skipExternalCheck
   };
-
-  // Testing backdoor
-  if (TESTING_MODE && prompt === 'SAFEPROMPT_TEST_FORCE_SAFE') {
-    return {
-      safe: true,
-      confidence: 1.0,
-      threats: [],
-      reasoning: 'Testing backdoor',
-      processingTime: 1,
-      stage: 'testing',
-      cost: 0
-    };
-  }
 
   // Stages -1 to -0.25: Run all zero-cost pattern checks in parallel for speed
   // Note: Using synchronous checks in Promise.all for minimal overhead
