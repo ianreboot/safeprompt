@@ -12,6 +12,46 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 **Internal Repository**: https://github.com/ianreboot/safeprompt-internal.git
 **Current State**: Production ready, Product Hunt launch ready (Oct 2025)
 
+## 🚨 CRITICAL: Git Repository Separation
+
+### Repository Structure
+- **safeprompt** (PUBLIC): https://github.com/ianreboot/safeprompt
+  - Purpose: NPM package distribution ONLY
+  - Visibility: PUBLIC ⚠️
+  - NEVER push application code here
+  - Only contains: package.json, README.md, src/ (SDK code)
+
+- **safeprompt-internal** (PRIVATE): https://github.com/ianreboot/safeprompt-internal
+  - Purpose: Full application (dashboard, website, API, scripts, .env files)
+  - Visibility: PRIVATE ✅
+  - ALL development work happens here
+  - Local repo remote points here: `git remote -v`
+
+### MANDATORY Git Workflow
+**ALWAYS verify repo before pushing:**
+```bash
+git remote -v  # Should show: safeprompt-internal
+git push origin dev  # Pushes to PRIVATE repo ✅
+```
+
+**NEVER do this:**
+```bash
+# ❌ WRONG - pushes to PUBLIC repo
+git push https://github.com/ianreboot/safeprompt.git
+```
+
+### Emergency: Pushed to Wrong Repo
+If code accidentally pushed to PUBLIC safeprompt repo:
+1. Delete branch immediately: `source /home/projects/.env && export GH_TOKEN=$GITHUB_PAT && gh api -X DELETE repos/ianreboot/safeprompt/git/refs/heads/BRANCH`
+2. Force push cleaned history to correct internal repo
+3. Verify public repo only has `main` branch: `gh api repos/ianreboot/safeprompt/branches --jq '.[].name'`
+
+### Files That Must NEVER Be in Public Repo
+- ❌ .env files (all variants)
+- ❌ scripts/ directory (contains Supabase tokens)
+- ❌ docs/internal/ directory (contains secrets, pricing details)
+- ❌ Any file with API keys, passwords, or internal business data
+
 ## Core Value Proposition
 **Updated Messaging (Oct 2, 2025)**: "Stop users from hijacking your AI. One API call."
 
