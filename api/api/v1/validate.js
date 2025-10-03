@@ -18,13 +18,28 @@ const cache = new Map();
 const CACHE_MAX_SIZE = 1000;
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
-function getCacheKey(prompt, mode) {
-  return crypto.createHash('md5').update(`${prompt}:${mode}`).digest('hex');
+function getCacheKey(prompt, mode, profileId) {
+  // 🔒 SECURITY: Include profileId to prevent cache leakage between users
+  return crypto.createHash('md5').update(`${profileId}:${prompt}:${mode}`).digest('hex');
 }
 
 export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // 🔒 SECURITY: Strict CORS - only allow specific origins
+  const allowedOrigins = [
+    'https://safeprompt.dev',
+    'https://www.safeprompt.dev',
+    'https://dashboard.safeprompt.dev',
+    'https://dev.safeprompt.dev',
+    'https://dev-dashboard.safeprompt.dev',
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ];
+
+  const origin = req.headers.origin || req.headers.referer;
+  if (origin && allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
   // OpenRouter API key updated 2025-10-03
@@ -105,7 +120,7 @@ export default async function handler(req, res) {
       const results = await Promise.all(
         prompts.map(async (p) => {
           const batchStartTime = Date.now();
-          const cacheKey = getCacheKey(p, mode);
+          const cacheKey = getCacheKey(p, mode, profileId);
           const cached = cache.get(cacheKey);
 
           if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -161,7 +176,7 @@ export default async function handler(req, res) {
     }
 
     // Check cache for single prompt
-    const cacheKey = getCacheKey(prompt, mode);
+    const cacheKey = getCacheKey(prompt, mode, profileId);
     const cached = cache.get(cacheKey);
 
     if (mode === 'with-cache' && cached && Date.now() - cached.timestamp < CACHE_TTL) {
