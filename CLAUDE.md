@@ -404,10 +404,10 @@ If you prefer to use Supabase UI:
 ### Email Branding Status
 
 **Current State (Updated Oct 3, 2025):**
-- ✅ **Password reset emails**: Fully branded SafePrompt HTML templates (applied via API)
+- ✅ **Password reset emails**: Fully branded + Resend SMTP delivery
 - ✅ **Welcome emails** (paid users): Fully branded via Resend from "SafePrompt <noreply@safeprompt.dev>"
 - ✅ **Approval emails** (free users): Fully branded via Resend
-- ⚠️ **Confirmation/Magic Link emails**: Sender shows "Supabase Auth" (SMTP limitation)
+- ✅ **All Supabase auth emails**: Now use Resend SMTP (reliable delivery from SafePrompt)
 
 **⚠️ CRITICAL: Why Email Templates Keep Reverting**
 
@@ -420,15 +420,16 @@ If you prefer to use Supabase UI:
 4. Templates must be reapplied programmatically or manually
 
 **The Fix (Automated):**
-Run this script whenever templates need to be (re)applied:
+Run this script whenever email configuration needs to be (re)applied:
 ```bash
 node scripts/apply-email-templates.js
 ```
 
 This script:
 - Uses Supabase Management API to set branded templates
+- Configures Resend SMTP for reliable email delivery
 - Applies to both DEV and PROD instances
-- Can be run anytime templates are reset/lost
+- Can be run anytime config is reset/lost
 - Should be run after creating any new Supabase project
 
 **Manual Fix (Fallback):**
@@ -437,18 +438,15 @@ If API approach fails, templates can be set manually:
 2. Run `node scripts/configure-auth-emails.js` to see templates
 3. Copy/paste templates into dashboard
 
-**Why Sender Still Shows "Supabase Auth":**
-- Supabase free tier doesn't support custom SMTP
-- HTML templates are branded, but sender email is not
-- Would require Supabase Pro ($25/month) or custom SMTP setup
-- Template branding still provides professional look inside emails
+**SMTP Configuration (✅ Already Applied):**
+- ✅ Host: smtp.resend.com:587
+- ✅ Username: resend
+- ✅ Password: Resend API key (re_FPZirbgX...)
+- ✅ From: SafePrompt <noreply@safeprompt.dev>
+- ✅ Configured via `apply-email-templates.js` script
+- ✅ Applies to both DEV and PROD automatically
 
-**Future: Custom SMTP (Requires Supabase Pro or Custom Setup):**
-- Settings → Auth → SMTP Settings
-- Use Resend SMTP: smtp.resend.com:587
-- Username: resend
-- Password: re_* (API key from Resend)
-- From: SafePrompt <noreply@safeprompt.dev>
+**Note:** Supabase Pro plan required for custom SMTP (enabled on this account)
 
 ### Supabase Configuration Checklist
 

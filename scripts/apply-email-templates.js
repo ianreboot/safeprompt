@@ -1,18 +1,23 @@
 #!/usr/bin/env node
 /**
- * Apply Branded Email Templates to Supabase via Management API
+ * Apply Email Templates & SMTP Config to Supabase via Management API
  *
  * WHY THIS EXISTS:
- * Email templates are stored in Supabase's database config, NOT in code.
+ * Email templates and SMTP settings are stored in Supabase's database config, NOT in code.
  * This means they need to be reapplied whenever:
  * 1. A new Supabase project is created
- * 2. Templates are accidentally reset/overwritten
- * 3. Templates need to be updated with new branding
+ * 2. Templates/SMTP are accidentally reset/overwritten
+ * 3. Branding or SMTP credentials need to be updated
+ *
+ * WHAT THIS CONFIGURES:
+ * 1. Branded SafePrompt email templates (password reset)
+ * 2. Resend SMTP for reliable email delivery
+ * 3. Email sender: SafePrompt <noreply@safeprompt.dev>
  *
  * USAGE:
  *   node scripts/apply-email-templates.js
  *
- * This script applies branded templates to both DEV and PROD Supabase instances.
+ * This script applies configuration to both DEV and PROD Supabase instances.
  */
 
 const https = require('https');
@@ -83,11 +88,19 @@ const projects = [
   { ref: 'adyfhzbcsqzgqvyimycv', env: 'PROD' }
 ];
 
-function applyTemplate(projectRef, environment) {
+function applyConfig(projectRef, environment) {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify({
+      // Email templates
       mailer_subjects_recovery: 'Reset your SafePrompt password',
-      mailer_templates_recovery_content: passwordResetTemplate
+      mailer_templates_recovery_content: passwordResetTemplate,
+      // SMTP configuration (Resend)
+      smtp_host: 'smtp.resend.com',
+      smtp_port: '587',
+      smtp_user: 'resend',
+      smtp_pass: 're_FPZirbgX_MQ4V1mnvF2VdKwrQgHxoQPBa',
+      smtp_admin_email: 'noreply@safeprompt.dev',
+      smtp_sender_name: 'SafePrompt'
     });
 
     const options = {
@@ -108,9 +121,11 @@ function applyTemplate(projectRef, environment) {
       res.on('end', () => {
         if (res.statusCode === 200) {
           const data = JSON.parse(body);
-          console.log(`✅ ${environment}: Email template applied successfully`);
-          console.log(`   Subject: ${data.mailer_subjects_recovery}`);
+          console.log(`✅ ${environment}: Email config applied successfully`);
+          console.log(`   Email subject: ${data.mailer_subjects_recovery}`);
           console.log(`   Template size: ${data.mailer_templates_recovery_content.length} chars`);
+          console.log(`   SMTP host: ${data.smtp_host}`);
+          console.log(`   SMTP sender: ${data.smtp_sender_name} <${data.smtp_admin_email}>`);
           resolve();
         } else {
           console.error(`❌ ${environment}: Failed (${res.statusCode})`);
@@ -132,28 +147,33 @@ function applyTemplate(projectRef, environment) {
 
 async function main() {
   console.log('═'.repeat(80));
-  console.log('APPLYING BRANDED EMAIL TEMPLATES TO SUPABASE');
+  console.log('APPLYING EMAIL TEMPLATES & SMTP CONFIG TO SUPABASE');
   console.log('═'.repeat(80));
   console.log('');
 
   for (const project of projects) {
     try {
-      await applyTemplate(project.ref, project.env);
+      await applyConfig(project.ref, project.env);
       console.log('');
     } catch (error) {
-      console.error(`Error applying template to ${project.env}:`, error.message);
+      console.error(`Error applying config to ${project.env}:`, error.message);
       process.exit(1);
     }
   }
 
   console.log('═'.repeat(80));
-  console.log('✅ ALL TEMPLATES APPLIED SUCCESSFULLY');
+  console.log('✅ ALL EMAIL CONFIGS APPLIED SUCCESSFULLY');
   console.log('═'.repeat(80));
+  console.log('');
+  console.log('What was configured:');
+  console.log('✅ Branded SafePrompt email templates (password reset)');
+  console.log('✅ Resend SMTP for reliable email delivery');
+  console.log('✅ Sender: SafePrompt <noreply@safeprompt.dev>');
   console.log('');
   console.log('Next steps:');
   console.log('1. Test password reset in DEV: https://dev-dashboard.safeprompt.dev/forgot-password');
   console.log('2. Test password reset in PROD: https://dashboard.safeprompt.dev/forgot-password');
-  console.log('3. Verify branded emails are received');
+  console.log('3. Verify branded emails are received from SafePrompt');
   console.log('');
 }
 
