@@ -338,6 +338,42 @@ export default function Dashboard() {
     }
   }
 
+  async function handleUpgrade(planId: string) {
+    try {
+      // Get current session to extract auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Please log in again to upgrade');
+        return;
+      }
+
+      // Determine API URL based on environment
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.safeprompt.dev';
+
+      const response = await fetch(`${apiUrl}/api/stripe-checkout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ planId })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || data.error || 'Failed to start checkout');
+        return;
+      }
+
+      // Redirect to Stripe Checkout
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Failed to start checkout. Please try again.');
+    }
+  }
+
   async function signOut() {
     await supabase.auth.signOut()
     window.location.href = '/login'
@@ -1070,9 +1106,7 @@ def check_prompt(user_input):
                           : 'bg-gray-700 text-white hover:bg-gray-600'
                       }`}
                       disabled={currentPlan.id === plan.id}
-                      onClick={() => {
-                        alert(`Would redirect to Stripe checkout for ${plan.name} plan`)
-                      }}
+                      onClick={() => handleUpgrade(plan.id)}
                     >
                       {currentPlan.id === plan.id ? 'Current Plan' : 'Select Plan'}
                     </button>
