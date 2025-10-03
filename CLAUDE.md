@@ -25,6 +25,88 @@ SafePrompt is a developer-first API service that prevents prompt injection attac
 
 ## Recent Updates (October 2025)
 
+### ✅ Database Architecture & Password Management (Oct 3)
+**CRITICAL INCIDENT & RESOLUTION:**
+
+#### The Problem
+- Dashboard was connecting to DEV database (`vkyggknknyfallmnrmfu`) instead of PROD (`adyfhzbcsqzgqvyimycv`)
+- `.env.local` in dashboard folder took precedence over `.env.production`
+- Users couldn't log in because their accounts were in different databases
+- First paying customer (yuenho.8@gmail.com) couldn't access dashboard after payment
+
+#### Root Cause
+- PROD database created Oct 2 for production launch
+- Dashboard still had `.env.local` pointing to old DEV database
+- No password management features (forgot password, change password)
+
+#### Complete Resolution
+1. **Database Cleanup:**
+   - Removed `.env.local` from dashboard
+   - Rebuilt dashboard to use `.env.production` (correct PROD database)
+   - DEV database cleaned - now contains only `ian.ho@rebootmedia.net` for testing
+   - PROD database now authoritative source of truth
+
+2. **Password Management:**
+   - Added `/forgot-password` page with email-based password reset
+   - Added `/reset-password` page for setting new password via magic link
+   - Added `PasswordSettings` component to dashboard for logged-in users
+   - All users can now securely manage their passwords
+
+3. **User Migration:**
+   - Created `ian.ho@rebootmedia.net` in PROD as internal/admin user
+   - Migrated `arsh.s@rebootmedia.net` and `linpap@gmail.com` to PROD (free tier)
+   - Fixed `yuenho.8@gmail.com` subscription data in PROD
+
+4. **API Fix for Internal Users:**
+   - Modified `/api/api/v1/validate.js` to check `subscription_tier === 'internal'`
+   - Internal users now bypass subscription status check
+   - Fixes playground and contact form (both use internal API key)
+
+#### Current Database State (PROD)
+```
+Total Users: 5
+- ian.ho@rebootmedia.net (internal, unlimited API access)
+- yuenho.8@gmail.com (early_bird, $5/month, active)
+- arsh.s@rebootmedia.net (free tier, inactive)
+- linpap@gmail.com (free tier, inactive)
+- test-paid-user@example.com (test account)
+```
+
+#### Current Database State (DEV)
+```
+Total Users: 1
+- ian.ho@rebootmedia.net (internal, for testing only)
+```
+
+#### Database URLs (CRITICAL REFERENCE)
+- **PROD**: `https://adyfhzbcsqzgqvyimycv.supabase.co` ← Production, authoritative
+- **DEV**: `https://vkyggknknyfallmnrmfu.supabase.co` ← Testing/development only
+
+#### Files Modified
+- `dashboard/.env.local` → Deleted (was causing wrong DB connection)
+- `dashboard/src/app/login/page.tsx` → Added forgot password link
+- `dashboard/src/app/forgot-password/page.tsx` → Created
+- `dashboard/src/app/reset-password/page.tsx` → Created
+- `dashboard/src/components/PasswordSettings.tsx` → Created
+- `api/api/v1/validate.js` → Fixed internal user bypass
+- `scripts/create-ian-prod-account.js` → Created
+- `scripts/migrate-dev-users-to-prod.js` → Created
+- `scripts/cleanup-dev-database.js` → Created
+
+#### Hard-Fought Knowledge
+1. **Always check .env file precedence**: `.env.local` > `.env.production` in Next.js
+2. **Verify database connections**: Don't assume dashboard connects to same DB as scripts
+3. **Password management is essential**: Users MUST be able to reset/change passwords
+4. **Internal users need bypass logic**: Subscription checks should skip internal/admin accounts
+5. **Database migration requires**: User creation + password reset emails + profile setup
+
+#### Prevention for Future
+- ✅ Never use `.env.local` in dashboard (use `.env.production` only)
+- ✅ Always verify Supabase URL in deployed builds (`grep supabase out/_next/static/`)
+- ✅ Include password management from day 1 (forgot password, change password)
+- ✅ Test login flow for all user types (paid, free, internal)
+- ✅ Document which database is PROD vs DEV in CLAUDE.md
+
 ### ✅ Mobile Header Standardization (Oct 2)
 - Applied standard 2-column mobile layout (Logo left, Hamburger right)
 - Removed non-standard 3-column layout (hamburger far left + centered logo + sign up right)
@@ -766,19 +848,54 @@ Unlike Lakera (enterprise) and Rebuff (open source), we focus on:
 - **Updated**: API docs to match current /validate endpoint
 - **Deployed**: All three apps (API, Website, Dashboard) with cleanup changes
 
-### Database Architecture (UPDATED January 2025)
+### Database Architecture (UPDATED October 3, 2025)
 
+**🚨 CRITICAL: Two-Database Setup**
+
+SafePrompt uses **TWO separate Supabase databases**:
+
+1. **PRODUCTION** (`adyfhzbcsqzgqvyimycv.supabase.co`)
+   - **Authoritative source of truth**
+   - All production user data and subscriptions
+   - Dashboard connects here (via `.env.production`)
+   - API validates against this database
+   - **5 users** (as of Oct 3, 2025)
+
+2. **DEVELOPMENT** (`vkyggknknyfallmnrmfu.supabase.co`)
+   - Testing and development only
+   - Contains only `ian.ho@rebootmedia.net` internal account
+   - Used for local development and testing
+   - **1 user** (ian.ho only)
+
+**Environment Variable Configuration:**
+```bash
+# PRODUCTION (in /home/projects/.env and dashboard/.env.production)
+SAFEPROMPT_PROD_SUPABASE_URL=https://adyfhzbcsqzgqvyimycv.supabase.co
+SAFEPROMPT_PROD_SUPABASE_ANON_KEY=eyJh...
+SAFEPROMPT_PROD_SUPABASE_SERVICE_ROLE_KEY=eyJh...
+
+# DEVELOPMENT (in /home/projects/.env only)
+SAFEPROMPT_SUPABASE_URL=https://vkyggknknyfallmnrmfu.supabase.co
+SAFEPROMPT_SUPABASE_ANON_KEY=eyJh...
+SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY=eyJh...
+```
+
+**⚠️ CRITICAL RULE:** Dashboard MUST NOT have `.env.local` file (it overrides `.env.production`)
+
+**Schema (Both Databases):**
 ```sql
 -- Unified profiles table with subscription management
 CREATE TABLE profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   stripe_customer_id TEXT UNIQUE,
-  api_key TEXT UNIQUE DEFAULT gen_random_uuid(),
-  api_calls_this_month INT DEFAULT 0,
-  subscription_status TEXT DEFAULT 'free',
-  subscription_plan_id TEXT,
-  subscription_period_end TIMESTAMPTZ,
+  stripe_subscription_id TEXT,
+  api_key TEXT,  -- Stored in plaintext for UX
+  api_key_hint TEXT,  -- Last 4 characters for display
+  api_requests_used INT DEFAULT 0,
+  api_requests_limit INT DEFAULT 10000,
+  subscription_status TEXT DEFAULT 'inactive',  -- 'active' | 'inactive'
+  subscription_tier TEXT DEFAULT 'free',  -- 'free' | 'early_bird' | 'starter' | 'business' | 'internal'
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -796,23 +913,32 @@ CREATE TABLE api_logs (
   endpoint TEXT,
   prompt_length INT,
   response_time_ms INT,
+  safe BOOLEAN,  -- Validation result
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Subscription plans
-CREATE TABLE subscription_plans (
-  stripe_price_id TEXT PRIMARY KEY,
-  name TEXT,
-  api_calls_limit INT,
-  price_cents INT
+-- Waitlist for free tier signups
+CREATE TABLE waitlist (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  approved_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
 
-**Key Updates**:
-- Profiles table now includes subscription fields
-- API logs replace validation_logs
-- Subscription plans table for tier management
-- See MIGRATION_GUIDE.md for full details
+**Internal User Configuration:**
+- `subscription_tier = 'internal'` bypasses subscription checks
+- Used for playground, contact form, internal testing
+- Current internal user: `ian.ho@rebootmedia.net`
+- API key: `sp_test_unlimited_dogfood_key_2025`
+- Unlimited API requests (999,999,999 limit)
+
+**Key Updates (Oct 3, 2025)**:
+- Two-database architecture clarified
+- API key stored in plaintext (conscious UX trade-off)
+- Internal tier added for admin/testing accounts
+- Dashboard environment configuration fixed
+- Password management added (forgot/reset/change)
 
 ### Implementation Documentation
 
