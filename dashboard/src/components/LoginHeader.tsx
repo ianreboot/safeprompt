@@ -10,7 +10,7 @@ export default function LoginHeader() {
 
           {/* Right side - Sign up link for login page */}
           <a
-            href="https://safeprompt.dev/signup"
+            href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/signup"}
             className="text-sm text-gray-400 hover:text-white transition-colors"
           >
             Don't have an account? Sign up

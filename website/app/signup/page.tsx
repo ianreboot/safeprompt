@@ -38,7 +38,8 @@ export default function UnifiedSignup() {
         intent: 'signup'
       })
 
-      window.location.href = `https://dashboard.safeprompt.dev/onboard?${params.toString()}`
+      const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'
+      window.location.href = `${dashboardUrl}/onboard?${params.toString()}`
     } catch (err) {
       setError('Something went wrong. Please try again.')
       setIsLoading(false)

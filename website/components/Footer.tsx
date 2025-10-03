@@ -55,7 +55,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition text-sm">
+                <a href={process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'} className="text-muted-foreground hover:text-foreground transition text-sm">
                   Dashboard
                 </a>
               </li>

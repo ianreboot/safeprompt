@@ -113,7 +113,7 @@ export default function IntentRouter({ intent, onClose }: IntentRouterProps) {
           if (error) throw error
           setStep('success')
           setTimeout(() => {
-            window.location.href = 'https://dashboard.safeprompt.dev'
+            window.location.href = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'
           }, 2000)
         }
 
@@ -132,7 +132,8 @@ export default function IntentRouter({ intent, onClose }: IntentRouterProps) {
           // In production, this would create a Stripe checkout session
           setStep('success')
           setTimeout(() => {
-            window.location.href = `https://dashboard.safeprompt.dev/checkout?plan=earlybird&email=${encodeURIComponent(email)}`
+            const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'
+            window.location.href = `${dashboardUrl}/checkout?plan=earlybird&email=${encodeURIComponent(email)}`
           }, 2000)
         }
       }

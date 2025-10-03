@@ -28,7 +28,7 @@ export default function Header() {
             <Link href="/about" className="text-muted-foreground hover:text-foreground transition">
               About
             </Link>
-            <Link href="https://dashboard.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition">
+            <Link href={process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'} className="text-muted-foreground hover:text-foreground transition">
               Sign In
             </Link>
             <Link href="/signup" className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition">
@@ -77,7 +77,7 @@ export default function Header() {
               About
             </Link>
             <Link
-              href="https://dashboard.safeprompt.dev"
+              href={process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'}
               className="block text-muted-foreground hover:text-foreground transition py-2"
               onClick={() => setMobileMenuOpen(false)}
             >

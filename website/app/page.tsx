@@ -528,7 +528,7 @@ export default function Home() {
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold mb-2">Get Your API Key</h3>
                   <p className="text-muted-foreground mb-4">Sign up and access your API key from the dashboard.</p>
-                  <a href="https://dashboard.safeprompt.dev" className="text-primary hover:underline">
+                  <a href={process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'} className="text-primary hover:underline">
                     Access Dashboard →
                   </a>
                 </div>

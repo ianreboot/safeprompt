@@ -15,7 +15,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="https://safeprompt.dev/about"
+                  href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/about"}
                   className="text-gray-400 hover:text-white transition text-sm"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -25,7 +25,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://safeprompt.dev/blog/prevent-ai-email-attacks"
+                  href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/blog/prevent-ai-email-attacks"}
                   className="text-gray-400 hover:text-white transition text-sm"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -35,7 +35,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://safeprompt.dev/contact?subject=technical-support&source=dashboard"
+                  href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/contact?subject=technical-support&source=dashboard"}
                   className="text-gray-400 hover:text-white transition text-sm"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -51,7 +51,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="https://safeprompt.dev/terms"
+                  href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/terms"}
                   className="text-gray-400 hover:text-white transition text-sm"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -61,7 +61,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://safeprompt.dev/privacy"
+                  href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/privacy"}
                   className="text-gray-400 hover:text-white transition text-sm"
                   target="_blank"
                   rel="noopener noreferrer"

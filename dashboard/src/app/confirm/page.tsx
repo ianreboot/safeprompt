@@ -111,7 +111,7 @@ function ConfirmContent() {
           <p className="text-gray-400 mb-6">{message}</p>
 
           <button
-            onClick={() => window.location.href = 'https://safeprompt.dev/contact'}
+            onClick={() => window.location.href = (process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev') + '/contact'}
             className="bg-gray-800 px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
             Contact Support
@@ -152,14 +152,14 @@ function ConfirmContent() {
 
           <div className="space-y-3">
             <button
-              onClick={() => window.location.href = 'https://safeprompt.dev'}
+              onClick={() => window.location.href = process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev'}
               className="w-full bg-gray-800 px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               Back to Homepage
             </button>
 
             <button
-              onClick={() => window.location.href = 'https://safeprompt.dev/signup?plan=paid'}
+              onClick={() => window.location.href = (process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev') + '/signup?plan=paid'}
               className="w-full text-sm text-primary hover:underline"
             >
               Don't want to wait? Get instant access for $5/month →

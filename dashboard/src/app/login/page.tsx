@@ -131,7 +131,7 @@ export default function Login() {
             Don't have an account?
             {' '}
             <a
-              href="https://safeprompt.dev/signup"
+              href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/signup"}
               className="text-primary hover:underline"
             >
               Sign up

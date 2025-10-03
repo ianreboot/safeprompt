@@ -975,7 +975,7 @@ def check_prompt(user_input):
 
             <div className="mt-6 pt-6 border-t border-gray-800 text-center">
               <p className="text-sm text-gray-400 mb-2">💬 Need Help?</p>
-              <a href="https://safeprompt.dev/contact?subject=support" className="text-primary hover:underline flex items-center gap-1 justify-center">
+              <a href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/contact?subject=support"} className="text-primary hover:underline flex items-center gap-1 justify-center">
                 Contact Support <ExternalLink className="w-3 h-3" />
               </a>
             </div>

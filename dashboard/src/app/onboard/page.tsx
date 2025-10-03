@@ -29,7 +29,7 @@ function OnboardContent() {
       handleSignup(email, plan)
     } else {
       // No email provided, redirect back to signup
-      window.location.href = 'https://safeprompt.dev/signup'
+      window.location.href = (process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev') + '/signup'
     }
   }, [])
 
@@ -62,7 +62,7 @@ function OnboardContent() {
           email: userEmail,
           password: password,
           options: {
-            emailRedirectTo: `https://dashboard.safeprompt.dev/confirm?plan=free`,
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_DASHBOARD_URL || "https://dashboard.safeprompt.dev"}/confirm?plan=free`,
             data: {
               plan: 'free',
               signup_source: 'unified_signup',
@@ -100,8 +100,8 @@ function OnboardContent() {
         body: JSON.stringify({
           userId,
           email,
-          successUrl: 'https://dashboard.safeprompt.dev?welcome=true',
-          cancelUrl: 'https://safeprompt.dev/signup'
+          successUrl: (process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev') + '?welcome=true',
+          cancelUrl: (process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev') + '/signup'
         })
       })
 
@@ -165,7 +165,7 @@ function OnboardContent() {
             <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
             <p className="text-sm text-gray-400 mb-4">{error}</p>
             <button
-              onClick={() => window.location.href = 'https://safeprompt.dev/signup'}
+              onClick={() => window.location.href = (process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev') + '/signup'}
               className="bg-gray-800 px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
               Back to Signup
@@ -218,7 +218,7 @@ function OnboardContent() {
 
           <p className="text-sm text-gray-500">
             Didn't receive the email? Check your spam folder or{' '}
-            <a href="https://safeprompt.dev/contact" className="text-primary hover:underline">
+            <a href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/contact"} className="text-primary hover:underline">
               contact support
             </a>
           </p>
@@ -287,14 +287,14 @@ function OnboardContent() {
 
           <div className="space-y-3">
             <button
-              onClick={() => window.location.href = 'https://safeprompt.dev'}
+              onClick={() => window.location.href = process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev'}
               className="w-full bg-gray-800 px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               Back to Homepage
             </button>
 
             <button
-              onClick={() => window.location.href = 'https://safeprompt.dev/signup?plan=paid'}
+              onClick={() => window.location.href = (process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev') + '/signup?plan=paid'}
               className="w-full text-sm text-primary hover:underline"
             >
               Don't want to wait? Get instant access for $5/month →

@@ -291,7 +291,7 @@ function LoginContent() {
 
           {/* Links */}
           <div className="mt-8 flex justify-center gap-4 text-sm text-gray-400">
-            <a href="https://safeprompt.dev" className="hover:text-white transition-colors">
+            <a href={process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev"} className="hover:text-white transition-colors">
               Home
             </a>
             <span>•</span>
@@ -299,7 +299,7 @@ function LoginContent() {
               Documentation
             </a>
             <span>•</span>
-            <a href="https://safeprompt.dev/contact" className="hover:text-white transition-colors">
+            <a href={(process.env.NEXT_PUBLIC_WEBSITE_URL || "https://safeprompt.dev") + "/contact"} className="hover:text-white transition-colors">
               Support
             </a>
           </div>
