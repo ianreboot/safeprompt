@@ -1024,6 +1024,131 @@ USING (
 - Large result sets may be truncated
 - Complex queries should be split into smaller operations
 
+### 🚨 CRITICAL: RLS Infinite Recursion Issue (Oct 3, 2025)
+
+**THE HARD-FOUGHT LESSON**: RLS policies that check user permissions can cause infinite recursion if not implemented correctly.
+
+#### The Problem
+
+**Symptoms:**
+- `500 Internal Server Error` when querying tables
+- Error code: `42P17` - "infinite recursion detected in policy for relation"
+- Dashboard shows "Free Plan" for paying users
+- Admin panel shows "0 users" despite data existing
+
+**Root Cause:**
+```sql
+-- BROKEN POLICY (causes infinite recursion):
+CREATE POLICY "Internal users can read all profiles"
+ON profiles FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1 FROM profiles  -- ← Queries profiles WHILE checking RLS on profiles!
+    WHERE profiles.id = auth.uid()
+    AND profiles.subscription_tier = 'internal'
+  )
+);
+```
+
+**What Happens:**
+1. User queries `profiles` table
+2. RLS checks if user is `internal`
+3. To check `internal`, must query `profiles` table
+4. RLS checks if user is `internal` again
+5. Infinite loop → Database error 42P17
+
+#### Why Table Aliases Don't Work
+
+We tried adding table alias `AS p`:
+```sql
+SELECT 1 FROM profiles AS p  -- Still causes recursion!
+WHERE p.id = auth.uid()
+```
+
+**Why it fails:** The alias doesn't bypass RLS. Querying `profiles` (even with alias) still triggers the RLS policy we're trying to define.
+
+#### The Solution: SECURITY DEFINER Function
+
+**Create a function that bypasses RLS:**
+
+```sql
+-- Step 1: Create SECURITY DEFINER function
+CREATE OR REPLACE FUNCTION public.is_internal_user()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER  -- ← This is the magic - bypasses RLS!
+SET search_path = public
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid()
+    AND subscription_tier = 'internal'
+  );
+$$;
+
+-- Step 2: Use function in policy
+CREATE POLICY "Allow profile reads"
+ON profiles FOR SELECT
+TO authenticated
+USING (
+  auth.uid() = id  -- Users can read own profile
+  OR
+  public.is_internal_user() = true  -- No recursion!
+);
+```
+
+**How SECURITY DEFINER Works:**
+- Function runs with elevated privileges (as function creator)
+- Bypasses RLS when checking `profiles` table
+- Returns boolean result to policy
+- No recursion because RLS doesn't apply inside the function
+
+#### Implementation Scripts
+
+- **Final fix:** `/home/projects/safeprompt/scripts/fix-rls-final.js`
+- **Remaining tables:** `/home/projects/safeprompt/scripts/fix-remaining-rls.js`
+- **Debug tool:** `/home/projects/safeprompt/scripts/debug-rls-policies.js`
+
+#### Policies Applied
+
+**profiles table:**
+- Users can read own profile: `auth.uid() = id`
+- Internal users read all: `is_internal_user() = true`
+
+**api_logs table:**
+- Users read own logs: `profile_id = auth.uid()`
+- Internal users read all: `is_internal_user() = true`
+
+**waitlist table:**
+- Anyone can insert
+- Internal users can read all
+
+#### Key Learnings
+
+1. **Never query the same table in its own RLS policy** - causes infinite recursion
+2. **Table aliases don't bypass RLS** - they're just syntax sugar
+3. **SECURITY DEFINER is the solution** - creates privilege boundary
+4. **Create function in `public` schema** - `auth` schema is restricted
+5. **Use `STABLE` qualifier** - signals function result is consistent for same inputs
+6. **500 errors mean policy logic error** - 403 means policy is blocking correctly
+
+#### Error Codes to Recognize
+
+- **42P17**: Infinite recursion in RLS policy - check for self-referential queries
+- **500**: Policy logic error (infinite recursion, syntax error)
+- **403**: Policy correctly blocking (user doesn't have permission)
+
+#### Future AI: If You See 500 Errors on RLS
+
+1. Check error message for "infinite recursion detected"
+2. Identify if policy queries the same table it protects
+3. Create SECURITY DEFINER function to check permissions
+4. Use function in policy instead of direct query
+5. Test with Management API before deploying
+
+This issue cost 4+ hours of debugging. Don't repeat it.
+
 ### Implementation Documentation
 
 For complete implementation details, roadmap, and task tracking, see:
