@@ -1193,6 +1193,85 @@ For complete deployment instructions:
 - Cloudflare (Website/Dashboard): `/home/projects/docs/reference-cloudflare-access.md`
 - Supabase (Database): `/home/projects/docs/reference-supabase-access.md`
 
+### Git/GitHub Authentication (Oct 3, 2025)
+
+**CRITICAL: .env File Special Character Quoting**
+
+#### The Problem (Hard-Fought Knowledge)
+Unquoted special characters in `/home/projects/.env` break `source` command, causing ALL git operations to fail with "Bad credentials" even when tokens are valid.
+
+**Problematic characters in bash:** `& $ % * ! # @` (and especially `&&` which is a command separator)
+
+#### Example Failures Fixed:
+```bash
+# ❌ BROKEN (bash interprets && as command separator)
+SAFEPROMPT_PROD_DB_PASSWORD=PX1N&&$Yd6%AMb*6CHcc
+
+# ✅ FIXED (single quotes protect special chars)
+SAFEPROMPT_PROD_DB_PASSWORD='PX1N&&$Yd6%AMb*6CHcc'
+```
+
+#### All Passwords Fixed (Oct 3):
+- Line 77: `STORAGE_BOX_PASSWORD='JQpN#1Lgmb7UNPHAYOQN'`
+- Line 91: `CLAUDE_1_PASSWORD='reboot-1!'`
+- Line 93: `CLAUDE_2_PASSWORD='reboot-2!'`
+- Line 95: `CLAUDE_3_PASSWORD='reboot-3!'`
+- Line 130: `SYNCUP_SUPABASE_DB_PASSWORD='C$a4ty9noe$4Qjg'`
+- Line 165: `SAFEPROMPT_TEST_PASSWORD='SafePromptTest2025!'`
+- Line 186: `NPM_PASSWORD='$rU3!g#v3LcEA*i'`
+- Line 194: `SAFEPROMPT_PROD_DB_PASSWORD='PX1N&&$Yd6%AMb*6CHcc'`
+
+#### GitHub Authentication Methods
+
+**Method 1: Using gh CLI (PREFERRED)**
+```bash
+source /home/projects/.env
+export GH_TOKEN=$GITHUB_PAT
+gh auth status  # Verify authentication
+# gh CLI now works for all operations
+```
+
+**Method 2: Git Push with Embedded PAT**
+```bash
+source /home/projects/.env
+git push https://ianreboot:$GITHUB_PAT@github.com/ianreboot/safeprompt-internal.git HEAD:main
+```
+
+**Method 3: Verify Repository Exists**
+```bash
+source /home/projects/.env
+export GH_TOKEN=$GITHUB_PAT
+gh repo view ianreboot/safeprompt-internal
+```
+
+#### Testing PAT Validity
+```bash
+# Using gh CLI (recommended)
+source /home/projects/.env
+export GH_TOKEN=$GITHUB_PAT
+gh auth status
+
+# Using curl (requires Basic auth, not Bearer)
+source /home/projects/.env
+curl -u ianreboot:$GITHUB_PAT https://api.github.com/user
+```
+
+**⚠️ IMPORTANT:** GitHub Personal Access Tokens require Basic auth with curl (`-u username:token`), NOT Bearer auth (`-H "Authorization: Bearer token"`). This is why direct curl tests were failing.
+
+#### Repository Information
+- **Internal Repo**: https://github.com/ianreboot/safeprompt-internal.git (private, complete source)
+- **Public Repo**: https://github.com/ianreboot/safeprompt (public, NPM package source)
+- **Account**: ianreboot
+- **Token Scopes**: repo, workflow, read:org
+- **PAT Location**: `/home/projects/.env` line 2 (`GITHUB_PAT`)
+
+#### Troubleshooting Checklist
+1. ✅ Check .env file for unquoted special characters
+2. ✅ Verify `source /home/projects/.env` succeeds without errors
+3. ✅ Test PAT with `gh auth status` (after `export GH_TOKEN=$GITHUB_PAT`)
+4. ✅ Confirm repository name (safeprompt-internal.git, not safeprompt.git)
+5. ✅ Use embedded credentials in git URL if `gh` unavailable
+
 ### Vercel Environment Variable Management
 
 **Project-Specific Details:**
