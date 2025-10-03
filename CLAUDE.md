@@ -1402,23 +1402,84 @@ For complete deployment instructions:
 - Cloudflare (Website/Dashboard): `/home/projects/docs/reference-cloudflare-access.md`
 - Supabase (Database): `/home/projects/docs/reference-supabase-access.md`
 
-#### DEV/PROD Environment Workflow (Oct 3, 2025)
+#### DEV/PROD Environment Workflow (Updated Oct 3, 2025)
 
 **Architecture:**
 - **Git Branches**: `dev` branch for development, `main` branch for production
-- **Cloudflare Pages Projects**: Separate projects for dev and prod (safeprompt-dev vs safeprompt, safeprompt-dashboard-dev vs safeprompt-dashboard)
-- **Supabase Databases**: DEV database (vkyggknknyfallmnrmfu) vs PROD database (adyfhzbcsqzgqvyimycv)
+- **Cloudflare Pages Projects**: Separate projects for dev and prod
+  - Website: `safeprompt-dev` → dev.safeprompt.dev | `safeprompt` → safeprompt.dev
+  - Dashboard: `safeprompt-dashboard-dev` → dev-dashboard.safeprompt.dev | `safeprompt-dashboard` → dashboard.safeprompt.dev
+- **Supabase Databases**: DEV (vkyggknknyfallmnrmfu) vs PROD (adyfhzbcsqzgqvyimycv)
 - **API**: Single Vercel deployment (api.safeprompt.dev) used by both environments
 
 **Environment Mapping:**
 
 | Component | DEV | PROD |
 |-----------|-----|------|
-| **Website** | safeprompt-dev.pages.dev | safeprompt.dev |
-| **Dashboard** | safeprompt-dashboard-dev.pages.dev | dashboard.safeprompt.dev |
-| **Database** | vkyggknknyfallmnrmfu | adyfhzbcsqzgqvyimycv |
+| **Website** | dev.safeprompt.dev | safeprompt.dev |
+| **Dashboard** | dev-dashboard.safeprompt.dev | dashboard.safeprompt.dev |
+| **Database** | vkyggknknyfallmnrmfu (DEV) | adyfhzbcsqzgqvyimycv (PROD) |
+| **Stripe** | Test mode (pk_test_...) | Live mode (pk_live_...) |
 | **API** | api.safeprompt.dev | api.safeprompt.dev |
 | **Git Branch** | dev | main |
+
+**Deployment Scripts:**
+
+Use automated deployment scripts with shell exports (recommended approach):
+
+```bash
+# Deploy website to DEV
+bash /home/projects/safeprompt/scripts/deploy-website-dev.sh
+
+# Deploy dashboard to DEV
+bash /home/projects/safeprompt/scripts/deploy-dashboard-dev.sh
+
+# Deploy to PROD (similar scripts for production)
+bash /home/projects/safeprompt/scripts/deploy-website-prod.sh
+bash /home/projects/safeprompt/scripts/deploy-dashboard-prod.sh
+```
+
+**How Environment Variables Work:**
+
+Next.js ALWAYS loads `.env.production` during `npm run build` regardless of NODE_ENV. Environment separation uses **shell exports** to override .env.production values:
+
+```bash
+# From deploy-website-dev.sh
+export NEXT_PUBLIC_DASHBOARD_URL=https://dev-dashboard.safeprompt.dev
+export NEXT_PUBLIC_WEBSITE_URL=https://dev.safeprompt.dev
+export NEXT_PUBLIC_SUPABASE_URL=https://vkyggknknyfallmnrmfu.supabase.co
+# ... etc
+npm run build  # Shell exports override .env.production
+```
+
+**Why This Approach:**
+- ✅ Shell exports override .env.production during build process
+- ✅ No file swapping (previous approach was brittle)
+- ✅ Cloudflare Pages env vars don't inject into Direct Upload projects
+- ✅ Recommended by Next.js documentation
+- ✅ Automated via deployment scripts
+
+**Cloudflare Pages Configuration:**
+
+Both DEV projects have `production_branch="main"` configured:
+- Deploying to main branch creates **Production** deployments
+- Custom domains route ONLY to Production deployments
+- Cache purge included in scripts for immediate visibility
+
+**Environment Files:**
+
+Each app has separate environment files:
+- `website/.env.development` - DEV configuration
+- `website/.env.production` - PROD configuration
+- `dashboard/.env.development` - DEV configuration
+- `dashboard/.env.production` - PROD configuration
+
+Deployment scripts export vars from .env.development to override .env.production.
+
+**Database Configuration:**
+- DEV database has same schema as PROD (RLS policies applied)
+- Only ian.ho@rebootmedia.net exists in DEV for testing
+- PROD database has real users and subscription data
 
 **Daily Workflow:**
 
@@ -1427,48 +1488,51 @@ For complete deployment instructions:
 git checkout dev
 # make changes to code
 
-# 2. Build and deploy to DEV
-cd /home/projects/safeprompt/website
-npm run build
-source /home/projects/.env && export CLOUDFLARE_API_TOKEN
-wrangler pages deploy out --project-name safeprompt-dev --branch dev
+# 2. Deploy to DEV using scripts
+bash scripts/deploy-website-dev.sh
+bash scripts/deploy-dashboard-dev.sh
 
-# 3. Test at safeprompt-dev.pages.dev
-# Verify functionality works correctly
+# 3. Test at custom domains
+# Website: https://dev.safeprompt.dev
+# Dashboard: https://dev-dashboard.safeprompt.dev
 
 # 4. When ready for production, merge to main
 git checkout main
 git merge dev
 git push
 
-# 5. Build and deploy to PROD
-npm run build
-wrangler pages deploy out --project-name safeprompt --branch main
+# 5. Deploy to PROD using scripts
+bash scripts/deploy-website-prod.sh
+bash scripts/deploy-dashboard-prod.sh
 ```
 
-**Environment Variables:**
-
-Dashboard and website use `.env.production` for builds (since Next.js static export only reads production env during build). Environment separation happens through:
-1. Different Cloudflare Pages projects (safeprompt-dev vs safeprompt)
-2. Different Supabase database credentials embedded at build time
-3. Git branches (dev vs main) for code separation
-
-**Database Configuration:**
-- DEV database has same schema as PROD (RLS policies applied via scripts/fix-rls-dev.js)
-- Only ian.ho@rebootmedia.net exists in DEV for testing
-- PROD database has real users and subscription data
-
 **Testing Before PROD:**
-1. Deploy to DEV environment (safeprompt-dev.pages.dev)
+1. Deploy to DEV environment (dev.safeprompt.dev, dev-dashboard.safeprompt.dev)
 2. Test with DEV database (vkyggknknyfallmnrmfu)
-3. Verify no breaking changes
-4. Merge to main and deploy to PROD only after testing
+3. Verify correct environment URLs appear in deployed code
+4. Verify no breaking changes
+5. Merge to main and deploy to PROD only after testing
+
+**Verification Commands:**
+
+```bash
+# Verify URLs in built output
+grep -r "dashboard.safeprompt.dev" dashboard/out/
+grep -r "vkyggknknyfallmnrmfu" dashboard/out/
+
+# Check live site URLs
+curl -s "https://dev.safeprompt.dev/" | grep dashboard
+curl -s "https://dev-dashboard.safeprompt.dev/" | grep supabase
+```
 
 **Critical Notes:**
 - ✅ API is shared between DEV and PROD (stateless validation, acceptable)
-- ✅ DEV deployments use .pages.dev URLs (no custom domains needed for testing)
+- ✅ DEV uses custom domains for realistic testing (dev.safeprompt.dev)
 - ✅ Both environments have RLS policies configured
+- ✅ Cache purge automated in deployment scripts
+- ✅ Production deployments require production_branch=main configuration
 - ❌ Do NOT test directly in PROD - always use DEV first
+- ❌ Never use file swapping or sed scripts for environment separation
 
 ### Git/GitHub Authentication (Oct 3, 2025)
 
