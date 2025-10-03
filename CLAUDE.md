@@ -403,20 +403,47 @@ If you prefer to use Supabase UI:
 
 ### Email Branding Status
 
-**Current State (2025-09-30):**
+**Current State (Updated Oct 3, 2025):**
+- ✅ **Password reset emails**: Fully branded SafePrompt HTML templates (applied via API)
 - ✅ **Welcome emails** (paid users): Fully branded via Resend from "SafePrompt <noreply@safeprompt.dev>"
 - ✅ **Approval emails** (free users): Fully branded via Resend
-- ❌ **Confirmation emails** (Supabase): Still shows "Supabase Auth" sender (temporary)
+- ⚠️ **Confirmation/Magic Link emails**: Sender shows "Supabase Auth" (SMTP limitation)
 
-**Why Confirmation Emails Aren't Branded Yet:**
+**⚠️ CRITICAL: Why Email Templates Keep Reverting**
+
+**Problem:** Email templates are stored in Supabase's database config, NOT in git/code.
+
+**Why This Keeps Happening:**
+1. Email templates are NOT part of the codebase
+2. They're configuration stored in Supabase's auth settings
+3. When a new Supabase project is created, it starts with default templates
+4. Templates must be reapplied programmatically or manually
+
+**The Fix (Automated):**
+Run this script whenever templates need to be (re)applied:
+```bash
+node scripts/apply-email-templates.js
+```
+
+This script:
+- Uses Supabase Management API to set branded templates
+- Applies to both DEV and PROD instances
+- Can be run anytime templates are reset/lost
+- Should be run after creating any new Supabase project
+
+**Manual Fix (Fallback):**
+If API approach fails, templates can be set manually:
+1. Go to Supabase Dashboard → Authentication → Email Templates
+2. Run `node scripts/configure-auth-emails.js` to see templates
+3. Copy/paste templates into dashboard
+
+**Why Sender Still Shows "Supabase Auth":**
 - Supabase free tier doesn't support custom SMTP
+- HTML templates are branded, but sender email is not
 - Would require Supabase Pro ($25/month) or custom SMTP setup
-- Workaround: Confirmation emails work but aren't branded
-- Users still get professional branded emails for approval/welcome
+- Template branding still provides professional look inside emails
 
-**To Fix (Future):**
-Option A: Upgrade to Supabase Pro
-Option B: Configure custom SMTP in Supabase Dashboard:
+**Future: Custom SMTP (Requires Supabase Pro or Custom Setup):**
 - Settings → Auth → SMTP Settings
 - Use Resend SMTP: smtp.resend.com:587
 - Username: resend
@@ -425,21 +452,23 @@ Option B: Configure custom SMTP in Supabase Dashboard:
 
 ### Supabase Configuration Checklist
 
-**CRITICAL: These must be set in Supabase Dashboard:**
+**CRITICAL: These must be configured (not in code):**
 
 ☑️ **Project Settings → API → Site URL:**
-- Set to: `https://dashboard.safeprompt.dev`
-- NOT localhost:3000!
+- PROD: `https://dashboard.safeprompt.dev`
+- DEV: `https://dev-dashboard.safeprompt.dev`
+- ⚠️ Must be HTTPS, NOT http or localhost!
 
 ☑️ **Authentication → URL Configuration → Redirect URLs:**
-Add these to whitelist:
-- `https://dashboard.safeprompt.dev/**`
-- `https://dashboard.safeprompt.dev/confirm`
-- `https://dashboard.safeprompt.dev/onboard`
+- PROD: `https://dashboard.safeprompt.dev/**`
+- DEV: `https://dev-dashboard.safeprompt.dev/**`
+- Configured via Supabase Management API (see redirect URL fix commits)
 
 ☑️ **Authentication → Email Templates:**
-- Can customize later when Supabase Pro is enabled
-- For now, default templates work (just not branded)
+- ✅ Branded templates applied via `scripts/apply-email-templates.js`
+- Run script after creating new Supabase project
+- Rerun if templates are accidentally reset
+- Templates are configuration, NOT code
 
 ### Monitoring User Signups
 
