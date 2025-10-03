@@ -50,12 +50,14 @@ node scripts/apply-email-templates.js
 
 ### 2. Password Reset Email Flow
 
+**✅ FIXED (Oct 3, 2025)**: Redirect URLs now configured in Supabase
+
 **DEV Environment**:
-- [ ] Visit https://dev-dashboard.safeprompt.dev/forgot-password
-- [ ] Request reset for ian.ho@rebootmedia.net
-- [ ] Receive branded email from SafePrompt
-- [ ] Email contains DEV reset link
-- [ ] Reset link works and connects to DEV database
+- [x] Visit https://dev-dashboard.safeprompt.dev/forgot-password
+- [x] Request reset for ian.ho@rebootmedia.net
+- [x] Receive branded email from SafePrompt
+- [x] Email contains DEV reset link
+- [ ] Reset link works and connects to DEV database (TEST AGAIN WITH NEW LINK)
 
 **PROD Environment**:
 - [ ] Visit https://dashboard.safeprompt.dev/forgot-password
