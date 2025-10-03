@@ -390,7 +390,12 @@ async function handleWaitlist(data, clientIp, resend) {
 // Main handler
 export default async function handler(req, res) {
   // Enable CORS with strict origin for contact, open for waitlist
-  const allowedOrigins = ['https://safeprompt.dev', 'https://www.safeprompt.dev'];
+  const allowedOrigins = [
+    'https://safeprompt.dev',
+    'https://www.safeprompt.dev',
+    'https://dev.safeprompt.dev',
+    'https://dev-dashboard.safeprompt.dev'
+  ];
   const origin = req.headers.origin;
 
   // Set CORS headers based on action

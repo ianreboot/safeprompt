@@ -6,11 +6,15 @@ set -e
 echo "🔧 Building Website for DEV environment..."
 cd /home/projects/safeprompt/website
 
-# Load DEV environment variables
-export $(grep -v '^#' .env.development | xargs)
+# Backup production env and use development env for build
+cp .env.production .env.production.backup
+cp .env.development .env.production
 
 # Build
 npm run build
+
+# Restore production env
+mv .env.production.backup .env.production
 
 # Deploy to Cloudflare Pages DEV project
 echo "🚀 Deploying to dev.safeprompt.dev..."
