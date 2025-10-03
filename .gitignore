@@ -13,3 +13,6 @@
 
 # Supabase
 supabase/.temp/
+
+# Internal documentation (may contain secrets)
+docs/internal/
