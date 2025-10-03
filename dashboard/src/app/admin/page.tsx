@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Shield, Users, Clock, CheckCircle, XCircle, Mail, Search, Activity, DollarSign, Eye } from 'lucide-react'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
 // Simple admin auth - in production, use proper role-based access
 const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
@@ -18,6 +20,17 @@ export default function AdminDashboard() {
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [userLogs, setUserLogs] = useState<any[]>([])
   const [creditNotes, setCreditNotes] = useState('')
+
+  // Usage state for Header component
+  const [usage] = useState({
+    current: 0,
+    limit: 999999999,
+    percentage: 0,
+    tier: 'internal',
+    daily_usage: [],
+    avg_response_time: null,
+    error_rate: null
+  })
 
   useEffect(() => {
     checkAdminAccess()
@@ -182,27 +195,23 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Shield className="w-8 h-8 text-primary" />
-              <h1 className="text-2xl font-bold">SafePrompt Admin</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-400">{user?.email}</span>
-              <a href="/" className="text-gray-400 hover:text-white">
-                User Dashboard
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <Header user={user} usage={usage} />
 
-      {/* Stats */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Content - Add padding-top to account for fixed header */}
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 flex-1">
+        {/* Admin Panel Indicator */}
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Shield className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+          </div>
+          <a href="/" className="text-gray-400 hover:text-white text-sm">
+            Back to User Dashboard
+          </a>
+        </div>
+
+        {/* Stats */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
           <div className="bg-gray-900 rounded-lg p-6 border border-gray-800">
             <p className="text-gray-400 text-sm">Total Users</p>
@@ -455,7 +464,9 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
-      </div>
+      </main>
+
+      <Footer />
     </div>
   )
 }

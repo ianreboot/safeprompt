@@ -310,8 +310,13 @@ export default function Dashboard() {
   }
 
   async function openBillingPortal() {
-    // Show upgrade modal for billing management
-    setShowUpgradeModal(true)
+    // In production, this would redirect to Stripe Customer Portal
+    // const response = await fetch('/api/create-portal-session', { method: 'POST' })
+    // const { url } = await response.json()
+    // window.location.href = url
+
+    // For now, show a message
+    alert('Stripe billing portal integration coming soon.\n\nYou will be able to:\n- Update payment method\n- View invoices\n- Cancel subscription\n- Download receipts')
   }
 
   async function signOut() {
@@ -522,7 +527,7 @@ For questions, contact: support@safeprompt.dev`
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-2">
 
           {/* API Key Card - Improved */}
           <div className="lg:col-span-2 bg-gray-900 rounded-lg p-6 border border-gray-800 min-w-0">
@@ -671,6 +676,11 @@ For questions, contact: support@safeprompt.dev`
               )}
             </div>
           </div>
+
+          {/* Password Settings */}
+          <div className="bg-gray-900 rounded-lg border border-gray-800 min-w-0">
+            <PasswordSettings />
+          </div>
         </div>
 
         {/* Usage Analytics */}
@@ -745,11 +755,6 @@ For questions, contact: support@safeprompt.dev`
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Password Settings Section */}
-        <div className="mt-8">
-          <PasswordSettings />
         </div>
 
         {/* Documentation Section */}
@@ -971,18 +976,6 @@ def check_prompt(user_input):
                 <div className="mt-3 text-xs text-gray-500">
                   Response includes cache hit rates and bulk processing metrics
                 </div>
-              </div>
-
-              {/* Caching Info */}
-              <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-800">
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-yellow-500" />
-                  Intelligent Caching
-                </h4>
-                <p className="text-sm text-gray-400">
-                  Automatic response caching reduces costs by 30% and speeds up repeated validations to under 1ms.
-                  Cached responses are returned with no additional charges.
-                </p>
               </div>
             </div>
 
