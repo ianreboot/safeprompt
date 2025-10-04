@@ -345,11 +345,54 @@ async function handleApproveWaitlist(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // TODO: Add admin authentication check here
-  // For now, require a secret key
-  const adminKey = req.headers['x-admin-key'];
-  if (adminKey !== process.env.ADMIN_SECRET_KEY) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  // Admin authentication check: Verify Bearer token and is_admin flag
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Bearer token required'
+    });
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+
+  try {
+    // Verify token and get user
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Invalid or expired token'
+      });
+    }
+
+    // Check if user has admin privileges
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'User profile not found'
+      });
+    }
+
+    if (!profile.is_admin) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        message: 'Admin privileges required'
+      });
+    }
+  } catch (error) {
+    console.error('Admin authentication error:', error);
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Authentication failed'
+    });
   }
 
   const { email } = req.body;
