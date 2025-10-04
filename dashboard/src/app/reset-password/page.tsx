@@ -14,6 +14,22 @@ export default function ResetPassword() {
   const [error, setError] = useState('')
   const [validToken, setValidToken] = useState(false)
 
+  function validatePassword(password: string): string | null {
+    if (password.length < 12) {
+      return 'Password must be at least 12 characters'
+    }
+    if (!/[a-z]/.test(password)) {
+      return 'Password must contain at least one lowercase letter'
+    }
+    if (!/[A-Z]/.test(password)) {
+      return 'Password must contain at least one uppercase letter'
+    }
+    if (!/[0-9]/.test(password)) {
+      return 'Password must contain at least one number'
+    }
+    return null
+  }
+
   useEffect(() => {
     // Check if we have a valid session (from the magic link)
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -36,8 +52,9 @@ export default function ResetPassword() {
       return
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+    const passwordError = validatePassword(password)
+    if (passwordError) {
+      setError(passwordError)
       setLoading(false)
       return
     }
@@ -119,9 +136,12 @@ export default function ResetPassword() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
                     placeholder="••••••••"
-                    minLength={6}
+                    minLength={12}
                   />
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Must be at least 12 characters with uppercase, lowercase, and numbers
+                </p>
               </div>
 
               <div>
@@ -138,7 +158,7 @@ export default function ResetPassword() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
                     placeholder="••••••••"
-                    minLength={6}
+                    minLength={12}
                   />
                 </div>
               </div>

@@ -12,6 +12,22 @@ export default function PasswordSettings() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
+  function validatePassword(password: string): string | null {
+    if (password.length < 12) {
+      return 'Password must be at least 12 characters'
+    }
+    if (!/[a-z]/.test(password)) {
+      return 'Password must contain at least one lowercase letter'
+    }
+    if (!/[A-Z]/.test(password)) {
+      return 'Password must contain at least one uppercase letter'
+    }
+    if (!/[0-9]/.test(password)) {
+      return 'Password must contain at least one number'
+    }
+    return null
+  }
+
   async function handlePasswordChange(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -24,8 +40,9 @@ export default function PasswordSettings() {
       return
     }
 
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters')
+    const passwordError = validatePassword(newPassword)
+    if (passwordError) {
+      setError(passwordError)
       setLoading(false)
       return
     }
@@ -106,8 +123,11 @@ export default function PasswordSettings() {
             onChange={(e) => setNewPassword(e.target.value)}
             className="w-full px-3 py-2 bg-black border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
             placeholder="••••••••"
-            minLength={6}
+            minLength={12}
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Must be at least 12 characters with uppercase, lowercase, and numbers
+          </p>
         </div>
 
         <div>
@@ -122,7 +142,7 @@ export default function PasswordSettings() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             className="w-full px-3 py-2 bg-black border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
             placeholder="••••••••"
-            minLength={6}
+            minLength={12}
           />
         </div>
 
