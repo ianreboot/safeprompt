@@ -6,11 +6,23 @@ This guide configures branded email verification for SafePrompt free tier users 
 ## ✅ Implementation Status
 
 **Date**: 2025-10-04
-**Status**: READY TO CONFIGURE
+**Status**: PARTIALLY CONFIGURED (Manual steps remaining)
+
+**Automated Configuration Completed:**
+- ✅ Site URLs configured via `scripts/configure-redirect-urls.js`
+- ✅ Email templates applied via `scripts/apply-email-templates.js`
+- ✅ SMTP configuration (Resend) applied
+- ✅ Redirect URLs whitelist configured
+
+**Manual Steps Remaining:**
+- ⚠️ Enable "Confirm email" toggle in Supabase Dashboard (CRITICAL - cannot be automated)
+- ⚠️ Enable "Double confirm email changes" toggle (recommended)
 
 ## Configuration Steps
 
-### 1. Enable Email Confirmation (CRITICAL)
+### 1. Enable Email Confirmation (CRITICAL - MANUAL STEP REQUIRED)
+
+**⚠️ THIS STEP CANNOT BE AUTOMATED - MUST BE DONE MANUALLY**
 
 **For both PROD and DEV Supabase projects:**
 
@@ -23,7 +35,11 @@ This guide configures branded email verification for SafePrompt free tier users 
 - PROD: https://supabase.com/dashboard/project/adyfhzbcsqzgqvyimycv/auth/providers
 - DEV: https://supabase.com/dashboard/project/vkyggknknyfallmnrmfu/auth/providers
 
-### 2. Configure Site URLs
+**Why manual?** The Supabase Management API does not expose the email confirmation toggle setting. This must be enabled through the web dashboard.
+
+### 2. Configure Site URLs (✅ AUTOMATED)
+
+**Status**: ✅ Configured automatically via `scripts/configure-redirect-urls.js`
 
 **PROD Configuration:**
 ```
@@ -45,17 +61,27 @@ Redirect URLs:
 - https://dev-dashboard.safeprompt.dev/reset-password
 ```
 
-**Direct links:**
+**Verify configuration:**
 - PROD: https://supabase.com/dashboard/project/adyfhzbcsqzgqvyimycv/auth/url-configuration
 - DEV: https://supabase.com/dashboard/project/vkyggknknyfallmnrmfu/auth/url-configuration
 
-### 3. Apply Branded Email Templates
+**To re-apply:** `node scripts/configure-redirect-urls.js`
 
-Go to: Authentication → Email Templates
+### 3. Apply Branded Email Templates (✅ AUTOMATED)
 
-**Direct links:**
+**Status**: ✅ Configured automatically via `scripts/apply-email-templates.js`
+
+This script applies:
+- Branded signup confirmation email template
+- Branded password reset email template
+- Resend SMTP configuration
+- Email sender: SafePrompt <noreply@safeprompt.dev>
+
+**Verify configuration:**
 - PROD: https://supabase.com/dashboard/project/adyfhzbcsqzgqvyimycv/auth/templates
 - DEV: https://supabase.com/dashboard/project/vkyggknknyfallmnrmfu/auth/templates
+
+**To re-apply:** `node scripts/apply-email-templates.js`
 
 #### Confirm Signup Template
 

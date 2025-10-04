@@ -6,6 +6,8 @@ import StructuredData from '@/components/StructuredData'
 
 const inter = Inter({ subsets: ['latin'] })
 
+const websiteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev';
+
 export const metadata: Metadata = {
   title: 'SafePrompt - Stop Prompt Injection in One Line of Code',
   description: 'Protect your AI applications from prompt injection attacks with simple, transparent, developer-first security.',
@@ -19,11 +21,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'SafePrompt - Stop Prompt Injection in One Line of Code',
     description: 'Protect your AI applications from prompt injection attacks.',
-    url: 'https://safeprompt.dev',
+    url: websiteUrl,
     siteName: 'SafePrompt',
     images: [
       {
-        url: 'https://safeprompt.dev/og-image.png',
+        url: `${websiteUrl}/og-image.png`,
         width: 1200,
         height: 630,
       },
@@ -35,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'SafePrompt - Stop Prompt Injection in One Line of Code',
     description: 'Protect your AI applications from prompt injection attacks.',
-    images: ['https://safeprompt.dev/og-image.png'],
+    images: [`${websiteUrl}/og-image.png`],
   },
   robots: {
     index: true,

@@ -85,6 +85,64 @@ const passwordResetTemplate = `<!DOCTYPE html>
 </body>
 </html>`;
 
+// Branded signup confirmation template
+const signupConfirmationTemplate = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #000000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h1 style="color: #ffffff; font-size: 32px; font-weight: 600; margin: 0;">SafePrompt</h1>
+      <p style="color: #888888; font-size: 14px; margin-top: 8px;">Stop users from hijacking your AI</p>
+    </div>
+
+    <!-- Main Content -->
+    <div style="background-color: #111111; border: 1px solid #222222; border-radius: 12px; padding: 40px;">
+      <h2 style="color: #ffffff; font-size: 24px; font-weight: 600; margin: 0 0 16px 0;">Confirm your email</h2>
+
+      <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+        Welcome to SafePrompt! Click the button below to confirm your email address and activate your account.
+      </p>
+
+      <!-- Confirm Button -->
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="{{ .ConfirmationURL }}" style="display: inline-block; background-color: #3b82f6; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 16px; font-weight: 500;">
+          Confirm Email
+        </a>
+      </div>
+
+      <p style="color: #888888; font-size: 14px; line-height: 1.6; margin: 24px 0 0 0;">
+        This link will expire in 24 hours. If you didn't create a SafePrompt account, you can safely ignore this email.
+      </p>
+
+      <!-- Fallback URL -->
+      <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #222222;">
+        <p style="color: #666666; font-size: 12px; margin: 0 0 8px 0;">
+          Or copy and paste this URL into your browser:
+        </p>
+        <p style="color: #3b82f6; font-size: 12px; word-break: break-all; margin: 0;">
+          {{ .ConfirmationURL }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 40px;">
+      <p style="color: #666666; font-size: 12px; margin: 0 0 8px 0;">
+        SafePrompt - Prompt Injection Protection
+      </p>
+      <p style="color: #444444; font-size: 12px; margin: 0;">
+        © 2025 SafePrompt. All rights reserved.
+      </p>
+    </div>
+  </div>
+</body>
+</html>`;
+
 const projects = [
   { ref: 'vkyggknknyfallmnrmfu', env: 'DEV' },
   { ref: 'adyfhzbcsqzgqvyimycv', env: 'PROD' }
@@ -96,6 +154,8 @@ function applyConfig(projectRef, environment) {
       // Email templates
       mailer_subjects_recovery: 'Reset your SafePrompt password',
       mailer_templates_recovery_content: passwordResetTemplate,
+      mailer_subjects_confirmation: 'Confirm your SafePrompt email',
+      mailer_templates_confirmation_content: signupConfirmationTemplate,
       // SMTP configuration (Resend)
       smtp_host: 'smtp.resend.com',
       smtp_port: '587',
@@ -172,14 +232,16 @@ async function main() {
   console.log('═'.repeat(80));
   console.log('');
   console.log('What was configured:');
-  console.log('✅ Branded SafePrompt email templates (password reset)');
+  console.log('✅ Branded SafePrompt email templates (password reset + signup confirmation)');
   console.log('✅ Resend SMTP for reliable delivery');
   console.log('✅ Sender: SafePrompt <noreply@safeprompt.dev>');
   console.log('');
   console.log('Next steps:');
-  console.log('1. Test password reset in DEV: https://dev-dashboard.safeprompt.dev/forgot-password');
-  console.log('2. Test password reset in PROD: https://dashboard.safeprompt.dev/forgot-password');
-  console.log('3. Verify branded emails are received from SafePrompt');
+  console.log('1. Test signup in DEV: https://dev-dashboard.safeprompt.dev/signup');
+  console.log('2. Test password reset in DEV: https://dev-dashboard.safeprompt.dev/forgot-password');
+  console.log('3. Test signup in PROD: https://dashboard.safeprompt.dev/signup');
+  console.log('4. Test password reset in PROD: https://dashboard.safeprompt.dev/forgot-password');
+  console.log('5. Verify branded emails are received from SafePrompt');
   console.log('');
 }
 

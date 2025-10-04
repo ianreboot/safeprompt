@@ -20,6 +20,9 @@ try {
   // Continue without Supabase - contact form will still work
 }
 
+// Environment-aware URLs for emails
+const WEBSITE_URL = process.env.WEBSITE_URL || 'https://safeprompt.dev';
+
 // Rate limiting (in-memory for now, use Redis in production)
 const rateLimiter = new Map();
 const RATE_LIMIT = 5; // Max 5 requests per hour per IP
@@ -343,7 +346,7 @@ async function handleWaitlist(data, clientIp, resend) {
 
         <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h4 style="color: #333; margin-top: 0;">While you wait:</h4>
-          <p>Check out our blog post on <a href="https://safeprompt.dev/blog/prevent-ai-email-attacks">how Gmail's AI can be weaponized against you</a> and learn why prompt injection protection is critical.</p>
+          <p>Check out our blog post on <a href="${WEBSITE_URL}/blog/prevent-ai-email-attacks">how Gmail's AI can be weaponized against you</a> and learn why prompt injection protection is critical.</p>
         </div>
 
         <p>Questions? Just reply to this email.</p>
@@ -391,10 +394,12 @@ async function handleWaitlist(data, clientIp, resend) {
 export default async function handler(req, res) {
   // Enable CORS with strict origin for contact, open for waitlist
   const allowedOrigins = [
-    'https://safeprompt.dev',
+    WEBSITE_URL,
     'https://www.safeprompt.dev',
     'https://dev.safeprompt.dev',
-    'https://dev-dashboard.safeprompt.dev'
+    'https://dev-dashboard.safeprompt.dev',
+    'http://localhost:3000',
+    'http://localhost:5173'
   ];
   const origin = req.headers.origin;
 

@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://safeprompt.dev'
+  const baseUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev'
   const currentDate = new Date()
 
   // Static pages

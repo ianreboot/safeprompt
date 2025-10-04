@@ -6,6 +6,8 @@ interface StructuredDataProps {
 }
 
 export default function StructuredData({ type = 'organization', data }: StructuredDataProps) {
+  const websiteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.dev';
+
   const getStructuredData = () => {
     switch (type) {
       case 'organization':
@@ -13,13 +15,13 @@ export default function StructuredData({ type = 'organization', data }: Structur
           "@context": "https://schema.org",
           "@type": "Organization",
           "name": "SafePrompt",
-          "url": "https://safeprompt.dev",
-          "logo": "https://safeprompt.dev/logo.png",
+          "url": websiteUrl,
+          "logo": `${websiteUrl}/logo.png`,
           "description": "Developer-first API service that prevents prompt injection attacks in AI applications",
           "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "customer support",
-            "url": "https://safeprompt.dev/contact"
+            "url": `${websiteUrl}/contact`
           },
           "sameAs": [
             "https://github.com/ianreboot/safeprompt"
@@ -34,7 +36,7 @@ export default function StructuredData({ type = 'organization', data }: Structur
           "applicationCategory": "SecurityApplication",
           "operatingSystem": "All",
           "description": "Stop prompt injection in one line of code. Fast, simple, transparent API for AI security.",
-          "url": "https://safeprompt.dev",
+          "url": websiteUrl,
           "author": {
             "@type": "Organization",
             "name": "SafePrompt"
@@ -76,17 +78,17 @@ export default function StructuredData({ type = 'organization', data }: Structur
           },
           "datePublished": data?.date || new Date().toISOString(),
           "dateModified": data?.modified || data?.date || new Date().toISOString(),
-          "image": "https://safeprompt.dev/og-image.png",
+          "image": `${websiteUrl}/og-image.png`,
           "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": data?.url || "https://safeprompt.dev/blog"
+            "@id": data?.url || `${websiteUrl}/blog`
           },
           "publisher": {
             "@type": "Organization",
             "name": "SafePrompt",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://safeprompt.dev/logo.png"
+              "url": `${websiteUrl}/logo.png`
             }
           }
         }

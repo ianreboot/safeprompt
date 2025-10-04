@@ -16,6 +16,10 @@ const supabase = createClient(
   process.env.SAFEPROMPT_PROD_SUPABASE_SERVICE_ROLE_KEY || process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
+// Environment-aware URLs for emails and redirects
+const DASHBOARD_URL = process.env.DASHBOARD_URL || 'https://dashboard.safeprompt.dev';
+const WEBSITE_URL = process.env.WEBSITE_URL || 'https://safeprompt.dev';
+
 const hashApiKey = (key) => {
   return crypto.createHash('sha256').update(key).digest('hex');
 };
@@ -218,8 +222,8 @@ async function handleCreateCheckout(req, res) {
           quantity: 1,
         },
       ],
-      success_url: successUrl || 'https://dashboard.safeprompt.dev?welcome=true',
-      cancel_url: cancelUrl || 'https://safeprompt.dev/signup',
+      success_url: successUrl || `${DASHBOARD_URL}?welcome=true`,
+      cancel_url: cancelUrl || `${WEBSITE_URL}/signup`,
       metadata: {
         supabase_user_id: userId
       }
@@ -302,16 +306,16 @@ if (!result.safe) {
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
-              <a href="https://dashboard.safeprompt.dev" style="display: inline-block; background: #6366f1; color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600;">Access Dashboard</a>
+              <a href="${DASHBOARD_URL}" style="display: inline-block; background: #6366f1; color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600;">Access Dashboard</a>
             </div>
           </div>
 
           <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px;">
             <p style="font-size: 14px; color: #666; margin-bottom: 10px;"><strong>Need Help?</strong></p>
             <p style="font-size: 14px; color: #666; margin: 0;">
-              • 📚 <a href="https://safeprompt.dev/#docs" style="color: #6366f1; text-decoration: none;">Documentation</a><br>
-              • 💬 <a href="https://safeprompt.dev/contact" style="color: #6366f1; text-decoration: none;">Contact Support</a><br>
-              • 📊 <a href="https://dashboard.safeprompt.dev" style="color: #6366f1; text-decoration: none;">View Dashboard</a>
+              • 📚 <a href="${WEBSITE_URL}/#docs" style="color: #6366f1; text-decoration: none;">Documentation</a><br>
+              • 💬 <a href="${WEBSITE_URL}/contact" style="color: #6366f1; text-decoration: none;">Contact Support</a><br>
+              • 📊 <a href="${DASHBOARD_URL}" style="color: #6366f1; text-decoration: none;">View Dashboard</a>
             </p>
           </div>
 
@@ -513,9 +517,9 @@ export default async function handler(req, res) {
                  process.env.VERCEL_ENV === 'production';
 
   const allowedOrigins = isProd
-    ? ['https://dashboard.safeprompt.dev']
+    ? [DASHBOARD_URL]
     : [
-        'https://dev-dashboard.safeprompt.dev',
+        DASHBOARD_URL,
         'http://localhost:3000',
         'http://localhost:5173'
       ];

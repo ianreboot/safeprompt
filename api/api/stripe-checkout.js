@@ -13,6 +13,10 @@ const supabase = createClient(
   process.env.SAFEPROMPT_PROD_SUPABASE_SERVICE_ROLE_KEY || process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
+// Environment-aware URLs for redirects
+const DASHBOARD_URL = process.env.DASHBOARD_URL || 'https://dashboard.safeprompt.dev';
+const WEBSITE_URL = process.env.WEBSITE_URL || 'https://safeprompt.dev';
+
 // Price ID mapping (from environment variables or hardcoded)
 const PRICE_IDS = {
   early_bird: process.env.STRIPE_PROD_BETA_PRICE_ID || 'price_1SDqd8Exyn6XfOJwatOsrebN',
@@ -27,12 +31,12 @@ export default async function handler(req, res) {
 
   const allowedOrigins = isProd
     ? [
-        'https://dashboard.safeprompt.dev',
-        'https://safeprompt.dev'
+        DASHBOARD_URL,
+        WEBSITE_URL
       ]
     : [
-        'https://dev-dashboard.safeprompt.dev',
-        'https://dev.safeprompt.dev',
+        DASHBOARD_URL,
+        WEBSITE_URL,
         'http://localhost:3000',
         'http://localhost:5173'
       ];
@@ -110,14 +114,9 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Profile not found' });
     }
 
-    // Determine return URLs based on environment
-    const isDev = origin?.includes('dev-dashboard') || origin?.includes('localhost');
-    const successUrl = isDev
-      ? 'https://dev-dashboard.safeprompt.dev?checkout=success'
-      : 'https://dashboard.safeprompt.dev?checkout=success';
-    const cancelUrl = isDev
-      ? 'https://dev-dashboard.safeprompt.dev?checkout=cancelled'
-      : 'https://dashboard.safeprompt.dev?checkout=cancelled';
+    // Use dashboard URL from environment for redirects
+    const successUrl = `${DASHBOARD_URL}?checkout=success`;
+    const cancelUrl = `${DASHBOARD_URL}?checkout=cancelled`;
 
     // Create checkout session parameters
     const sessionParams = {

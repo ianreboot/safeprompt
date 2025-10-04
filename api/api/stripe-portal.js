@@ -13,6 +13,10 @@ const supabase = createClient(
   process.env.SAFEPROMPT_PROD_SUPABASE_SERVICE_ROLE_KEY || process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
+// Environment-aware URLs for redirects
+const DASHBOARD_URL = process.env.DASHBOARD_URL || 'https://dashboard.safeprompt.dev';
+const WEBSITE_URL = process.env.WEBSITE_URL || 'https://safeprompt.dev';
+
 export default async function handler(req, res) {
   // Environment-based CORS (no localhost in production)
   const isProd = process.env.NODE_ENV === 'production' ||
@@ -20,12 +24,12 @@ export default async function handler(req, res) {
 
   const allowedOrigins = isProd
     ? [
-        'https://dashboard.safeprompt.dev',
-        'https://safeprompt.dev'
+        DASHBOARD_URL,
+        WEBSITE_URL
       ]
     : [
-        'https://dev-dashboard.safeprompt.dev',
-        'https://dev.safeprompt.dev',
+        DASHBOARD_URL,
+        WEBSITE_URL,
         'http://localhost:3000',
         'http://localhost:5173'
       ];
@@ -100,11 +104,8 @@ export default async function handler(req, res) {
       });
     }
 
-    // Determine return URL based on environment
-    const isDev = origin?.includes('dev-dashboard') || origin?.includes('localhost');
-    const returnUrl = isDev
-      ? 'https://dev-dashboard.safeprompt.dev'
-      : 'https://dashboard.safeprompt.dev';
+    // Use dashboard URL from environment for return
+    const returnUrl = DASHBOARD_URL;
 
     // Create Stripe Customer Portal session
     const session = await stripe.billingPortal.sessions.create({
