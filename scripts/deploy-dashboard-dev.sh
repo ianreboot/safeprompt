@@ -11,7 +11,7 @@ cd /home/projects/safeprompt/dashboard
 
 # Export DEV environment variables (these override .env.production)
 export NEXT_PUBLIC_SUPABASE_URL=https://vkyggknknyfallmnrmfu.supabase.co
-export NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZreWdna25rbnlmYWxsbW5ybWZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NDczMTcsImV4cCI6MjA3NDIyMzMxN30.yC2lRuZI4hYWpeT4rJW67zYc8A-kg7hp8NossOKnRlo
+export NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_3xiz2CdEwv54d3ezxHiSjQ_Avg95CQn
 export NEXT_PUBLIC_DASHBOARD_URL=https://dev-dashboard.safeprompt.dev
 export NEXT_PUBLIC_WEBSITE_URL=https://dev.safeprompt.dev
 export NEXT_PUBLIC_APP_URL=https://dev-dashboard.safeprompt.dev

@@ -140,6 +140,9 @@ export default async function handler(req, res) {
           });
           const batchProcessingTime = Date.now() - batchStartTime;
 
+          // Add processing time to result
+          result.processingTime = batchProcessingTime;
+
           // Cache the result
           if (cache.size >= CACHE_MAX_SIZE) {
             const firstKey = cache.keys().next().value;
@@ -203,6 +206,9 @@ export default async function handler(req, res) {
       skipExternalCheck: mode === 'ai-only'
     });
     const processingTime = Date.now() - startTime;
+
+    // Add processing time to result
+    result.processingTime = processingTime;
 
     // Cache the result
     if (cache.size >= CACHE_MAX_SIZE) {
