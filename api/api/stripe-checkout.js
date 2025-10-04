@@ -1,6 +1,7 @@
 // Stripe Checkout - Create checkout sessions for plan upgrades
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from '../lib/rate-limiter.js';
 
 const stripe = new Stripe(
   process.env.STRIPE_PROD_SECRET_KEY || process.env.STRIPE_SECRET_KEY || '',
@@ -41,6 +42,28 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate limiting (5/min, 20/hour, 50/day)
+  const clientIP = getClientIP(req);
+  const rateLimit = await checkRateLimit(clientIP, 'stripe-checkout', {
+    perMinute: 5,
+    perHour: 20,
+    perDay: 50
+  });
+
+  // Add rate limit headers
+  const rateLimitHeaders = getRateLimitHeaders(rateLimit);
+  Object.entries(rateLimitHeaders).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
+  if (!rateLimit.allowed) {
+    return res.status(429).json({
+      error: 'Rate limit exceeded',
+      message: `Too many requests. Please try again in ${rateLimit.resetAt.minute} seconds.`,
+      retryAfter: rateLimit.resetAt.minute
+    });
   }
 
   try {

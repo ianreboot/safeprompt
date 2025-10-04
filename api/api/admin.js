@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { Resend } from 'resend';
 import crypto from 'crypto';
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from '../lib/rate-limiter.js';
 
 // Use production Stripe keys in production, fall back to test keys for dev
 const stripeKey = process.env.STRIPE_PROD_SECRET_KEY || process.env.STRIPE_SECRET_KEY || '';
@@ -475,6 +476,28 @@ export default async function handler(req, res) {
 
   if (req.method !== 'GET' && req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate limiting (10/min, 100/hour, 500/day - generous for admin actions)
+  const clientIP = getClientIP(req);
+  const rateLimit = await checkRateLimit(clientIP, 'admin', {
+    perMinute: 10,
+    perHour: 100,
+    perDay: 500
+  });
+
+  // Add rate limit headers
+  const rateLimitHeaders = getRateLimitHeaders(rateLimit);
+  Object.entries(rateLimitHeaders).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
+
+  if (!rateLimit.allowed) {
+    return res.status(429).json({
+      error: 'Rate limit exceeded',
+      message: `Too many requests. Please try again in ${rateLimit.resetAt.minute} seconds.`,
+      retryAfter: rateLimit.resetAt.minute
+    });
   }
 
   const { action } = req.query;
