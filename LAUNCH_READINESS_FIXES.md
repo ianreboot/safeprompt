@@ -8,10 +8,11 @@
 **Context Switches**: 0
 
 ## 📊 Quick Stats
-- **Items Completed**: 0/39 (0%)
+- **Items Completed**: 0/56 (0%)
 - **Current Phase**: Not Started
 - **Blockers**: None
-- **Last Update**: 2025-10-04 by Initial AI
+- **Estimated Time**: 55 hours (can parallelize to 16 hours with 4 workstreams)
+- **Last Update**: 2025-10-04 by Initial AI (Updated after agent reviews)
 
 ## 🧭 Status-Driven Navigation
 - **✅ Completed**: 0 tasks
@@ -34,15 +35,20 @@ Three specialist agents (big-brain, qa-engineer, security-engineer) unanimously 
 3. Admin endpoint weak auth (single static key)
 4. Localhost in production CORS (PR disaster with security researchers)
 
-**3 HIGH-RISK ISSUES** (should fix - 10 hours):
-5. Performance misrepresentation (claims 350ms, actual 3-6 seconds)
-6. Free tier economics broken (10K free → bankruptcy risk)
-7. No load testing (will crash under Product Hunt traffic)
+**2 HIGH-RISK ISSUES** (should fix - 4 hours):
+5. Free tier economics broken (10K free → bankruptcy risk)
+6. No load testing (will crash under Product Hunt traffic)
 
-**3 INFRASTRUCTURE GAPS** (before launch - 3 hours):
-8. No monitoring/alerts
-9. No production smoke test
-10. API key migration incomplete (can defer 48hr)
+**2 INFRASTRUCTURE GAPS** (before launch - 3 hours):
+7. No monitoring/alerts
+8. No production smoke test
+
+**PERFORMANCE VALIDATION** (after other fixes - 6 hours):
+9. Retest performance claims (previous testing showed 350ms avg - verify before changing)
+10. Fix claims IF retesting shows issues (may be false alarm)
+
+**POST-LAUNCH** (within 48 hours - 2 hours):
+11. API key migration incomplete (acceptable to defer)
 
 **Expected Outcome**: SafePrompt ready to launch on Product Hunt with confidence that security researchers won't destroy us in first hour, service won't crash under load, and economics are sustainable.
 
@@ -53,7 +59,17 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 
 ### When you reach a 🧠 CONTEXT REFRESH task:
 
-**ESSENTIAL UPDATES (Do these first):**
+**CRITICAL: ALWAYS READ THESE FIRST (Before updating this doc):**
+1. **Read /home/projects/safeprompt/CLAUDE.md** - Complete project architecture, hard-fought knowledge, deployment procedures
+2. **Read /home/projects/docs/reference-supabase-access.md** - Database access patterns and SQL operations
+3. **Read /home/projects/docs/reference-cloudflare-access.md** - Deployment and DNS configuration
+4. **Read /home/projects/docs/reference-vercel-access.md** - API deployment and environment variables
+
+**Why This Matters**: These documents contain instructions beyond AI training data (current API versions, exact commands, authentication patterns, hard-fought solutions). Reading them ensures you use correct, up-to-date methods rather than outdated or incorrect approaches.
+
+**Context Refresh Frequency**: Every 3 tasks (reduced from every 1-2 tasks to minimize overhead while maintaining continuity)
+
+**ESSENTIAL UPDATES (Do these after reading above):**
 
 1. **Update Task Checklist**:
    - Find completed tasks in checklist
@@ -91,150 +107,237 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 
 ## Task Checklist (UPDATE AFTER EACH STEP)
 
-### Phase 1: LAUNCH BLOCKERS (Must Fix - 8 hours)
+### Phase 0: PRE-FLIGHT CRITICAL TASKS (Must Do First - 1.5 hours)
 
-#### 1.1 Strong Password Requirements (2 hours)
+#### 0.1 Full Database Backup (30 minutes)
+- [ ] 0.1a Create complete backup of PROD database (adyfhzbcsqzgqvyimycv)
+- [ ] 0.1b Store backup in /home/projects/safeprompt/backups/ with timestamp
+- [ ] 0.1c Verify backup file is complete and accessible
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+
+#### 0.2 Complete CORS Audit (30 minutes)
+- [ ] 0.2a Run grep to find ALL CORS configurations in /api directory
+- [ ] 0.2b Identify all files with allowedOrigins arrays
+- [ ] 0.2c Document all files needing CORS updates (not just 3 known files)
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+
+#### 0.3 Baseline Performance Measurement (30 minutes)
+- [ ] 0.3a Test production /api/v1/validate endpoint (100 requests)
+- [ ] 0.3b Calculate average, P50, P95, P99 response times
+- [ ] 0.3c Document baseline metrics BEFORE any changes
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+
+### Phase 1: LAUNCH BLOCKERS (Must Fix - 14 hours)
+
+#### 1.1 Strong Password Requirements (3 hours - CRITICAL from Day 1)
 - [ ] 1.1a Read Supabase Auth password policy documentation
 - [ ] 1.1b Configure Supabase Auth settings: 12 char minimum + complexity
 - [ ] 1.1c Test signup with weak password (should fail)
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 - [ ] 1.1d Test signup with strong password (should succeed)
 - [ ] 1.1e Update onboard/page.tsx if client-side validation needed
 - [ ] 1.1f Deploy dashboard to production
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
-#### 1.2 Rate Limiting on Auth Endpoints (4 hours)
+#### 1.2 Rate Limiting on Auth Endpoints (8 hours - TIME INCREASED)
 - [ ] 1.2a Read existing rate limiting in playground.js (lines 95-107)
-- [ ] 1.2b Create rate limiting utility function in /api/lib/rate-limiter.js
-- [ ] 1.2c Add rate limiting to /api/stripe-checkout.js
-- [ ] 1.2d Add rate limiting to /api/stripe-portal.js
-- [ ] 1.2e Add rate limiting to /api/admin.js (all actions)
+- [ ] 1.2b Verify update_rate_limit function exists in Supabase
+- [ ] 1.2c Create rate limiting utility function in /api/lib/rate-limiter.js
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 1.2f Test rate limiting with rapid requests (should block after limit)
-- [ ] 1.2g Deploy API to production
-- [ ] 1.2h Verify rate limiting works in production
+- [ ] 1.2d Add rate limiting to /api/stripe-checkout.js
+- [ ] 1.2e Add rate limiting to /api/stripe-portal.js
+- [ ] 1.2f Add rate limiting to /api/admin.js (all actions)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 1.2g Test rate limiting with rapid requests (should block after limit)
+- [ ] 1.2h Debug edge cases (IPv6, proxies, connection resets)
+- [ ] 1.2i Deploy API to production
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 1.2j Verify rate limiting works in production
 
-#### 1.3 Fix Admin Authentication (1 hour)
+#### 1.3 Fix Admin Authentication (3 hours - TIME INCREASED)
 - [ ] 1.3a Review current admin auth in /api/admin.js line 349-352
 - [ ] 1.3b Design solution: Use Supabase RLS + is_admin flag in profiles table
 - [ ] 1.3c Update profiles table schema (add is_admin boolean)
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 - [ ] 1.3d Set ian.ho@rebootmedia.net as admin user
+- [ ] 1.3e Consider service role key requirements for admin operations
+- [ ] 1.3f Replace static key check with Supabase auth + admin check
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 1.3e Replace static key check with Supabase auth + admin check
-- [ ] 1.3f Test admin endpoints with admin user (should succeed)
-- [ ] 1.3g Test admin endpoints with non-admin user (should fail)
-- [ ] 1.3h Deploy API to production
+- [ ] 1.3g Test admin endpoints with admin user (should succeed)
+- [ ] 1.3h Test admin endpoints with non-admin user (should fail)
+- [ ] 1.3i Test dashboard admin panel integration
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 1.3j Deploy API to production
 
-#### 1.4 Remove Localhost from Production CORS (30 minutes)
-- [ ] 1.4a Find all files with CORS configuration (stripe-portal, stripe-checkout, validate)
-- [ ] 1.4b Implement environment-based CORS (prod vs dev)
-- [ ] 1.4c Remove localhost from production CORS arrays
+#### 1.4 Remove Localhost from Production CORS (45 minutes - EXPANDED SCOPE)
+- [ ] 1.4a Use results from Task 0.2 (complete CORS audit)
+- [ ] 1.4b Implement environment-based CORS in ALL identified files
+- [ ] 1.4c Remove localhost from production CORS arrays everywhere
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 - [ ] 1.4d Test API from production dashboard (should work)
 - [ ] 1.4e Test API from localhost in dev (should work in dev only)
 - [ ] 1.4f Deploy API to production
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
-### Phase 2: HIGH-RISK ISSUES (Should Fix - 10 hours)
+### Phase 2: INFRASTRUCTURE & BASELINE TESTING (Before Other Fixes - 9 hours)
 
-#### 2.1 Fix Performance Claims (6 hours)
-- [ ] 2.1a Measure actual production API response times (100 requests)
-- [ ] 2.1b Find all performance claims in website (grep "350ms" "instant")
-- [ ] 2.1c DECISION: Update claims vs optimize validator vs add fast mode
+#### 2.1 Set Up Monitoring & Alerts (3 hours - MOVED EARLIER)
+- [ ] 2.1a Configure Vercel monitoring for API project
+- [ ] 2.1b Set up error rate alerts (>1% error rate)
+- [ ] 2.1c Set up OpenRouter spend alerts ($50/day threshold)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 2.1d Implement chosen solution
-- [ ] 2.1e Verify new claims are accurate with production testing
-- [ ] 2.1f Deploy website to production
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-
-#### 2.2 Reduce Free Tier (30 minutes)
-- [ ] 2.2a Update free tier limit in database schema (10000 → 1000)
-- [ ] 2.2b Update dashboard display (show 1000 requests/month)
-- [ ] 2.2c Update website pricing page
-- [ ] 2.2d Update signup confirmation email template
-- [ ] 2.2e Deploy all changes to production
+- [ ] 2.1d Set up Stripe webhook failure alerts
+- [ ] 2.1e Test alerts with intentional failures
+- [ ] 2.1f Document alert response procedures
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
-#### 2.3 Load Testing (4 hours)
-- [ ] 2.3a Install load testing tools (Apache Bench or Artillery)
-- [ ] 2.3b Create load test scenarios (1000 concurrent signups)
-- [ ] 2.3c Run signup endpoint load test
-- [ ] 2.3d Run API validation endpoint load test
+#### 2.2 Baseline Load Testing (6 hours - BEFORE Rate Limiting)
+- [ ] 2.2a Install load testing tools (Apache Bench or Artillery)
+- [ ] 2.2b Create realistic test scenarios (signup, validation, payment)
+- [ ] 2.2c Run signup endpoint baseline test (100 concurrent users)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 2.3e Analyze results: identify bottlenecks
-- [ ] 2.3f Fix critical bottlenecks if found
-- [ ] 2.3g Re-test after fixes
-- [ ] 2.3h Document maximum concurrent users supported
+- [ ] 2.2d Run API validation endpoint baseline test (100 concurrent)
+- [ ] 2.2e Analyze baseline results: response times, error rates
+- [ ] 2.2f Identify baseline bottlenecks (if any exist)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-
-### Phase 3: INFRASTRUCTURE (Before Launch - 3 hours)
-
-#### 3.1 Set Up Monitoring & Alerts (2 hours)
-- [ ] 3.1a Configure Vercel monitoring for API project
-- [ ] 3.1b Set up error rate alerts (>1% error rate)
-- [ ] 3.1c Set up OpenRouter spend alerts ($50/day threshold)
-- [ ] 3.1d Set up Stripe webhook failure alerts
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 3.1e Test alerts with intentional failures
-- [ ] 3.1f Document alert response procedures
+- [ ] 2.2g Fix critical baseline bottlenecks
+- [ ] 2.2h Re-test to confirm fixes
+- [ ] 2.2i Document baseline capacity (max concurrent users supported)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
-#### 3.2 Production Smoke Test (1 hour)
-- [ ] 3.2a Read QA agent's test plan at /home/projects/safeprompt/PRODUCTION_QUALITY_TEST_PLAN.md
-- [ ] 3.2b Execute 5-minute smoke test script
-- [ ] 3.2c Execute P0 fixes verification (all 5 fixes)
-- [ ] 3.2d Execute revenue paths verification
-- [ ] 3.2e Document all test results inline (pass/fail)
+### Phase 3: ECONOMICS & VALIDATION (Can Run in Parallel - 2.5 hours)
+
+#### 3.1 Reduce Free Tier (30 minutes)
+
+- [ ] 3.1a Update free tier limit in database schema (10000 → 1000)
+- [ ] 3.1b Update dashboard display (show 1000 requests/month)
+- [ ] 3.1c Update website pricing page
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 3.1d Update signup confirmation email template
+- [ ] 3.1e Deploy all changes to production
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
-### Phase 4: POST-LAUNCH (Within 48 hours - 2 hours)
-
-#### 4.1 Complete API Key Hash Migration (2 hours)
-- [ ] 4.1a Review current migration status in /api/api/v1/validate.js
-- [ ] 4.1b Identify all plaintext API keys in database
-- [ ] 4.1c Hash all plaintext keys
-- [ ] 4.1d Remove plaintext fallback code
-- [ ] 4.1e Test API with hashed keys only
-- [ ] 4.1f Deploy to production
+#### 3.2 Retest Load After Rate Limiting (2 hours)
+- [ ] 3.2a Run same load tests as Phase 2.2 (with rate limiting active)
+- [ ] 3.2b Compare results to baseline (Task 0.3 and Phase 2.2)
+- [ ] 3.2c Verify rate limiting doesn't degrade performance excessively
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 3.2d Verify rate limits enforce correctly under load
+- [ ] 3.2e Document final capacity with all protections active
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
-### Phase 5: Final Validation & Launch Decision
+### Phase 4: PRE-LAUNCH VALIDATION (1.5 hours)
 
-#### 5.1 Launch Readiness Assessment
-- [ ] 5.1a Review all Phase 1 completions (4 blockers fixed)
-- [ ] 5.1b Review all Phase 2 completions (3 high-risk fixed)
-- [ ] 5.1c Review all Phase 3 completions (infrastructure ready)
-- [ ] 5.1d Run complete smoke test suite
+#### 4.1 Production Smoke Test (1.5 hours)
+- [ ] 4.1a Read QA agent's test plan at /home/projects/safeprompt/PRODUCTION_QUALITY_TEST_PLAN.md
+- [ ] 4.1b Execute 5-minute smoke test script
+- [ ] 4.1c Execute P0 fixes verification (all 5 previous + today's 4 new fixes)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 5.1e Create launch readiness report
-- [ ] 5.1f DECISION: GO/NO-GO for Product Hunt launch
+- [ ] 4.1d Execute revenue paths verification (signup → payment → API usage)
+- [ ] 4.1e Document all test results inline (pass/fail with details)
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+
+### Phase 5: PERFORMANCE VALIDATION (After Other Fixes - 2 hours)
+
+#### 5.1 Verify Performance Claims (2 hours)
+- [ ] 5.1a Compare Task 0.3 baseline to current production performance
+- [ ] 5.1b Test /api/v1/validate with proper methodology (warm cache, 100+ requests)
+- [ ] 5.1c Calculate statistical average and P95 response times
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 5.1d DECISION: Do claims match reality? (350ms avg, 67% instant)
+- [ ] 5.1e If YES: Document validation, move to Phase 7
+- [ ] 5.1f If NO: Find all claims in website, decide fix approach
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 5.1g If needed: Update claims or optimize validator
+- [ ] 5.1h If needed: Deploy website and reverify
+
+### Phase 6: POST-LAUNCH (Within 48 hours - 2 hours)
+
+#### 6.1 Complete API Key Hash Migration (2 hours)
+- [ ] 6.1a Review current migration status in /api/api/v1/validate.js
+- [ ] 6.1b Identify all plaintext API keys in database
+- [ ] 6.1c Hash all plaintext keys
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 6.1d Remove plaintext fallback code
+- [ ] 6.1e Test API with hashed keys only
+- [ ] 6.1f Deploy to production
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+
+### Phase 7: FINAL LAUNCH DECISION & PLAYBOOK
+
+#### 7.1 Status Page Setup (Optional - 2 hours if automated)
+- [ ] 7.1a Research automated status page solutions (status.io, Vercel status, Cloudflare)
+- [ ] 7.1b If fully automated option exists: Configure status.safeprompt.dev
+- [ ] 7.1c Connect to existing monitoring alerts (auto-update from alerts)
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 7.1d Test status page updates automatically when alerts trigger
+- [ ] 7.1e If NO automated option: Skip and monitor manually
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+
+#### 7.2 Launch Day Playbook (Added to this document - 1 hour)
+- [ ] 7.2a Create "Launch Day Operations" section below in this document
+- [ ] 7.2b Document on-call schedule and responsibilities
+- [ ] 7.2c Document communication channels (who monitors what)
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 7.2d Create decision tree for common issues (rollback criteria)
+- [ ] 7.2e Draft pre-written responses for common Product Hunt questions
+- [ ] 7.2f Document escalation path for critical issues
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+
+#### 7.3 Final Launch Readiness Assessment
+- [ ] 7.3a Review all Phase 0 completions (pre-flight done)
+- [ ] 7.3b Review all Phase 1 completions (4 blockers fixed)
+- [ ] 7.3c Review all Phase 2 completions (monitoring + baseline testing)
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 7.3d Review all Phase 3 completions (economics + load retest)
+- [ ] 7.3e Review all Phase 4 completions (smoke tests passed)
+- [ ] 7.3f Review Phase 5 completion (performance validated)
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 7.3g Create comprehensive launch readiness report
+- [ ] 7.3h DECISION: GO/NO-GO for Product Hunt launch
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
 ## Current State Variables (UPDATE THESE)
 
 ```yaml
 CURRENT_PHASE: "Not Started"
+PHASE_0_COMPLETE: false  # Pre-flight tasks (backup, CORS audit, baseline)
 PHASE_1_COMPLETE: false  # Launch blockers fixed
-PHASE_2_COMPLETE: false  # High-risk issues fixed
-PHASE_3_COMPLETE: false  # Infrastructure ready
-PHASE_4_COMPLETE: false  # API key migration done (post-launch OK)
-PHASE_5_COMPLETE: false  # Final validation done
+PHASE_2_COMPLETE: false  # Infrastructure & baseline testing
+PHASE_3_COMPLETE: false  # Economics & load retest
+PHASE_4_COMPLETE: false  # Pre-launch validation
+PHASE_5_COMPLETE: false  # Performance validated
+PHASE_6_COMPLETE: false  # API key migration (post-launch OK)
+PHASE_7_COMPLETE: false  # Final launch decision
+
+# Critical Pre-Flight Status
+DATABASE_BACKUP_COMPLETE: false
+CORS_AUDIT_COMPLETE: false
+BASELINE_PERFORMANCE_MEASURED: false
 
 # Critical Fixes Status
 PASSWORD_REQUIREMENTS_FIXED: false
 RATE_LIMITING_ADDED: false
 ADMIN_AUTH_FIXED: false
 CORS_LOCALHOST_REMOVED: false
-PERFORMANCE_CLAIMS_FIXED: false
-FREE_TIER_REDUCED: false
-LOAD_TESTING_COMPLETE: false
 MONITORING_CONFIGURED: false
+BASELINE_LOAD_TEST_COMPLETE: false
+FREE_TIER_REDUCED: false
+LOAD_RETEST_COMPLETE: false
 SMOKE_TEST_PASSED: false
+PERFORMANCE_RETESTED: false
+PERFORMANCE_CLAIMS_FIXED: false  # Only if retesting shows issues
 API_KEY_MIGRATION_COMPLETE: false
+STATUS_PAGE_CONFIGURED: false  # Optional if automated
+LAUNCH_PLAYBOOK_DOCUMENTED: false
 
 # File Locations
+DATABASE_BACKUP: "[Not created yet]"
+CORS_AUDIT_RESULTS: "[Not created yet]"
+BASELINE_PERFORMANCE_RESULTS: "[Not created yet]"
 RATE_LIMITER_UTILITY: "[Not created yet]"
-LOAD_TEST_RESULTS: "[Not created yet]"
+BASELINE_LOAD_TEST_RESULTS: "[Not created yet]"
+LOAD_RETEST_RESULTS: "[Not created yet]"
 SMOKE_TEST_RESULTS: "[Not created yet]"
 LAUNCH_READINESS_REPORT: "[Not created yet]"
 
@@ -583,6 +686,21 @@ If critical failure occurs:
 - Structured into 5 phases with 39 specific tasks
 - Added context refresh tasks every 1-2 tasks for crash resistance
 
+### 2025-10-04 16:30 - Agent Review & Restructuring
+- Launched big-brain and fresh-eyes agents for critical review
+- User approved Option A with modifications:
+  - Status page only if fully automated
+  - Launch playbook added to this doc (no separate file)
+  - Strong passwords from Day 1 (kept in Phase 1)
+  - Context refresh every 3 tasks (reduced from every 1-2)
+- Applied approved changes:
+  - Added Phase 0 (pre-flight): Database backup, CORS audit, baseline perf
+  - Reordered tasks: Monitoring → Load testing → Rate limiting (proper dependencies)
+  - Increased time estimates: Rate limiting (8hr), Load testing (6hr), Admin auth (3hr)
+  - Reduced context refreshes from 25 to 19 (every 3 tasks)
+  - Added parallelization strategy (55hr → 16hr with 4 workstreams)
+  - Total: 56 tasks, 55 hours serial, ~22.5 hours parallel
+
 ## Results Tracking
 
 ### Expected vs Actual Results
@@ -645,6 +763,94 @@ If critical failure occurs:
 ## Workarounds & Hacks
 
 [Will document any workarounds needed during implementation]
+
+## Parallelization Strategy
+
+### 4-Way Parallel Execution (Cuts Timeline from 55hr to ~16hr)
+
+**Prerequisite**: Complete Phase 0 first (backup, CORS audit, baseline)
+
+**Workstream 1: Security Fixes** (14 hours)
+- Owner: Security Engineer / Agent 1
+- Tasks: Phase 1 (Password, Rate Limiting, Admin Auth, CORS)
+- Dependencies: None after Phase 0
+- Output: All security blockers fixed
+
+**Workstream 2: Infrastructure** (9 hours)
+- Owner: DevOps Engineer / Agent 2
+- Tasks: Phase 2 (Monitoring setup, Baseline load testing)
+- Dependencies: None after Phase 0
+- Output: Monitoring active, baseline capacity known
+
+**Workstream 3: Economics** (2.5 hours)
+- Owner: Product Engineer / Agent 3
+- Tasks: Phase 3.1 (Free tier reduction)
+- Dependencies: None after Phase 0
+- Output: Sustainable economics configured
+
+**Workstream 4: Documentation** (3 hours)
+- Owner: QA Engineer / Agent 4
+- Tasks: Phase 7.1-7.2 (Status page research, Launch playbook)
+- Dependencies: None (can research/document in parallel)
+- Output: Launch day procedures ready
+
+**Convergence Point** (After all 4 workstreams complete):
+- Run Phase 3.2: Load retest with rate limiting (2 hours)
+- Run Phase 4: Production smoke test (1.5 hours)
+- Run Phase 5: Performance validation (2 hours)
+- Complete Phase 7.3: Final launch decision (1 hour)
+
+**Total Timeline**: 16 hours with 4-way parallel + 6.5 hours convergence = ~22.5 hours
+
+**Serial Timeline**: 55 hours
+
+**Time Savings**: 59% reduction (32.5 hours saved)
+
+### Single-Threaded Execution Order
+
+If running solo (one person/agent), execute phases sequentially:
+1. Phase 0: Pre-flight (1.5hr)
+2. Phase 2: Infrastructure first (9hr) - need monitoring before testing
+3. Phase 1: Security fixes (14hr)
+4. Phase 3: Economics + retest (2.5hr)
+5. Phase 4: Smoke test (1.5hr)
+6. Phase 5: Performance validation (2hr)
+7. Phase 7: Launch decision (5hr)
+8. Phase 6: API key migration post-launch (2hr)
+
+Total: 37.5 hours (excluding optional status page and detailed playbook)
+
+## Launch Day Operations
+
+**[TO BE COMPLETED IN TASK 7.2]**
+
+This section will contain:
+- On-call schedule and team responsibilities
+- Communication channels (who monitors Product Hunt, support email, error logs)
+- Decision tree for common issues (when to rollback, when to patch forward)
+- Pre-written responses for common Product Hunt questions
+- Escalation path for critical issues
+- Success metrics to monitor (signup rate, error rate, revenue)
+
+**Template Structure** (will be filled in during Phase 7.2):
+
+### Team Roles & Responsibilities
+[To be documented]
+
+### Communication Channels
+[To be documented]
+
+### Issue Response Playbook
+[To be documented]
+
+### Rollback Decision Criteria
+[To be documented]
+
+### Pre-Written Responses
+[To be documented]
+
+### Success Metrics
+[To be documented]
 
 ## References
 

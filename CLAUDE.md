@@ -1004,42 +1004,44 @@ function getCacheKey(prompt, mode, profileId) {
 
 ---
 
-### 17. Performance Claims vs Architecture Reality
+### 17. Performance Claims - Needs Retesting (Potentially False Alarm)
 
-**WHY It Happens:**
-Marketing claims inherited from old architecture, don't reflect current hardened validator:
+**IMPORTANT**: Previous production testing validated ~350ms avg claims. Recent agent analysis suggested slower performance, but this MAY be a testing methodology issue rather than actual problem.
+
+**Status**: ⚠️ NEEDS VERIFICATION - Retest before changing claims
+
+**Original Claims** (validated in Sept 2025):
 ```javascript
-// Old validator (single AI call): ~350ms
 // Documented: "Fast: ~350ms avg (67% instant via pattern detection)"
-
-// New hardened validator (multiple sequential AI calls):
-// 1. Orchestrator AI call: ~1-2s
-// 2. Parallel validators (3 AI calls): ~1-2s total
-// 3. Pass 2 (if uncertain): ~1-2s
-// Total: 3-6 seconds actual
-
-// Claims not updated after architecture change
+// Previous testing confirmed these numbers
 ```
 
-**HOW To Fix:**
-Update documentation to reflect current performance:
-```markdown
-// ✅ REALISTIC: Match actual measurements
-- Pattern detection: <100ms (instant)
-- AI validation: 3-6 seconds (multi-pass security depth)
-- Trade-off: Security depth over speed
-```
+**Recent Concern** (2025-10-03):
+Agent analysis suggested hardened validator may take 3-6 seconds, but:
+- Agent may have tested wrong endpoint
+- Agent may have tested without caching
+- Agent may have measured cold-start times
+- Previous production testing showed 350ms avg
 
-**Alternative:** Optimize hardened validator:
-- Cache orchestrator results
-- Implement request queuing
-- Add timeout fallbacks to pattern-only mode
+**Action Required:**
+1. **Retest production performance** with proper methodology:
+   - Test /api/v1/validate endpoint (not admin endpoints)
+   - Use production API keys (not test mode)
+   - Measure warm cache performance (typical usage)
+   - Run 100+ requests for statistical average
+2. **Only update claims if retesting confirms slower performance**
+3. **Document actual findings** to replace this section
 
-**Recognition:** Actual API response times 10x slower than documented = update docs or optimize
+**If Performance IS Actually Slower:**
+- Option A: Optimize validator (caching, queuing)
+- Option B: Update claims to match reality
+- Option C: Add "fast mode" for speed-critical users
 
-**Impact:** HIGH - User expectation mismatch, reputation risk
+**Recognition:** Conflicting performance data = retest with proper methodology
 
-**Date Discovered:** 2025-10-03
+**Impact:** MEDIUM - Only if claims proven incorrect
+
+**Date Discovered:** 2025-10-03 (needs verification)
 
 ---
 
