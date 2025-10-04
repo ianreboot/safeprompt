@@ -8,11 +8,11 @@
 **Context Switches**: 0
 
 ## 📊 Quick Stats
-- **Items Completed**: 35/56 (63%) - ✅ Phase 0 COMPLETE, ✅ Phase 1.1 COMPLETE, ✅ Phase 1.2 READY, ✅ Phase 5 COMPLETE
-- **Current Phase**: Phase 1 - Launch Blockers (Tasks 1.1 & 1.2 done, ready for 1.3)
-- **Blockers**: 1 item - Phase 1.2j needs merge dev→main for production deployment
-- **Estimated Time**: 40.5 hours remaining (can parallelize to 9 hours with 4 workstreams)
-- **Last Update**: 2025-10-04 06:22 - Phase 1.2 complete: Rate limiting implemented & tested
+- **Items Completed**: 41/56 (73%) - ✅ Phase 0 COMPLETE, ✅ Phase 1.1 COMPLETE, ✅ Phase 1.2 READY, ⚠️ Phase 1.3 CODE READY, ✅ Phase 5 COMPLETE
+- **Current Phase**: Phase 1 - Launch Blockers (1.1 ✅, 1.2 ⚠️, 1.3 ⚠️ code ready, needs manual DB migration)
+- **Blockers**: 2 items - Phase 1.2j needs merge dev→main, Phase 1.3g-j need manual Supabase migration
+- **Estimated Time**: 37 hours remaining (can parallelize to 8.5 hours with 4 workstreams)
+- **Last Update**: 2025-10-04 06:35 - Phase 1.3 code complete: Admin auth updated to token-based RBAC
 
 ## 🧭 Status-Driven Navigation
 - **✅ Completed**: 12 tasks (Phase 0 COMPLETE - all 3 pre-flight tasks done)
@@ -150,20 +150,20 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 - [x] 1.2i Deploy API to production (COMPLETED: 2025-10-04 06:20 - pushed to dev, needs merge to main for prod)
 - [ ] 1.2j Verify rate limiting works in production (BLOCKED: Awaiting merge dev→main for production deployment)
 
-#### 1.3 Fix Admin Authentication (3 hours - TIME INCREASED)
-- [ ] 1.3a Review current admin auth in /api/admin.js line 349-352
-- [ ] 1.3b Design solution: Use Supabase RLS + is_admin flag in profiles table
-- [ ] 1.3c Update profiles table schema (add is_admin boolean)
+#### 1.3 Fix Admin Authentication ⚠️ CODE READY (3 hours - TIME INCREASED)
+- [x] 1.3a Review current admin auth in /api/admin.js line 349-352 (COMPLETED: 2025-10-04 06:25)
+- [x] 1.3b Design solution: Use Supabase RLS + is_admin flag in profiles table (COMPLETED: 2025-10-04 06:26)
+- [x] 1.3c Update profiles table schema (add is_admin boolean) (COMPLETED: 2025-10-04 06:30 - migration file created)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 1.3d Set ian.ho@rebootmedia.net as admin user
-- [ ] 1.3e Consider service role key requirements for admin operations
-- [ ] 1.3f Replace static key check with Supabase auth + admin check
+- [x] 1.3d Set ian.ho@rebootmedia.net as admin user (COMPLETED: 2025-10-04 06:30 - in migration SQL)
+- [x] 1.3e Consider service role key requirements for admin operations (COMPLETED: 2025-10-04 06:28 - uses service role client)
+- [x] 1.3f Replace static key check with Supabase auth + admin check (COMPLETED: 2025-10-04 06:35)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 1.3g Test admin endpoints with admin user (should succeed)
-- [ ] 1.3h Test admin endpoints with non-admin user (should fail)
-- [ ] 1.3i Test dashboard admin panel integration
+- [ ] 1.3g Test admin endpoints with admin user (should succeed) (REQUIRES: Manual database migration)
+- [ ] 1.3h Test admin endpoints with non-admin user (should fail) (REQUIRES: Manual database migration)
+- [ ] 1.3i Test dashboard admin panel integration (REQUIRES: Manual database migration)
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
-- [ ] 1.3j Deploy API to production
+- [ ] 1.3j Deploy API to production (REQUIRES: Manual database migration + merge dev→main)
 
 #### 1.4 Remove Localhost from Production CORS (45 minutes - EXPANDED SCOPE)
 - [ ] 1.4a Use results from Task 0.2 (complete CORS audit)
@@ -800,6 +800,46 @@ If critical failure occurs:
   - **Action Required**: Merge dev→main to deploy to production
 - **Next**: Phase 1.3 - Fix Admin Authentication (or merge dev→main for production deployment)
 
+### 2025-10-04 06:35 - Phase 1.3 Code Complete: Admin Authentication ⚠️ READY FOR MIGRATION
+- ✅ Admin authentication code updated (token-based RBAC)
+- **Database Migration Created** (/api/migrations/003_add_admin_flag.sql):
+  - ALTER TABLE to add is_admin BOOLEAN column (default FALSE)
+  - UPDATE to set ian.ho@rebootmedia.net as admin (is_admin = TRUE)
+  - CREATE INDEX for performance (idx_profiles_is_admin)
+  - Verification step to confirm admin count
+- **Authentication Logic Updated** (admin.js handleApproveWaitlist function):
+  - Replaced static X-Admin-Key header check with Bearer token verification
+  - Verify token via supabase.auth.getUser(token)
+  - Query profiles table to check is_admin flag
+  - Return 401 for invalid/missing tokens
+  - Return 403 for non-admin users (proper HTTP status code)
+- **Documentation Created**: /home/projects/safeprompt/MANUAL_MIGRATION_STEPS.md
+  - Complete step-by-step guide for running SQL migration
+  - Supabase dashboard instructions (SQL Editor)
+  - Post-migration testing procedures
+  - Rollback SQL if needed
+- **Git Commit**: 201f44a0 - Phase 1.3: Replace static admin key with role-based authentication
+- **Files Modified**:
+  - api/api/admin.js (lines 348-396 - authentication logic rewritten)
+  - api/migrations/003_add_admin_flag.sql (new file - 33 lines)
+  - MANUAL_MIGRATION_STEPS.md (new file - 95 lines)
+- **Security Impact**:
+  - Proper role-based access control (RBAC) instead of static keys
+  - Token-based authentication (Bearer tokens)
+  - Database-backed authorization (is_admin flag)
+  - Better error messages (401 vs 403 separation)
+  - No more shared static keys that can leak
+- **Deployment Status**: ⚠️ Code pushed to dev branch (commit 201f44a0)
+  - **REQUIRES MANUAL STEP**: Database migration must be run via Supabase dashboard
+  - Reason: Supabase disabled legacy API keys (2025-10-03)
+  - Migration file ready at /api/migrations/003_add_admin_flag.sql
+  - Testing blocked until migration is run
+  - **Action Required**:
+    1. Run SQL migration in Supabase dashboard
+    2. Test admin auth with ian.ho@rebootmedia.net account
+    3. Merge dev→main to deploy to production
+- **Next**: Manual database migration → Testing → Phase 1.4 - Remove Localhost from Production CORS
+
 ## Results Tracking
 
 ### Expected vs Actual Results
@@ -808,7 +848,7 @@ If critical failure occurs:
 |------|----------|--------|--------|-------|
 | 1.1 Password Requirements | 12 char min enforced | 12 char + complexity enforced | ✅ | Server + client validation |
 | 1.2 Rate Limiting | 429 errors after limit | 429 + retry headers working | ⚠️ | Ready for prod (needs merge dev→main) |
-| 1.3 Admin Auth | Token-based auth works | [Pending] | ⏳ | |
+| 1.3 Admin Auth | Token-based auth works | Code ready, needs DB migration | ⚠️ | Requires manual Supabase SQL migration |
 | 1.4 CORS Fix | Localhost removed in prod | [Pending] | ⏳ | |
 | 2.1 Performance | Claims match reality | [Pending] | ⏳ | |
 | 2.2 Free Tier | 1000 req/month limit | [Pending] | ⏳ | |
@@ -830,7 +870,7 @@ If critical failure occurs:
 ### Current/Optimized Metrics
 - **Password Min Length**: ✅ 12 characters with complexity requirements (lowercase, uppercase, numbers)
 - **Auth Rate Limiting**: ✅ Implemented (5-10/min, 20-100/hour, 50-500/day depending on endpoint)
-- **Admin Auth**: [Not yet updated]
+- **Admin Auth**: ⚠️ Token-based RBAC implemented (code ready, awaiting DB migration)
 - **CORS**: [Not yet fixed]
 - **Performance Claim**: ✅ 178ms avg (48% better than claimed)
 - **Free Tier**: [Not yet reduced]
