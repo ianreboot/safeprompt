@@ -221,6 +221,9 @@ export default function PlaygroundPage() {
     setError(null);
     setResults(null);
 
+    // Start timer to measure TOTAL response time (what user actually experiences)
+    const startTime = performance.now();
+
     try {
       // Temporarily use validate endpoint until playground endpoint deploys
       const [protectedResponse, unprotectedResponse] = await Promise.all([
@@ -330,6 +333,9 @@ export default function PlaygroundPage() {
       const protectedData = await protectedResponse.json();
       const unprotectedData = await unprotectedResponse.json();
 
+      // Calculate TOTAL response time (what user actually experiences)
+      const totalResponseTime = Math.round(performance.now() - startTime);
+
       const data = {
         success: true,
         unprotected: unprotectedData,
@@ -341,7 +347,7 @@ export default function PlaygroundPage() {
           detectionMethod: protectedData.detectionMethod,
           detectionDescription: protectedData.detectionDescription,
           reasoning: protectedData.reasoning,
-          responseTime: protectedData.processingTime
+          responseTime: totalResponseTime  // Use TOTAL time, not just API processing time
         },
         intelligence: {
           detectionMethod: protectedData.detectionDescription ||
@@ -351,7 +357,7 @@ export default function PlaygroundPage() {
                           'Security Validation'),
           confidence: Math.round((protectedData.confidence || 0) * 100) + '%',
           threatType: protectedData.threats?.[0] || 'None detected',
-          responseTime: protectedData.processingTime + 'ms',
+          responseTime: totalResponseTime + 'ms',  // Use TOTAL time, not just API processing time
           blocked: !protectedData.safe,
           reasoning: protectedData.reasoning
         },
