@@ -67,45 +67,6 @@ function decodeEncodingBypasses(input) {
 }
 
 /**
- * Common safe prompt patterns
- * These patterns identify obviously safe user inputs that can skip AI validation
- */
-const SAFE_PROMPT_PATTERNS = [
-  // Factual questions and information requests
-  /^(what|where|when|who|which|whose)\s+(is|are|was|were|do|does|did|can|could|would|should)/i,
-  /^(how\s+(do|does|can|to|much|many))\s/i,
-  /^(why\s+(is|are|do|does|did))\s/i,
-  /^(tell\s+me\s+about|explain|describe|define)\s/i,
-
-  // Simple requests and commands (safe verbs)
-  /^(show|list|find|get|give|provide|calculate|count|compare)\s+(me\s+)?(the\s+)?/i,
-  /^(translate|summarize|paraphrase|rephrase)\s+/i,
-
-  // Weather, time, date queries
-  /\b(weather|temperature|forecast|climate)\b.*?\b(today|tomorrow|this\s+week)\b/i,
-  /^what\s+(time|date)\s+is\s+it/i,
-
-  // Common pleasantries and greetings
-  /^(hello|hi|hey|greetings|good\s+(morning|afternoon|evening))/i,
-  /^(thank\s+you|thanks|please|excuse\s+me)/i,
-
-  // Math and calculations (no code execution)
-  /^(what\s+is|calculate)\s+\d+\s*[\+\-\*\/×÷]\s*\d+/i,
-  /^solve\s+\d+\s*[\+\-\*\/×÷]/i,
-
-  // General knowledge and definitions
-  /^(what\s+does|what's|define)\s+\w+\s+mean/i,
-  /^(what\s+is\s+the\s+(definition|meaning)\s+of)/i,
-
-  // Simple yes/no questions (safe topics)
-  /^(is|are|can|could|will|would|should)\s+\w+\s+(a|an|the)\s+/i,
-
-  // Educational queries
-  /^(how\s+do\s+I\s+(learn|study|understand|improve))/i,
-  /^(recommend|suggest)\s+(a|some|good)\s+(book|article|resource)/i
-];
-
-/**
  * Business context whitelist patterns
  * Legitimate security discussions that should not be filtered
  */
@@ -232,9 +193,6 @@ export function validatePromptSync(prompt) {
       };
     }
 
-    // Check for obviously safe prompts (for fast-path validation)
-    const matchesSafePattern = SAFE_PROMPT_PATTERNS.some(pattern => pattern.test(normalizedPrompt));
-
     // Check if it's a legitimate business use
     const isBusinessUse = BUSINESS_WHITELIST.some(pattern => pattern.test(normalizedPrompt));
     const containsObviousAttack = /ignore\s+(all\s+)?previous\s+instructions|reveal\s+your\s+(prompt|system|instructions)/i.test(normalizedPrompt);
@@ -303,7 +261,6 @@ export function validatePromptSync(prompt) {
       threats,
       inputLength: prompt.length,
       isLegitimateBusinessUse: isLegitimate,
-      matchesSafePattern,
       mixedSignals
     });
 
@@ -316,7 +273,6 @@ export function validatePromptSync(prompt) {
       confidence,
       processingTime: Date.now() - startTime,
       isLegitimateBusinessUse: isLegitimate,
-      matchesSafePattern,
       mixedSignals
     };
 
@@ -343,19 +299,14 @@ export function calculateConfidence(validationResult) {
   if (validationResult.threats.length === 0) {
     confidence = 0.95;  // No threats found
 
-    // Boost confidence for obviously safe patterns
-    if (validationResult.matchesSafePattern) {
-      confidence = 0.98;  // High confidence - skip AI validation
+    // Slightly lower if it's very short (could be incomplete)
+    if (validationResult.inputLength < 10) {
+      confidence = 0.90;
     }
 
     // Perfect confidence for legitimate business use
     if (validationResult.isLegitimateBusinessUse) {
       confidence = 0.98;
-    }
-
-    // Slightly lower if it's very short (could be incomplete)
-    if (validationResult.inputLength < 10 && !validationResult.matchesSafePattern) {
-      confidence = 0.90;
     }
   } else {
     // Calculate based on threat severity
