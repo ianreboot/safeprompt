@@ -1093,6 +1093,6 @@ This section will contain:
 
 - Methodology: /home/projects/docs/methodology-long-running-tasks.md
 - Project Docs: /home/projects/safeprompt/CLAUDE.md
-- Security Audit: /home/projects/user-input/SAFEPROMPT_SECURITY_AUDIT_20251003.md
+- Security Audit: /home/projects/safeprompt/docs/internal/SAFEPROMPT_SECURITY_AUDIT_20251003.md
 - Test Plan: /home/projects/safeprompt/docs/internal/PRODUCTION_QUALITY_TEST_PLAN.md
 - Agent Analysis: See Progress Log 2025-10-04 entry for full findings
