@@ -1970,7 +1970,7 @@ open https://safeprompt.dev/privacy
 **TIMELINE**: 2-3 days implementation
 **PHILOSOPHY**: Optional enhancement, immediate value, zero friction
 **PRIORITY**: HIGH - Competitive differentiation through intelligence layer
-**CRITICAL**: Read competitive moat analysis at `/home/projects/user-input/safeprompt/competitive-moat-features-proposal.md`
+**CRITICAL**: Read competitive moat analysis at `/home/projects/safeprompt/docs/internal/competitive-moat-features-proposal.md`
 
 ### WHY This Feature Matters (Critical Context for Implementation)
 
