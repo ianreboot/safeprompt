@@ -15,7 +15,7 @@ export NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3
 export NEXT_PUBLIC_DASHBOARD_URL=https://dev-dashboard.safeprompt.dev
 export NEXT_PUBLIC_WEBSITE_URL=https://dev.safeprompt.dev
 export NEXT_PUBLIC_APP_URL=https://dev-dashboard.safeprompt.dev
-export NEXT_PUBLIC_API_URL=https://api.safeprompt.dev
+export NEXT_PUBLIC_API_URL=https://dev-api.safeprompt.dev
 
 # Build with exported DEV environment variables
 npm run build

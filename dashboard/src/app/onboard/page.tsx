@@ -40,7 +40,8 @@ function OnboardContent() {
       if (userPlan === 'paid') {
         // Paid users: Create via API with email already confirmed
         // This skips the confirmation email entirely
-        const response = await fetch('https://api.safeprompt.dev/api/admin?action=create-paid-user', {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.safeprompt.dev'
+        const response = await fetch(`${apiUrl}/api/admin?action=create-paid-user`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: userEmail, password })
@@ -93,7 +94,8 @@ function OnboardContent() {
     try {
       // Call consolidated admin API for Stripe checkout
       // Don't send priceId - let API use its production environment variable
-      const response = await fetch('https://api.safeprompt.dev/api/admin?action=create-checkout', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.safeprompt.dev'
+      const response = await fetch(`${apiUrl}/api/admin?action=create-checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -121,7 +123,8 @@ function OnboardContent() {
   async function addToWaitlist(email: string, userId: string) {
     try {
       // Add to waitlist via consolidated website API
-      const response = await fetch('https://api.safeprompt.dev/api/website', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.safeprompt.dev'
+      const response = await fetch(`${apiUrl}/api/website`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

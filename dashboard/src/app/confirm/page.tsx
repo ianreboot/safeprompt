@@ -67,7 +67,8 @@ function ConfirmContent() {
 
   async function addToWaitlist(email: string, userId: string) {
     try {
-      const response = await fetch('https://api.safeprompt.dev/api/website', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.safeprompt.dev'
+      const response = await fetch(`${apiUrl}/api/website`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

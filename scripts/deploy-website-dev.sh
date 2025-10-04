@@ -13,7 +13,7 @@ cd /home/projects/safeprompt/website
 export NEXT_PUBLIC_DASHBOARD_URL=https://dev-dashboard.safeprompt.dev
 export NEXT_PUBLIC_WEBSITE_URL=https://dev.safeprompt.dev
 export NEXT_PUBLIC_APP_URL=https://dev.safeprompt.dev
-export NEXT_PUBLIC_API_URL=https://api.safeprompt.dev
+export NEXT_PUBLIC_API_URL=https://dev-api.safeprompt.dev
 export NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51SAa37IceoFuMr41R6d2ODUwqR9ComtqErYAOrN0cnInmMHSfXVcyHmANp3roVctJ7YW9gSxBw0CiSJpkd6IiAvr0086DtC7BR
 export NEXT_PUBLIC_BETA_PRICE_ID=price_1SAaJGIceoFuMr41bDK1egBY
 

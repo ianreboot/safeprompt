@@ -222,7 +222,8 @@ export default function Dashboard() {
 
   async function fetchCacheStats() {
     try {
-      const response = await fetch('https://api.safeprompt.dev/api/admin?action=cache')
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.safeprompt.dev'
+      const response = await fetch(`${apiUrl}/api/admin?action=cache`)
       if (response.ok) {
         const stats = await response.json()
         setCacheStats(stats)
