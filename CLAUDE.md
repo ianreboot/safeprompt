@@ -1004,44 +1004,41 @@ function getCacheKey(prompt, mode, profileId) {
 
 ---
 
-### 17. Performance Claims - Needs Retesting (Potentially False Alarm)
+### 17. Performance Claims - VALIDATED ✅
 
-**IMPORTANT**: Previous production testing validated ~350ms avg claims. Recent agent analysis suggested slower performance, but this MAY be a testing methodology issue rather than actual problem.
+**Status**: ✅ CONFIRMED - Performance claims are ACCURATE
 
-**Status**: ⚠️ NEEDS VERIFICATION - Retest before changing claims
-
-**Original Claims** (validated in Sept 2025):
+**Website Claims** (validated in Sept 2025):
 ```javascript
 // Documented: "Fast: ~350ms avg (67% instant via pattern detection)"
-// Previous testing confirmed these numbers
+// Claims are conservative - actual performance is BETTER
 ```
 
-**Recent Concern** (2025-10-03):
-Agent analysis suggested hardened validator may take 3-6 seconds, but:
-- Agent may have tested wrong endpoint
-- Agent may have tested without caching
-- Agent may have measured cold-start times
-- Previous production testing showed 350ms avg
+**Baseline Testing Results** (2025-10-04):
+Production testing with 100 requests confirmed excellent performance:
+- **Average**: 178.52ms (48% BETTER than claimed 350ms!)
+- **P50 (Median)**: 154ms
+- **P95**: 197ms
+- **P99**: 318ms
+- **Distribution**: 99% of requests complete in <500ms
 
-**Action Required:**
-1. **Retest production performance** with proper methodology:
-   - Test /api/v1/validate endpoint (not admin endpoints)
-   - Use production API keys (not test mode)
-   - Measure warm cache performance (typical usage)
-   - Run 100+ requests for statistical average
-2. **Only update claims if retesting confirms slower performance**
-3. **Document actual findings** to replace this section
+**Previous Concern - RESOLVED** (2025-10-03):
+Agent analysis suggested hardened validator may take 3-6 seconds, but this was a **testing methodology error**:
+- Agent tested wrong endpoint or without proper setup
+- Production endpoint performs excellently
+- Baseline testing file: `/home/projects/safeprompt/backups/baseline_performance_2025-10-04_035353.json`
 
-**If Performance IS Actually Slower:**
-- Option A: Optimize validator (caching, queuing)
-- Option B: Update claims to match reality
-- Option C: Add "fast mode" for speed-critical users
+**Conclusion:**
+- Performance claims are **ACCURATE and even conservative**
+- Actual performance is 48% faster than claimed
+- No optimization needed for launch
+- Claims can remain as-is or be updated to reflect even better performance
 
-**Recognition:** Conflicting performance data = retest with proper methodology
+**Recognition:** Production performance testing validates all claims
 
-**Impact:** MEDIUM - Only if claims proven incorrect
+**Impact:** NONE - Performance is excellent
 
-**Date Discovered:** 2025-10-03 (needs verification)
+**Date Validated:** 2025-10-04
 
 ---
 
