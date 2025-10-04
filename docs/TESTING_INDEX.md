@@ -16,7 +16,7 @@ This document consolidates all SafePrompt testing documentation and provides qui
 | **Load Test Results** | `/load-tests/baseline-results.md` | 2025-10-04 | Production capacity validation (890 requests, 5-min test) |
 | **Capacity Planning** | `/load-tests/BASELINE_CAPACITY.md` | 2025-10-04 | Scaling thresholds and performance SLAs |
 | **CLAUDE.md Section 17** | `/CLAUDE.md` (line 1007) | 2025-10-04 | Load testing summary and performance validation |
-| **Quality Test Plan** | `/PRODUCTION_QUALITY_TEST_PLAN.md` | 2025-10-04 | Manual testing procedures and checklists |
+| **Quality Test Plan** | `/docs/internal/PRODUCTION_QUALITY_TEST_PLAN.md` | 2025-10-04 | Manual testing procedures and checklists |
 | **Testing Methodology** | `/docs/internal/TESTING_METHODOLOGY.md` | - | Testing approach and strategies |
 
 ### Test Results Archive
@@ -205,8 +205,8 @@ When updating tests:
 
 ## Related Documentation
 
-- **Production Quality Plan**: `/PRODUCTION_QUALITY_TEST_PLAN.md`
-- **Launch Readiness**: `/LAUNCH_READINESS_FIXES.md`
+- **Production Quality Plan**: `/docs/internal/PRODUCTION_QUALITY_TEST_PLAN.md`
+- **Launch Readiness**: `/docs/internal/LAUNCH_READINESS_FIXES.md`
 - **API Documentation**: `/docs/API.md`
 - **CLAUDE.md Section 17**: Performance validation & load testing
 

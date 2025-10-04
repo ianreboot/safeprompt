@@ -113,19 +113,19 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 - [x] 0.1a Create complete backup of PROD database (adyfhzbcsqzgqvyimycv) (COMPLETED: 2025-10-04 03:42)
 - [x] 0.1b Store backup in /home/projects/safeprompt/backups/ with timestamp (COMPLETED: 2025-10-04 03:42)
 - [x] 0.1c Verify backup file is complete and accessible (COMPLETED: 2025-10-04 03:43)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 03:45)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 03:45)
 
 #### 0.2 Complete CORS Audit (30 minutes) ✅ COMPLETED
 - [x] 0.2a Run grep to find ALL CORS configurations in /api directory (COMPLETED: 2025-10-04 03:45)
 - [x] 0.2b Identify all files with allowedOrigins arrays (COMPLETED: 2025-10-04 03:46)
 - [x] 0.2c Document all files needing CORS updates (not just 3 known files) (COMPLETED: 2025-10-04 03:47)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 03:48)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 03:48)
 
 #### 0.3 Baseline Performance Measurement (30 minutes) ✅ COMPLETED
 - [x] 0.3a Test production /api/v1/validate endpoint (100 requests) (COMPLETED: 2025-10-04 03:53)
 - [x] 0.3b Calculate average, P50, P95, P99 response times (COMPLETED: 2025-10-04 03:53)
 - [x] 0.3c Document baseline metrics BEFORE any changes (COMPLETED: 2025-10-04 03:54)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 03:54)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 03:54)
 
 ### Phase 1: LAUNCH BLOCKERS (Must Fix - 14 hours)
 
@@ -154,26 +154,26 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 - [x] 1.3a Review current admin auth in /api/admin.js line 349-352 (COMPLETED: 2025-10-04 06:25)
 - [x] 1.3b Design solution: Use Supabase RLS + is_admin flag in profiles table (COMPLETED: 2025-10-04 06:26)
 - [x] 1.3c Update profiles table schema (add is_admin boolean) (COMPLETED: 2025-10-04 06:30 - migration file created)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 06:50)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 06:50)
 - [x] 1.3d Set ian.ho@rebootmedia.net as admin user (COMPLETED: 2025-10-04 06:45 - migration executed)
 - [x] 1.3e Consider service role key requirements for admin operations (COMPLETED: 2025-10-04 06:28 - uses service role client)
 - [x] 1.3f Replace static key check with Supabase auth + admin check (COMPLETED: 2025-10-04 06:35)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 06:50)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 06:50)
 - [x] 1.3g Test admin endpoints with admin user (should succeed) (COMPLETED: 2025-10-04 06:48 - database logic tested)
 - [x] 1.3h Test admin endpoints with non-admin user (should fail) (COMPLETED: 2025-10-04 06:48 - returns 403 as expected)
 - [x] 1.3i Test dashboard admin panel integration (SKIPPED: Will test after deployment)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 06:50)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 06:50)
 - [ ] 1.3j Deploy API to production (READY: Merge dev→main)
 
 #### 1.4 Remove Localhost from Production CORS ✅ COMPLETE (45 minutes - EXPANDED SCOPE)
 - [x] 1.4a Use results from Task 0.2 (complete CORS audit) (COMPLETED: 2025-10-04 07:05)
 - [x] 1.4b Implement environment-based CORS in ALL identified files (COMPLETED: 2025-10-04 07:08)
 - [x] 1.4c Remove localhost from production CORS arrays everywhere (COMPLETED: 2025-10-04 07:08)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 07:10)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 07:10)
 - [x] 1.4d Test API from production dashboard (should work) (SKIPPED: Will verify post-deployment)
 - [x] 1.4e Test API from localhost in dev (should work in dev only) (SKIPPED: Will verify in dev environment)
 - [x] 1.4f Deploy API to production (COMPLETED: 2025-10-04 07:10)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 07:10)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 07:10)
 
 ### Phase 2: INFRASTRUCTURE & BASELINE TESTING (Before Other Fixes - 9 hours)
 
@@ -230,7 +230,7 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 ### Phase 4: PRE-LAUNCH VALIDATION (1.5 hours) ✅ COMPLETE
 
 #### 4.1 Production Smoke Test (1.5 hours) ✅ COMPLETE
-- [x] 4.1a Read QA test plan at /home/projects/safeprompt/PRODUCTION_QUALITY_TEST_PLAN.md (COMPLETED: 2025-10-04 14:10)
+- [x] 4.1a Read QA test plan at /home/projects/safeprompt/docs/internal/PRODUCTION_QUALITY_TEST_PLAN.md (COMPLETED: 2025-10-04 14:10)
 - [x] 4.1b Execute 5-minute smoke test script (COMPLETED: 2025-10-04 14:18)
   - ✅ API Health Check: 200 OK
   - ✅ AI Validation: Working (`detectionMethod: "ai_validation"`)
@@ -276,7 +276,7 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 - [x] 5.1a Compare Task 0.3 baseline to current production performance (COMPLETED: 2025-10-04 03:54)
 - [x] 5.1b Test /api/v1/validate with proper methodology (warm cache, 100+ requests) (COMPLETED: 2025-10-04 03:53)
 - [x] 5.1c Calculate statistical average and P95 response times (COMPLETED: 2025-10-04 03:53)
-- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 03:54)
+- [x] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions" (COMPLETED: 2025-10-04 03:54)
 - [x] 5.1d DECISION: Claims VALIDATED ✅ (178ms avg - 48% better than 350ms claim!) (COMPLETED: 2025-10-04 03:54)
 - [x] 5.1e Documented validation, no changes needed (COMPLETED: 2025-10-04 03:54)
 - [x] Performance optimization NOT needed - already excellent (COMPLETED: 2025-10-04 03:54)
@@ -287,11 +287,11 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 - [ ] 6.1a Review current migration status in /api/api/v1/validate.js
 - [ ] 6.1b Identify all plaintext API keys in database
 - [ ] 6.1c Hash all plaintext keys
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 - [ ] 6.1d Remove plaintext fallback code
 - [ ] 6.1e Test API with hashed keys only
 - [ ] 6.1f Deploy to production
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
 ### Phase 7: FINAL LAUNCH DECISION & PLAYBOOK
 
@@ -299,33 +299,33 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` - Battle-teste
 - [ ] 7.1a Research automated status page solutions (status.io, Vercel status, Cloudflare)
 - [ ] 7.1b If fully automated option exists: Configure status.safeprompt.dev
 - [ ] 7.1c Connect to existing monitoring alerts (auto-update from alerts)
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 - [ ] 7.1d Test status page updates automatically when alerts trigger
 - [ ] 7.1e If NO automated option: Skip and monitor manually
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
 #### 7.2 Launch Day Playbook (Added to this document - 1 hour)
 - [ ] 7.2a Create "Launch Day Operations" section below in this document
 - [ ] 7.2b Document on-call schedule and responsibilities
 - [ ] 7.2c Document communication channels (who monitors what)
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 - [ ] 7.2d Create decision tree for common issues (rollback criteria)
 - [ ] 7.2e Draft pre-written responses for common Product Hunt questions
 - [ ] 7.2f Document escalation path for critical issues
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
 #### 7.3 Final Launch Readiness Assessment
 - [ ] 7.3a Review all Phase 0 completions (pre-flight done)
 - [ ] 7.3b Review all Phase 1 completions (4 blockers fixed)
 - [ ] 7.3c Review all Phase 2 completions (monitoring + baseline testing)
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 - [ ] 7.3d Review all Phase 3 completions (economics + load retest)
 - [ ] 7.3e Review all Phase 4 completions (smoke tests passed)
 - [ ] 7.3f Review Phase 5 completion (performance validated)
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 - [ ] 7.3g Create comprehensive launch readiness report
 - [ ] 7.3h DECISION: GO/NO-GO for Product Hunt launch
-- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
+- [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/docs/internal/LAUNCH_READINESS_FIXES.md and execute section "📝 Document Update Instructions"
 
 ## Current State Variables (UPDATE THESE)
 
@@ -397,7 +397,7 @@ LAUNCH_DATE: "[To be determined]"
 
 **Agent Analysis Reports**:
 1. big-brain: Strategic multi-perspective analysis (economics, security, UX, technical)
-2. qa-engineer: Created complete test plan at /home/projects/safeprompt/PRODUCTION_QUALITY_TEST_PLAN.md
+2. qa-engineer: Created complete test plan at /home/projects/safeprompt/docs/internal/PRODUCTION_QUALITY_TEST_PLAN.md
 3. security-engineer: Detailed attack scenarios and security recommendations
 
 **Things That Must Not Change**:
@@ -850,7 +850,7 @@ If critical failure occurs:
   - Query profiles table to check is_admin flag
   - Return 401 for invalid/missing tokens
   - Return 403 for non-admin users (proper HTTP status code)
-- **Documentation Created**: /home/projects/safeprompt/MANUAL_MIGRATION_STEPS.md
+- **Documentation Created**: /home/projects/safeprompt/docs/internal/MANUAL_MIGRATION_STEPS.md
   - Complete step-by-step guide for running SQL migration
   - Supabase dashboard instructions (SQL Editor)
   - Post-migration testing procedures
@@ -859,7 +859,7 @@ If critical failure occurs:
 - **Files Modified**:
   - api/api/admin.js (lines 348-396 - authentication logic rewritten)
   - api/migrations/003_add_admin_flag.sql (new file - 33 lines)
-  - MANUAL_MIGRATION_STEPS.md (new file - 95 lines)
+  - docs/internal/MANUAL_MIGRATION_STEPS.md (new file - 95 lines)
 - **Security Impact**:
   - Proper role-based access control (RBAC) instead of static keys
   - Token-based authentication (Bearer tokens)
@@ -1094,5 +1094,5 @@ This section will contain:
 - Methodology: /home/projects/docs/methodology-long-running-tasks.md
 - Project Docs: /home/projects/safeprompt/CLAUDE.md
 - Security Audit: /home/projects/user-input/SAFEPROMPT_SECURITY_AUDIT_20251003.md
-- Test Plan: /home/projects/safeprompt/PRODUCTION_QUALITY_TEST_PLAN.md
+- Test Plan: /home/projects/safeprompt/docs/internal/PRODUCTION_QUALITY_TEST_PLAN.md
 - Agent Analysis: See Progress Log 2025-10-04 entry for full findings
