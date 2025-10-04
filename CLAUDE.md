@@ -134,13 +134,17 @@ gh api -X DELETE repos/ianreboot/safeprompt/git/refs/heads/BRANCH
 ### Pricing Strategy (NEVER Change Without User)
 ```javascript
 // CURRENT PRICING (locked)
-FREE_TIER = 1000 requests/month
-STARTER = $9/month, 10K requests
-GROWTH = $29/month, 50K requests
-BUSINESS = $99/month, 250K requests
+FREE_TIER = 1000 validations/month (free)
+STARTER = $9/month, 10K validations (LIMITED BETA - first 50 users only)
+GROWTH = $29/month, 50K validations (STANDARD PRICING)
+BUSINESS = $99/month, 250K validations
 ENTERPRISE = Custom pricing
 
-// Cost structure: ~$0.0002/request with 95% margin on paid tiers
+// PRICING MODEL:
+// - Flat rate per validation (regardless of complexity)
+// - Pattern detection = same price as AI validation
+// - Customer pays per validation, NOT per token usage
+// - Our internal costs (~$0.0002/request) are NOT passed to customer
 ```
 
 ### Email Privacy Protocol
