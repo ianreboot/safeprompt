@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   api_key TEXT UNIQUE,
   api_key_hash TEXT,
   api_key_hint TEXT,
-  api_requests_limit INT DEFAULT 10000,
+  api_requests_limit INT DEFAULT 1000,
   api_requests_used INT DEFAULT 0,
   last_used_at TIMESTAMPTZ,
   is_active BOOLEAN DEFAULT true,

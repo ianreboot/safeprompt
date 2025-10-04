@@ -481,7 +481,7 @@ export default function Home() {
               price="$0"
               description="Perfect for testing"
               features={[
-                '10,000 validations/month',
+                '1,000 validations/month',
                 'Advanced AI protection',
                 'Community support',
                 'Early access when ready',

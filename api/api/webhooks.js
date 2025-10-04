@@ -190,7 +190,7 @@ async function handleStripeWebhook(req, res) {
       // Determine tier from price ID
       const priceId = session.line_items?.data?.[0]?.price?.id || session.price;
       let tier = 'free';
-      let requestLimit = 10000;
+      let requestLimit = 1000;
 
       if (priceId === 'price_1SAaJGIceoFuMr41bDK1egBY') {
         tier = 'early_bird';
@@ -292,7 +292,7 @@ async function handleStripeWebhook(req, res) {
         .update({
           subscription_status: 'canceled',
           subscription_tier: 'free',
-          api_requests_limit: 10000,
+          api_requests_limit: 1000,
           updated_at: new Date().toISOString()
         })
         .eq('stripe_customer_id', subscription.customer);

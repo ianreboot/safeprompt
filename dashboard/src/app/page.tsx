@@ -53,8 +53,8 @@ const pricingPlans: PricingPlan[] = [
     id: 'free',
     name: 'Free',
     price: 0,
-    requests: 10000,
-    features: ['10,000 requests/month', 'Community support', 'Basic protection']
+    requests: 1000,
+    features: ['1,000 requests/month', 'Community support', 'Basic protection']
   },
   {
     id: 'early_bird',

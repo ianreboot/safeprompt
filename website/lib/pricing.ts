@@ -81,7 +81,7 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
     price: 0,
     currency: 'USD',
     interval: 'month',
-    requestsPerMonth: 10000,
+    requestsPerMonth: 1000,
     support: 'Community support',
     availability: 'Access when capacity allows',
     ctaText: 'Join Waitlist - Free',
@@ -89,7 +89,7 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
     savingsText: 'Join the queue for free access. We\'re scaling infrastructure gradually.',
     features: [
       {
-        text: '10,000 requests/month',
+        text: '1,000 requests/month',
         included: true,
         icon: 'check'
       },
@@ -129,7 +129,7 @@ export const getPricingDisplay = (plan: 'free' | 'paid') => {
  */
 export const PRICING_SUMMARY = {
   headline: 'Free tier available or $5/mo beta (regular $29/mo)',
-  freeLimit: '10,000',
+  freeLimit: '1,000',
   paidLimit: '100,000',
   betaPrice: 5,
   regularPrice: 29,

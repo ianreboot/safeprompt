@@ -63,7 +63,7 @@ async function handleUserApiKey(req, res) {
           api_key: newApiKey,
           api_key_hint: keyHint,
           subscription_tier: 'free',
-          api_requests_limit: 10000,
+          api_requests_limit: 1000,
           api_requests_used: 0,
           subscription_status: 'active',
           created_at: new Date().toISOString(),
@@ -77,7 +77,7 @@ async function handleUserApiKey(req, res) {
         api_key: newApiKey,
         key_hint: keyHint,
         subscription_tier: 'free',
-        usage: { current: 0, limit: 10000, percentage: 0 },
+        usage: { current: 0, limit: 1000, percentage: 0 },
         created_at: newProfile.created_at
       });
     }
@@ -97,7 +97,7 @@ async function handleUserApiKey(req, res) {
       subscription_status: profile.subscription_status,
       usage: {
         current: profile.api_requests_used || 0,
-        limit: profile.api_requests_limit || 10000,
+        limit: profile.api_requests_limit || 1000,
         percentage: usagePercentage
       },
       created_at: profile.created_at,
@@ -271,7 +271,7 @@ async function sendApprovalEmail(email, apiKey) {
             <div style="background: #eff6ff; border-left: 4px solid #6366f1; padding: 15px; margin: 20px 0;">
               <div style="font-weight: 600; color: #111; margin-bottom: 8px;">Your Plan: Free Tier</div>
               <div style="font-size: 14px; color: #555;">
-                ✨ 10,000 requests/month<br>
+                ✨ 1,000 requests/month<br>
                 ✨ Community support<br>
                 ✨ Full protection features
               </div>
@@ -455,7 +455,7 @@ async function handleApproveWaitlist(req, res) {
           api_key: apiKey,
           api_key_hint: keyHint,
           subscription_tier: 'free',
-          api_requests_limit: 10000,
+          api_requests_limit: 1000,
           subscription_status: 'active',
           is_active: true,
           updated_at: new Date().toISOString()
@@ -470,7 +470,7 @@ async function handleApproveWaitlist(req, res) {
           api_key: apiKey,
           api_key_hint: keyHint,
           subscription_tier: 'free',
-          api_requests_limit: 10000,
+          api_requests_limit: 1000,
           api_requests_used: 0,
           subscription_status: 'active',
           is_active: true,
