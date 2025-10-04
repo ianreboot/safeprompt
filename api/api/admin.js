@@ -508,8 +508,23 @@ async function handleApproveWaitlist(req, res) {
 }
 
 export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Strict CORS - dashboard only (no wildcard)
+  const isProd = process.env.NODE_ENV === 'production' ||
+                 process.env.VERCEL_ENV === 'production';
+
+  const allowedOrigins = isProd
+    ? ['https://dashboard.safeprompt.dev']
+    : [
+        'https://dev-dashboard.safeprompt.dev',
+        'http://localhost:3000',
+        'http://localhost:5173'
+      ];
+
+  const origin = req.headers.origin || req.headers.referer;
+  if (origin && allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, Authorization');
 

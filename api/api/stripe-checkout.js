@@ -21,12 +21,21 @@ const PRICE_IDS = {
 };
 
 export default async function handler(req, res) {
-  // CORS headers
-  const allowedOrigins = [
-    'https://dashboard.safeprompt.dev',
-    'https://dev-dashboard.safeprompt.dev',
-    'http://localhost:3000'
-  ];
+  // Environment-based CORS (no localhost in production)
+  const isProd = process.env.NODE_ENV === 'production' ||
+                 process.env.VERCEL_ENV === 'production';
+
+  const allowedOrigins = isProd
+    ? [
+        'https://dashboard.safeprompt.dev',
+        'https://safeprompt.dev'
+      ]
+    : [
+        'https://dev-dashboard.safeprompt.dev',
+        'https://dev.safeprompt.dev',
+        'http://localhost:3000',
+        'http://localhost:5173'
+      ];
 
   const origin = req.headers.origin || req.headers.referer;
   if (origin && allowedOrigins.some(allowed => origin.startsWith(allowed))) {
