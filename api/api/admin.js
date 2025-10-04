@@ -626,6 +626,88 @@ export default async function handler(req, res) {
           timestamp: new Date().toISOString()
         });
 
+      case 'list-alerts':
+        // List all alerts (admin only)
+        const { data: alerts, error: alertsError } = await supabase
+          .from('alerts')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(100);
+
+        if (alertsError) {
+          return res.status(500).json({ error: alertsError.message });
+        }
+
+        return res.status(200).json({
+          success: true,
+          alerts,
+          count: alerts.length
+        });
+
+      case 'resolve-alert':
+        // Resolve an alert (admin only)
+        const { alertId } = req.body;
+
+        if (!alertId) {
+          return res.status(400).json({ error: 'Alert ID is required' });
+        }
+
+        const { data: resolvedAlert, error: resolveError } = await supabase
+          .from('alerts')
+          .update({
+            resolved: true,
+            resolved_at: new Date().toISOString(),
+            resolved_by: user.id
+          })
+          .eq('id', alertId)
+          .select()
+          .single();
+
+        if (resolveError) {
+          return res.status(500).json({ error: resolveError.message });
+        }
+
+        return res.status(200).json({
+          success: true,
+          alert: resolvedAlert
+        });
+
+      case 'monitoring-stats':
+        // Get monitoring statistics (admin only)
+        try {
+          // Get error rate
+          const { data: errorRateData, error: errorRateError } = await supabase
+            .rpc('get_error_rate');
+
+          // Get daily spend
+          const { data: dailySpendData, error: dailySpendError } = await supabase
+            .rpc('get_daily_spend', { service_name: 'openrouter' });
+
+          // Get unresolved alerts count
+          const { data: unresolvedAlerts, error: unresolvedError } = await supabase
+            .from('alerts')
+            .select('id', { count: 'exact' })
+            .eq('resolved', false);
+
+          return res.status(200).json({
+            success: true,
+            stats: {
+              error_rate: errorRateError ? null : errorRateData[0],
+              daily_spend: {
+                openrouter: dailySpendError ? 0 : parseFloat(dailySpendData)
+              },
+              unresolved_alerts: unresolvedError ? 0 : unresolvedAlerts.length
+            },
+            timestamp: new Date().toISOString()
+          });
+        } catch (statsError) {
+          console.error('Monitoring stats error:', statsError);
+          return res.status(500).json({
+            error: 'Failed to fetch monitoring stats',
+            message: statsError.message
+          });
+        }
+
       default:
         // Default to health check
         return res.status(200).json({

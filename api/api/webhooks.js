@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import crypto from 'crypto';
+import { alertStripeWebhookFailure } from '../lib/alert-notifier.js';
 
 // Use production Stripe keys in production, fall back to test keys for dev
 const stripeKey = process.env.STRIPE_PROD_SECRET_KEY || process.env.STRIPE_SECRET_KEY || '';
@@ -170,8 +171,9 @@ async function handleStripeWebhook(req, res) {
 
   console.log('Processing Stripe webhook:', event.type);
 
-  switch (event.type) {
-    case 'checkout.session.completed': {
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
       const session = event.data.object;
       const customerEmail = session.customer_email || session.customer_details?.email;
       const customerId = session.customer;
@@ -309,9 +311,24 @@ async function handleStripeWebhook(req, res) {
       break;
     }
 
-    default:
-      console.log(`Unhandled event type: ${event.type}`);
-  }
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
 
-  return res.status(200).json({ received: true });
+    return res.status(200).json({ received: true });
+
+  } catch (webhookError) {
+    console.error('Stripe webhook processing error:', webhookError);
+
+    // Send alert notification
+    await alertStripeWebhookFailure(
+      event.id,
+      webhookError.message
+    );
+
+    return res.status(500).json({
+      error: 'Webhook processing failed',
+      message: webhookError.message
+    });
+  }
 }

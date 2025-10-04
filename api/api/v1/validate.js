@@ -3,6 +3,7 @@ import validateWithAI from '../../lib/ai-validator-hardened.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sanitizeResponseWithMode } from '../../lib/response-sanitizer.js';
+import { logError, logCost } from '../../lib/alert-notifier.js';
 
 const supabase = createClient(
   process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
@@ -229,6 +230,20 @@ export default async function handler(req, res) {
       }
     }
 
+    // Log cost if AI was used (for monitoring OpenRouter spend)
+    if (result.stats && result.stats.totalCost && result.stats.totalCost > 0) {
+      await logCost({
+        service: 'openrouter',
+        amountUsd: result.stats.totalCost,
+        metadata: {
+          model: result.stats.model,
+          detection_method: result.detectionMethod,
+          prompt_length: prompt.length
+        },
+        profileId
+      });
+    }
+
     // Add cache stats if requested
     if (include_stats) {
       result.stats = {
@@ -253,6 +268,24 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Validation error:', error);
+
+    // Log error for monitoring
+    await logError({
+      endpoint: '/api/v1/validate',
+      errorMessage: error.message,
+      errorStack: error.stack,
+      requestMethod: req.method,
+      requestHeaders: {
+        'content-type': req.headers['content-type'],
+        'user-agent': req.headers['user-agent']
+      },
+      ipAddress: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress,
+      metadata: {
+        prompt_length: req.body?.prompt?.length || 0,
+        mode: req.body?.mode || 'unknown'
+      }
+    });
+
     return res.status(500).json({
       error: 'Internal server error',
       safe: false,
