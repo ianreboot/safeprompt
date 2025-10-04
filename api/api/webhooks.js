@@ -59,7 +59,7 @@ async function sendWelcomeEmail(email, apiKey, tier) {
             <div style="background: #eff6ff; border-left: 4px solid #6366f1; padding: 15px; margin: 20px 0;">
               <div style="font-weight: 600; color: #111; margin-bottom: 8px;">Your Plan: ${tier === 'early_bird' ? 'Early Bird ($5/month)' : tier}</div>
               <div style="font-size: 14px; color: #555;">
-                ${tier === 'early_bird' ? '✨ 100,000 requests/month<br>✨ Priority support<br>✨ Price locked in forever at $5/month' : ''}
+                ${tier === 'early_bird' ? '✨ 10,000 requests/month<br>✨ Priority support<br>✨ Price locked in forever at $5/month' : ''}
               </div>
             </div>
           </div>
@@ -198,13 +198,13 @@ async function handleStripeWebhook(req, res) {
 
       if (priceId === 'price_1SAaJGIceoFuMr41bDK1egBY') {
         tier = 'early_bird';
-        requestLimit = 100000;
+        requestLimit = 10000;
       } else if (priceId === 'price_1SAaK4IceoFuMr41rq9yNrbo') {
         tier = 'starter';
-        requestLimit = 100000;
+        requestLimit = 10000;
       } else if (priceId === 'price_1SAaKZIceoFuMr41JPNPtZ73') {
         tier = 'business';
-        requestLimit = 1000000;
+        requestLimit = 250000;
       }
 
       // Check if user exists

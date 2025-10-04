@@ -57,8 +57,8 @@ if (validation.safe) {
 
 ## Pricing
 
-- **Free**: 10,000 validations/month - Full AI protection, community support
-- **Early Bird**: $5/month - 100,000 validations/month, priority support, 99.9% uptime SLA (beta pricing)
+- **Free**: 1,000 validations/month - Full AI protection, community support
+- **Early Bird**: $5/month - 10,000 validations/month, priority support, 99.9% uptime SLA (beta pricing - first 50 users only)
 
 Both tiers include the SAME technology - full regex + AI validation with 100% accuracy on 50 professional tests.
 
@@ -174,8 +174,10 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - View usage metrics, manage billing, and access documentation
 
 ### Current Beta Pricing (October 2025)
-- **Free Tier**: 10,000 validations/month
-- **Early Bird Special**: $5/month for 100,000 validations (limited time)
+- **Free Tier**: 1,000 validations/month
+- **Starter**: $29/month for 10,000 validations
+- **Early Bird Special**: $5/month for 10,000 validations (first 50 users only - discounted Starter)
+- **Business**: $99/month for 250,000 validations
 
 ## Technical Implementation
 

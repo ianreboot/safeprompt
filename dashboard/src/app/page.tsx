@@ -60,8 +60,8 @@ const pricingPlans: PricingPlan[] = [
     id: 'early_bird',
     name: 'Early Bird',
     price: 5,
-    requests: 100000,
-    features: ['100,000 requests/month', 'Priority support', 'Advanced AI protection', '99.9% uptime SLA', '🔥 Lock in $5/mo forever'],
+    requests: 10000,
+    features: ['10,000 requests/month', 'Priority support', 'Advanced AI protection', '99.9% uptime SLA', '🔥 Lock in $5/mo forever'],
     popular: true
   }
 ]

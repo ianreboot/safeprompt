@@ -35,7 +35,7 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
     originalPrice: 29,
     currency: 'USD',
     interval: 'month',
-    requestsPerMonth: 100000,
+    requestsPerMonth: 10000,
     support: 'Priority support',
     availability: 'Instant access',
     ctaText: 'Get Started - $5/mo',
@@ -43,7 +43,7 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
     savingsText: 'You save $288/year with beta pricing locked forever',
     features: [
       {
-        text: '100,000 requests/month',
+        text: '10,000 requests/month',
         included: true,
         icon: 'check'
       },
@@ -130,7 +130,7 @@ export const getPricingDisplay = (plan: 'free' | 'paid') => {
 export const PRICING_SUMMARY = {
   headline: 'Free tier available or $5/mo beta (regular $29/mo)',
   freeLimit: '1,000',
-  paidLimit: '100,000',
+  paidLimit: '10,000',
   betaPrice: 5,
   regularPrice: 29,
   savings: 24
