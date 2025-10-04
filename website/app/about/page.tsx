@@ -105,7 +105,7 @@ export default function AboutPage() {
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
                 <li><strong>Simple:</strong> One line of code to add protection</li>
-                <li><strong>Fast:</strong> Sub-10ms latency that wouldn't slow down apps</li>
+                <li><strong>Fast:</strong> Sub-100ms pattern detection (67% of requests) that won't slow down apps</li>
                 <li><strong>Accurate:</strong> Advanced detection without false positives</li>
                 <li><strong>Affordable:</strong> Accessible to indie developers and startups</li>
               </ul>

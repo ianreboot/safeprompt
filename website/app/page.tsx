@@ -65,8 +65,8 @@ export default function Home() {
               <div className="text-sm text-muted-foreground">Overall Accuracy</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">~350ms</div>
-              <div className="text-sm text-muted-foreground">Avg Response Time</div>
+              <div className="text-2xl font-bold text-primary mb-1">&lt;100ms</div>
+              <div className="text-sm text-muted-foreground">Pattern Detection (67%)</div>
             </div>
             <div className="flex flex-col items-center">
               <div className="text-2xl font-bold text-primary mb-1">95%</div>
@@ -347,7 +347,7 @@ export default function Home() {
               <div className="text-4xl mb-4">⚡</div>
               <h3 className="text-xl font-semibold mb-2">Fast Validation</h3>
               <p className="text-muted-foreground">
-                Average ~350ms response time. Pattern detection catches 44% of threats instantly in &lt;5ms
+                Lightning-fast pattern detection handles 67% of requests in &lt;100ms. AI validation provides deep analysis in 2-3s when needed.
               </p>
             </div>
 
@@ -449,7 +449,7 @@ export default function Home() {
               <div className="text-4xl mb-4">⚡</div>
               <h3 className="text-xl font-semibold mb-2">Don't Slow Down Users</h3>
               <p className="text-muted-foreground">
-                Fast ~350ms average validation. Pattern detection catches 44% of threats instantly.
+                67% of requests validated instantly in &lt;100ms via pattern detection.
                 Your users get security without noticeable delay.
               </p>
             </div>

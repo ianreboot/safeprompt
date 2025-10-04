@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
+    "@vercel/sdk": "^1.12.1",
     "dotenv": "^16.6.1",
     "node-fetch": "^3.3.2",
     "resend": "^3.0.0",

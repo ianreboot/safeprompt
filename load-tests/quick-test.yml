@@ -1,0 +1,20 @@
+config:
+  target: "https://api.safeprompt.dev"
+  phases:
+    - duration: 10
+      arrivalRate: 2
+      name: "Quick test"
+
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      X-API-Key: "sp_test_unlimited_dogfood_key_2025"
+
+scenarios:
+  - name: "Quick validation test"
+    flow:
+      - post:
+          url: "/api/v1/validate"
+          json:
+            prompt: "What is the weather today?"
+            mode: "standard"
