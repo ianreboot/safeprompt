@@ -8,19 +8,19 @@
 **Context Switches**: 0
 
 ## 📊 Quick Stats
-- **Items Completed**: 7/79 (8.9%)
-- **Current Phase**: Phase 0.5 - Path & Environment Verification
+- **Items Completed**: 10/79 (12.7%)
+- **Current Phase**: Phase 1 - Discovery & Current State Assessment
 - **Blockers**: None
-- **Last Update**: 2025-10-05 00:35 (Phase 0 COMPLETED - context loaded, ready for testing)
+- **Last Update**: 2025-10-05 00:42 (Phase 0.5 COMPLETED - environment verified, ready for discovery)
 
 ## 🧭 Status-Driven Navigation
-- **✅ Completed**: 2 tasks (Phase -1.1, Context Refresh)
-- **🔧 In Progress**: 0 tasks
+- **✅ Completed**: Phases -1, 0, 0.5 (10 tasks total)
+- **🔧 In Progress**: Phase 1 starting
 - **❌ Blocked/Missing**: 0 tasks
 - **🐛 Bug Fixes**: 1 bug discovered and fixed (hardcoded pricing in homepage)
 
-**Current Focus**: Phase 0, Task 0.1 - Read project CLAUDE.md
-**Last Completed**: Phase -1.1 - Pricing audit (2025-10-04 23:00)
+**Current Focus**: Phase 1, Task 1.1 - Audit existing tests across codebase
+**Last Completed**: Phase 0.5 - Path & Environment Verification (2025-10-05 00:42)
 
 ## Executive Summary
 
@@ -235,9 +235,9 @@ Go to "Error Recovery" and add problem + solution
 - [x] 🧠 CONTEXT REFRESH (COMPLETED: 2025-10-05 00:35): Updated Progress Log, Task Checklist, Quick Stats
 
 ### Phase 0.5: Path & Environment Verification - CRITICAL (3 tasks)
-- [ ] 0.5.1 Verify API actual location: Check /home/projects/api/api/ vs /home/projects/safeprompt/api/
-- [ ] 0.5.2 Update pre-approved commands with correct API path in this document
-- [ ] 0.5.3 Verify Vercel project links: safeprompt-api (prod) vs safeprompt-api-dev (dev)
+- [x] 0.5.1 Verify API actual location: Check /home/projects/api/api/ vs /home/projects/safeprompt/api/ (COMPLETED: 2025-10-05 00:40) - API at /home/projects/safeprompt/api/ confirmed
+- [x] 0.5.2 Update pre-approved commands with correct API path in this document (COMPLETED: 2025-10-05 00:42) - All commands already use correct path
+- [x] 0.5.3 Verify Vercel project links: safeprompt-api (prod) vs safeprompt-api-dev (dev) (COMPLETED: 2025-10-05 00:42) - Both projects verified via API
 
 ### Phase 1: Discovery & Current State Assessment (6 tasks)
 - [ ] 1.1 Audit existing tests: Search for *.test.js, *.spec.js, __tests__/ across all components
@@ -680,6 +680,26 @@ If testing implementation breaks existing functionality:
 - **Final stats**: 79 tasks across 11 phases (added Phase -1 pricing audit)
 - **Coverage target**: 90%+ with security-critical paths at 95%+
 - **Timeline impact**: +2-3 days (acceptable for launch readiness)
+
+### 2025-10-05 00:42 - Phase 0.5 COMPLETED (Path & Environment Verification)
+- ✅ **COMPLETED Task 0.5.1**: Verified API location
+  - **Confirmed**: API is at `/home/projects/safeprompt/api/` (NOT `/home/projects/api/api/`)
+  - **Structure**: Contains api/ subdirectory with v1/validate.js, webhooks.js, playground.js, admin.js, stripe-*.js
+  - **Vercel link**: .vercel/project.json shows projectId prj_vEUOowUKqyUzHVH8v56iMoHBatLe (safeprompt-api)
+- ✅ **COMPLETED Task 0.5.2**: Pre-approved commands verified
+  - All commands already use correct path `/home/projects/safeprompt/api`
+  - No updates needed
+- ✅ **COMPLETED Task 0.5.3**: Vercel project links verified via API
+  - **PROD**: Project `safeprompt-api` (prj_vEUOowUKqyUzHVH8v56iMoHBatLe)
+    - Domain: api.safeprompt.dev
+    - Latest deployment: dpl_FK1eKsP51UAjMKDxKQqrbW8T8eRn (PROMOTED)
+    - Status: READY
+  - **DEV**: Project `safeprompt-api-dev` (prj_b0nTXs7q9e2SfpG7M3JJ8Pf9rQz5)
+    - Domain: dev-api.safeprompt.dev
+    - Latest deployment: dpl_6Tzkf9m1ZNQbfypEXsZEtsgSxZKN (PROMOTED)
+    - Status: READY
+- **Technical Note**: Vercel CLI authentication failed (expected in headless environment), used Vercel API directly with Bearer token
+- **Next**: Phase 1 - Discovery & Current State Assessment
 
 ### 2025-10-05 00:30 - Phase 0 COMPLETED (Initialization & Context Loading)
 - ✅ **COMPLETED Task 0.1**: Read project CLAUDE.md
