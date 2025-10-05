@@ -161,7 +161,15 @@ npm run test:smoke
 **Time**: 8-10 minutes
 **Cost**: ~$0.50 per run
 
+**⚠️ Prerequisites**: Requires `OPENROUTER_API_KEY` environment variable
+- Key available in `/home/projects/.env`
+- Load with: `source /home/projects/.env`
+- Or set manually: `export OPENROUTER_API_KEY=your_key`
+
 ```bash
+# Load environment variables (required for AI tests)
+source /home/projects/.env
+
 cd /home/projects/safeprompt/api
 
 # Full 94-test suite (uses OpenRouter API)
@@ -199,6 +207,11 @@ npm run test:no-ai         # Skip AI calls (pattern-only)
 - ✅ Before major releases
 - ✅ Weekly/monthly accuracy tracking
 - ❌ NOT in CI/CD (too slow, uses external APIs)
+
+**Test Suite Location**:
+- Test definitions: `/home/projects/safeprompt/test-suite/realistic-test-suite.js`
+- Test runner: `/home/projects/safeprompt/test-suite/run-realistic-tests.js`
+- Results saved to: `/home/projects/safeprompt/test-suite/realistic-test-results.json`
 
 ---
 
