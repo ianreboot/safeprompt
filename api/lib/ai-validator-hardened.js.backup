@@ -90,33 +90,33 @@ const REPETITION_PATTERNS = [
 // Enhanced XSS detection patterns (catches obfuscation techniques)
 const XSS_ATTACK_PATTERNS = [
   // Script tags and variations
-  /<script[^>]*>[\s\S]*?<\/script>/i,
-  /<script[^>]*\/>/i,
-  /javascript:\s*[^"\s]/i,
+  /<script[^>]*>[\s\S]*?<\/script>/gi,
+  /<script[^>]*\/>/gi,
+  /javascript:\s*[^"\s]/gi,
 
   // Event handlers
-  /<[^>]+on\w+\s*=\s*[^>]*>/i,  // Any tag with event handler
-  /on(load|error|click|mouseover|focus|blur|change)\s*=/i,
+  /<[^>]+on\w+\s*=\s*[^>]*>/gi,  // Any tag with event handler
+  /on(load|error|click|mouseover|focus|blur|change)\s*=/gi,
 
   // Dangerous elements
-  /<(iframe|embed|object|svg)[^>]*>/i,
+  /<(iframe|embed|object|svg)[^>]*>/gi,
 
   // JavaScript execution methods (including obfuscation)
-  /String\.fromCharCode\s*\(/i,  // CRITICAL: Catch fromCharCode obfuscation
-  /eval\s*\(/i,
-  /Function\s*\(/i,
-  /setTimeout\s*\(/i,
-  /setInterval\s*\(/i,
+  /String\.fromCharCode\s*\(/gi,  // CRITICAL: Catch fromCharCode obfuscation
+  /eval\s*\(/gi,
+  /Function\s*\(/gi,
+  /setTimeout\s*\(/gi,
+  /setInterval\s*\(/gi,
 
   // Common XSS vectors
-  /<svg[^>]*on\w+/i,
-  /<img[^>]*on\w+/i,
-  /<body[^>]*on\w+/i,
+  /<svg[^>]*on\w+/gi,
+  /<img[^>]*on\w+/gi,
+  /<body[^>]*on\w+/gi,
 
   // Alert/prompt/confirm (even in strings)
-  /alert\s*\([^)]*\)/i,
-  /prompt\s*\([^)]*\)/i,
-  /confirm\s*\([^)]*\)/i,
+  /alert\s*\([^)]*\)/gi,
+  /prompt\s*\([^)]*\)/gi,
+  /confirm\s*\([^)]*\)/gi,
 
   // Data URIs with script content
   /data:text\/html[^"'\s]*script/gi
@@ -124,58 +124,58 @@ const XSS_ATTACK_PATTERNS = [
 
 // Template injection patterns
 const TEMPLATE_INJECTION_PATTERNS = [
-  /\{\{[^}]*\}\}/,           // Jinja2/Angular: {{7*7}}
-  /\$\{[^}]*\}/,             // JavaScript template literals: ${process.exit()}
-  /#\{[^}]*\}/,              // Ruby: #{system('cmd')}
-  /<%[^%]*%>/,               // ERB/ASP: <%= system('cmd') %>
-  /@\{[^}]*\}/,              // Razor: @{code}
-  /\[\[[^\]]*\]\]/,          // MediaWiki/other: [[expression]]
-  /\$\([^)]*\)/,             // Shell/Perl: $(command)
+  /\{\{[^}]*\}\}/g,           // Jinja2/Angular: {{7*7}}
+  /\$\{[^}]*\}/g,             // JavaScript template literals: ${process.exit()}
+  /#\{[^}]*\}/g,              // Ruby: #{system('cmd')}
+  /<%[^%]*%>/g,               // ERB/ASP: <%= system('cmd') %>
+  /@\{[^}]*\}/g,              // Razor: @{code}
+  /\[\[[^\]]*\]\]/g,          // MediaWiki/other: [[expression]]
+  /\$\([^)]*\)/g,             // Shell/Perl: $(command)
 ];
 
 // SQL injection patterns
 const SQL_INJECTION_PATTERNS = [
-  /'\s*(OR|AND)\s*['"]?\d+['"]?\s*=\s*['"]?\d+/i,  // ' OR '1'='1, ' OR 1=1
-  /'\s*OR\s+\d+\s*=\s*\d+\s*--/i,                   // ' OR 1=1--
-  /'\s*;\s*DROP\s+TABLE/i,                          // '; DROP TABLE
-  /'\s*;\s*DELETE\s+FROM/i,                         // '; DELETE FROM
-  /'\s*;\s*INSERT\s+INTO/i,                         // '; INSERT INTO
-  /'\s*;\s*UPDATE\s+\w+\s+SET/i,                    // '; UPDATE users SET
-  /UNION\s+SELECT/i,                                 // UNION SELECT
-  /'\s*;\s*EXEC\s*\(/i,                             // '; EXEC(
-  /'\s*;\s*EXECUTE\s*\(/i,                          // '; EXECUTE(
+  /'\s*(OR|AND)\s*['"]?\d+['"]?\s*=\s*['"]?\d+/gi,  // ' OR '1'='1, ' OR 1=1
+  /'\s*OR\s+\d+\s*=\s*\d+\s*--/gi,                   // ' OR 1=1--
+  /'\s*;\s*DROP\s+TABLE/gi,                          // '; DROP TABLE
+  /'\s*;\s*DELETE\s+FROM/gi,                         // '; DELETE FROM
+  /'\s*;\s*INSERT\s+INTO/gi,                         // '; INSERT INTO
+  /'\s*;\s*UPDATE\s+\w+\s+SET/gi,                    // '; UPDATE users SET
+  /UNION\s+SELECT/gi,                                 // UNION SELECT
+  /'\s*;\s*EXEC\s*\(/gi,                             // '; EXEC(
+  /'\s*;\s*EXECUTE\s*\(/gi,                          // '; EXECUTE(
   /--\s*$/,                                           // SQL comment at end
-  /\/\*[\s\S]*?\*\//,                                // /* SQL comment */
+  /\/\*[\s\S]*?\*\//g,                               // /* SQL comment */
 ];
 
 // Command injection patterns
 const COMMAND_INJECTION_PATTERNS = [
-  /;\s*(ls|cat|rm|wget|curl|nc|bash|sh|python|perl|ruby|php)\s/i,  // Command chaining
-  /\|\s*(ls|cat|rm|wget|curl|nc|bash|sh|python|perl|ruby|php)\s/i, // Pipe to command
-  /`[^`]*`/,                                        // Backtick execution
-  /\$\(.*?\)/,                                      // Command substitution $(...)
-  /&&\s*(ls|cat|rm|wget|curl|nc|bash|sh)\s/i,      // Command chaining with &&
-  /\|\|\s*(ls|cat|rm|wget|curl|nc|bash|sh)\s/i,    // Command chaining with ||
+  /;\s*(ls|cat|rm|wget|curl|nc|bash|sh|python|perl|ruby|php)\s/gi,  // Command chaining
+  /\|\s*(ls|cat|rm|wget|curl|nc|bash|sh|python|perl|ruby|php)\s/gi, // Pipe to command
+  /`[^`]*`/g,                                        // Backtick execution
+  /\$\(.*?\)/g,                                      // Command substitution $(...)
+  /&&\s*(ls|cat|rm|wget|curl|nc|bash|sh)\s/gi,      // Command chaining with &&
+  /\|\|\s*(ls|cat|rm|wget|curl|nc|bash|sh)\s/gi,    // Command chaining with ||
 ];
 
 // Semantic extraction patterns (indirect information retrieval attacks)
 const SEMANTIC_EXTRACTION_PATTERNS = [
-  /tell me a (riddle|puzzle|game)\s+(where|that|whose)\s+(the\s+)?answer\s+(is|contains)/i,
-  /what (word|phrase|term)\s+rhymes\s+with\s+(the\s+)?(password|secret|key|token)/i,
-  /define\s+(the\s+)?(word|term)\s+that\s+(is|has).{0,50}(password|secret|key|letter)/i,
-  /spell\s+out\s+(the\s+)?(password|secret|key|word)/i,
-  /first\s+letter\s+of\s+(the\s+|each\s+)?(password|secret|word)/i,
-  /hint\s+about\s+(the\s+)?(password|secret|key)/i,
-  /acronym\s+(for|of)\s+(the\s+)?(password|secret)/i,
-  /sounds\s+like\s+(the\s+)?(password|secret)/i,
+  /tell me a (riddle|puzzle|game)\s+(where|that|whose)\s+(the\s+)?answer\s+(is|contains)/gi,
+  /what (word|phrase|term)\s+rhymes\s+with\s+(the\s+)?(password|secret|key|token)/gi,
+  /define\s+(the\s+)?(word|term)\s+that\s+(is|has).{0,50}(password|secret|key|letter)/gi,
+  /spell\s+out\s+(the\s+)?(password|secret|key|word)/gi,
+  /first\s+letter\s+of\s+(the\s+|each\s+)?(password|secret|word)/gi,
+  /hint\s+about\s+(the\s+)?(password|secret|key)/gi,
+  /acronym\s+(for|of)\s+(the\s+)?(password|secret)/gi,
+  /sounds\s+like\s+(the\s+)?(password|secret)/gi,
 ];
 
 // Execution command patterns (fetch and execute)
 const EXECUTION_COMMAND_PATTERNS = [
-  /(fetch|get|retrieve|download|load|pull).{0,30}(execute|run|eval|process)/i,
-  /(visit|navigate|go to).{0,30}(execute|run|follow instructions)/i,
-  /decode.{0,20}(execute|run|eval)/i,
-  /translate.{0,20}(execute|run|eval)/i,
+  /(fetch|get|retrieve|download|load|pull).{0,30}(execute|run|eval|process)/gi,
+  /(visit|navigate|go to).{0,30}(execute|run|follow instructions)/gi,
+  /decode.{0,20}(execute|run|eval)/gi,
+  /translate.{0,20}(execute|run|eval)/gi,
 ];
 
 // Business context indicators (legitimate use of trigger words)
