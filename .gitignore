@@ -1,6 +1,7 @@
 **/node_modules/
 **/.next/
 **/out/
+**/coverage/
 .vercel
 
 # Environment variables (secrets should be in /home/projects/.env)

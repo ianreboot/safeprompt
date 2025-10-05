@@ -1816,4 +1816,31 @@ curl https://openrouter.ai/api/v1/auth/key \
 
 ---
 
+---
+
+## FUTURE IMPROVEMENTS & TECHNICAL DEBT
+
+### Validation System Brittleness
+**Date Identified**: 2025-10-05
+**Issue**: Pattern matching regex in `prompt-validator.js` may be overly specific
+**Evidence**: Test case for `role: admin\n` pattern failed to match despite appearing correct
+**Impact**: LOW - Other system role tests pass, production system working
+**Action Items**:
+1. Review all PROMPT_INJECTION_PATTERNS regex for brittleness
+2. Consider simplifying patterns for better coverage
+3. Add comprehensive regex unit tests
+4. Investigate: Why does `role: system\n` match but `role: admin\n` doesn't?
+5. Balance between: strict patterns (fewer false positives) vs flexible patterns (better coverage)
+
+**Pattern in question**:
+```javascript
+/role:\s*(system|admin|root)\s*[\n;]/gi
+```
+
+**Related Files**:
+- `/home/projects/safeprompt/api/lib/prompt-validator.js` (line 103)
+- `/home/projects/safeprompt/api/__tests__/pattern-matching.test.js`
+
+---
+
 **End of optimized CLAUDE.md**
