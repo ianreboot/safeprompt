@@ -11,10 +11,16 @@ import { validateHardened } from '../api/lib/ai-validator-hardened.js';
 import { getAllTests, getTestStats, REALISTIC_TEST_SUITE } from './realistic-test-suite.js';
 import fs from 'fs';
 
-// Load environment variables from /home/projects/.env
+// Load environment variables from /home/projects/.env (optional, falls back to process.env)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+const envPath = path.join(__dirname, '../../.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+} else {
+  // Running in CI/CD where env vars are set directly
+  dotenv.config(); // Load from .env if it exists in current dir
+}
 
 /**
  * Test a single prompt
