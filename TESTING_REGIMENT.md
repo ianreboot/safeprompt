@@ -112,6 +112,12 @@ Following `/home/projects/docs/methodology-long-running-tasks.md` (LONG_RUNNING_
 3. **Include full paths** - Not relative paths
 4. **Add timestamps** - For all completions and updates
 5. **If contradicting earlier findings** - Mark old as SUPERSEDED
+6. **NO-HOARDING PROTOCOL** - Do NOT create temporal files:
+   - All progress/findings go in THIS document (Progress Log section)
+   - Do NOT create summary/report files in /workspace
+   - Temporal info with no permanent use: Don't write OR use /home/projects/user-input
+   - Permanent knowledge: Update project CLAUDE.md, README, or docs/README.md
+   - Exception: WORK_STATE.md for handoff (delete after reading)
 
 ### Pre-Approved Commands (No permission needed)
 ```bash
@@ -183,7 +189,24 @@ cd /home/projects/safeprompt && node -e "const { createClient } = require('@supa
 - **Quick Stats** (top) - instant progress overview
 - **Task Checklist** - find next uncompleted task
 - **Implementation Details** - specific instructions for tasks
-- **Progress Log** - what's been done recently
+- **Progress Log** - what's been done recently (SINGLE SOURCE OF TRUTH for findings)
+
+### NO-HOARDING PROTOCOL (Mandatory):
+**Do NOT create temporal files** - This document IS the permanent record.
+
+**When you complete work:**
+- ✅ Update Progress Log in THIS document (detailed findings, URLs, git commits)
+- ✅ Update Task Checklist with completion status
+- ❌ Do NOT create separate summary/report/findings files in /workspace
+- ❌ Do NOT create deployment plan/status/complete files
+
+**If you need to store information:**
+- **For this task**: Add to Progress Log section below
+- **Permanent project knowledge**: Update `/home/projects/safeprompt/CLAUDE.md`
+- **Temporary scratch**: Use `/home/projects/user-input/` (expect deletion)
+- **Exception**: WORK_STATE.md for handoff (delete immediately after reading)
+
+**Why**: Prevents file proliferation, maintains single source of truth, easier for future AIs to find information.
 
 ### Updating the Document:
 ```markdown
