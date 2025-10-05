@@ -8,14 +8,14 @@
 **Context Switches**: 0
 
 ## 📊 Quick Stats
-- **Items Completed**: 16/79 (20.3%)
-- **Current Phase**: Phase 2 - Risk-Based Prioritization & Tool Selection
+- **Items Completed**: 22/79 (27.8%)
+- **Current Phase**: Phase 3 - Playground Testing (CONVERSION CRITICAL)
 - **Blockers**: None
-- **Last Update**: 2025-10-05 00:55 (Phase 1 COMPLETED - all 6 discovery tasks done)
+- **Last Update**: 2025-10-05 01:05 (Phase 2 COMPLETED - framework selections finalized)
 
 ## 🧭 Status-Driven Navigation
-- **✅ Completed**: Phases -1, 0, 0.5, 1 (16 tasks total)
-- **🔧 In Progress**: Starting Phase 2
+- **✅ Completed**: Phases -1, 0, 0.5, 1, 2 (22 tasks total)
+- **🔧 In Progress**: Ready to begin Phase 3
 - **❌ Blocked/Missing**: 0 tasks
 - **🐛 Bug Fixes**: 1 bug discovered and fixed (hardcoded pricing in homepage)
 
@@ -249,12 +249,12 @@ Go to "Error Recovery" and add problem + solution
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/TESTING_REGIMENT.md and execute section "📝 Document Update Instructions"
 
 ### Phase 2: Risk-Based Prioritization & Tool Selection (6 tasks)
-- [ ] 2.1 Create risk matrix: Revenue impact × Security impact × User trust impact
-- [ ] 2.2 Prioritize testing order based on matrix (Playground MUST be top 3)
-- [ ] 2.3 Evaluate test frameworks: Vitest vs Jest (check CLAUDE.md for prior decisions)
-- [ ] 2.4 Evaluate E2E frameworks: Playwright vs Cypress (multi-domain support for dev/prod)
-- [ ] 2.5 Select mocking strategy: MSW for API mocking, Supabase client mocking
-- [ ] 2.6 Define test file structure standards (co-located vs __tests__ directory)
+- [x] 2.1 Create risk matrix: Revenue impact × Security impact × User trust impact (COMPLETED: 2025-10-05 01:00)
+- [x] 2.2 Prioritize testing order based on matrix (Playground MUST be top 3) (COMPLETED: 2025-10-05 01:00)
+- [x] 2.3 Evaluate test frameworks: Vitest vs Jest (check CLAUDE.md for prior decisions) (COMPLETED: 2025-10-05 01:05) - Selected Vitest
+- [x] 2.4 Evaluate E2E frameworks: Playwright vs Cypress (multi-domain support for dev/prod) (COMPLETED: 2025-10-05 01:05) - Selected Playwright
+- [x] 2.5 Select mocking strategy: MSW for API mocking, Supabase client mocking (COMPLETED: 2025-10-05 01:05) - MSW + Supabase mocks
+- [x] 2.6 Define test file structure standards (co-located vs __tests__ directory) (COMPLETED: 2025-10-05 01:05) - Co-located pattern
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/TESTING_REGIMENT.md and execute section "📝 Document Update Instructions"
 
 ### Phase 3: Playground Testing - CONVERSION CRITICAL (15 tasks)
@@ -680,6 +680,147 @@ If testing implementation breaks existing functionality:
 - **Final stats**: 79 tasks across 11 phases (added Phase -1 pricing audit)
 - **Coverage target**: 90%+ with security-critical paths at 95%+
 - **Timeline impact**: +2-3 days (acceptable for launch readiness)
+
+### 2025-10-05 01:00 - Phase 2.1 & 2.2 COMPLETED (Risk Matrix & Testing Prioritization)
+- ✅ **COMPLETED Task 2.1**: Create comprehensive risk matrix
+
+  **Risk Scoring** (1-5 scale: 1=Low, 5=Critical):
+
+  | Component | Revenue | Security | User Trust | Total | Priority |
+  |-----------|---------|----------|------------|-------|----------|
+  | **Playground** | 5 | 4 | 5 | 14 | **#1** |
+  | **API Validation** | 5 | 5 | 5 | 15 | **#2** |
+  | **Stripe Payment** | 5 | 3 | 4 | 12 | **#3** |
+  | **Dashboard API Key** | 4 | 4 | 4 | 12 | **#4** |
+  | **Email Verification** | 3 | 4 | 4 | 11 | **#5** |
+  | **Usage Tracking** | 4 | 3 | 3 | 10 | **#6** |
+  | **Rate Limiting** | 3 | 4 | 3 | 10 | **#7** |
+  | **Signup/Login** | 3 | 3 | 4 | 10 | **#8** |
+  | **Website Landing** | 3 | 1 | 3 | 7 | **#9** |
+
+  **Rationale**:
+  - **Playground (#1)**: Direct conversion tool, broken = 0% signups
+  - **API Validation (#2)**: Core product, failure = churn + bad reviews
+  - **Stripe Payment (#3)**: Revenue gateway, failure = lost sales
+  - **Dashboard API Key (#4)**: Required for API usage, broken = support tickets
+  - **Email Verification (#5)**: Activation blocker, delays onboarding
+  - **Usage Tracking (#6)**: Billing accuracy, undercounting = lost revenue
+  - **Rate Limiting (#7)**: Prevents abuse, protects infrastructure
+  - **Signup/Login (#8)**: Gateway to product, but lower impact than other flows
+  - **Website Landing (#9)**: Informational, lowest impact
+
+- ✅ **COMPLETED Task 2.2**: Prioritize testing order based on risk matrix
+
+  **Testing Order (Phases 3-10)**:
+  1. **Phase 3: Playground Testing** (Risk Score: 14) - CONVERSION CRITICAL
+  2. **Phase 4: API Validation Testing** (Risk Score: 15) - CORE PRODUCT
+  3. **Phase 5: Authentication & Session Testing** (includes email verification)
+  4. **Phase 6: Payment & Subscription Testing** (Stripe integration)
+  5. **Phase 7: Dashboard Functionality Testing** (API keys, usage display)
+  6. **Phase 8: Rate Limiting & Quota Testing**
+  7. **Phase 9: Deployment & Infrastructure Testing**
+  8. **Phase 10: Production Smoke Testing**
+
+  **Validation**: Playground confirmed as top 3 priority ✓
+
+- **Next**: Evaluate test frameworks (Tasks 2.3-2.6)
+
+### 2025-10-05 01:05 - Phase 2.3-2.6 COMPLETED (Framework & Strategy Selection)
+- ✅ **COMPLETED Task 2.3**: Evaluate unit/integration test frameworks
+
+  **Vitest vs Jest**:
+
+  | Criteria | Vitest | Jest | Winner |
+  |----------|--------|------|--------|
+  | **Speed** | ⚡ Fast (native ESM) | 🐢 Slower (transpilation) | Vitest |
+  | **TypeScript** | ✅ Native support | ⚠️ Needs ts-jest | Vitest |
+  | **Next.js** | ✅ Supported | ✅ Traditional choice | Tie |
+  | **Ecosystem** | 🌱 Growing | 🌳 Mature | Jest |
+  | **Config** | 📝 Simple | 📚 Complex | Vitest |
+  | **Hot reload** | ✅ Built-in watch mode | ✅ Watch mode | Tie |
+
+  **Decision: VITEST**
+  - Faster execution (critical for dev feedback loop)
+  - Better TypeScript/ESM support (matches modern stack)
+  - Simpler configuration
+  - Jest-compatible API (easy migration if needed)
+  - **No prior decisions in CLAUDE.md** - greenfield choice
+
+- ✅ **COMPLETED Task 2.4**: Evaluate E2E test frameworks
+
+  **Playwright vs Cypress**:
+
+  | Criteria | Playwright | Cypress | Winner |
+  |----------|------------|---------|--------|
+  | **Multi-domain** | ✅ Native support | ❌ Workarounds needed | **Playwright** |
+  | **Speed** | ⚡ Faster | 🐢 Slower | Playwright |
+  | **TypeScript** | ✅ First-class | ✅ Supported | Tie |
+  | **Browser support** | ✅ All major | ⚠️ Chromium-focused | Playwright |
+  | **Debugging** | ⚠️ Good | ✅ Excellent | Cypress |
+  | **Learning curve** | 📈 Steeper | 📉 Easier | Cypress |
+
+  **Decision: PLAYWRIGHT**
+  - **Multi-domain support is CRITICAL** for SafePrompt:
+    - `dev-api.safeprompt.dev` ↔ `dev-dashboard.safeprompt.dev`
+    - `api.safeprompt.dev` ↔ `dashboard.safeprompt.dev`
+    - Cross-domain API testing essential
+  - Faster execution
+  - Better browser coverage (Firefox, Safari testing)
+
+- ✅ **COMPLETED Task 2.5**: Select mocking strategy
+
+  **Mocking Strategy**:
+  1. **API Mocking**: Mock Service Worker (MSW)
+     - Intercepts network requests at fetch level
+     - Works in both tests and browser (dev debugging)
+     - Realistic HTTP mocking (status codes, headers, delays)
+     - Reusable handlers across unit/integration/E2E tests
+
+  2. **Supabase Mocking**: `@supabase/supabase-js` client mocks
+     - Mock auth.getUser(), auth.signIn(), etc.
+     - Mock database queries (from().select(), etc.)
+     - Controlled test data without hitting real database
+     - Prevents test database pollution
+
+  3. **Stripe Mocking**: MSW + Stripe test cards
+     - Intercept Stripe API calls in tests
+     - Use Stripe test card numbers for E2E flows
+     - Mock webhook delivery for payment verification
+
+- ✅ **COMPLETED Task 2.6**: Define test file structure
+
+  **File Structure: CO-LOCATED PATTERN**
+  ```
+  dashboard/
+  ├── src/
+  │   ├── components/
+  │   │   ├── Playground.tsx
+  │   │   └── Playground.test.tsx          ← Co-located
+  │   ├── pages/
+  │   │   ├── index.tsx
+  │   │   └── index.test.tsx               ← Co-located
+  │   └── lib/
+  │       ├── supabase.ts
+  │       └── supabase.test.ts             ← Co-located
+  ├── e2e/
+  │   └── playground.spec.ts               ← Playwright E2E tests
+  └── vitest.config.ts
+  ```
+
+  **Rationale**:
+  - Co-located tests easier to maintain (test near code)
+  - Encourages writing tests when creating components
+  - Clear 1:1 mapping (Playground.tsx → Playground.test.tsx)
+  - E2E tests separate (cross-component flows)
+  - Follows modern React/Next.js conventions
+
+- **Summary**:
+  - Unit/Integration: **Vitest** (fast, modern, TypeScript-native)
+  - E2E: **Playwright** (multi-domain support required)
+  - Mocking: **MSW + Supabase mocks** (realistic, reusable)
+  - Structure: **Co-located** (maintainability)
+
+- **Next**: Begin Phase 3 - Playground Testing (CONVERSION CRITICAL)
 
 ### 2025-10-05 00:55 - Phase 1.3 & 1.6 COMPLETED (Test Suite Analysis & User Journey Mapping)
 - ✅ **COMPLETED Task 1.3**: Review realistic-test-suite.js structure
