@@ -8,7 +8,7 @@ import CodeSelector from '@/components/CodeSelector'
 import LogoText from '@/components/LogoText'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { PRICING_SUMMARY } from '@/lib/pricing'
+import { PRICING_SUMMARY, PRICING } from '@/lib/pricing'
 
 export default function Home() {
 
@@ -477,34 +477,22 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 gap-8">
             <PricingCard
-              title="Free"
-              price="$0"
-              description="Perfect for testing"
-              features={[
-                '1,000 validations/month',
-                'Advanced AI protection',
-                'Community support',
-                'Early access when ready',
-              ]}
-              buttonText="Join Waitlist"
+              title={PRICING.free.name}
+              price={`$${PRICING.free.price}`}
+              description={PRICING.free.description}
+              features={PRICING.free.features.map(f => f.text)}
+              buttonText={PRICING.free.ctaText}
               buttonVariant="blue"
               buttonHref="/signup?plan=free"
             />
 
             <PricingCard
-              title="Beta Access"
-              price="$5"
-              period="/month"
-              description="Regular price $29/mo - lock in $5 forever"
-              features={[
-                '10,000 validations/month',
-                'Advanced AI protection',
-                'Priority support',
-                'High availability infrastructure',
-                '🔥 Lock in $5/mo forever (83% off)',
-                '💰 Save $288/year vs regular price',
-              ]}
-              buttonText="Get Beta Access"
+              title={PRICING.paid.name}
+              price={`$${PRICING.paid.price}`}
+              period={`/${PRICING.paid.interval}`}
+              description={PRICING.paid.description}
+              features={PRICING.paid.features.map(f => f.text)}
+              buttonText={PRICING.paid.ctaText}
               buttonVariant="primary"
               popular={true}
               buttonHref="/signup?plan=paid"
