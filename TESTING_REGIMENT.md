@@ -654,10 +654,45 @@ If testing implementation breaks existing functionality:
 - **Phase 6 expanded**: 6 → 7 tasks (CSRF protection)
 - **Phase 9 expanded**: 7 → 8 tasks (deployment rollback testing)
 - **Phase 10 rewritten**: 6 → 10 tasks (production safety with internal tier, read-only)
-- **Final stats**: 78 tasks across 11 phases with 9 context refresh points
+- **Final stats**: 79 tasks across 11 phases (added Phase -1 pricing audit)
 - **Coverage target**: 90%+ with security-critical paths at 95%+
 - **Timeline impact**: +2-3 days (acceptable for launch readiness)
-- Ready to begin Phase 0: Initialization & Context Loading
+
+### 2025-10-04 23:00 - Phase -1 COMPLETED (Critical Pricing Audit)
+- ✅ **COMPLETED Task -1.1**: Comprehensive pricing audit across entire codebase
+- **Issue**: User reported pricing confusion - Early Bird/Starter showed 100K instead of 10K validations
+- **Root Cause**: Multiple hardcoded pricing values (not using single source of truth)
+- **Files Fixed**: 7 files across API, website, dashboard, docs
+  1. `api/api/webhooks.js` - Stripe webhook DB limits + welcome email (CRITICAL)
+  2. `website/lib/pricing.ts` - Primary pricing config
+  3. `website/app/page.tsx` - Homepage (converted to use pricing library)
+  4. `dashboard/src/app/page.tsx` - Dashboard pricing display
+  5. `README.md` - Public documentation
+  6. `docs/archive/API.md` - Rate limits table
+  7. `TESTING_REGIMENT.md` - This document
+- **Architecture Improvement**: Implemented single source of truth pattern
+  - Before: Hardcoded values in 7+ locations
+  - After: All pricing pulled from `website/lib/pricing.ts`
+  - Benefit: Future pricing changes = edit ONE file
+- **Deployments to DEV**: All services deployed and verified
+  - Website: https://73f36a81.safeprompt-dev.pages.dev ✅ Shows "10,000"
+  - Dashboard: https://d867eadc.safeprompt-dashboard-dev.pages.dev ✅
+  - API: https://safeprompt-o9umxvcgj-ian-hos-projects.vercel.app ✅
+- **Comprehensive Verification**: Grep search found NO additional issues
+  - Searched: `/home/projects/safeprompt/` and `/home/projects/safeprompt-public/`
+  - Found: ~100+ instances of "100K" - ALL were cost calculations (not pricing)
+  - Backup files: Intentionally preserved (historical data)
+- **Documentation**: Created 4 detailed reports
+  - `/workspace/PRICING_AUDIT_FINDINGS.md` - Complete audit
+  - `/workspace/PRICING_FIXES_SUMMARY.md` - Executive summary
+  - `/workspace/DEPLOYMENT_COMPLETE.md` - Deployment guide
+  - `/workspace/FINAL_PRICING_VERIFICATION.md` - Grep verification
+- **Git History**: 3 commits
+  - `7c14a4b8` - Fix critical pricing inconsistencies across codebase
+  - `e113e951` - Fix hardcoded pricing in website homepage
+  - `612450d1` - Use pricing library instead of hardcoded values
+- **Time Spent**: ~1 hour (audit, fix, deploy, verify)
+- **Next**: Phase 0 - Initialization & Context Loading
 
 ## Results Tracking
 
