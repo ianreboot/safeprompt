@@ -8,14 +8,18 @@
     "dev": "node test-server.js",
     "vercel-dev": "vercel dev --listen 3000",
     "start": "node test-server.js",
-    "test": "node ../test-suite/run-realistic-tests.js",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:realistic": "node ../test-suite/run-realistic-tests.js",
     "test:quick": "node ../test-suite/run-realistic-tests.js --mode=quick",
     "test:full": "node ../test-suite/run-realistic-tests.js --mode=full",
     "test:accuracy": "node ../test-suite/run-realistic-tests.js --test=accuracy",
     "test:performance": "node ../test-suite/run-realistic-tests.js --test=performance",
     "test:no-ai": "node ../test-suite/run-realistic-tests.js --skip-ai",
     "test:e2e": "node ../test-suite/playground-test-suite.js",
-    "test:all": "npm run test && npm run test:e2e"
+    "test:all": "npm run test:unit && npm run test:realistic && npm run test:e2e"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
@@ -26,7 +30,9 @@
     "stripe": "^14.14.0"
   },
   "devDependencies": {
-    "vercel": "^32.5.0"
+    "@vitest/coverage-v8": "^3.2.4",
+    "vercel": "^32.5.0",
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=18.0.0"
