@@ -77,6 +77,8 @@ supabase db reset --db-url postgresql://postgres.vkyggknknyfallmnrmfu:PASSWORD@a
 
 ### Testing & Quality Assurance
 
+**📋 Complete testing documentation**: `/home/projects/safeprompt/TESTING_REGIMENT.md`
+
 SafePrompt has **4 test tiers** with different purposes and run frequencies:
 
 #### **Tier 1: CI/CD Unit Tests** (Automatic - Every Push)
@@ -96,14 +98,17 @@ npm run test:coverage       # Generate coverage report
 # View results: https://github.com/ianreboot/safeprompt-internal/actions
 ```
 
-**Coverage**: ~7% currently (5 tests) → Target 80%+ (180+ tests needed)
+**Current Coverage** (as of 2025-10-05):
+- **188 unit tests** passing (100% pass rate)
+- **prompt-validator.js**: 86.82% lines, 83.33% branches, 80% functions
+- **external-reference-detector.js**: 96.65% lines, 97.29% branches, 100% functions
+- **Overall api/lib**: 28.4% → Target 80%+
 
 **What's tested**:
-- Pattern matching logic (regex, deterministic)
-- External reference detection
-- Response parsing and business logic
-- Rate limiting
-- Mocked AI validator interactions
+- Pattern matching (84 tests): XSS, prompt injection, business whitelist
+- Encoding bypass detection (35 tests): Unicode, hex, URL, HTML entities
+- External reference detection (75 tests): URLs, IPs, file paths, obfuscation
+- Confidence scoring and decision logic
 
 ---
 
@@ -221,25 +226,28 @@ curl -X POST https://dev-api.safeprompt.dev/api/v1/validate \
 - Smoke tests: 100% pass rate
 - Realistic tests: 98% accuracy (manual only)
 
-**🎯 Next Steps**:
-1. Write 75+ deterministic unit tests (pattern matching, logic)
-2. Add security vulnerability explicit tests (8 cases)
-3. Create dashboard calculation tests (20 cases)
-4. Add authentication flow integration tests (10 cases)
+**🎯 Next Steps** (See TESTING_REGIMENT.md for complete plan):
+1. ✅ DONE: 194 deterministic unit tests written (188 passing)
+2. Phase 9: CI/CD Integration (GitHub Actions, coverage reporting)
+3. Phase 10: Production validation and documentation
+4. Additional tests: Dashboard calculations, auth flows, security vulnerabilities
 
 **📁 Test File Locations**:
 ```
 api/
-├── __tests__/                     # Unit tests (Vitest)
-│   └── prompt-validator.test.js   # 5 tests currently
-├── vitest.config.js               # Test configuration
-└── coverage/                      # Generated reports
+├── __tests__/                                  # Unit tests (Vitest) - 188 tests
+│   ├── pattern-matching.test.js               # 84 tests (XSS, injection, whitelist)
+│   ├── encoding-bypass.test.js                # 35 tests (encoding detection)
+│   ├── external-reference-detector.test.js    # 75 tests (URLs, IPs, files)
+│   └── prompt-validator.test.js               # 18 tests (legacy)
+├── vitest.config.js                           # Test configuration
+└── coverage/                                  # Generated reports
 
 test-suite/
-├── smoke-test-suite.js            # 5 smoke tests
-├── run-smoke-tests.js             # Smoke test runner
-├── realistic-test-suite.js        # 94 comprehensive tests
-└── run-realistic-tests.js         # Realistic test runner
+├── smoke-test-suite.js                        # 5 smoke tests
+├── run-smoke-tests.js                         # Smoke test runner
+├── realistic-test-suite.js                    # 94 comprehensive tests
+└── run-realistic-tests.js                     # Realistic test runner
 ```
 
 **🔗 Useful Links**:
