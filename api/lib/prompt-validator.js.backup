@@ -92,40 +92,40 @@ const BUSINESS_WHITELIST = [
  */
 const PROMPT_INJECTION_PATTERNS = [
   // Direct instruction override attempts
-  /ignore\s+(all\s+)?previous\s+(instructions?|prompts?|context)/i,
-  /disregard\s+(all\s+)?previous\s+(instructions?|prompts?|context)/i,
-  /forget\s+(everything|all)\s*(you|that)\s*(know|learned|were\s+told)/i,
+  /ignore\s+(all\s+)?previous\s+(instructions?|prompts?|context)/gi,
+  /disregard\s+(all\s+)?previous\s+(instructions?|prompts?|context)/gi,
+  /forget\s+(everything|all)\s*(you|that)\s*(know|learned|were\s+told)/gi,
 
   // System role manipulation
-  /^system:\s*/im,
-  /\n\s*system:\s*/i,
-  /\[\s*system\s*\].*?:/i,
-  /role:\s*(system|admin|root)\s*[\n;]/i,
+  /^system:\s*/gim,
+  /\n\s*system:\s*/gi,
+  /\[\s*system\s*\].*?:/gi,
+  /role:\s*(system|admin|root)\s*[\n;]/gi,
 
   // Jailbreak attempts
-  /activate\s+DAN\s+mode/i,
-  /enable\s+jailbreak/i,
-  /switch\s+to\s+developer\s+mode/i,
-  /enter\s+god\s+mode/i,
-  /you\s+are\s+now\s+DAN/i,
-  /you\s+are\s+now\s+(unrestricted|unfiltered|uncensored)/i,
+  /activate\s+DAN\s+mode/gi,
+  /enable\s+jailbreak/gi,
+  /switch\s+to\s+developer\s+mode/gi,
+  /enter\s+god\s+mode/gi,
+  /you\s+are\s+now\s+DAN/gi,
+  /you\s+are\s+now\s+(unrestricted|unfiltered|uncensored)/gi,
 
   // Override and bypass attempts
-  /override\s+(your\s+)?(safety|security)\s+(rules|filters|protocols)/i,
-  /bypass\s+(the\s+)?(safety|security)\s+(check|filter|validation)\s+and/i,
-  /disable\s+(all\s+)?(safety|security)\s+(features|checks|filters)/i,
+  /override\s+(your\s+)?(safety|security)\s+(rules|filters|protocols)/gi,
+  /bypass\s+(the\s+)?(safety|security)\s+(check|filter|validation)\s+and/gi,
+  /disable\s+(all\s+)?(safety|security)\s+(features|checks|filters)/gi,
 
   // Role confusion
-  /pretend\s+you\s+are\s+(not\s+)?an?\s+(AI|human)\s+without/i,
-  /pretend\s+you\s+are\s+(human|unrestricted|jailbroken)/i,
-  /act\s+as\s+if\s+you\s+(are|were)\s+human/i,
-  /from\s+now\s+on\s+you\s+are/i,
-  /as\s+your\s+(developer|creator|programmer)/i,
+  /pretend\s+you\s+are\s+(not\s+)?an?\s+(AI|human)\s+without/gi,
+  /pretend\s+you\s+are\s+(human|unrestricted|jailbroken)/gi,
+  /act\s+as\s+if\s+you\s+(are|were)\s+human/gi,
+  /from\s+now\s+on\s+you\s+are/gi,
+  /as\s+your\s+(developer|creator|programmer)/gi,
 
   // Context manipulation
-  /reveal\s+your\s+(prompt|instructions?|system\s+prompt|original\s+instructions?)/i,
-  /stop\s+following\s+(your\s+)?instructions\s+and/i,
-  /this\s+is\s+the\s+end\s+of\s+(the\s+)?prompt.*?now\s+do/i,
+  /reveal\s+your\s+(prompt|instructions?|system\s+prompt|original\s+instructions?)/gi,
+  /stop\s+following\s+(your\s+)?instructions\s+and/gi,
+  /this\s+is\s+the\s+end\s+of\s+(the\s+)?prompt.*?now\s+do/gi,
 
   // Unicode-based attacks
   /[\u202e\u202d\u200e\u200f]/g,  // Bidirectional override characters
@@ -137,25 +137,25 @@ const PROMPT_INJECTION_PATTERNS = [
  */
 const XSS_PATTERNS = [
   // Script tags
-  /<script[^>]*>[\s\S]*?<\/script>/i,
-  /<script[^>]*\/>/i,
+  /<script[^>]*>[\s\S]*?<\/script>/gi,
+  /<script[^>]*\/>/gi,
 
   // Dangerous HTML elements
-  /<iframe[^>]*src[^>]*>/i,
-  /<object[^>]*data[^>]*>/i,
-  /<embed[^>]*src[^>]*>/i,
-  /<link[^>]*href[^>]*>/i,
-  /<meta[^>]*http-equiv[^>]*>/i,
+  /<iframe[^>]*src[^>]*>/gi,
+  /<object[^>]*data[^>]*>/gi,
+  /<embed[^>]*src[^>]*>/gi,
+  /<link[^>]*href[^>]*>/gi,
+  /<meta[^>]*http-equiv[^>]*>/gi,
 
   // Event handlers
-  /on(click|load|error|mouseover)\s*=\s*["'][^"']*["']/i,
-  /on\w+\s*=\s*["']?(javascript:|eval|alert|prompt|confirm)/i,
+  /on(click|load|error|mouseover)\s*=\s*["'][^"']*["']/gi,
+  /on\w+\s*=\s*["']?(javascript:|eval|alert|prompt|confirm)/gi,
 
   // JavaScript/VBScript protocols
-  /(href|src|action)\s*=\s*["']?\s*(javascript|vbscript|data:text\/html):/i,
+  /(href|src|action)\s*=\s*["']?\s*(javascript|vbscript|data:text\/html):/gi,
 
   // Style injection
-  /<style[^>]*>[\s\S]*?(expression|javascript:|behavior:)[\s\S]*?<\/style>/i,
+  /<style[^>]*>[\s\S]*?(expression|javascript:|behavior:)[\s\S]*?<\/style>/gi,
   /style\s*=\s*["'][^"']*expression\s*\([^"']*["']/gi
 ];
 
@@ -163,12 +163,12 @@ const XSS_PATTERNS = [
  * Polyglot payload patterns
  */
 const POLYGLOT_PATTERNS = [
-  /<!--[\s\S]*?-->\s*<script/i,
-  /<script[^>]*>[\s\S]*?<!--/i,
-  /\/\*[\s\S]*?\*\/\s*<script/i,
-  /expression\s*\([\s\S]*?\)/i,
-  /<!\[CDATA\[[\s\S]*?<script/i,
-  /"\s*;\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(/i,
+  /<!--[\s\S]*?-->\s*<script/gi,
+  /<script[^>]*>[\s\S]*?<!--/gi,
+  /\/\*[\s\S]*?\*\/\s*<script/gi,
+  /expression\s*\([\s\S]*?\)/gi,
+  /<!\[CDATA\[[\s\S]*?<script/gi,
+  /"\s*;\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(/gi,
   /data:[\w\/]+;base64,[\w+\/=]+/gi
 ];
 
@@ -243,9 +243,9 @@ export function validatePromptSync(prompt) {
 
     // Check for encoded attacks
     const encodedPatterns = [
-      /&lt;script&gt;/i,
-      /&#x3c;script&#x3e;/i,
-      /&#60;script&#62;/i,
+      /&lt;script&gt;/gi,
+      /&#x3c;script&#x3e;/gi,
+      /&#60;script&#62;/gi,
       /%3Cscript%3E/gi
     ];
 
