@@ -29,10 +29,10 @@ if (!result.safe) {
 ## Features
 
 - **🚀 One-Line Integration**: Literally just POST to /validate
-- **⚡ ~350ms Response**: Fast multi-layer validation
+- **⚡ Lightning Fast**: <100ms pattern detection (67% of requests), 2-3s AI validation when needed
 - **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
 - **📊 Batch Processing**: Validate multiple prompts in one call
-- **💰 Cost Optimized**: 42% requests require $0 AI cost (pattern/reference matching)
+- **💰 Cost Optimized**: 67% requests require $0 AI cost (instant pattern/reference matching)
 - **📈 Usage Dashboard**: See threats blocked, track usage
 
 ## Quick Start
@@ -85,9 +85,11 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 2. **Template Injection Detection** (0ms): Detects server-side template exploitation
 3. **External Reference Detection** (5ms): Blocks URLs, IPs, file paths (including encoded/obfuscated)
 4. **Pattern Matching** (0ms): Fast detection of known attack patterns
-5. **Pass 1 AI Validation** (~200ms): Llama 3.1 8B for quick risk assessment
-6. **Pass 2 AI Validation** (~400ms): Llama 3.1 70B for uncertain cases only (5% of requests)
-7. **Response**: Safe/unsafe verdict with confidence score and threat details
+5. **AI Orchestrator** (~100ms): Intelligent routing determines which validators to invoke
+6. **Specialized Validators** (parallel): Business context, attack detection, semantic analysis
+7. **Consensus Engine**: Multi-validator voting with smart escalation
+8. **Pass 2 Deep Analysis** (~2s): Triggered for ambiguous cases only (~5% of requests)
+9. **Response**: Safe/unsafe verdict with confidence score and threat details
 
 ## API Documentation
 
@@ -183,10 +185,11 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ### Production Performance (October 2025)
 - **Accuracy**: 98% (92/94 professional tests passed)
-- **Response Time**: ~350ms average (multi-layer optimization)
-- **Zero-Cost Rate**: 58.5% of requests handled instantly via pattern/reference detection
-- **Architecture**: Hardened 2-pass validator with external reference action detection
-- **Test Coverage**: 94 professional tests covering real-world attacks and false positive prevention
+- **Response Time**: <100ms for 67% requests (pattern detection), 2-3s for AI validation
+- **Zero-Cost Rate**: 67% of requests handled instantly via pattern/reference detection
+- **Architecture**: Hardened 2-pass validator with intelligent routing and consensus
+- **Test Coverage**: 386 unit tests (100% pass rate) + 94 professional integration tests
+- **Unit Test Coverage**: 52.71% overall, 74-96% on critical validation paths
 - **Attack Detection**: 95% (attacks blocked in production)
 - **False Positive Rate**: 3.1% (31/32 legitimate requests approved)
 - **Uptime SLA**: 99.9% for paid plans

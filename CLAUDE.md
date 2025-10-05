@@ -77,7 +77,7 @@ supabase db reset --db-url postgresql://postgres.vkyggknknyfallmnrmfu:PASSWORD@a
 
 ### Testing & Quality Assurance
 
-**📋 Complete testing documentation**: `/home/projects/safeprompt/TESTING_REGIMENT.md`
+**📋 Complete testing documentation**: `/home/projects/safeprompt/docs/TESTING_REGIMENT.md`
 
 SafePrompt has **4 test tiers** with different purposes and run frequencies:
 
@@ -90,7 +90,7 @@ SafePrompt has **4 test tiers** with different purposes and run frequencies:
 ```bash
 # Run locally
 cd /home/projects/safeprompt/api
-npm test                    # Run all unit tests (5 currently)
+npm test                    # Run all unit tests (386 tests)
 npm run test:unit:watch     # Watch mode for TDD
 npm run test:coverage       # Generate coverage report
 
@@ -244,7 +244,7 @@ curl -X POST https://dev-api.safeprompt.dev/api/v1/validate \
 2. ✅ DONE: Critical path coverage 74-96%
 3. ✅ DONE: Regex state pollution bugs fixed
 4. ✅ DONE: Comprehensive validation logic coverage
-5. See `/home/projects/safeprompt/TESTING_COVERAGE_EXPANSION.md` for complete report
+5. See `/home/projects/safeprompt/docs/TESTING_COVERAGE_EXPANSION.md` for complete report
 
 **Next Steps** (Optional enhancements):
 - Integration tests for cache-manager.js and rate-limiter.js
@@ -1880,7 +1880,7 @@ curl https://openrouter.ai/api/v1/auth/key \
 
 **Related Files**:
 - `/home/projects/safeprompt/api/lib/ai-validator-hardened.js`
-- `/home/projects/safeprompt/TESTING_COVERAGE_EXPANSION.md` (tracking document)
+- `/home/projects/safeprompt/docs/TESTING_COVERAGE_EXPANSION.md` (tracking document)
 
 ---
 
