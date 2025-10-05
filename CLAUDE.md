@@ -75,6 +75,178 @@ supabase db reset --db-url postgresql://postgres.adyfhzbcsqzgqvyimycv:PASSWORD@a
 supabase db reset --db-url postgresql://postgres.vkyggknknyfallmnrmfu:PASSWORD@aws-0-us-west-1.pooler.supabase.com:6543/postgres
 ```
 
+### Testing & Quality Assurance
+
+SafePrompt has **4 test tiers** with different purposes and run frequencies:
+
+#### **Tier 1: CI/CD Unit Tests** (Automatic - Every Push)
+**What**: Fast, deterministic tests with mocked external APIs
+**When**: Runs automatically on every push/PR via GitHub Actions
+**Time**: <40 seconds
+**Cost**: $0
+
+```bash
+# Run locally
+cd /home/projects/safeprompt/api
+npm test                    # Run all unit tests (5 currently)
+npm run test:unit:watch     # Watch mode for TDD
+npm run test:coverage       # Generate coverage report
+
+# CI/CD automatically runs on: push to main/dev, all pull requests
+# View results: https://github.com/ianreboot/safeprompt-internal/actions
+```
+
+**Coverage**: ~7% currently (5 tests) → Target 80%+ (180+ tests needed)
+
+**What's tested**:
+- Pattern matching logic (regex, deterministic)
+- External reference detection
+- Response parsing and business logic
+- Rate limiting
+- Mocked AI validator interactions
+
+---
+
+#### **Tier 2: Smoke Tests** (Manual - Before Production Deploys)
+**What**: 5 critical tests covering all code paths
+**When**: Run manually before deploying to production
+**Time**: ~30 seconds
+**Cost**: ~$0.01 (3 AI API calls)
+
+```bash
+cd /home/projects/safeprompt/api
+npm run test:smoke
+```
+
+**Tests**:
+1. **Pattern Stage** (67.7%): XSS detection via regex
+2. **AI Pass 1** (27.3%): External reference + AI validation
+3. **AI Pass 2** (5%): Complex jailbreak detection
+4. **Business Whitelist**: Legitimate security queries pass
+5. **Safe Baseline**: Normal queries pass quickly
+
+**Exit codes**:
+- `0` = All tests passed → Safe to deploy
+- `1` = Tests failed → DO NOT deploy
+
+**When to run**:
+- ✅ Before deploying to production
+- ✅ After significant AI validator changes
+- ✅ After pattern matching updates
+- ✅ Weekly as confidence check
+
+---
+
+#### **Tier 3: Realistic Test Suite** (Manual Only - 94 Tests)
+**What**: Comprehensive validation of production accuracy
+**When**: Manual trigger only (do NOT run in CI/CD)
+**Time**: 8-10 minutes
+**Cost**: ~$0.50 per run
+
+```bash
+cd /home/projects/safeprompt/api
+
+# Full 94-test suite (uses OpenRouter API)
+npm run test:realistic
+
+# Quick mode (subset, faster)
+npm run test:quick
+
+# Specific test modes
+npm run test:accuracy      # Focus on accuracy metrics
+npm run test:performance   # Focus on latency benchmarks
+npm run test:no-ai         # Skip AI calls (pattern-only)
+```
+
+**Test Categories** (94 total):
+- XSS & Code Injection: 20 tests
+- External References: 15 tests (URL/IP/file + encoding bypasses)
+- Prompt Manipulation: 5 tests (jailbreaks, system injection)
+- Language Switching: 4 tests (non-English bypass attempts)
+- Semantic Manipulation: 4 tests (indirect extraction)
+- Indirect Injection: 3 tests (RAG poisoning)
+- Adversarial Suffixes: 3 tests (filter bypass)
+- Modern Jailbreaks: 4 tests (STAN, DevMode, AIM)
+- Nested Encoding: 2 tests (layered obfuscation)
+- Legitimate Business: 15 tests (false positive prevention)
+- Technical/Customer Service: 16 tests (safe contexts)
+
+**Exit codes**:
+- `0` = Accuracy acceptable
+- `1` = Accuracy regression detected
+
+**When to run**:
+- ✅ After AI model changes
+- ✅ After validation logic updates
+- ✅ Before major releases
+- ✅ Weekly/monthly accuracy tracking
+- ❌ NOT in CI/CD (too slow, uses external APIs)
+
+---
+
+#### **Tier 4: Manual Validation** (As Needed)
+**What**: Ad-hoc testing with specific prompts
+**When**: Debugging, investigating specific issues
+
+```bash
+# Test API directly
+curl -X POST https://api.safeprompt.dev/api/v1/validate \
+  -H "X-API-Key: sp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"your test prompt","mode":"optimized"}'
+
+# Test with internal key (unlimited requests)
+curl -X POST https://dev-api.safeprompt.dev/api/v1/validate \
+  -H "X-API-Key: sp_live_INTERNAL_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"test prompt"}'
+```
+
+**Internal test account**: `ian.ho@rebootmedia.net` (unlimited tier)
+
+---
+
+#### **Test Infrastructure Status**
+
+**✅ Working**:
+- GitHub Actions CI/CD (runs on every push)
+- Vitest unit testing framework
+- Coverage reporting (Codecov integration)
+- Matrix testing (Node 18.x, 20.x)
+- Smoke test suite (5 tests)
+- Realistic test suite (94 tests)
+
+**📊 Current Coverage**:
+- Unit tests: ~7% (5 tests) → Target: 80%+ (180+ tests)
+- Smoke tests: 100% pass rate
+- Realistic tests: 98% accuracy (manual only)
+
+**🎯 Next Steps**:
+1. Write 75+ deterministic unit tests (pattern matching, logic)
+2. Add security vulnerability explicit tests (8 cases)
+3. Create dashboard calculation tests (20 cases)
+4. Add authentication flow integration tests (10 cases)
+
+**📁 Test File Locations**:
+```
+api/
+├── __tests__/                     # Unit tests (Vitest)
+│   └── prompt-validator.test.js   # 5 tests currently
+├── vitest.config.js               # Test configuration
+└── coverage/                      # Generated reports
+
+test-suite/
+├── smoke-test-suite.js            # 5 smoke tests
+├── run-smoke-tests.js             # Smoke test runner
+├── realistic-test-suite.js        # 94 comprehensive tests
+└── run-realistic-tests.js         # Realistic test runner
+```
+
+**🔗 Useful Links**:
+- GitHub Actions: https://github.com/ianreboot/safeprompt-internal/actions
+- Codecov Dashboard: https://codecov.io/gh/ianreboot/safeprompt-internal
+- Test Documentation: `/home/projects/safeprompt/api/README-TESTING.md`
+
 ---
 
 ## 🚨 MANDATORY PROTOCOL FOR ALL TASKS

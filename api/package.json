@@ -12,6 +12,7 @@
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:smoke": "node ../test-suite/run-smoke-tests.js",
     "test:realistic": "node ../test-suite/run-realistic-tests.js",
     "test:quick": "node ../test-suite/run-realistic-tests.js --mode=quick",
     "test:full": "node ../test-suite/run-realistic-tests.js --mode=full",
