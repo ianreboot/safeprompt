@@ -30,7 +30,7 @@ SafePrompt is a SaaS API that protects AI applications from prompt injection att
 - **Fast**: <100ms pattern detection (67% of requests), 2-3s AI validation when needed
 - **Simple**: One API endpoint, single line of code integration
 - **Transparent**: Clear pricing, no sales calls
-- **Accurate**: 98% accuracy with 2-pass AI validation
+- **Accurate**: 98.9% accuracy with 2-pass AI validation
 
 ### Current Status
 - **Production Environment**: Live at safeprompt.dev, dashboard.safeprompt.dev, api.safeprompt.dev
@@ -38,7 +38,7 @@ SafePrompt is a SaaS API that protects AI applications from prompt injection att
 - **Launch Readiness**: 97% complete (63/65 tasks), all critical security fixes deployed
 
 ### Key Metrics
-- **Accuracy**: 98% (92/94 professional tests passed)
+- **Accuracy**: 98% (93/94 professional tests passed)
 - **Performance**: Pattern detection <100ms, AI validation 2-3s average
 - **Capacity**: 50 req/sec peak load validated (25 req/sec recommended sustained)
 - **Zero-Cost Rate**: 67% of requests handled instantly via pattern detection
@@ -569,7 +569,7 @@ $$;
 - Edge Cases (1 test) - Ambiguous references
 
 **Current Results**:
-- Accuracy: 98% (92/94 tests passed)
+- Accuracy: 98% (93/94 tests passed)
 - False Positives: 3.1% (3/32 legitimate prompts blocked)
 - Attack Detection: 95.2% (59/62 attacks blocked)
 

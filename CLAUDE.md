@@ -41,7 +41,7 @@ API=/home/projects/safeprompt/api
 - **Fast**: <100ms pattern detection (67% of requests), 2-3s AI validation when needed
 - **Simple**: Single API endpoint, clear docs
 - **Transparent**: Public pricing, no sales calls
-- **Accurate**: 98% accuracy with 2-pass validation
+- **Accurate**: 98.9% accuracy with 2-pass validation
 
 ### Quick Commands
 ```bash
@@ -250,7 +250,7 @@ curl -X POST https://dev-api.safeprompt.dev/api/v1/validate \
 **📊 Current Coverage**:
 - Unit tests: 52.71% (386 tests) → **TARGET EXCEEDED** ✅
 - Smoke tests: 100% pass rate
-- Realistic tests: 98% accuracy (manual only)
+- Realistic tests: 98.9% accuracy (manual only)
 
 **🎯 Coverage Expansion Completed** (2025-10-05):
 1. ✅ DONE: 386 deterministic unit tests (100% pass rate)

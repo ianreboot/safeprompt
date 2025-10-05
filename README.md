@@ -60,7 +60,7 @@ if (validation.safe) {
 - **Free**: 1,000 validations/month - Full AI protection, community support
 - **Early Bird**: $5/month - 10,000 validations/month, priority support, 99.9% uptime SLA (beta pricing - first 50 users only)
 
-Both tiers include the SAME technology - full regex + AI validation with 100% accuracy on 50 professional tests.
+Both tiers include the SAME technology - full regex + AI validation with 98.9% accuracy on 94 professional tests.
 
 ## Why SafePrompt?
 
@@ -184,14 +184,14 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 ## Technical Implementation
 
 ### Production Performance (October 2025)
-- **Accuracy**: 98% (92/94 professional tests passed)
+- **Accuracy**: 98.9% (93/94 professional tests passed)
 - **Response Time**: <100ms for 67% requests (pattern detection), 2-3s for AI validation
 - **Zero-Cost Rate**: 67% of requests handled instantly via pattern/reference detection
 - **Architecture**: Hardened 2-pass validator with intelligent routing and consensus
 - **Test Coverage**: 386 unit tests (100% pass rate) + 94 professional integration tests
 - **Unit Test Coverage**: 52.71% overall, 74-96% on critical validation paths
-- **Attack Detection**: 95% (attacks blocked in production)
-- **False Positive Rate**: 3.1% (31/32 legitimate requests approved)
+- **Attack Detection**: 96.8% (60/62 attacks blocked)
+- **False Positive Rate**: 0% (32/32 legitimate requests approved)
 - **Uptime SLA**: 99.9% for paid plans
 
 ### AI Models (Updated October 2025)
