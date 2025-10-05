@@ -15,6 +15,22 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+/**
+ * Sanitize string for safe inclusion in JSON
+ * Prevents JSON injection attacks by escaping control characters
+ */
+function sanitizeForJSON(input) {
+  if (typeof input !== 'string') return input;
+
+  return input
+    .replace(/\\/g, '\\\\')   // Escape backslashes first
+    .replace(/"/g, '\\"')      // Escape quotes
+    .replace(/\n/g, '\\n')     // Escape newlines
+    .replace(/\r/g, '\\r')     // Escape carriage returns
+    .replace(/\t/g, '\\t')     // Escape tabs
+    .replace(/[\u0000-\u001F]/g, ''); // Strip control characters
+}
+
 const SEMANTIC_MODEL = {
   name: 'meta-llama/llama-3.1-8b-instruct',
   costPerMillion: 0.02,
@@ -91,7 +107,7 @@ export async function analyzeSemantic(prompt) {
 
     const userMessage = JSON.stringify({
       request_type: "analyze_semantic",
-      untrusted_input: prompt,
+      untrusted_input: sanitizeForJSON(prompt),
       analysis_only: true
     });
 

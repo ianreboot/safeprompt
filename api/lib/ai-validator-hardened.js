@@ -551,6 +551,22 @@ Respond with ONLY this JSON structure:
 }`;
 
 /**
+ * Sanitize string for safe inclusion in JSON
+ * Prevents JSON injection attacks by escaping control characters
+ */
+function sanitizeForJSON(input) {
+  if (typeof input !== 'string') return input;
+
+  return input
+    .replace(/\\/g, '\\\\')   // Escape backslashes first
+    .replace(/"/g, '\\"')      // Escape quotes
+    .replace(/\n/g, '\\n')     // Escape newlines
+    .replace(/\r/g, '\\r')     // Escape carriage returns
+    .replace(/\t/g, '\\t')     // Escape tabs
+    .replace(/[\u0000-\u001F]/g, ''); // Strip control characters
+}
+
+/**
  * Secure API call with fallback and proper isolation
  */
 async function secureApiCall(models, userPrompt, systemPrompt, options = {}) {
@@ -583,7 +599,7 @@ async function secureApiCall(models, userPrompt, systemPrompt, options = {}) {
           role: 'user',
           content: JSON.stringify({
             request_type: 'analyze_for_threats',
-            untrusted_input: userPrompt,
+            untrusted_input: sanitizeForJSON(userPrompt),
             analysis_only: true,
             input_checksum: inputChecksum,
             max_length: userPrompt.length
