@@ -8,19 +8,19 @@
 **Context Switches**: 0
 
 ## 📊 Quick Stats
-- **Items Completed**: 0/15 (0%)
-- **Current Phase**: Phase 1 - Validation System Review
+- **Items Completed**: 4/38 (10.5%)
+- **Current Phase**: Phase 1 - Validation System Review (IN PROGRESS)
 - **Blockers**: None
-- **Last Update**: 2025-10-05 12:30 - Task initiated
+- **Last Update**: 2025-10-05 12:42 - Phase 1.1-1.4 completed, regex bug fixed
 
 ## 🧭 Status-Driven Navigation
-- **✅ Completed**: 0 tasks
-- **🔧 In Progress**: Phase 1 - Regex brittleness investigation
+- **✅ Completed**: 4 tasks (Phase 1.1 through 1.4)
+- **🔧 In Progress**: Phase 1.5 - Updating documentation
 - **❌ Blocked/Missing**: 0 tasks
-- **🐛 Bug Fixes**: 0 tasks
+- **🐛 Bug Fixes**: 1 CRITICAL bug fixed (regex state pollution)
 
-**Current Focus**: Phase 1.1 - Review PROMPT_INJECTION_PATTERNS regex in prompt-validator.js
-**Last Completed**: N/A - Starting task
+**Current Focus**: Phase 1.5 - Document regex fix completion
+**Last Completed**: Phase 1.4 - Added 19 regression tests for regex state pollution
 
 ## Executive Summary
 
@@ -59,12 +59,12 @@ Following `/home/projects/docs/methodology-long-running-tasks.md`
 ## Task Checklist (UPDATE AFTER EACH STEP)
 
 ### Phase 1: Validation System Review & Regex Analysis
-- [ ] 1.1 Review all PROMPT_INJECTION_PATTERNS in prompt-validator.js for brittleness
-- [ ] 1.2 Investigate: Why does `role: system\n` match but `role: admin\n` doesn't?
+- [x] 1.1 Review all PROMPT_INJECTION_PATTERNS in prompt-validator.js for brittleness (COMPLETED: 2025-10-05 12:35)
+- [x] 1.2 Investigate: Why does `role: system\n` match but `role: admin\n` doesn't? (COMPLETED: 2025-10-05 12:37) - ROOT CAUSE: Regex /g flag pollution
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/TESTING_COVERAGE_EXPANSION.md and execute section "📝 Document Update Instructions"
-- [ ] 1.3 Create test cases for all regex patterns to verify coverage
-- [ ] 1.4 Document findings: Are patterns too specific or appropriately strict?
-- [ ] 1.5 DECISION: Simplify patterns OR keep strict (document rationale)
+- [x] 1.3 Create test cases for all regex patterns to verify coverage (COMPLETED: 2025-10-05 12:40) - 19 regression tests added
+- [x] 1.4 Document findings: Are patterns too specific or appropriately strict? (COMPLETED: 2025-10-05 12:41) - Created REGEX_BRITTLENESS_ANALYSIS.md
+- [x] 1.5 DECISION: Simplify patterns OR keep strict (document rationale) (COMPLETED: 2025-10-05 12:42) - DECISION: Remove /g flag, keep strict patterns
 - [ ] 🧠 CONTEXT REFRESH: Read /home/projects/safeprompt/TESTING_COVERAGE_EXPANSION.md and execute section "📝 Document Update Instructions"
 
 ### Phase 2: AI Validator Coverage Expansion
@@ -108,16 +108,25 @@ Following `/home/projects/docs/methodology-long-running-tasks.md`
 ## Current State Variables
 
 ```yaml
-CURRENT_PHASE: "Phase 1 - Validation System Review"
-REGEX_REVIEW_COMPLETE: false
-REGEX_DECISION_MADE: false
+CURRENT_PHASE: "Phase 1 - Validation System Review (COMPLETED)"
+REGEX_REVIEW_COMPLETE: true
+REGEX_DECISION_MADE: true
+REGEX_BUG_FIXED: true
+REGRESSION_TESTS_ADDED: true
 AI_VALIDATOR_COVERAGE_TARGET_MET: false
 CONSENSUS_ENGINE_COVERAGE_TARGET_MET: false
 API_ENDPOINT_COVERAGE_TARGET_MET: false
 OVERALL_COVERAGE_TARGET_MET: false
 
+# Test Statistics
+TOTAL_TESTS: 207  # Up from 188
+NEW_REGRESSION_TESTS: 19
+TESTS_PASSING: 207
+TESTS_FAILING: 0
+
 # File Locations
 PROMPT_VALIDATOR: "/home/projects/safeprompt/api/lib/prompt-validator.js"
+REGEX_REGRESSION_TESTS: "/home/projects/safeprompt/api/__tests__/regex-state-pollution.test.js"
 AI_VALIDATOR_HARDENED: "/home/projects/safeprompt/api/lib/ai-validator-hardened.js"
 CONSENSUS_ENGINE: "/home/projects/safeprompt/api/lib/consensus-engine.js"
 AI_ORCHESTRATOR: "/home/projects/safeprompt/api/lib/ai-orchestrator.js"
@@ -166,6 +175,22 @@ TEST_DIRECTORY: "/home/projects/safeprompt/api/__tests__/"
 
 ## Progress Log
 
+### 2025-10-05 12:42 - Phase 1.1-1.5 COMPLETED (Regex Bug Fixed)
+- **AI**: Claude (Sonnet 4.5)
+- **Action**: Fixed critical regex state pollution bug
+- **Files Modified**:
+  - `/home/projects/safeprompt/api/lib/prompt-validator.js` (removed /g from 43+ patterns)
+  - `/home/projects/safeprompt/api/__tests__/regex-state-pollution.test.js` (19 new tests)
+  - `/home/projects/safeprompt/REGEX_BRITTLENESS_ANALYSIS.md` (detailed analysis)
+- **Result**:
+  - ✅ Bug fixed: All three role types (system/admin/root) now detected
+  - ✅ 207 tests passing (up from 188)
+  - ✅ Zero regressions
+  - ✅ Comprehensive regression tests prevent future recurrence
+- **Issues**: None
+- **Next Step**: Phase 2 - AI Validator Coverage Expansion
+- **Commit**: 4875e812 "Fix: Resolve regex state pollution in validation patterns"
+
 ### 2025-10-05 12:30 - Task Initialization
 - **AI**: Claude (Sonnet 4.5)
 - **Action**: Created TESTING_COVERAGE_EXPANSION.md long-running task document
@@ -177,7 +202,31 @@ TEST_DIRECTORY: "/home/projects/safeprompt/api/__tests__/"
 ## Notes & Observations
 
 ### Hard-Fought Knowledge
-*To be populated as discoveries are made*
+
+#### Regex Global Flag State Pollution (2025-10-05)
+**Discovery**: Global regex patterns (`/pattern/gi`) maintain state via `lastIndex` property
+**Impact**: CRITICAL security bug - "admin" role injection bypassed detection
+**Root Cause**:
+```javascript
+// BROKEN: Global flag causes state pollution
+const pattern = /role:\s*(system|admin|root)\s*[\n;]/gi;
+pattern.test('role: system\n...'); // true, sets lastIndex = 13
+pattern.test('role: admin\n...'); // false! Starts from position 13, misses "admin"
+```
+
+**Fix**: Remove `/g` flag from ALL patterns - boolean `.test()` checks don't need it
+```javascript
+// FIXED: Stateless pattern, no state pollution
+const pattern = /role:\s*(system|admin|root)\s*[\n;]/i;
+pattern.test('role: system\n...'); // true
+pattern.test('role: admin\n...'); // true ✅
+```
+
+**Key Insight**: The `/g` flag is only needed for `.exec()`, `.match()`, and `.matchAll()` when finding ALL occurrences. For existence checks (`.test()`), it creates unnecessary state management and bugs.
+
+**Testing**: 19 comprehensive regression tests added to prevent recurrence
+**Documentation**: Complete analysis in REGEX_BRITTLENESS_ANALYSIS.md
+**Verification**: All 207 tests passing, zero regressions
 
 ### Context from Previous Work
 
