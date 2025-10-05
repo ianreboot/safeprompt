@@ -133,11 +133,11 @@ gh api -X DELETE repos/ianreboot/safeprompt/git/refs/heads/BRANCH
 
 ### Pricing Strategy (NEVER Change Without User)
 ```javascript
-// CURRENT PRICING (locked)
-FREE_TIER = 1000 validations/month (free)
-STARTER = $9/month, 10K validations (LIMITED BETA - first 50 users only)
-GROWTH = $29/month, 50K validations (STANDARD PRICING)
-BUSINESS = $99/month, 250K validations
+// CURRENT PRICING (locked - Updated 2025-10-05)
+FREE_TIER = 1,000 validations/month (FREE)
+STARTER = $29/month, 10,000 validations (STANDARD PRICING)
+EARLY_BIRD = $5/month, 10,000 validations (LIMITED - first 50 users only, discounted Starter)
+BUSINESS = $99/month, 250,000 validations
 ENTERPRISE = Custom pricing
 
 // PRICING MODEL:
@@ -176,8 +176,8 @@ ENTERPRISE = Custom pricing
                     ↓
 ┌─────────────────────────────────────────────┐
 │ AI Validation (OpenRouter)                  │
-│ - Pass 1: Llama 3.1 8B Instruct (fast)     │
-│ - Pass 2: Llama 3.1 70B Instruct (accurate)│
+│ - Pass 1: Gemini 2.0 Flash (FREE, fast)    │
+│ - Pass 2: Gemini 2.5 Flash (accurate)      │
 │ - Hardened 2-pass architecture              │
 └─────────────────────────────────────────────┘
                     ↓
@@ -569,7 +569,7 @@ const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
 Use Context7 to find current model names:
 ```bash
 # Find latest model names
-# Ask: "use context7 to show OpenRouter available models for Llama 3.1"
+# Ask: "use context7 to show OpenRouter available models for Gemini"
 
 # Update code with current names
 const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -1632,7 +1632,7 @@ curl https://openrouter.ai/api/v1/auth/key \
 ### Migration History
 
 **Sept 26, 2025 - AI Validator v2.0**
-- Migrated from GPT-4o Mini to Llama 3.1 (2-pass)
+- Migrated from GPT-4o Mini → Llama 3.1 (2-pass) → Gemini 2.0/2.5 Flash (current)
 - Cost reduction: $150 → $0.50 per 100K requests
 - Accuracy improvement: 43% → 92.9%
 - Response time improvement: 1360ms → 250ms
