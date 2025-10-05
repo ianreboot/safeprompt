@@ -1782,6 +1782,18 @@ curl https://openrouter.ai/api/v1/auth/key \
 
 ### Resolved Incidents
 
+**Oct 5, 2025 - Regex State Pollution (CRITICAL SECURITY BUG)**
+- "admin" role injection pattern bypassed due to regex global flag state pollution
+- Root cause: Global regex patterns (`/gi`) maintain `lastIndex` state between `.test()` calls
+- Impact: CRITICAL - Security vulnerability allowed role manipulation attacks to bypass detection
+- Discovery: Test showed `role: system\n` detected but `role: admin\n` bypassed
+- Resolution: Removed `/g` flag from ALL 43+ validation patterns in `prompt-validator.js`
+- Testing: Added 19 comprehensive regression tests in `__tests__/regex-state-pollution.test.js`
+- Result: All 207 tests passing, zero regressions, all role types now detected consistently
+- Lesson: For boolean existence checks (`.test()`), `/g` flag creates unnecessary state and bugs
+- Documentation: Complete analysis in `REGEX_BRITTLENESS_ANALYSIS.md`
+- Commits: 4875e812, e461fa15
+
 **Oct 3, 2025 - Dev/Prod Environment Separation (CRITICAL)**
 - Dev testing was writing to PROD database for 12 hours
 - Root cause: Single API architecture - only databases separated, not API layer
@@ -1828,26 +1840,22 @@ curl https://openrouter.ai/api/v1/auth/key \
 
 ## FUTURE IMPROVEMENTS & TECHNICAL DEBT
 
-### Validation System Brittleness
+### AI Validator Test Coverage
 **Date Identified**: 2025-10-05
-**Issue**: Pattern matching regex in `prompt-validator.js` may be overly specific
-**Evidence**: Test case for `role: admin\n` pattern failed to match despite appearing correct
-**Impact**: LOW - Other system role tests pass, production system working
+**Issue**: Low test coverage on core validation logic
+**Current Coverage**: `ai-validator-hardened.js` at 23.32%
+**Target**: 70%+ coverage
+**Priority**: MEDIUM - Production system working, but needs better test coverage for confidence
 **Action Items**:
-1. Review all PROMPT_INJECTION_PATTERNS regex for brittleness
-2. Consider simplifying patterns for better coverage
-3. Add comprehensive regex unit tests
-4. Investigate: Why does `role: system\n` match but `role: admin\n` doesn't?
-5. Balance between: strict patterns (fewer false positives) vs flexible patterns (better coverage)
-
-**Pattern in question**:
-```javascript
-/role:\s*(system|admin|root)\s*[\n;]/gi
-```
+1. Add unit tests for pattern detection functions (XSS, SQL injection, command injection)
+2. Add tests for API call with model fallback logic
+3. Add tests for Pass 1 and Pass 2 protocol checking
+4. Add tests for confidence scoring and threshold decisions
+5. Add integration tests for full validation pipeline
 
 **Related Files**:
-- `/home/projects/safeprompt/api/lib/prompt-validator.js` (line 103)
-- `/home/projects/safeprompt/api/__tests__/pattern-matching.test.js`
+- `/home/projects/safeprompt/api/lib/ai-validator-hardened.js`
+- `/home/projects/safeprompt/TESTING_COVERAGE_EXPANSION.md` (tracking document)
 
 ---
 
