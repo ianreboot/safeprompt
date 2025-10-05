@@ -20,6 +20,45 @@ import { buildConsensus, calculateTotalCost, calculateProcessingTime } from './c
 // Load environment variables - works both locally and on Vercel
 dotenv.config();
 
+/**
+ * Multi-State Validation Architecture
+ * Replaces binary safe/unsafe with graduated confidence states
+ */
+export const ValidationState = {
+  DEFINITELY_UNSAFE: 'block',       // High confidence attack → instant block (0.90+)
+  SUSPICIOUS: 'review',              // Pattern + context ambiguous → AI review (0.50-0.89)
+  LIKELY_SAFE: 'light_check',        // Low risk but verify → light AI check (0.30-0.49)
+  DEFINITELY_SAFE: 'allow'           // Zero concerns → instant allow (0-0.29)
+};
+
+/**
+ * Map confidence score to validation state
+ */
+export function getValidationState(confidence, hasPattern = false, hasContext = false) {
+  // Pattern detected with educational/business context → SUSPICIOUS (needs AI)
+  if (hasPattern && hasContext && confidence >= 0.50) {
+    return ValidationState.SUSPICIOUS;
+  }
+
+  // High confidence pattern → DEFINITELY_UNSAFE
+  if (confidence >= 0.90) {
+    return ValidationState.DEFINITELY_UNSAFE;
+  }
+
+  // Medium-high confidence → SUSPICIOUS (AI review)
+  if (confidence >= 0.50) {
+    return ValidationState.SUSPICIOUS;
+  }
+
+  // Low confidence → LIKELY_SAFE (light check)
+  if (confidence >= 0.30) {
+    return ValidationState.LIKELY_SAFE;
+  }
+
+  // Very low confidence → DEFINITELY_SAFE
+  return ValidationState.DEFINITELY_SAFE;
+}
+
 // Testing mode removed - use internal account (tier='internal') for testing instead
 
 // Model configurations - Using Llama with Credits
@@ -760,8 +799,30 @@ export async function validateHardened(prompt, options = {}) {
     Promise.resolve(checkExecutionCommands(prompt))
   ]);
 
-  // Stage -1: XSS Detection
+  // Stage -1: XSS Detection (Multi-State with Context Awareness)
   if (xssDetected) {
+    const hasEduContext = hasEducationalContext(prompt);
+    const hasBizContext = hasBusinessContext(prompt);
+
+    // Pattern detected + educational/business context → SUSPICIOUS (requires AI validation)
+    if (hasEduContext || hasBizContext) {
+      const contextType = hasEduContext ? 'educational' : 'business';
+      return {
+        safe: false,  // Default deny until AI validates
+        confidence: 0.65,
+        threats: ['xss_pattern'],
+        reasoning: `XSS-like patterns detected with ${contextType} context - requires AI analysis to distinguish code discussion from attack`,
+        externalReferences: false,
+        processingTime: Date.now() - startTime,
+        stage: 'xss_pattern',
+        cost: 0,
+        validationState: ValidationState.SUSPICIOUS,
+        requiresAI: true,
+        patternContext: contextType
+      };
+    }
+
+    // Pattern detected without context → DEFINITELY_UNSAFE (instant block)
     return {
       safe: false,
       confidence: 0.95,
@@ -770,12 +831,37 @@ export async function validateHardened(prompt, options = {}) {
       externalReferences: false,
       processingTime: Date.now() - startTime,
       stage: 'xss_pattern',
-      cost: 0
+      cost: 0,
+      validationState: ValidationState.DEFINITELY_UNSAFE,
+      requiresAI: false,
+      patternContext: 'none'
     };
   }
 
-  // Stage -0.75: SQL Injection Detection (skip if educational context)
-  if (sqlDetected && !hasEducationalContext(prompt)) {
+  // Stage -0.75: SQL Injection Detection (Multi-State with Context Awareness)
+  if (sqlDetected) {
+    const hasEduContext = hasEducationalContext(prompt);
+    const hasBizContext = hasBusinessContext(prompt);
+
+    // Pattern detected + educational/business context → SUSPICIOUS (requires AI validation)
+    if (hasEduContext || hasBizContext) {
+      const contextType = hasEduContext ? 'educational' : 'business';
+      return {
+        safe: false,  // Default deny until AI validates
+        confidence: 0.65,
+        threats: ['sql_pattern'],
+        reasoning: `SQL keywords detected with ${contextType} context - requires AI analysis to distinguish legitimate discussion from attack`,
+        externalReferences: false,
+        processingTime: Date.now() - startTime,
+        stage: 'sql_pattern',
+        cost: 0,
+        validationState: ValidationState.SUSPICIOUS,
+        requiresAI: true,
+        patternContext: contextType
+      };
+    }
+
+    // Pattern detected without context → DEFINITELY_UNSAFE (instant block)
     return {
       safe: false,
       confidence: 0.95,
@@ -784,12 +870,37 @@ export async function validateHardened(prompt, options = {}) {
       externalReferences: false,
       processingTime: Date.now() - startTime,
       stage: 'sql_pattern',
-      cost: 0
+      cost: 0,
+      validationState: ValidationState.DEFINITELY_UNSAFE,
+      requiresAI: false,
+      patternContext: 'none'
     };
   }
 
-  // Stage -0.5: Template Injection Detection
+  // Stage -0.5: Template Injection Detection (Multi-State with Context Awareness)
   if (templateDetected) {
+    const hasEduContext = hasEducationalContext(prompt);
+    const hasBizContext = hasBusinessContext(prompt);
+
+    // Pattern detected + educational/business context → SUSPICIOUS (requires AI validation)
+    if (hasEduContext || hasBizContext) {
+      const contextType = hasEduContext ? 'educational' : 'business';
+      return {
+        safe: false,  // Default deny until AI validates
+        confidence: 0.65,
+        threats: ['template_pattern'],
+        reasoning: `Template syntax detected with ${contextType} context - requires AI analysis to distinguish code examples from injection`,
+        externalReferences: false,
+        processingTime: Date.now() - startTime,
+        stage: 'template_pattern',
+        cost: 0,
+        validationState: ValidationState.SUSPICIOUS,
+        requiresAI: true,
+        patternContext: contextType
+      };
+    }
+
+    // Pattern detected without context → DEFINITELY_UNSAFE (instant block)
     return {
       safe: false,
       confidence: 0.90,
@@ -798,12 +909,37 @@ export async function validateHardened(prompt, options = {}) {
       externalReferences: false,
       processingTime: Date.now() - startTime,
       stage: 'template_pattern',
-      cost: 0
+      cost: 0,
+      validationState: ValidationState.DEFINITELY_UNSAFE,
+      requiresAI: false,
+      patternContext: 'none'
     };
   }
 
-  // Stage -0.25: Command Injection Detection
+  // Stage -0.25: Command Injection Detection (Multi-State with Context Awareness)
   if (cmdDetected) {
+    const hasEduContext = hasEducationalContext(prompt);
+    const hasBizContext = hasBusinessContext(prompt);
+
+    // Pattern detected + educational/business context → SUSPICIOUS (requires AI validation)
+    if (hasEduContext || hasBizContext) {
+      const contextType = hasEduContext ? 'educational' : 'business';
+      return {
+        safe: false,  // Default deny until AI validates
+        confidence: 0.70,
+        threats: ['command_pattern'],
+        reasoning: `Command-like syntax detected with ${contextType} context - requires AI analysis to distinguish examples from injection`,
+        externalReferences: false,
+        processingTime: Date.now() - startTime,
+        stage: 'command_pattern',
+        cost: 0,
+        validationState: ValidationState.SUSPICIOUS,
+        requiresAI: true,
+        patternContext: contextType
+      };
+    }
+
+    // Pattern detected without context → DEFINITELY_UNSAFE (instant block)
     return {
       safe: false,
       confidence: 0.95,
@@ -812,26 +948,76 @@ export async function validateHardened(prompt, options = {}) {
       externalReferences: false,
       processingTime: Date.now() - startTime,
       stage: 'command_pattern',
-      cost: 0
+      cost: 0,
+      validationState: ValidationState.DEFINITELY_UNSAFE,
+      requiresAI: false,
+      patternContext: 'none'
     };
   }
 
-  // Stage -0.2: Semantic Extraction Detection
+  // Stage -0.2: Semantic Extraction Detection (Multi-State with Context Awareness)
   if (semanticDetected) {
+    const hasEduContext = hasEducationalContext(prompt);
+    const hasBizContext = hasBusinessContext(prompt);
+
+    // Pattern detected + educational/business context → SUSPICIOUS (requires AI validation)
+    if (hasEduContext || hasBizContext) {
+      const contextType = hasEduContext ? 'educational' : 'business';
+      return {
+        safe: false,  // Default deny until AI validates
+        confidence: 0.60,
+        threats: ['semantic_pattern'],
+        reasoning: `Semantic extraction patterns with ${contextType} context - requires AI analysis for word games vs attacks`,
+        externalReferences: false,
+        processingTime: Date.now() - startTime,
+        stage: 'semantic_pattern',
+        cost: 0,
+        validationState: ValidationState.SUSPICIOUS,
+        requiresAI: true,
+        patternContext: contextType
+      };
+    }
+
+    // Pattern detected without context → DEFINITELY_UNSAFE (instant block)
     return {
       safe: false,
       confidence: 0.90,
-      threats: ['semantic_extraction'],
+      threats: ['semantic_pattern'], // Changed from semantic_extraction for consistency
       reasoning: 'Semantic extraction pattern detected (indirect information retrieval via riddles, rhymes, or definitions)',
       externalReferences: false,
       processingTime: Date.now() - startTime,
       stage: 'semantic_pattern',
-      cost: 0
+      cost: 0,
+      validationState: ValidationState.DEFINITELY_UNSAFE,
+      requiresAI: false,
+      patternContext: 'none'
     };
   }
 
-  // Stage -0.1: Execution Command Detection
+  // Stage -0.1: Execution Command Detection (Multi-State with Context Awareness)
   if (execDetected) {
+    const hasEduContext = hasEducationalContext(prompt);
+    const hasBizContext = hasBusinessContext(prompt);
+
+    // Pattern detected + educational/business context → SUSPICIOUS (requires AI validation)
+    if (hasEduContext || hasBizContext) {
+      const contextType = hasEduContext ? 'educational' : 'business';
+      return {
+        safe: false,  // Default deny until AI validates
+        confidence: 0.70,
+        threats: ['execution_pattern'],
+        reasoning: `Execution command patterns with ${contextType} context - requires AI analysis`,
+        externalReferences: false,
+        processingTime: Date.now() - startTime,
+        stage: 'execution_pattern',
+        cost: 0,
+        validationState: ValidationState.SUSPICIOUS,
+        requiresAI: true,
+        patternContext: contextType
+      };
+    }
+
+    // Pattern detected without context → DEFINITELY_UNSAFE (instant block)
     return {
       safe: false,
       confidence: 0.92,
@@ -840,7 +1026,10 @@ export async function validateHardened(prompt, options = {}) {
       externalReferences: false,
       processingTime: Date.now() - startTime,
       stage: 'execution_pattern',
-      cost: 0
+      cost: 0,
+      validationState: ValidationState.DEFINITELY_UNSAFE,
+      requiresAI: false,
+      patternContext: 'none'
     };
   }
 

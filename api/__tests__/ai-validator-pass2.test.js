@@ -287,7 +287,7 @@ describe('AI Validator - Pass 2 Escalation Logic', () => {
 
       // Semantic extraction should be detected
       expect(result.safe).toBe(false);
-      expect(result.threats).toContain('semantic_extraction');
+      expect(result.threats).toContain('semantic_pattern'); // Changed from semantic_extraction
     });
   });
 
