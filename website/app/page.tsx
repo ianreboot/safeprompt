@@ -497,7 +497,7 @@ export default function Home() {
               period="/month"
               description="Regular price $29/mo - lock in $5 forever"
               features={[
-                '100,000 validations/month',
+                '10,000 validations/month',
                 'Advanced AI protection',
                 'Priority support',
                 'High availability infrastructure',
