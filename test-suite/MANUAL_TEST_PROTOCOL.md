@@ -33,7 +33,7 @@ curl https://dev-api.safeprompt.dev/health
 -- Run in Supabase SQL Editor (DEV database)
 
 -- Test User 1: Free tier
-INSERT INTO profiles (id, email, tier, preferences)
+INSERT INTO profiles (id, email, subscription_tier, preferences)
 VALUES (
   'test-free-001',
   'test-free@safeprompt.dev',
@@ -42,7 +42,7 @@ VALUES (
 );
 
 -- Test User 2: Pro tier (opted in)
-INSERT INTO profiles (id, email, tier, preferences)
+INSERT INTO profiles (id, email, subscription_tier, preferences)
 VALUES (
   'test-pro-001',
   'test-pro@safeprompt.dev',
@@ -51,7 +51,7 @@ VALUES (
 );
 
 -- Test User 3: Pro tier (opted out)
-INSERT INTO profiles (id, email, tier, preferences)
+INSERT INTO profiles (id, email, subscription_tier, preferences)
 VALUES (
   'test-pro-002',
   'test-pro-optout@safeprompt.dev',
@@ -60,7 +60,7 @@ VALUES (
 );
 
 -- Test User 4: Internal tier
-INSERT INTO profiles (id, email, tier, preferences)
+INSERT INTO profiles (id, email, subscription_tier, preferences)
 VALUES (
   'test-internal-001',
   'test-internal@safeprompt.dev',
