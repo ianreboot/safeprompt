@@ -93,7 +93,7 @@ describe('Consensus Engine', () => {
       expect(result.stage).toBe('attack_detected');
     });
 
-    it('should override when attack confidence is low', () => {
+    it('should allow business override when attack confidence is very low (< 0.6)', () => {
       const orchestrator = { fast_reject: false };
       const validators = {
         business: {
@@ -103,15 +103,43 @@ describe('Consensus Engine', () => {
         },
         attack: {
           is_attack: true,
-          confidence: 0.6, // Low confidence - business can override
+          confidence: 0.59, // Below new threshold (0.6) - can be overridden
           attack_types: ['uncertain']
         }
       };
 
       const result = buildConsensus(orchestrator, validators);
 
+      // Attack confidence < 0.6 allows business override
       expect(result.safe).toBe(true);
       expect(result.stage).toBe('business_override');
+      expect(result.needsReview).toBe(false);
+    });
+
+    it('should flag borderline cases for review (attack 0.6-0.7)', () => {
+      const orchestrator = { fast_reject: false };
+      const validators = {
+        business: {
+          is_business: true,
+          confidence: 0.85,
+          signals: ['ticket #123', 'manager approval']
+        },
+        attack: {
+          is_attack: true,
+          confidence: 0.65, // Borderline: >= 0.6 but < 0.7
+          attack_types: ['uncertain'],
+          reasoning: 'Ambiguous pattern'
+        }
+      };
+
+      const result = buildConsensus(orchestrator, validators);
+
+      // Multi-state architecture: Attack 0.6-0.7 + Business 0.85 → BORDERLINE (needs review)
+      expect(result.safe).toBe(false); // Default deny for safety
+      expect(result.stage).toBe('consensus_review');
+      expect(result.needsReview).toBe(true); // NEW: Borderline cases flagged
+      expect(result.needsPass2).toBe(true); // Escalate to Pass 2 for AI analysis
+      expect(result.confidence).toBe(0.85); // Uses MAX confidence
     });
   });
 
