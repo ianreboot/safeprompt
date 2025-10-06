@@ -110,7 +110,10 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [x] 2.5 Add test cases for Markdown injection ([Link](javascript:alert(1))) - 5 tests (COMPLETED: 2025-10-06 03:20)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 2.6 Deploy to DEV and validate pattern detection improvements
+- [x] 2.6 Deploy to DEV and validate pattern detection improvements (COMPLETED: 2025-10-06 03:30)
+  - **Deployed**: safeprompt-api-dev to https://dev-api.safeprompt.dev
+  - **Changes**: Markdown+HTML polyglot detection patterns
+  - **Validation**: All 124 tests passing locally (94.4% accuracy)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 ### Phase 3: Semantic Analyzer Enhancement
