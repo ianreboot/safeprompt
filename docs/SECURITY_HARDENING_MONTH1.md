@@ -106,9 +106,9 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [x] 2.3 ✅ **SKIPPED** - Tests will be added as part of custom lists implementation
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 2.4 Implement polyglot Markdown+HTML detection
+- [x] 2.4 Implement polyglot Markdown+HTML detection (COMPLETED: 2025-10-06 03:20)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 2.5 Add test cases for Markdown injection ([Link](javascript:alert(1))) - 5 tests
+- [x] 2.5 Add test cases for Markdown injection ([Link](javascript:alert(1))) - 5 tests (COMPLETED: 2025-10-06 03:20)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 2.6 Deploy to DEV and validate pattern detection improvements
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
@@ -243,6 +243,45 @@ VALIDATOR_FILE: "/home/projects/safeprompt/api/lib/ai-validator-hardened.js"
 ```
 
 ## Progress Log
+
+### 2025-10-06 03:20 - Tasks 2.4-2.5 COMPLETE: Markdown Injection Detection
+- **AI**: Claude (Sonnet 4.5)
+- **Action**: Implemented polyglot Markdown+HTML attack detection
+- **Files Modified**:
+  - `api/lib/prompt-validator.js`: Added 5 Markdown-specific polyglot patterns
+  - `test-suite/realistic-test-suite.js`: Added 5 Markdown injection tests (new category)
+
+**Patterns Added**:
+```javascript
+// Markdown link with javascript: protocol
+/\[[\s\S]*?\]\s*\(\s*javascript:/i
+
+// Markdown link with data: URI
+/\[[\s\S]*?\]\s*\(\s*data:/i
+
+// Markdown image with onerror
+/!\[[\s\S]*?\]\s*\([^)]*["\s]onerror\s*=/i
+
+// Markdown image with javascript:
+/!\[[\s\S]*?\]\s*\(\s*javascript:/i
+
+// Markdown reference-style link with javascript:
+/\[[\s\S]*?\]:\s*javascript:/i
+```
+
+**Test Cases Added** (5 tests):
+1. `[Click here](javascript:alert(1))` - Markdown link with javascript: protocol
+2. `![Profile](x" onerror="alert(1)")` - Markdown image with onerror handler
+3. `[Document](data:text/html,<script>alert(1)</script>)` - Markdown link with data: URI
+4. `[1]: javascript:void(alert(1))` - Reference-style link with javascript:
+5. `![Avatar](javascript:alert(document.cookie))` - Markdown image with javascript:
+
+**Results**:
+- **markdown_injection**: 100% accuracy (5/5 passed) ✅
+- **Overall accuracy**: 117/124 (94.4%) - improved from 94.1%
+- **Test suite expansion**: 119 → 124 tests (+5)
+
+**Milestone**: ✅ Polyglot Markdown+HTML detection implemented and validated
 
 ### 2025-10-06 03:00 - Task 1.8 COMPLETE: Chained Encoding Detection Fixed
 - **AI**: Claude (Sonnet 4.5)

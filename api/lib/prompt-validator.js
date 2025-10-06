@@ -161,15 +161,40 @@ const XSS_PATTERNS = [
 
 /**
  * Polyglot payload patterns
+ * Includes HTML+JavaScript and Markdown+HTML hybrids
  */
 const POLYGLOT_PATTERNS = [
+  // HTML comment + script
   /<!--[\s\S]*?-->\s*<script/i,
   /<script[^>]*>[\s\S]*?<!--/i,
+
+  // CSS comment + script
   /\/\*[\s\S]*?\*\/\s*<script/i,
   /expression\s*\([\s\S]*?\)/i,
+
+  // CDATA + script
   /<!\[CDATA\[[\s\S]*?<script/i,
+
+  // String escape + function call
   /"\s*;\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(/i,
-  /data:[\w\/]+;base64,[\w+\/=]+/gi
+
+  // Data URI (existing - catches some Markdown attacks)
+  /data:[\w\/]+;base64,[\w+\/=]+/gi,
+
+  // Markdown link with javascript: protocol
+  /\[[\s\S]*?\]\s*\(\s*javascript:/i,
+
+  // Markdown link with data: URI
+  /\[[\s\S]*?\]\s*\(\s*data:/i,
+
+  // Markdown image with onerror
+  /!\[[\s\S]*?\]\s*\([^)]*["\s]onerror\s*=/i,
+
+  // Markdown image with javascript:
+  /!\[[\s\S]*?\]\s*\(\s*javascript:/i,
+
+  // Markdown reference-style link with javascript:
+  /\[[\s\S]*?\]:\s*javascript:/i
 ];
 
 /**
