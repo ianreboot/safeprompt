@@ -1874,6 +1874,122 @@ curl https://openrouter.ai/api/v1/auth/key \
 
 ---
 
+### 19. Documentation-First Deployment Protocol (CRITICAL PROCESS LESSON)
+
+**WHY This Matters:**
+Post-auto-compaction deployments fail when project documentation isn't read first, wasting hours on solved problems.
+
+**The Problem Pattern:**
+```
+1. Auto-compaction wipes AI memory
+2. AI starts deployment work immediately
+3. Attempts database connections that aren't needed
+4. Tries migration applications to already-configured schemas
+5. Uses wrong authentication patterns for deployments
+6. User must repeatedly say "re-read the docs"
+7. 60 minutes wasted on 10-minute task
+```
+
+**Root Cause Analysis:**
+After auto-compaction, AI loses all project-specific knowledge including:
+- Database connection status and schema state
+- Proven deployment workflows
+- Authentication methods that work
+- Critical context like "schema already configured"
+
+**The Correct Protocol:**
+```bash
+# MANDATORY STEPS (from Universal CLAUDE.md section):
+1. Check <env> block for current date and environment context
+2. Detect active project from system reminder file paths
+3. IMMEDIATELY read /home/projects/[project]/CLAUDE.md
+4. Read relevant platform reference docs:
+   - /home/projects/docs/reference-supabase-access.md
+   - /home/projects/docs/reference-vercel-access.md
+   - /home/projects/docs/reference-cloudflare-access.md
+5. ONLY THEN begin deployment work
+```
+
+**Real Example from Phase 1A Deployment (2025-10-06):**
+
+**What Happened Without Reading Docs:**
+- Attempted psql connections using 5 different methods (all failed)
+- Tried to apply migrations to already-configured database
+- Used wrong Vercel authentication (missing --token flag)
+- Required user to say "re-read project CLAUDE" 3 times
+- **Total time wasted**: 50 minutes on solved problems
+
+**What Would Have Happened Reading Docs First:**
+- CLAUDE.md line 434: "DEV database same schema as production" → Skip migration
+- reference-vercel-access.md: `vercel --token="$VERCEL_TOKEN"` → Correct auth
+- **Total time**: 10 minutes for verified deployment
+
+**Key Insights from This Incident:**
+
+1. **Project CLAUDE.md is Ground Truth**
+   - Contains exact database status ("schema already configured")
+   - Has proven commands that work
+   - Documents known connection issues and workarounds
+
+2. **Reference Docs Have Platform Patterns**
+   - Supabase: Shows all connection methods, when each works
+   - Vercel: Shows token authentication for headless environments
+   - Cloudflare: Shows wrangler auth patterns
+
+3. **Trust Documentation Over Diagnostics**
+   - If CLAUDE.md says "database configured", it's configured
+   - Don't waste time debugging connections that aren't needed
+   - psql failure ≠ schema doesn't exist (may be access issue only)
+
+**HOW To Fix:**
+Always follow this exact sequence:
+```javascript
+// Pseudo-code for post-compaction recovery
+async function recoverAndDeploy() {
+  // Step 1: Get environment context
+  const env = readEnvBlock();  // Date, platform, working dir
+
+  // Step 2: Detect project
+  const project = detectFromSystemReminders();  // Look for /home/projects/X paths
+
+  // Step 3: Read project knowledge FIRST
+  const projectKnowledge = await read(`/home/projects/${project}/CLAUDE.md`);
+
+  // Step 4: Read relevant reference docs
+  const supabaseRef = await read('/home/projects/docs/reference-supabase-access.md');
+  const vercelRef = await read('/home/projects/docs/reference-vercel-access.md');
+
+  // Step 5: Plan based on documentation
+  const plan = createPlanFromDocs(projectKnowledge, [supabaseRef, vercelRef]);
+
+  // Step 6: Execute with proven commands
+  await executePlan(plan);  // Use exact commands from docs
+}
+```
+
+**Verification Checklist:**
+Before starting ANY deployment task:
+- [ ] Read project CLAUDE.md completely
+- [ ] Identified database status from docs (configured? needs migration?)
+- [ ] Found proven deployment commands for this project
+- [ ] Read platform reference docs for authentication patterns
+- [ ] Understand what's already done vs what's needed
+
+**Recognition Pattern:**
+If you find yourself:
+- Trying multiple connection methods
+- Getting authentication errors
+- User saying "re-read the docs"
+→ STOP. Go back to Step 1. Read ALL docs first.
+
+**Impact:** CRITICAL - Not following this protocol wastes 5-10x more time than necessary
+
+**Date Discovered:** 2025-10-06 (Phase 1A deployment, post-auto-compaction)
+
+**Prevention:** This pattern is now documented in both Universal CLAUDE.md and project-specific CLAUDE.md. Future auto-compaction recoveries MUST follow documentation-first protocol.
+
+---
+
 ---
 
 ## FUTURE IMPROVEMENTS & TECHNICAL DEBT

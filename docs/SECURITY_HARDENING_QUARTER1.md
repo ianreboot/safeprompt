@@ -578,7 +578,51 @@ function detectContextPriming(prompt, history) {
 ## Notes & Observations
 
 ### Hard-Fought Knowledge
-(To be filled in as work progresses)
+
+#### Deployment Protocol: Documentation-First Recovery (2025-10-06)
+
+**Context**: Phase 1A deployment after auto-compaction event
+
+**Problem**: Post-auto-compaction deployment took 60 minutes instead of 10 minutes due to not reading project documentation first.
+
+**Root Cause**:
+- AI loses all project-specific knowledge after auto-compaction
+- Attempted database connections that weren't needed
+- Tried to apply migrations to already-configured schema
+- Used wrong authentication patterns for Vercel deployment
+- User had to say "re-read the docs" 3 times
+
+**Key Failures**:
+1. **Database Status Misunderstanding**
+   - Tried 5 different psql connection methods (all failed)
+   - Attempted to apply Phase 1A migrations
+   - Actual status: Database schema already configured (documented in CLAUDE.md line 434)
+
+2. **Vercel Authentication Error**
+   - Used: `export VERCEL_ORG_ID && vercel deploy --yes`
+   - Correct: `vercel --token="$VERCEL_TOKEN" --prod --yes` (from reference-vercel-access.md)
+
+**Solution - Mandatory Protocol**:
+```bash
+# ALWAYS follow this sequence post-compaction:
+1. Check <env> block for current date/environment
+2. Detect project from system reminder paths
+3. IMMEDIATELY read /home/projects/[project]/CLAUDE.md
+4. Read relevant reference docs:
+   - /home/projects/docs/reference-supabase-access.md
+   - /home/projects/docs/reference-vercel-access.md
+   - /home/projects/docs/reference-cloudflare-access.md
+5. ONLY THEN begin work
+```
+
+**Impact**: 50 minutes wasted on solved problems (10-minute task became 60 minutes)
+
+**Prevention**:
+- Documentation-first protocol now added to project CLAUDE.md (#19)
+- Added to PHASE_1A_DEPLOYMENT_SUMMARY.md (lessons learned section)
+- This incident serves as template for all future post-compaction deployments
+
+**Key Insight**: Trust documentation over diagnostics. If CLAUDE.md says "database configured", it's configured. Don't waste time debugging connections that aren't needed.
 
 ## References
 
