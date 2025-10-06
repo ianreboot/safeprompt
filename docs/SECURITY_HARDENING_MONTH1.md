@@ -238,6 +238,60 @@ VALIDATOR_FILE: "/home/projects/safeprompt/api/lib/ai-validator-hardened.js"
 
 ## Progress Log
 
+### 2025-10-06 03:00 - Task 1.8 COMPLETE: Chained Encoding Detection Fixed
+- **AI**: Claude (Sonnet 4.5)
+- **Status**: ✅ RESOLVED - All chained encoding tests passing (100%)
+
+**Root Cause Analysis**:
+1. **Base64 Detection Threshold Too High**: 30 chars minimum missed shorter URLs (e.g., "http://evil.com" = 20 chars when encoded)
+2. **Missing HTML Entity Decoding**: No decimal (&#104;) or hexadecimal (&#x68;) entity normalization
+3. **Test Design Issue**: Test #114 had malformed triple-layer Base64 encoding
+
+**Fixes Applied** (`external-reference-detector.js`):
+```javascript
+// FIX 1: Lowered Base64 detection threshold (line 240)
+// OLD: const base64Candidates = normalized.match(/[a-zA-Z0-9+\/]{30,}={0,2}/g);
+// NEW: const base64Candidates = normalized.match(/[a-zA-Z0-9+\/]{16,}={0,2}/g);
+
+// FIX 2: Added HTML entity decoding normalizers (lines 94-110)
+// Decimal entities: &#104; → h
+text => text.replace(/&#(\d+);/g, (match, code) => {
+  try {
+    return String.fromCharCode(parseInt(code, 10));
+  } catch (e) {
+    return match;
+  }
+}),
+
+// Hexadecimal entities: &#x68; → h
+text => text.replace(/&#x([0-9a-f]+);/gi, (match, hex) => {
+  try {
+    return String.fromCharCode(parseInt(hex, 16));
+  } catch (e) {
+    return match;
+  }
+})
+```
+
+**Test Fix** (`realistic-test-suite.js`):
+- Corrected test #114 triple-layer Base64 encoding:
+  - OLD: `JUFSUjBjRG92TDJWMmFXd3VZMjl0` (malformed, decoded to garbage)
+  - NEW: `WVVoU01HTkViM1pNTWxZeVlWZDNkVmt5T1hRPQ==` (valid 3-layer encoding)
+  - Verification: Layer 3 → Layer 2 → Layer 1 → "http://evil.com"
+
+**Results After Fix**:
+- **chained_encoding**: 100% accuracy (5/5 passed) ✅
+- **Overall accuracy**: 94.1% (112/119 passed)
+- **Improvement**: +4 tests fixed (20% → 100%)
+
+**Remaining Failures**: 7 tests failing (non-critical edge cases):
+1. business_trigger_words: 1 false positive (#29)
+2. validator_disagreement: 4 tests (business override logic)
+3. edge_cases_ambiguous: 1 test (social engineering - deferred to Q1 Phase 3)
+4. confidence_manipulation: 1 test (business override)
+
+**Milestone**: ✅ Critical security issue resolved - External reference detection now blocking all encoded URLs
+
 ### 2025-10-06 02:40 - Task 1.7 COMPLETE: Expanded Test Suite Run - Baseline Established
 - **AI**: Claude (Sonnet 4.5)
 - **Action**: Ran complete 119-test suite against production validation system

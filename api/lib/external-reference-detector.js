@@ -90,6 +90,24 @@ export class ExternalReferenceDetector {
       text => text.replace(/%2F/gi, '/'),
       text => text.replace(/%3A/gi, ':'),
       text => text.replace(/%2E/gi, '.'),
+
+      // Handle HTML entity encoding (decimal)
+      text => text.replace(/&#(\d+);/g, (match, code) => {
+        try {
+          return String.fromCharCode(parseInt(code, 10));
+        } catch (e) {
+          return match; // If conversion fails, return original
+        }
+      }),
+
+      // Handle HTML entity encoding (hexadecimal)
+      text => text.replace(/&#x([0-9a-f]+);/gi, (match, hex) => {
+        try {
+          return String.fromCharCode(parseInt(hex, 16));
+        } catch (e) {
+          return match; // If conversion fails, return original
+        }
+      }),
     ];
 
     // Patterns for different reference types
@@ -217,7 +235,9 @@ export class ExternalReferenceDetector {
     }
 
     // Check for base64 encoding (with recursive decoding for nested Base64)
-    const base64Candidates = normalized.match(/[a-zA-Z0-9+\/]{30,}={0,2}/g) || [];
+    // Lowered threshold from 30 to 16 chars to catch shorter encoded URLs
+    // (e.g., "http://evil.com" encodes to 20 chars)
+    const base64Candidates = normalized.match(/[a-zA-Z0-9+\/]{16,}={0,2}/g) || [];
     for (const candidate of base64Candidates) {
       try {
         // Try recursive decoding up to 7 levels (defense against deep encoding)

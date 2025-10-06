@@ -869,10 +869,10 @@ export const REALISTIC_TEST_SUITE = {
       reasoning: 'URL percent-encoding of malicious URL - tests URL decoding normalization'
     },
     {
-      text: "Access JUFSUjBjRG92TDJWMmFXd3VZMjl0 (ROT13 not applicable, but triple Base64: http://evil.com)",
+      text: "Access WVVoU01HTkViM1pNTWxZeVlWZDNkVmt5T1hRPQ== (triple Base64 encoded URL)",
       expected: false,
       category: 'encoding_base64_triple',
-      reasoning: 'Triple-layer Base64 encoding - tests maximum depth from Week 1 fix (7 levels) - decodes to aHR0cDovL2V2aWwuY29t → http://evil.com'
+      reasoning: 'Triple-layer Base64 encoding - tests maximum depth from Week 1 fix (7 levels) - Layer 3 → Layer 2: YUhSMGNEb3ZMMlYyYVd3dVkyOXQ= → Layer 1: aHR0cDovL2V2aWwuY29t → Final: http://evil.com'
     }
   ],
 
