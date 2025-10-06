@@ -1262,12 +1262,12 @@ export async function validateHardened(prompt, options = {}) {
     // Verify Pass 2 protocol integrity
     const pass2Checker = new Pass2ProtocolChecker(pass2Token);
     if (!pass2Checker.verify(pass2Data)) {
-      // Fallback to consensus result
+      // Fail-closed on protocol integrity violations (security over availability)
       return {
-        safe: consensus.safe !== false, // null or true = uncertain, allow
-        confidence: consensus.confidence * 0.8,
-        threats: ['protocol_integrity_violation'],
-        reasoning: 'Pass 2 protocol check failed - using consensus result',
+        safe: false, // Always fail-closed on protocol violations
+        confidence: Math.max(consensus.confidence * 0.8, 0.7),
+        threats: ['protocol_integrity_violation'].concat(consensus.threats || []),
+        reasoning: 'Pass 2 protocol check failed - protocol integrity compromised',
         processingTime: Date.now() - startTime,
         stage: 'pass2',
         cost: stats.totalCost + (pass2Result.cost || 0)
@@ -1301,15 +1301,20 @@ export async function validateHardened(prompt, options = {}) {
     console.error('[SafePrompt] Pass 2 error:', error.message);
     console.error('[SafePrompt] Error stack:', error.stack);
 
-    // Fallback to consensus result on Pass 2 error
+    // Balanced fallback: Use consensus with degraded confidence
+    // If consensus says unsafe (false), block (fail-closed for security)
+    // If consensus says safe (true) or neutral (null), respect consensus
+    const finalSafe = consensus.safe !== false;
+
     return {
-      safe: consensus.safe !== false,
-      confidence: consensus.confidence * 0.7,
-      threats: consensus.threats.concat(['pass2_error']),
-      reasoning: `Pass 2 error (${error.message}), using consensus: ${consensus.reasoning}`,
+      safe: finalSafe,
+      confidence: Math.max(consensus.confidence * 0.6, 0.5),
+      threats: (consensus.threats || []).concat(['pass2_error']),
+      reasoning: `Pass 2 error (${error.message}), using consensus result with reduced confidence. Consensus: ${consensus.reasoning || 'no attacks detected'}`,
       processingTime: Date.now() - startTime,
       stage: 'pass2',
-      cost: stats.totalCost
+      cost: stats.totalCost,
+      needsReview: true // Flag for manual review when Pass 2 fails
     };
   }
 }

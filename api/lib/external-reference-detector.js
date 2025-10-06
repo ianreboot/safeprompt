@@ -29,14 +29,57 @@ export class ExternalReferenceDetector {
       text => text.replace(/hXXp/gi, 'http'),
 
       // Handle homoglyphs (lookalike characters)
-      text => text.replace(/[а-яА-Я]/g, match => {
-        // Cyrillic to Latin mapping
-        const map = {
+      text => {
+        // Expanded homoglyph mapping: Cyrillic, Greek, Full-width, Mathematical
+        const homoglyphMap = {
+          // Cyrillic (existing)
           'а':'a', 'о':'o', 'е':'e', 'р':'p', 'с':'c', 'х':'x',
-          'А':'A', 'О':'O', 'Е':'E', 'Р':'P', 'С':'C', 'Х':'X'
+          'А':'A', 'О':'O', 'Е':'E', 'Р':'P', 'С':'C', 'Х':'X',
+          'В':'B', 'Н':'H', 'К':'K', 'М':'M', 'Т':'T', 'У':'Y',
+          'в':'b', 'н':'h', 'к':'k', 'м':'m', 'т':'t', 'у':'y',
+
+          // Greek (common lookalikes)
+          'ο':'o', 'ν':'v', 'ρ':'p', 'α':'a', 'ε':'e', 'ι':'i',
+          'τ':'t', 'υ':'y', 'ω':'w', 'σ':'s', 'η':'n', 'μ':'u',
+          'Ο':'O', 'Ν':'N', 'Ρ':'P', 'Α':'A', 'Ε':'E', 'Ι':'I',
+          'Τ':'T', 'Υ':'Y', 'Ω':'W', 'Η':'H', 'Μ':'M', 'Κ':'K',
+
+          // Full-width Latin (often used in Unicode attacks)
+          'ａ':'a', 'ｂ':'b', 'ｃ':'c', 'ｄ':'d', 'ｅ':'e', 'ｆ':'f',
+          'ｇ':'g', 'ｈ':'h', 'ｉ':'i', 'ｊ':'j', 'ｋ':'k', 'ｌ':'l',
+          'ｍ':'m', 'ｎ':'n', 'ｏ':'o', 'ｐ':'p', 'ｑ':'q', 'ｒ':'r',
+          'ｓ':'s', 'ｔ':'t', 'ｕ':'u', 'ｖ':'v', 'ｗ':'w', 'ｘ':'x',
+          'ｙ':'y', 'ｚ':'z',
+          'Ａ':'A', 'Ｂ':'B', 'Ｃ':'C', 'Ｄ':'D', 'Ｅ':'E', 'Ｆ':'F',
+          'Ｇ':'G', 'Ｈ':'H', 'Ｉ':'I', 'Ｊ':'J', 'Ｋ':'K', 'Ｌ':'L',
+          'Ｍ':'M', 'Ｎ':'N', 'Ｏ':'O', 'Ｐ':'P', 'Ｑ':'Q', 'Ｒ':'R',
+          'Ｓ':'S', 'Ｔ':'T', 'Ｕ':'U', 'Ｖ':'V', 'Ｗ':'W', 'Ｘ':'X',
+          'Ｙ':'Y', 'Ｚ':'Z',
+
+          // Mathematical Alphanumeric Symbols (bold, italic, etc.)
+          // Bold lowercase
+          '𝐚':'a', '𝐛':'b', '𝐜':'c', '𝐝':'d', '𝐞':'e', '𝐟':'f',
+          '𝐠':'g', '𝐡':'h', '𝐢':'i', '𝐣':'j', '𝐤':'k', '𝐥':'l',
+          '𝐦':'m', '𝐧':'n', '𝐨':'o', '𝐩':'p', '𝐪':'q', '𝐫':'r',
+          '𝐬':'s', '𝐭':'t', '𝐮':'u', '𝐯':'v', '𝐰':'w', '𝐱':'x',
+          '𝐲':'y', '𝐳':'z',
+          // Bold uppercase
+          '𝐀':'A', '𝐁':'B', '𝐂':'C', '𝐃':'D', '𝐄':'E', '𝐅':'F',
+          '𝐆':'G', '𝐇':'H', '𝐈':'I', '𝐉':'J', '𝐊':'K', '𝐋':'L',
+          '𝐌':'M', '𝐍':'N', '𝐎':'O', '𝐏':'P', '𝐐':'Q', '𝐑':'R',
+          '𝐒':'S', '𝐓':'T', '𝐔':'U', '𝐕':'V', '𝐖':'W', '𝐗':'X',
+          '𝐘':'Y', '𝐙':'Z',
+          // Sans-serif bold (commonly used for obfuscation)
+          '𝗮':'a', '𝗯':'b', '𝗰':'c', '𝗱':'d', '𝗲':'e', '𝗳':'f',
+          '𝗴':'g', '𝗵':'h', '𝗶':'i', '𝗷':'j', '𝗸':'k', '𝗹':'l',
+          '𝗺':'m', '𝗻':'n', '𝗼':'o', '𝗽':'p', '𝗾':'q', '𝗿':'r',
+          '𝘀':'s', '𝘁':'t', '𝘂':'u', '𝘃':'v', '𝘄':'w', '𝘅':'x',
+          '𝘆':'y', '𝘇':'z'
         };
-        return map[match] || match;
-      }),
+
+        // Replace all homoglyphs with Latin equivalents
+        return text.split('').map(char => homoglyphMap[char] || char).join('');
+      },
 
       // Normalize dots and slashes
       text => text.replace(/[․‧⁘∙•·]/g, '.'), // Various dot characters
@@ -177,11 +220,11 @@ export class ExternalReferenceDetector {
     const base64Candidates = normalized.match(/[a-zA-Z0-9+\/]{30,}={0,2}/g) || [];
     for (const candidate of base64Candidates) {
       try {
-        // Try recursive decoding up to 3 levels (Base64 of Base64 of Base64)
+        // Try recursive decoding up to 7 levels (defense against deep encoding)
         let decoded = candidate;
         let decodedAtLevel = null;
 
-        for (let level = 1; level <= 3; level++) {
+        for (let level = 1; level <= 7; level++) {
           const attemptDecode = Buffer.from(decoded, 'base64').toString('utf-8');
 
           // Check if this level looks like a URL/IP

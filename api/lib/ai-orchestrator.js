@@ -103,7 +103,7 @@ Respond with ONLY this JSON structure:
  */
 export async function orchestrate(prompt, patternContext = null) {
   const startTime = Date.now();
-  const validationToken = Date.now();
+  const validationToken = parseInt(crypto.randomBytes(8).toString('hex'), 16);
 
   try {
     const controller = new AbortController();

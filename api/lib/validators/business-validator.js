@@ -83,7 +83,7 @@ Respond with ONLY this JSON structure:
  */
 export async function validateBusiness(prompt, patternContext = null) {
   const startTime = Date.now();
-  const validationToken = Date.now();
+  const validationToken = parseInt(crypto.randomBytes(8).toString('hex'), 16);
 
   // Note: Business validator doesn't use pattern context - it only looks for business signals
   // Parameter accepted for API consistency
