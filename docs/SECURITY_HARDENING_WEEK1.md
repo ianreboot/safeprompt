@@ -142,8 +142,8 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [x] 2.5 Modify SQL/XSS/Template detection: educational context → SUSPICIOUS (requires AI) not bypass (COMPLETED: 2025-10-05 - combined with 2.4)
 - [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above (COMPLETED: 2025-10-06)
 - [x] 2.6 Update consensus engine: use MAX confidence, close 0.7-0.8 gap, add needsReview flag (COMPLETED: 2025-10-06)
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 2.7 Update AI prompts to handle SUSPICIOUS state with pattern context
+- [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above (COMPLETED: 2025-10-06)
+- [x] 2.7 Update AI prompts to handle SUSPICIOUS state with pattern context (COMPLETED: 2025-10-06)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 2.8 Add unit tests for multi-state logic (20+ tests covering state transitions)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
@@ -657,6 +657,29 @@ return {
 - **Issues**: None
 - **Next Step**: Task 2.7 - Update AI prompts to handle SUSPICIOUS state with pattern context
 
+### 2025-10-06 - Task 2.7 AI Prompts for SUSPICIOUS State Complete
+- **AI**: Claude (Sonnet 4.5)
+- **Action**: Updated AI prompts and validators to handle SUSPICIOUS state with pattern context
+- **Files Modified**:
+  - `/home/projects/safeprompt/api/lib/ai-validator-hardened.js` (lines 803-1006 - pattern detection flow, 1153-1197 - validator calls with context)
+  - `/home/projects/safeprompt/api/lib/ai-orchestrator.js` (added pattern context parameter and prompt guidance)
+  - `/home/projects/safeprompt/api/lib/validators/attack-detector.js` (added pattern context handling)
+  - `/home/projects/safeprompt/api/lib/validators/business-validator.js` (added parameter for API consistency)
+  - `/home/projects/safeprompt/api/lib/validators/semantic-analyzer.js` (added parameter for API consistency)
+  - `/home/projects/safeprompt/api/__tests__/ai-validator-patterns.test.js` (updated 5 tests for new flow)
+- **Result**: Pattern detection with educational/business context now passes context to AI validators for nuanced decision-making
+- **Key Changes**:
+  - **Pattern detection flow**: SUSPICIOUS patterns no longer return early - they store context and continue to AI validation
+  - **Context propagation**: Pattern context (pattern_type, context_type, confidence, reasoning) passed to orchestrator and validators
+  - **Orchestrator prompt**: Updated to recognize pattern_context and route to appropriate validator
+  - **Attack detector prompt**: Updated to handle pattern context and make nuanced decisions based on intent
+  - **Test updates**: 5 tests updated to reflect new behavior (educational context triggers AI validation, not immediate return)
+- **Security Impact**: Eliminates false positives from educational/business queries while maintaining security for actual attacks
+- **Test Updates**: Updated 5 tests for new flow expectations
+- **Test Results**: **410/410 tests passing (100%)**
+- **Issues**: None
+- **Next Step**: Task 2.8 - Add unit tests for multi-state logic
+
 ## Results Tracking
 
 ### Expected vs Actual Results
@@ -696,4 +719,4 @@ return {
 
 ---
 
-**Document Status**: ✅ INITIALIZED - Ready to begin Phase 1.1
+**Document Status**: ⏳ IN PROGRESS - Phase 2 Task 2.7 Complete (19/32 tasks, 59%)

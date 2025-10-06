@@ -97,9 +97,12 @@ Respond with ONLY this JSON structure:
 /**
  * Detect semantic extraction attempts
  */
-export async function analyzeSemantic(prompt) {
+export async function analyzeSemantic(prompt, patternContext = null) {
   const startTime = Date.now();
   const validationToken = Date.now();
+
+  // Note: Semantic analyzer doesn't currently use pattern context
+  // Parameter accepted for API consistency
 
   try {
     const controller = new AbortController();

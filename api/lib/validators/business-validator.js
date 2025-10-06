@@ -81,9 +81,12 @@ Respond with ONLY this JSON structure:
 /**
  * Validate if input contains legitimate business context
  */
-export async function validateBusiness(prompt) {
+export async function validateBusiness(prompt, patternContext = null) {
   const startTime = Date.now();
   const validationToken = Date.now();
+
+  // Note: Business validator doesn't use pattern context - it only looks for business signals
+  // Parameter accepted for API consistency
 
   try {
     const controller = new AbortController();
