@@ -141,6 +141,146 @@ describe('Consensus Engine', () => {
       expect(result.needsPass2).toBe(true); // Escalate to Pass 2 for AI analysis
       expect(result.confidence).toBe(0.85); // Uses MAX confidence
     });
+
+    it('should allow business override at threshold boundary (attack 0.60 exactly)', () => {
+      const orchestrator = { fast_reject: false };
+      const validators = {
+        business: {
+          is_business: true,
+          confidence: 0.85,
+          signals: ['ticket #456']
+        },
+        attack: {
+          is_attack: true,
+          confidence: 0.60, // Exactly at threshold - borderline
+          attack_types: ['uncertain']
+        }
+      };
+
+      const result = buildConsensus(orchestrator, validators);
+
+      // Exactly 0.6 is borderline - needs review but safe: false
+      expect(result.safe).toBe(false);
+      expect(result.needsReview).toBe(true);
+      expect(result.stage).toBe('consensus_review');
+    });
+
+    it('should allow business override just below threshold (attack 0.59)', () => {
+      const orchestrator = { fast_reject: false };
+      const validators = {
+        business: {
+          is_business: true,
+          confidence: 0.85,
+          signals: ['meeting yesterday']
+        },
+        attack: {
+          is_attack: true,
+          confidence: 0.59, // Just below threshold - can override
+          attack_types: ['uncertain']
+        }
+      };
+
+      const result = buildConsensus(orchestrator, validators);
+
+      // Below 0.6 allows business override
+      expect(result.safe).toBe(true);
+      expect(result.stage).toBe('business_override');
+      expect(result.needsReview).toBe(false);
+    });
+
+    it('should flag borderline case just above threshold (attack 0.61)', () => {
+      const orchestrator = { fast_reject: false };
+      const validators = {
+        business: {
+          is_business: true,
+          confidence: 0.85,
+          signals: ['approved by manager']
+        },
+        attack: {
+          is_attack: true,
+          confidence: 0.61, // Just above threshold - borderline
+          attack_types: ['uncertain']
+        }
+      };
+
+      const result = buildConsensus(orchestrator, validators);
+
+      // Above 0.6 but below 0.7 - borderline
+      expect(result.safe).toBe(false);
+      expect(result.needsReview).toBe(true);
+      expect(result.stage).toBe('consensus_review');
+    });
+
+    it('should flag high borderline case (attack 0.69)', () => {
+      const orchestrator = { fast_reject: false };
+      const validators = {
+        business: {
+          is_business: true,
+          confidence: 0.90,
+          signals: ['ticket #789', 'approval #123']
+        },
+        attack: {
+          is_attack: true,
+          confidence: 0.69, // High borderline - still < 0.7
+          attack_types: ['suspicious']
+        }
+      };
+
+      const result = buildConsensus(orchestrator, validators);
+
+      // Still borderline (< 0.7)
+      expect(result.safe).toBe(false);
+      expect(result.needsReview).toBe(true);
+      expect(result.stage).toBe('consensus_review');
+    });
+
+    it('should escalate medium-high confidence to Pass 2 (attack 0.70 exactly)', () => {
+      const orchestrator = { fast_reject: false };
+      const validators = {
+        business: {
+          is_business: true,
+          confidence: 0.95,
+          signals: ['legitimate ticket']
+        },
+        attack: {
+          is_attack: true,
+          confidence: 0.70, // Medium-high (0.5-0.85) - escalate to Pass 2
+          attack_types: ['attack']
+        }
+      };
+
+      const result = buildConsensus(orchestrator, validators);
+
+      // Medium-high confidence (0.70) escalates to Pass 2 for AI analysis
+      expect(result.safe).toBe(null); // Null = needs Pass 2
+      expect(result.needsPass2).toBe(true);
+      expect(result.needsReview).toBe(false); // Not in borderline range (0.6-0.7)
+      expect(result.stage).toBe('consensus');
+    });
+
+    it('should escalate medium-high confidence to Pass 2 (attack 0.71)', () => {
+      const orchestrator = { fast_reject: false };
+      const validators = {
+        business: {
+          is_business: true,
+          confidence: 0.98,
+          signals: ['valid business context']
+        },
+        attack: {
+          is_attack: true,
+          confidence: 0.71, // Medium-high (0.5-0.85) - escalate to Pass 2
+          attack_types: ['jailbreak']
+        }
+      };
+
+      const result = buildConsensus(orchestrator, validators);
+
+      // Medium-high confidence (0.71) escalates to Pass 2
+      expect(result.safe).toBe(null);
+      expect(result.needsPass2).toBe(true);
+      expect(result.needsReview).toBe(false);
+      expect(result.stage).toBe('consensus');
+    });
   });
 
   describe('Attack Detection Consensus', () => {
