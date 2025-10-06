@@ -19,6 +19,7 @@ async function testExample(test) {
       method: 'POST',
       headers: {
         'X-API-Key': 'sp_test_unlimited_dogfood_key_2025',
+        'X-User-IP': '203.0.113.3', // TEST-NET-3 (documentation/testing IP)
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({

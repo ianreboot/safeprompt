@@ -67,8 +67,8 @@ describe('API Validate Endpoint Logic', () => {
   describe('API Key Validation', () => {
     it('should require X-API-Key header', () => {
       const validHeaders = [
-        { 'x-api-key': 'sp_test_123' },
-        { 'X-API-Key': 'sp_test_456' }
+        { 'x-api-key': 'sp_test_123', 'x-user-ip': '203.0.113.45' },
+        { 'X-API-Key': 'sp_test_456', 'X-User-IP': '198.51.100.42' }
       ];
 
       const invalidHeaders = [
@@ -87,6 +87,32 @@ describe('API Validate Endpoint Logic', () => {
       invalidHeaders.forEach(headers => {
         const apiKey = headers['x-api-key'] || headers['X-API-Key'];
         const isValid = apiKey && apiKey.trim().length > 0;
+        expect(isValid).toBeFalsy();
+      });
+    });
+
+    it('should require X-User-IP header', () => {
+      const validHeaders = [
+        { 'x-user-ip': '203.0.113.45' },
+        { 'X-User-IP': '198.51.100.42' }
+      ];
+
+      const invalidHeaders = [
+        {},
+        { 'x-api-key': 'sp_test_123' }, // Missing X-User-IP
+        { 'x-user-ip': '' },
+        { 'x-user-ip': '   ' } // Whitespace only
+      ];
+
+      validHeaders.forEach(headers => {
+        const userIp = headers['x-user-ip'] || headers['X-User-IP'];
+        expect(userIp).toBeTruthy();
+        expect(userIp.trim().length).toBeGreaterThan(0);
+      });
+
+      invalidHeaders.forEach(headers => {
+        const userIp = headers['x-user-ip'] || headers['X-User-IP'];
+        const isValid = userIp && userIp.trim().length > 0;
         expect(isValid).toBeFalsy();
       });
     });

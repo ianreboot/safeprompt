@@ -845,11 +845,12 @@ For questions, contact: support@safeprompt.dev`
               <h3 className="text-lg font-medium mb-3">2. JavaScript/TypeScript Integration</h3>
               <div className="relative">
                 <button
-                  onClick={() => copyCodeBlock(`async function checkPrompt(userInput) {
+                  onClick={() => copyCodeBlock(`async function checkPrompt(userInput, clientIp) {
   const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     method: 'POST',
     headers: {
       'X-API-Key': '${apiKey?.key || 'YOUR_API_KEY'}',
+      'X-User-IP': clientIp, // End user's IP address
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ prompt: userInput })
@@ -869,11 +870,12 @@ For questions, contact: support@safeprompt.dev`
                   {copiedCode === 'js' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                 </button>
                 <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
-                  <code>{`async function checkPrompt(userInput) {
+                  <code>{`async function checkPrompt(userInput, clientIp) {
   const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
     method: 'POST',
     headers: {
       'X-API-Key': '${apiKey?.key || 'YOUR_API_KEY'}',
+      'X-User-IP': clientIp, // End user's IP address
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ prompt: userInput })
@@ -899,11 +901,12 @@ For questions, contact: support@safeprompt.dev`
                 <button
                   onClick={() => copyCodeBlock(`import requests
 
-def check_prompt(user_input):
+def check_prompt(user_input, client_ip):
     response = requests.post(
         'https://api.safeprompt.dev/api/v1/validate',
         headers={
             'X-API-Key': '${apiKey?.key || 'YOUR_API_KEY'}',
+            'X-User-IP': client_ip,  # End user's IP address
             'Content-Type': 'application/json'
         },
         json={'prompt': user_input}
@@ -922,11 +925,12 @@ def check_prompt(user_input):
                 <pre className="bg-black rounded p-3 text-sm overflow-x-auto border border-gray-800 pr-12">
                   <code>{`import requests
 
-def check_prompt(user_input):
+def check_prompt(user_input, client_ip):
     response = requests.post(
         'https://api.safeprompt.dev/api/v1/validate',
         headers={
             'X-API-Key': '${apiKey?.key || 'YOUR_API_KEY'}',
+            'X-User-IP': client_ip,  # End user's IP address
             'Content-Type': 'application/json'
         },
         json={'prompt': user_input}
