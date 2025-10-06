@@ -15,14 +15,23 @@ const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
     'X-API-Key': 'sp_live_YOUR_KEY',
+    'X-User-IP': req.headers['x-forwarded-for'] || req.connection.remoteAddress,
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({ prompt: userInput, mode: 'optimized' })
+  body: JSON.stringify({
+    prompt: userInput,
+    mode: 'optimized',
+    sessionToken: sessionId  // Optional: for multi-turn attack detection
+  })
 });
 
 const result = await response.json();
 if (!result.safe) {
   throw new Error('Prompt blocked: potential injection detected');
+}
+// Optional: Check IP reputation (Pro tier)
+if (result.ipReputationScore < 0.5) {
+  console.warn('Request from low-reputation IP');
 }
 ```
 
@@ -31,9 +40,11 @@ if (!result.safe) {
 - **🚀 One-Line Integration**: Literally just POST to /validate
 - **⚡ Lightning Fast**: <100ms pattern detection (67% of requests), 2-3s AI validation when needed
 - **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
+- **🧠 Network Intelligence**: IP reputation system learns from attacks across all customers (Pro tier)
+- **🔗 Multi-Turn Protection**: Session-based validation detects context priming and RAG poisoning
 - **📊 Batch Processing**: Validate multiple prompts in one call
 - **💰 Cost Optimized**: 67% requests require $0 AI cost (instant pattern/reference matching)
-- **📈 Usage Dashboard**: See threats blocked, track usage
+- **📈 Usage Dashboard**: See threats blocked, track usage, view IP reputation scores
 
 ## Quick Start
 
@@ -57,10 +68,22 @@ if (validation.safe) {
 
 ## Pricing
 
-- **Free**: 1,000 validations/month - Full AI protection, community support
-- **Early Bird**: $5/month - 10,000 validations/month, priority support, 99.9% uptime SLA (beta pricing - first 50 users only)
+- **Free**: 1,000 validations/month
+  - Full AI protection with 98.9% accuracy
+  - Contributes attack data to network intelligence
+  - Community support
+  - **No IP blocking** (contributes only)
 
-Both tiers include the SAME technology - full regex + AI validation with 98.9% accuracy on 94 professional tests.
+- **Pro** (Early Bird $5/month, Regular $29/month):
+  - 10,000 validations/month
+  - All Free tier features PLUS:
+  - **IP reputation blocking**: Auto-block malicious IPs (opt-in)
+  - **Multi-turn attack detection**: Session-based validation
+  - **Intelligence opt-out**: Disable data contribution if needed
+  - Priority support
+  - 99.9% uptime SLA
+
+Both tiers use the SAME core technology - full regex + AI validation with 98.9% accuracy on 94 professional tests. Pro tier adds network defense features powered by collective intelligence.
 
 ## Why SafePrompt?
 
@@ -81,6 +104,7 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 
 ## How It Works
 
+### Core Validation Pipeline
 1. **XSS Pattern Detection** (0ms): Catches script injection and obfuscation techniques
 2. **Template Injection Detection** (0ms): Detects server-side template exploitation
 3. **External Reference Detection** (5ms): Blocks URLs, IPs, file paths (including encoded/obfuscated)
@@ -90,6 +114,31 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 7. **Consensus Engine**: Multi-validator voting with smart escalation
 8. **Pass 2 Deep Analysis** (~2s): Triggered for ambiguous cases only (~5% of requests)
 9. **Response**: Safe/unsafe verdict with confidence score and threat details
+
+### Advanced Protection (Phase 1A - October 2025)
+
+**Threat Intelligence Collection:**
+- Automatically collects blocked prompts from all customers (opt-out available for Pro tier)
+- 24-hour anonymization: Full prompt text deleted after 24 hours (GDPR/CCPA compliant)
+- Permanent attack pattern storage: Cryptographic hashes persist for network defense
+
+**IP Reputation System (Pro tier):**
+- Tracks attack patterns by IP address using cryptographic hashing
+- Auto-blocking: IPs with >70% block rate automatically rejected (requires opt-in)
+- Real-time scoring: Every validation updates IP reputation scores
+- Allowlist support: Whitelist your CI/CD and internal testing infrastructure
+
+**Multi-Turn Attack Detection:**
+- Session-based validation tracks conversation history
+- Context priming detection: Blocks fake ticket references, false authorization claims
+- RAG poisoning protection: Detects malicious document injection attempts
+- 2-hour session TTL with automatic cleanup
+
+**Privacy & Compliance:**
+- Free tier: Contributes attack data (no IP blocking capability)
+- Pro tier: Opt-in for intelligence sharing + IP blocking features
+- GDPR right to deletion: Delete all identifiable data via API
+- GDPR right to access: Export all data associated with your account
 
 ## API Documentation
 
@@ -153,6 +202,14 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ### Recent Updates (October 2025)
 
+**October 6, 2025 - Phase 1A: Threat Intelligence System** 🚀
+- ✅ **IP Reputation System**: Network defense intelligence across all customers
+- ✅ **Multi-Turn Attack Detection**: Session-based validation for context priming and RAG poisoning
+- ✅ **Threat Intelligence Collection**: 24-hour anonymization model (GDPR/CCPA compliant)
+- ✅ **Pro Tier IP Blocking**: Auto-block malicious IPs with >70% attack rate (opt-in)
+- ✅ **Privacy Compliance APIs**: GDPR right to deletion and data export
+- ✅ **X-User-IP Header**: Required for accurate attack source tracking
+
 **October 3, 2025:**
 - ✅ **Complete Dev/Prod Separation**: Dual API architecture implemented (safeprompt-api + safeprompt-api-dev)
 - ✅ **Environment Isolation**: Each environment has its own API endpoint, database, and Vercel project
@@ -176,10 +233,10 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - View usage metrics, manage billing, and access documentation
 
 ### Current Beta Pricing (October 2025)
-- **Free Tier**: 1,000 validations/month
-- **Starter**: $29/month for 10,000 validations
-- **Early Bird Special**: $5/month for 10,000 validations (first 50 users only - discounted Starter)
-- **Business**: $99/month for 250,000 validations
+- **Free Tier**: 1,000 validations/month (contributes attack data, no IP blocking)
+- **Pro/Starter**: $29/month for 10,000 validations (IP blocking, multi-turn protection)
+- **Early Bird Special**: $5/month for 10,000 validations (first 50 users only - discounted Pro tier)
+- **Business**: $99/month for 250,000 validations (all Pro features at scale)
 
 ## Technical Implementation
 
