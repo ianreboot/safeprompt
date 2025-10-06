@@ -76,34 +76,194 @@ Read /home/projects/safeprompt/CLAUDE.md
 
 ## Task Checklist (UPDATE AFTER EACH STEP)
 
-### Phase 1: Session-Based Validation (Multi-Turn Protection)
-- [x] 1.1 Design session storage schema (Supabase table for session history) ✅
+### Phase 1A: Threat Intelligence & IP Reputation System (NEW - CRITICAL MOAT FEATURE)
+
+**🎯 Purpose**: Build competitive moat through network defense intelligence
+**Legal Basis**: 24-hour anonymization model (GDPR/CCPA compliant)
+**Business Model**: Free collects (no IP blocking), Pro opt-in (gets IP blocking)
+
+#### Database & Core Implementation
+- [ ] 1A.1 Create threat_intelligence_samples migration (full prompt storage, 24h retention)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.2 Create ip_reputation migration (hash-based, permanent storage)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.3 Update validation_sessions migration (reduce TTL 24h→2h, add ip_fingerprint)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.4 Implement intelligence collection logic in session-validator.js
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.5 Implement IP reputation checking (hash-based lookup, auto-block logic)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.6 Create 24-hour anonymization background job (delete prompt_text, client_ip)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.7 Create IP reputation scoring job (hourly update from samples)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.8 Add user preferences API endpoint (intelligence_sharing, auto_block_enabled)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.9 Add privacy compliance endpoints (DELETE /privacy/delete, GET /privacy/export)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### Testing & Quality Assurance
+- [ ] 1A.10 Unit tests: Intelligence collection logic (free always, pro opt-in/out)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.11 Unit tests: IP reputation checking (hash lookup, auto-block thresholds)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.12 Unit tests: Anonymization logic (verify PII removal, irreversibility)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.13 Integration tests: Free tier contribution flow (blocked requests only)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.14 Integration tests: Pro tier opt-in/opt-out scenarios
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.15 Compliance tests: GDPR deletion (verify <24h data removed)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.16 Compliance tests: GDPR export (verify complete data returned)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.17 Security tests: Verify cannot reverse hash (IP, prompt)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.18 Performance tests: Latency impact <10ms for IP check
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.19 Load tests: Intelligence storage scaling (1M samples/day)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### Documentation Updates
+- [ ] 1A.20 Update /home/projects/safeprompt/CLAUDE.md with intelligence architecture
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.21 Update /home/projects/safeprompt/README.md with new features
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.22 Update /home/projects/safeprompt/docs/API.md (new endpoints, response fields)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.23 Update /home/projects/safeprompt/docs/ARCHITECTURE.md (intelligence system design)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.24 Create /home/projects/safeprompt/docs/THREAT_INTELLIGENCE.md (complete spec)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.25 Create /home/projects/safeprompt/docs/DATA_RETENTION_POLICY.md (2h/24h/90d)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.26 Create /home/projects/safeprompt/docs/PRIVACY_COMPLIANCE.md (GDPR/CCPA guide)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### Website Updates (/home/projects/safeprompt/website)
+- [ ] 1A.27 Update homepage: Explain IP reputation & network defense model
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.28 Update features page: Intelligence collection benefits
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.29 Update privacy policy: Data collection, 24h anonymization, deletion rights
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.30 Update terms of service: Free contribution requirement, Pro opt-in
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.31 Update pricing page: Free vs Pro feature matrix (IP blocking differentiation)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.32 Update documentation: Intelligence sharing guide, opt-out instructions
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.33 Update FAQ: Data collection, anonymization, why contribute
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### Dashboard Updates (/home/projects/safeprompt/dashboard)
+- [ ] 1A.34 Add user settings: Intelligence sharing toggle (Pro only)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.35 Add user settings: Auto-block bad IPs toggle (Pro only, requires opt-in)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.36 Add privacy controls: Data deletion UI (delete <24h samples)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.37 Add privacy controls: Data export UI (download identifiable data)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.38 Add admin panel: View intelligence samples (paginated table)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.39 Add admin panel: IP reputation management (view/edit scores)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.40 Add admin panel: Trigger manual anonymization
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.41 Add admin panel: Intelligence analysis dashboard (pattern discovery)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.42 Add analytics: Intelligence collection metrics (samples/day, anonymization rate)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.43 Update playground: Show IP reputation scores in validation responses
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.44 Update code snippet instructions: Session token usage examples
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### Public Repo Updates (/home/projects/safeprompt-public)
+- [ ] 1A.45 Update README: New IP reputation & intelligence features
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.46 Add code examples: Session token initialization
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.47 Add code examples: Handling IP reputation responses
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.48 Add code examples: Pro tier preference management
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.49 Add migration guide: Existing users upgrading to intelligence system
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.50 Add best practices: When to enable auto-block, false positive mitigation
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### API Changes & Versioning
+- [ ] 1A.51 Update /api/v1/validate response schema (add ipReputationChecked, ipReputationScore)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.52 Create /api/v1/account/preferences endpoint (GET/PATCH)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.53 Create /api/v1/privacy/delete endpoint (GDPR right to deletion)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.54 Create /api/v1/privacy/export endpoint (GDPR right to access)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.55 Update API error responses (new: ip_blocked, reputation_check_failed)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.56 Add API versioning strategy (backward compatibility for existing clients)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### Background Jobs & Automation
+- [ ] 1A.57 Session cleanup cron: Delete sessions older than 2 hours (runs hourly)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.58 Sample anonymization cron: Remove PII after 24 hours (runs hourly)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.59 IP reputation update cron: Recalculate scores from samples (runs hourly)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.60 Intelligence analysis job: AI pattern extraction (manual trigger initially)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### Monitoring, Logging & Alerts
+- [ ] 1A.61 Add logging: Intelligence collection events (sample stored, PII anonymized)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.62 Add metrics: Anonymization job success rate (target: 100%)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.63 Add metrics: IP blocking rate by tier (free=0%, pro=varies)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.64 Add alerts: Failed anonymization (critical - legal compliance)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.65 Add alerts: Intelligence storage capacity >80% (proactive scaling)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.66 Create dashboard: Moat metrics (samples collected, patterns discovered)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+#### Deployment & Migration Strategy
+- [ ] 1A.67 Database migration rollout plan (staged: dev → staging → prod)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.68 Feature flag implementation (gradual rollout to 10% → 50% → 100%)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.69 Rollback plan (revert migrations, disable intelligence collection)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.70 Existing user defaults: Free=contribute, Pro=contribute+opt-in to auto-block
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.71 Email announcement to existing users (feature benefits, privacy details)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.72 Deploy to DEV and validate complete intelligence flow
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.73 Deploy to PROD and monitor for 48 hours
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+
+### Phase 1B: Session-Based Validation (Original Multi-Turn Protection)
+- [x] 1B.1 Design session storage schema (Supabase table for session history) ✅
 - [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
-- [x] 1.2 Create session-validator.js wrapper around existing validateHardened() ✅
+- [x] 1B.2 Create session-validator.js wrapper around existing validateHardened() ✅
 - [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
-- [x] 1.3 Implement cryptographic session tokens (replace timestamp-based) ✅ (integrated in 1.2)
+- [x] 1B.3 Implement cryptographic session tokens (replace timestamp-based) ✅ (integrated in 1B.2)
 - [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
-- [x] 1.4 Add context priming detection logic (ticket reference validation) ✅ (integrated in 1.2)
+- [x] 1B.4 Add context priming detection logic (ticket reference validation) ✅ (integrated in 1B.2)
+- [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
+- [ ] 1B.5 Update /api/v1/validate endpoint to support optional session_token parameter
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.5 Create session storage service (Redis or Supabase-based)
+- [ ] 1B.6 Add unit tests for session validation (30+ test cases)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.6 Update /api/v1/validate endpoint to support optional session_token parameter
+- [ ] 1B.7 Add multi-turn attack test cases (context priming, RAG poisoning) - 10 tests
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.7 Add unit tests for session validation (30+ test cases)
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.8 Add multi-turn attack test cases (context priming, RAG poisoning) - 10 tests
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.9 Deploy to DEV and test multi-turn protection
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.10 Update API documentation with session_token parameter examples
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.11 Update website docs (/home/projects/safeprompt/website) with multi-turn protection guide
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.12 Update dashboard playground to support session-based testing
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.13 Update public repo README (/home/projects/safeprompt-public) with session examples
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.14 Add code examples to public repo (session initialization, multi-turn validation)
+- [ ] 1B.8 Deploy to DEV and test multi-turn protection
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 ### Phase 2: Validation Pipeline Consolidation (7 Stages → 3 Stages)
