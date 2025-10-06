@@ -1,5 +1,6 @@
 // Consolidated validation endpoint that handles all check types
 import validateHardened from '../../lib/ai-validator-hardened.js';
+import { collectThreatIntelligence } from '../../lib/intelligence-collector.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sanitizeResponseWithMode } from '../../lib/response-sanitizer.js';
@@ -209,6 +210,27 @@ export default async function handler(req, res) {
 
     // Add processing time to result
     result.processingTime = processingTime;
+
+    // Collect threat intelligence (non-blocking, fire-and-forget)
+    if (profileId) {
+      const clientIP = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress;
+      const userAgent = req.headers['user-agent'];
+      const isTestSuite = req.headers['x-safeprompt-test-suite'] === 'true';
+
+      // Fire and forget - don't wait for collection to complete
+      collectThreatIntelligence(prompt, result, {
+        ip_address: clientIP,
+        user_agent: userAgent,
+        user_id: profileId,
+        session_metadata: {
+          is_test_suite: isTestSuite,
+          mode: mode
+        }
+      }).catch(err => {
+        console.error('[SafePrompt] Intelligence collection failed:', err.message);
+        // Don't fail the request if collection fails
+      });
+    }
 
     // Cache the result
     if (cache.size >= CACHE_MAX_SIZE) {

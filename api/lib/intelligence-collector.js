@@ -10,10 +10,6 @@
 
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
-import { promisify } from 'util';
-import { gzip } from 'zlib';
-
-const gzipAsync = promisify(gzip);
 
 // Supabase client
 const supabase = createClient(
@@ -108,7 +104,7 @@ async function getUserProfile(userId) {
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('tier, preferences')
+      .select('subscription_tier, preferences')
       .eq('id', userId)
       .single();
 
@@ -117,7 +113,7 @@ async function getUserProfile(userId) {
     }
 
     return {
-      tier: data.tier || 'free',
+      tier: data.subscription_tier || 'free',
       preferences: data.preferences || { intelligence_sharing: true }
     };
   } catch (error) {
@@ -198,50 +194,32 @@ export async function collectThreatIntelligence(prompt, validationResult, option
       return false;
     }
 
-    // Compress prompt for storage efficiency
-    const promptCompressed = await gzipAsync(Buffer.from(prompt, 'utf-8'));
-
     // Calculate hashes
     const promptHash = hashData(prompt);
     const ipHash = ip_address ? createIPHash(ip_address) : null;
 
-    // Prepare sample data
+    // Prepare sample data (only fields that exist in database schema)
     const sample = {
       // Prompt data (temporary - deleted after 24h)
       prompt_text: prompt,
       prompt_hash: promptHash,
-      prompt_length: prompt.length,
-      prompt_compressed: promptCompressed,
 
       // Validation result
-      validation_result: validationResult,
       attack_vectors: validationResult.threats || [],
       threat_severity: calculateSeverity(validationResult.confidence, validationResult.safe),
       confidence_score: validationResult.confidence || 0,
-      detection_method: validationResult.detectionMethod || validationResult.stage,
 
       // IP data (temporary - deleted after 24h)
       client_ip: ip_address || null,
       ip_hash: ipHash,
 
-      // IP metadata (permanent - not PII)
-      // TODO: Add geolocation lookup in future task
-      ip_country: null,
-      ip_is_proxy: false,
-      ip_is_hosting: false,
-      ip_isp: null,
+      // Session ID (optional)
+      session_id: session_metadata.session_id || null,
 
-      // Behavioral fingerprint
-      session_metadata: session_metadata,
-      user_agent_category: categorizeUserAgent(user_agent),
-      request_timing_pattern: session_metadata.timing_pattern || 'unknown',
-
-      // User association
-      profile_id: user_id || null,
+      // User tier
       subscription_tier: profile.tier,
-      intelligence_sharing: profile.preferences?.intelligence_sharing ?? true,
 
-      // Timestamps (expires_at set by DB default: NOW() + 90 days)
+      // Timestamps handled by DB defaults
       created_at: new Date().toISOString()
     };
 
