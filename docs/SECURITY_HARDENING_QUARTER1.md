@@ -87,41 +87,55 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.2 Create ip_reputation migration (hash-based, permanent storage)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.3 Update validation_sessions migration (reduce TTL 24h→2h, add ip_fingerprint)
+- [ ] 1A.3 Create ip_allowlist migration (testing infrastructure, CI/CD, internal IPs)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.4 Implement intelligence collection logic in session-validator.js
+- [ ] 1A.4 Update validation_sessions migration (reduce TTL 24h→2h, add ip_fingerprint)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.5 Implement IP reputation checking (hash-based lookup, auto-block logic)
+- [ ] 1A.5 Implement intelligence collection logic in session-validator.js
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.6 Create 24-hour anonymization background job (delete prompt_text, client_ip)
+- [ ] 1A.6 Implement IP reputation checking with allowlist bypass (hash-based lookup, auto-block logic)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.7 Create IP reputation scoring job (hourly update from samples)
+- [ ] 1A.7 Add test suite marker detection (X-SafePrompt-Test-Suite header bypass)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.8 Add user preferences API endpoint (intelligence_sharing, auto_block_enabled)
+- [ ] 1A.8 Create 24-hour anonymization background job (delete prompt_text, client_ip)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.9 Add privacy compliance endpoints (DELETE /privacy/delete, GET /privacy/export)
+- [ ] 1A.9 Create IP reputation scoring job (hourly update, excludes allowlist IPs)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.10 Add user preferences API endpoint (intelligence_sharing, auto_block_enabled)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.11 Add privacy compliance endpoints (DELETE /privacy/delete, GET /privacy/export)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.12 Add IP allowlist management API (admin-only, CRUD operations)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 #### Testing & Quality Assurance
-- [ ] 1A.10 Unit tests: Intelligence collection logic (free always, pro opt-in/out)
+- [ ] 1A.13 Unit tests: Intelligence collection logic (free always, pro opt-in/out)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.11 Unit tests: IP reputation checking (hash lookup, auto-block thresholds)
+- [ ] 1A.14 Unit tests: IP reputation checking (hash lookup, auto-block thresholds)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.12 Unit tests: Anonymization logic (verify PII removal, irreversibility)
+- [ ] 1A.15 Unit tests: IP allowlist bypass (verify test IPs never blocked)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.13 Integration tests: Free tier contribution flow (blocked requests only)
+- [ ] 1A.16 Unit tests: Test suite header detection (X-SafePrompt-Test-Suite bypass)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.14 Integration tests: Pro tier opt-in/opt-out scenarios
+- [ ] 1A.17 Unit tests: Anonymization logic (verify PII removal, irreversibility)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.15 Compliance tests: GDPR deletion (verify <24h data removed)
+- [ ] 1A.18 Integration tests: Free tier contribution flow (blocked requests only)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.16 Compliance tests: GDPR export (verify complete data returned)
+- [ ] 1A.19 Integration tests: Pro tier opt-in/opt-out scenarios
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.17 Security tests: Verify cannot reverse hash (IP, prompt)
+- [ ] 1A.20 Integration tests: CI/CD pipeline (verify test runs never trigger IP blocks)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.18 Performance tests: Latency impact <10ms for IP check
+- [ ] 1A.21 Compliance tests: GDPR deletion (verify <24h data removed)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.19 Load tests: Intelligence storage scaling (1M samples/day)
+- [ ] 1A.22 Compliance tests: GDPR export (verify complete data returned)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.23 Security tests: Verify cannot reverse hash (IP, prompt)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.24 Security tests: Verify allowlist cannot be bypassed by attackers
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.25 Performance tests: Latency impact <10ms for IP check (including allowlist lookup)
+- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [ ] 1A.26 Load tests: Intelligence storage scaling (1M samples/day)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 #### Documentation Updates
