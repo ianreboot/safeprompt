@@ -50,10 +50,38 @@ run_test() {
 
 echo -e "${BLUE}⚠️  PREREQUISITES (Manual Steps Required):${NC}"
 echo "1. Create test users via Supabase Dashboard SQL Editor"
-echo "   - Run SQL from test protocol section 'Test Environment Setup'"
-echo "2. Ensure API is deployed and running"
+echo "   - Go to: https://supabase.com/dashboard/project/vkyggknknyfallmnrmfu/sql/new"
+echo "   - Copy/paste: /home/projects/safeprompt/test-users.sql"
+echo "   - Run the SQL (creates 4 test users with UUIDs)"
+echo "   - SAVE the returned UUIDs"
+echo ""
+echo "2. Set environment variables with the test user UUIDs:"
+echo "   export TEST_FREE_ID=\"<uuid-from-first-result>\""
+echo "   export TEST_PRO_ID=\"<uuid-from-second-result>\""
+echo "   export TEST_PRO_OPTOUT_ID=\"<uuid-from-third-result>\""
+echo "   export TEST_INTERNAL_ID=\"<uuid-from-fourth-result>\""
+echo ""
+echo "3. Ensure API is deployed and running"
 echo ""
 read -p "Press Enter when prerequisites are complete..."
+echo ""
+
+# Verify environment variables are set
+if [ -z "$TEST_FREE_ID" ] || [ -z "$TEST_PRO_ID" ] || [ -z "$TEST_PRO_OPTOUT_ID" ] || [ -z "$TEST_INTERNAL_ID" ]; then
+    echo -e "${RED}ERROR: Test user IDs not set!${NC}"
+    echo "Please set all test user environment variables:"
+    echo "  export TEST_FREE_ID=\"...\""
+    echo "  export TEST_PRO_ID=\"...\""
+    echo "  export TEST_PRO_OPTOUT_ID=\"...\""
+    echo "  export TEST_INTERNAL_ID=\"...\""
+    exit 1
+fi
+
+echo -e "${GREEN}Test user IDs configured:${NC}"
+echo "  FREE: $TEST_FREE_ID"
+echo "  PRO: $TEST_PRO_ID"
+echo "  PRO_OPTOUT: $TEST_PRO_OPTOUT_ID"
+echo "  INTERNAL: $TEST_INTERNAL_ID"
 echo ""
 
 echo -e "${BLUE}=== Test Suite 1: Intelligence Collection ===${NC}"
@@ -63,7 +91,7 @@ run_test "1.1 Free Tier - Blocked Request Collection" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-free-001' \
+        -H 'X-User-ID: $TEST_FREE_ID' \
         -d '{\"prompt\":\"<script>alert(1)</script>\",\"session_id\":\"test-session-free-001\"}'" \
     '"safe":false'
 
@@ -72,7 +100,7 @@ run_test "1.2 Free Tier - Safe Request NOT Collected" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-free-001' \
+        -H 'X-User-ID: $TEST_FREE_ID' \
         -d '{\"prompt\":\"What is the weather today?\",\"session_id\":\"test-session-free-002\"}'" \
     '"safe":true'
 
@@ -81,7 +109,7 @@ run_test "1.3a Pro Tier - Safe Request Collection" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-pro-001' \
+        -H 'X-User-ID: $TEST_PRO_ID' \
         -d '{\"prompt\":\"Hello, how are you?\",\"session_id\":\"test-session-pro-001\"}'" \
     '"safe":true'
 
@@ -90,7 +118,7 @@ run_test "1.3b Pro Tier - Blocked Request Collection" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-pro-001' \
+        -H 'X-User-ID: $TEST_PRO_ID' \
         -d '{\"prompt\":\"SELECT * FROM users WHERE 1=1\",\"session_id\":\"test-session-pro-002\"}'" \
     '"safe":false'
 
@@ -99,7 +127,7 @@ run_test "1.4 Pro Tier - Opted Out NO Collection" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-pro-002' \
+        -H 'X-User-ID: $TEST_PRO_OPTOUT_ID' \
         -d '{\"prompt\":\"DROP TABLE users;\",\"session_id\":\"test-session-pro-optout-001\"}'" \
     '"safe":false'
 
@@ -108,7 +136,7 @@ run_test "1.5 Internal Tier - NEVER Collect" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-internal-001' \
+        -H 'X-User-ID: $TEST_INTERNAL_ID' \
         -H 'X-SafePrompt-Test-Suite: true' \
         -d '{\"prompt\":\"Internal testing payload\",\"session_id\":\"test-session-internal-001\"}'" \
     '"safe":true'
@@ -131,7 +159,7 @@ for i in {1..6}; do
     curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H "X-API-Key: $SAFEPROMPT_DEV_API_KEY" \
-        -H 'X-User-ID: test-free-001' \
+        -H 'X-User-ID: $TEST_FREE_ID' \
         -d "{\"prompt\":\"<img src=x onerror=alert($i)>\",\"session_id\":\"test-session-ip-$i\"}" \
         > /dev/null
     echo "  Request $i/6 sent"
@@ -156,7 +184,7 @@ run_test "2.2 Auto-Block Enforcement (Pro)" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-pro-001' \
+        -H 'X-User-ID: $TEST_PRO_ID' \
         -d '{\"prompt\":\"Innocent request\",\"session_id\":\"test-session-autoblock-001\"}'" \
     'known_bad_actor\|auto-block'
 
@@ -165,7 +193,7 @@ run_test "2.3 Free Tier - No Auto-Block" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-free-001' \
+        -H 'X-User-ID: $TEST_FREE_ID' \
         -d '{\"prompt\":\"Innocent request\",\"session_id\":\"test-session-free-noblock-001\"}'" \
     '"safe":true'
 
@@ -176,7 +204,7 @@ run_test "3.1 Test Suite Header Bypass" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-pro-001' \
+        -H 'X-User-ID: $TEST_PRO_ID' \
         -H 'X-SafePrompt-Test-Suite: true' \
         -d '{\"prompt\":\"Test payload\",\"session_id\":\"test-session-bypass-001\"}'" \
     '"safe":true'
@@ -194,7 +222,7 @@ run_test "3.2 IP Allowlist Bypass" \
     "curl -s -X POST https://dev-api.safeprompt.dev/api/v1/validate \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-pro-001' \
+        -H 'X-User-ID: $TEST_PRO_ID' \
         -d '{\"prompt\":\"Allowlist test\",\"session_id\":\"test-session-allowlist-001\"}'" \
     '"safe":true'
 
@@ -233,7 +261,7 @@ echo ""
 run_test "4.2 Right to Access (Data Export)" \
     "curl -s -X GET https://dev-api.safeprompt.dev/api/v1/privacy/export \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-pro-001'" \
+        -H 'X-User-ID: $TEST_PRO_ID'" \
     '"export_date"\|"data"'
 
 echo -e "${BLUE}=== Manual Step: Test Anonymization ===${NC}"
@@ -253,7 +281,7 @@ run_test "5.1 Pro Tier - Opt Out of Intelligence" \
     "curl -s -X PATCH https://dev-api.safeprompt.dev/api/v1/account/preferences \
         -H 'Content-Type: application/json' \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-pro-001' \
+        -H 'X-User-ID: $TEST_PRO_ID' \
         -d '{\"intelligence_sharing\":false}'" \
     '"success":true'
 
@@ -261,7 +289,7 @@ run_test "5.1 Pro Tier - Opt Out of Intelligence" \
 run_test "5.2 Free Tier - View Only Preferences" \
     "curl -s -X GET https://dev-api.safeprompt.dev/api/v1/account/preferences \
         -H 'X-API-Key: $SAFEPROMPT_DEV_API_KEY' \
-        -H 'X-User-ID: test-free-001'" \
+        -H 'X-User-ID: $TEST_FREE_ID'" \
     '"can_modify":false'
 
 echo ""
@@ -277,8 +305,8 @@ echo ""
 
 echo -e "${BLUE}=== Cleanup (Manual) ===${NC}"
 echo "Run in Supabase SQL Editor:"
-echo "  DELETE FROM profiles WHERE id LIKE 'test-%';"
-echo "  DELETE FROM threat_intelligence_samples WHERE prompt_text LIKE '%test%';"
+echo "  DELETE FROM profiles WHERE email LIKE '%@safeprompt.dev';"
+echo "  DELETE FROM threat_intelligence_samples WHERE prompt_text LIKE '%test%' OR prompt_text LIKE '%Test%';"
 echo "  DELETE FROM validation_sessions WHERE session_id LIKE 'test-session-%';"
 echo "  DELETE FROM ip_allowlist WHERE description LIKE '%Manual test%';"
 echo "  DELETE FROM ip_reputation WHERE total_samples < 10;"
