@@ -13,15 +13,15 @@ CREATE TABLE IF NOT EXISTS validation_sessions (
   -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   last_activity TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-  expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '24 hours') NOT NULL,
+  expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '2 hours') NOT NULL,  -- REDUCED from 24h
 
-  -- Session data
+  -- Session data (MINIMAL for multi-turn detection only)
   history JSONB NOT NULL DEFAULT '[]'::jsonb,
   flags JSONB NOT NULL DEFAULT '{}'::jsonb,
 
-  -- Metadata for analysis
-  ip_address INET,
-  user_agent TEXT,
+  -- Metadata for analysis (ANONYMIZED)
+  ip_fingerprint TEXT,  -- SHA256(ip + daily_salt) - changes daily, cannot reverse
+  user_agent_fingerprint TEXT,  -- Hash only, not full UA
   request_count INTEGER DEFAULT 0 NOT NULL,
 
   -- Constraints
@@ -39,10 +39,17 @@ CREATE INDEX IF NOT EXISTS idx_sessions_created_at ON validation_sessions(create
 
 -- Auto-cleanup function for expired sessions
 CREATE OR REPLACE FUNCTION cleanup_expired_sessions()
-RETURNS void AS $$
+RETURNS INTEGER AS $$
+DECLARE
+  rows_deleted INTEGER;
 BEGIN
   DELETE FROM validation_sessions
-  WHERE expires_at < NOW();
+  WHERE expires_at < NOW()
+     OR created_at < NOW() - INTERVAL '2 hours';  -- Hard limit: delete after 2h regardless
+
+  GET DIAGNOSTICS rows_deleted = ROW_COUNT;
+
+  RETURN rows_deleted;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
