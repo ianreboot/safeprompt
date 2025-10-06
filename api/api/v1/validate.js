@@ -62,11 +62,21 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = req.headers['x-api-key'];
+    const userIP = req.headers['x-user-ip'];
     let profileId = null;
 
     // 🔒 CRITICAL: API key is REQUIRED
     if (!apiKey || apiKey.trim() === '') {
       return res.status(401).json({ error: 'API key required' });
+    }
+
+    // 🔒 CRITICAL: User IP is REQUIRED for threat intelligence
+    // This must be the END USER's IP (attacker), not the API caller's server IP
+    if (!userIP || userIP.trim() === '') {
+      return res.status(400).json({
+        error: 'X-User-IP header required',
+        message: 'Please provide the end user\'s IP address via X-User-IP header for threat intelligence tracking'
+      });
     }
 
     // Validate API key against database (all users including internal)
@@ -213,13 +223,13 @@ export default async function handler(req, res) {
 
     // Collect threat intelligence (non-blocking, fire-and-forget)
     if (profileId) {
-      const clientIP = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress;
       const userAgent = req.headers['user-agent'];
       const isTestSuite = req.headers['x-safeprompt-test-suite'] === 'true';
 
       // Fire and forget - don't wait for collection to complete
+      // Use userIP from X-User-IP header (end user's IP, not API caller's server IP)
       collectThreatIntelligence(prompt, result, {
-        ip_address: clientIP,
+        ip_address: userIP, // End user's IP for tracking actual attackers
         user_agent: userAgent,
         user_id: profileId,
         session_metadata: {
