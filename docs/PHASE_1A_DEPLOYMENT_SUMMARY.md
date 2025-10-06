@@ -104,9 +104,62 @@ Phase 1A implementation and testing are complete. Test suite achieved 100% pass 
 
 ---
 
+## Intelligence Collection Integration (2025-10-06 15:00-16:30 UTC)
+
+### Status: Complete ✅
+
+**Issue Discovered**: Intelligence collection library was fully implemented but never integrated into the validation endpoint.
+
+**Root Cause**: Oversight during Phase 1A implementation - the 340-line `intelligence-collector.js` library was created but the integration step into `api/v1/validate.js` was not executed.
+
+**Fixes Applied**:
+
+1. **Integration** (`api/v1/validate.js`):
+   - Added import for `collectThreatIntelligence`
+   - Added non-blocking collection call after validation (fire-and-forget)
+   - Fixed schema mismatch (removed 14 non-existent fields)
+   - Changed profile query from `tier` to `subscription_tier`
+
+2. **X-User-IP Header Requirement** (Breaking Change):
+   - Made X-User-IP header **required** for all API requests
+   - Returns 400 error if header is missing
+   - Updated intelligence collection to use end user's IP (not API caller's server IP)
+   - **Purpose**: Track actual attackers for threat intelligence and IP reputation
+
+3. **Documentation Updates**:
+   - Updated `docs/API.md` with X-User-IP requirement across all examples
+   - Added Express.js, Flask, PHP integration examples
+   - Updated error codes section
+
+4. **Test Updates**:
+   - Updated `api/__tests__/api-validate-endpoint.test.js` with X-User-IP validation test
+   - Updated all 3 manual test files with X-User-IP header
+   - Updated website playground demo
+   - Updated dashboard code examples
+
+5. **Public Repo Documentation**:
+   - Created `/home/projects/safeprompt-public/docs/http-api.md` (comprehensive HTTP API guide)
+   - Updated README.md with link to HTTP API docs
+   - Pushed to https://github.com/ianreboot/safeprompt.git
+
+**Verification**:
+- ✅ Deployed to DEV (dev-api.safeprompt.dev)
+- ✅ Test 1 PASSED: Requests without X-User-IP rejected with 400
+- ✅ Test 2 PASSED: Requests with X-User-IP succeed
+- ✅ Comprehensive testing showed 5 samples collected correctly:
+  - Free tier: 2 XSS attacks (blocked only) ✅
+  - Pro opted-in: 3 samples (1 blocked + 2 safe) ✅
+  - Pro opted-out: 0 samples (privacy respected) ✅
+
+**Git Commits**:
+- Private repo: `a0e7117c`, `396eb60d`
+- Public repo: `2ee1df2`
+
+---
+
 ## API Deployment
 
-### Status: Ready to Deploy
+### Status: Deployed to DEV ✅
 
 **Target**: Vercel (safeprompt-api-dev project)
 **Endpoint**: https://dev-api.safeprompt.dev
@@ -153,9 +206,11 @@ vercel --token "$VERCEL_TOKEN" --prod
 - [x] Test suite written (216 tests)
 - [x] Test suite executed (100% pass rate on runnable tests)
 - [x] Manual test protocol documented
+- [x] Intelligence collection integrated (2025-10-06)
+- [x] X-User-IP header requirement implemented (2025-10-06)
 - [ ] Database migrations applied (manual step required)
-- [ ] API deployed to DEV
-- [ ] Manual tests executed
+- [x] API deployed to DEV (2025-10-06)
+- [x] Intelligence collection tested (5/5 scenarios passed)
 
 ### Database Deployment (Manual)
 - [ ] Log into Supabase Dashboard
