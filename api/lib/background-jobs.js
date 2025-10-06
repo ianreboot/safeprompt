@@ -47,9 +47,9 @@ export async function anonymizeThreatSamples() {
 
       return {
         success: false,
-        error: error.message,
+        error,
         rowsAnonymized: 0,
-        duration: Date.now() - startTime
+        executionTime: Date.now() - startTime
       };
     }
 
@@ -62,6 +62,11 @@ export async function anonymizeThreatSamples() {
 
     // Alert if unexpectedly high volume (potential issue)
     if (rowsAnonymized > 10000) {
+      console.warn('[BackgroundJobs] High volume anonymization:', {
+        rowsAnonymized,
+        threshold: 10000
+      });
+
       await sendAnonymizationAlert({
         status: 'HIGH_VOLUME',
         rowsAnonymized,
@@ -73,7 +78,7 @@ export async function anonymizeThreatSamples() {
     return {
       success: true,
       rowsAnonymized,
-      duration: Date.now() - startTime
+      executionTime: Date.now() - startTime
     };
 
   } catch (error) {
@@ -87,9 +92,9 @@ export async function anonymizeThreatSamples() {
 
     return {
       success: false,
-      error: error.message,
+      error,
       rowsAnonymized: 0,
-      duration: Date.now() - startTime
+      executionTime: Date.now() - startTime
     };
   }
 }
@@ -111,14 +116,13 @@ export async function updateReputationScores() {
     const updatedCount = await updateIPReputationScores();
 
     console.log('[BackgroundJobs] Reputation update complete:', {
-      ipsUpdated: updatedCount,
+      scoresUpdated: updatedCount,
       duration: Date.now() - startTime
     });
 
     return {
       success: true,
-      ipsUpdated: updatedCount,
-      duration: Date.now() - startTime
+      scoresUpdated: updatedCount
     };
 
   } catch (error) {
@@ -126,9 +130,8 @@ export async function updateReputationScores() {
 
     return {
       success: false,
-      error: error.message,
-      ipsUpdated: 0,
-      duration: Date.now() - startTime
+      error,
+      scoresUpdated: 0
     };
   }
 }
@@ -146,38 +149,39 @@ export async function cleanupExpiredSessions() {
   try {
     console.log('[BackgroundJobs] Starting session cleanup...');
 
-    const { data, error } = await supabase.rpc('cleanup_expired_sessions');
+    // Delete sessions older than 2 hours
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+
+    const { data, error } = await supabase
+      .from('validation_sessions')
+      .delete()
+      .lt('created_at', twoHoursAgo)
+      .select('session_token');
 
     if (error) {
       console.error('[BackgroundJobs] Session cleanup error:', error.message);
       return {
         success: false,
-        error: error.message,
-        rowsDeleted: 0,
-        duration: Date.now() - startTime
+        error,
+        sessionsDeleted: 0
       };
     }
 
-    const rowsDeleted = data || 0;
+    const sessionsDeleted = data?.length || 0;
 
-    console.log('[BackgroundJobs] Session cleanup complete:', {
-      rowsDeleted,
-      duration: Date.now() - startTime
-    });
+    console.log('[BackgroundJobs] Cleaned up sessions:', sessionsDeleted);
 
     return {
       success: true,
-      rowsDeleted,
-      duration: Date.now() - startTime
+      sessionsDeleted
     };
 
   } catch (error) {
     console.error('[BackgroundJobs] Session cleanup error:', error.message);
     return {
       success: false,
-      error: error.message,
-      rowsDeleted: 0,
-      duration: Date.now() - startTime
+      error,
+      sessionsDeleted: 0
     };
   }
 }
@@ -193,38 +197,39 @@ export async function cleanupExpiredSamples() {
   try {
     console.log('[BackgroundJobs] Starting expired sample cleanup...');
 
-    const { data, error } = await supabase.rpc('cleanup_expired_threat_samples');
+    // Delete samples older than 90 days
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data, error } = await supabase
+      .from('threat_intelligence_samples')
+      .delete()
+      .lt('expires_at', ninetyDaysAgo)
+      .select('id');
 
     if (error) {
       console.error('[BackgroundJobs] Sample cleanup error:', error.message);
       return {
         success: false,
-        error: error.message,
-        rowsDeleted: 0,
-        duration: Date.now() - startTime
+        error,
+        samplesDeleted: 0
       };
     }
 
-    const rowsDeleted = data || 0;
+    const samplesDeleted = data?.length || 0;
 
-    console.log('[BackgroundJobs] Sample cleanup complete:', {
-      rowsDeleted,
-      duration: Date.now() - startTime
-    });
+    console.log('[BackgroundJobs] Cleaned up samples:', samplesDeleted);
 
     return {
       success: true,
-      rowsDeleted,
-      duration: Date.now() - startTime
+      samplesDeleted
     };
 
   } catch (error) {
     console.error('[BackgroundJobs] Sample cleanup error:', error.message);
     return {
       success: false,
-      error: error.message,
-      rowsDeleted: 0,
-      duration: Date.now() - startTime
+      error,
+      samplesDeleted: 0
     };
   }
 }
