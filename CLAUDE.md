@@ -1,8 +1,10 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-03
+**Last Updated**: 2025-10-06 (Phase 1A Intelligence System Deployed)
 **Status**: Production Ready (Product Hunt Launch Ready)
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
+
+**🚨 Phase 1A Intelligence Architecture**: See `/home/projects/safeprompt/docs/PHASE_1A_INTELLIGENCE_ARCHITECTURE.md` for complete details on threat intelligence, IP reputation, and session storage systems.
 
 ---
 
