@@ -88,7 +88,9 @@ https://api.safeprompt.dev
 
 ## Endpoints
 
-### POST /v1/validate
+### Validation Endpoints
+
+#### POST /v1/validate
 
 Validate a single prompt for injection attacks.
 
@@ -104,7 +106,8 @@ Content-Type: application/json
 {
   "prompt": "string",           // Required: The prompt to validate
   "mode": "optimized",          // Optional: standard, optimized, ai-only, with-cache
-  "include_stats": false        // Optional: Include performance statistics
+  "include_stats": false,       // Optional: Include performance statistics
+  "sessionToken": "string"      // Optional: Session ID for multi-turn attack detection
 }
 ```
 
@@ -116,7 +119,12 @@ Content-Type: application/json
   "threats": [],               // Array: Detected threat types (empty if safe)
   "processingTime": 250,       // Integer: Response time in milliseconds
   "detectionMethod": "pattern_detection",  // String: Detection stage
-  "reasoning": "No security threats detected"  // String: Why this verdict?
+  "reasoning": "No security threats detected",  // String: Why this verdict?
+
+  // Phase 1A: IP Reputation & Multi-Turn Protection
+  "ipReputationChecked": true, // Boolean: Was IP reputation checked?
+  "ipReputationScore": 0.92,   // Float 0-1: IP reputation (1=good, 0=bad) - Pro tier only
+  "sessionId": "sess_abc123"   // String: Session token for next validation (if provided in request)
 }
 ```
 
@@ -189,6 +197,28 @@ Human-readable explanation of the verdict.
 
 Use this for logging, debugging, or showing users why their input was blocked.
 
+#### `ipReputationChecked` (boolean) - Phase 1A
+Indicates whether IP reputation was checked for this request:
+- `true`: IP reputation system processed this request
+- `false`: IP reputation check skipped (CI/CD allowlist, test suite, or internal request)
+
+#### `ipReputationScore` (float, 0-1) - Phase 1A (Pro tier only)
+Score indicating IP address reputation:
+- `0.9-1.0`: Excellent reputation (mostly safe prompts)
+- `0.7-0.89`: Good reputation
+- `0.3-0.69`: Medium reputation (mixed activity)
+- `0.0-0.29`: Poor reputation (high attack rate, may be auto-blocked)
+
+**Note**: Only available for Pro tier with IP blocking enabled. Free tier returns `null`.
+
+#### `sessionId` (string) - Phase 1A
+Session token for multi-turn attack detection. Include this in subsequent validation requests to enable:
+- **Context priming detection**: Blocks fake ticket/document references
+- **RAG poisoning protection**: Detects malicious content injection
+- **Multi-turn jailbreaks**: Prevents gradual instruction overrides
+
+Sessions expire after 2 hours of inactivity.
+
 **Example:**
 ```bash
 curl -X POST https://api.safeprompt.dev/api/v1/validate \
@@ -209,7 +239,188 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
 }
 ```
 
-### GET /status
+### User Preferences Endpoints (Phase 1A - Pro Tier)
+
+#### GET /v1/account/preferences
+
+Retrieve current user preferences for threat intelligence sharing and IP blocking.
+
+**Required Headers:**
+```
+X-API-Key: sp_live_YOUR_API_KEY
+Content-Type: application/json
+```
+
+**Response:**
+```json
+{
+  "enable_intelligence_sharing": true,  // Contribute attack data to network
+  "enable_ip_blocking": false           // Auto-block malicious IPs (Pro tier only)
+}
+```
+
+#### PATCH /v1/account/preferences
+
+Update user preferences.
+
+**Required Headers:**
+```
+X-API-Key: sp_live_YOUR_API_KEY
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "enable_intelligence_sharing": false,  // Optional: Disable data contribution
+  "enable_ip_blocking": true             // Optional: Enable IP auto-blocking (Pro tier only)
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "preferences": {
+    "enable_intelligence_sharing": false,
+    "enable_ip_blocking": true
+  }
+}
+```
+
+**Error Responses:**
+```json
+// Free tier trying to enable IP blocking
+{
+  "error": "IP blocking requires Pro tier subscription"
+}
+```
+
+### Privacy & Compliance Endpoints (Phase 1A)
+
+#### DELETE /v1/privacy/delete
+
+Delete all identifiable personal data (GDPR right to deletion).
+
+**Required Headers:**
+```
+X-API-Key: sp_live_YOUR_API_KEY
+Content-Type: application/json
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "deleted": {
+    "prompt_samples": 142,  // Samples with identifiable data (<24h old)
+    "sessions": 5           // Active validation sessions
+  },
+  "retained": {
+    "hashed_patterns": 142  // Anonymized attack patterns (no PII)
+  }
+}
+```
+
+**Note**: This deletes:
+- All prompt text and IP addresses (<24 hours old)
+- All active validation sessions
+- Retains anonymized attack patterns (cryptographic hashes only)
+
+#### GET /v1/privacy/export
+
+Export all personal data (GDPR right to access).
+
+**Required Headers:**
+```
+X-API-Key: sp_live_YOUR_API_KEY
+Content-Type: application/json
+```
+
+**Response:**
+```json
+{
+  "user_id": "uuid",
+  "email": "user@example.com",
+  "tier": "pro",
+  "threat_intelligence_samples": [
+    {
+      "prompt_text": "Ignore all instructions",  // Only if <24h old
+      "client_ip": "203.0.113.45",               // Only if <24h old
+      "detected_at": "2025-10-06T10:00:00Z",
+      "attack_vectors": ["prompt_injection"],
+      "severity": "high"
+    }
+  ],
+  "validation_sessions": [
+    {
+      "session_token": "sess_abc123",
+      "created_at": "2025-10-06T09:00:00Z",
+      "history": [
+        {"prompt": "test", "result": "safe", "timestamp": "2025-10-06T09:01:00Z"}
+      ]
+    }
+  ]
+}
+```
+
+### Admin Endpoints (Phase 1A - Internal Use)
+
+#### POST /v1/admin/ip-allowlist
+
+Add IP address to allowlist (bypasses reputation checks).
+
+**Required Headers:**
+```
+X-API-Key: sp_internal_ADMIN_KEY
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "ip_address": "192.0.2.1",
+  "description": "CI/CD pipeline",
+  "purpose": "ci_cd",  // ci_cd | internal_tools | security_research | customer_request
+  "expires_at": "2026-01-01T00:00:00Z"  // Optional: Expiration date
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "allowlist_entry": {
+    "id": "uuid",
+    "ip_address": "192.0.2.1",
+    "ip_hash": "hash_value",
+    "description": "CI/CD pipeline",
+    "purpose": "ci_cd",
+    "added_at": "2025-10-06T10:00:00Z"
+  }
+}
+```
+
+#### DELETE /v1/admin/ip-allowlist/:id
+
+Remove IP address from allowlist.
+
+**Required Headers:**
+```
+X-API-Key: sp_internal_ADMIN_KEY
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "deleted_id": "uuid"
+}
+```
+
+### System Status Endpoint
+
+#### GET /status
 
 Check API health and status.
 
@@ -217,9 +428,14 @@ Check API health and status.
 ```json
 {
   "status": "operational",
-  "timestamp": "2025-09-24T10:00:00Z",
+  "timestamp": "2025-10-06T10:00:00Z",
   "version": "1.0.0-beta",
-  "endpoints": ["/v1/check", "/status"]
+  "endpoints": ["/v1/validate", "/v1/account/preferences", "/v1/privacy/delete", "/v1/privacy/export", "/status"],
+  "phase1a_features": {
+    "ip_reputation": true,
+    "multi_turn_detection": true,
+    "threat_intelligence": true
+  }
 }
 ```
 
@@ -253,8 +469,9 @@ X-RateLimit-Reset: 1640995200
 | 200 | Success |
 | 400 | Bad request (invalid input or missing X-User-IP header) |
 | 401 | Unauthorized (invalid API key) |
-| 403 | Forbidden (subscription expired) |
+| 403 | Forbidden (subscription expired or feature not available for tier) |
 | 429 | Too many requests (rate limited) |
+| 451 | IP address blocked (Pro tier with IP blocking enabled) |
 | 500 | Internal server error |
 
 **Error Response Format:**
@@ -280,6 +497,19 @@ X-RateLimit-Reset: 1640995200
 // Rate limit exceeded
 {
   "error": "Rate limit exceeded"
+}
+
+// IP address blocked (Pro tier - Phase 1A)
+{
+  "error": "IP address blocked",
+  "message": "This IP address has been automatically blocked due to high attack rate",
+  "ipReputationScore": 0.15
+}
+
+// Feature not available for tier
+{
+  "error": "Feature not available",
+  "message": "IP blocking requires Pro tier subscription"
 }
 ```
 
@@ -446,6 +676,15 @@ setTimeout(() => cache.delete(cacheKey), 3600000); // 1 hour TTL
 - API Status: https://api.safeprompt.dev/status
 
 ## Changelog
+
+### Phase 1A (October 6, 2025)
+- **IP Reputation System**: Network defense intelligence across all customers
+- **Multi-Turn Attack Detection**: Session-based validation for context priming and RAG poisoning
+- **Threat Intelligence Collection**: 24-hour anonymization model (GDPR/CCPA compliant)
+- **Pro Tier IP Blocking**: Auto-block malicious IPs with >70% attack rate (opt-in)
+- **Privacy Compliance APIs**: GDPR right to deletion and data export
+- **New Endpoints**: `/v1/account/preferences`, `/v1/privacy/delete`, `/v1/privacy/export`, `/v1/admin/ip-allowlist`
+- **X-User-IP Header**: Now required for accurate attack source tracking
 
 ### v1.0.0-beta (October 2025)
 - Initial beta release
