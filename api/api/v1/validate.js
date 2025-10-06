@@ -1,5 +1,5 @@
 // Consolidated validation endpoint that handles all check types
-import validateWithAI from '../../lib/ai-validator-hardened.js';
+import validateHardened from '../../lib/ai-validator-hardened.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sanitizeResponseWithMode } from '../../lib/response-sanitizer.js';
@@ -134,7 +134,7 @@ export default async function handler(req, res) {
             return { prompt: p, ...cached.result, cached: true };
           }
 
-          const result = await validateWithAI(p, {
+          const result = await validateHardened(p, {
             skipPatterns: mode === 'ai-only',
             skipExternalCheck: mode === 'ai-only'
           });
@@ -201,7 +201,7 @@ export default async function handler(req, res) {
 
     // Validate the prompt
     const startTime = Date.now();
-    const result = await validateWithAI(prompt, {
+    const result = await validateHardened(prompt, {
       skipPatterns: mode === 'ai-only',
       skipExternalCheck: mode === 'ai-only'
     });
