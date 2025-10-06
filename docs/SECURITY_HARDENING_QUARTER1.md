@@ -161,8 +161,8 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
 
 #### Website Updates (/home/projects/safeprompt/website)
-- [ ] 1A.27 Update homepage: Explain IP reputation & network defense model
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [x] 1A.27 Update homepage: Explain IP reputation & network defense model ✅
+- [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
 - [ ] 1A.28 Update features page: Intelligence collection benefits
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.29 Update privacy policy: Data collection, 24h anonymization, deletion rights

@@ -392,6 +392,126 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Network Intelligence Section - Phase 1A */}
+      <section className="py-20 px-6 bg-gradient-to-b from-secondary/5 to-background border-y border-primary/20">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <span className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-semibold mb-4">
+              🧠 NETWORK INTELLIGENCE
+            </span>
+            <h2 className="text-3xl font-bold mb-4">
+              Protection That Learns From Every Attack
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              SafePrompt builds a collective defense network. When one customer gets attacked,
+              all customers benefit from the intelligence.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="bg-card rounded-xl border border-border p-6">
+              <div className="text-4xl mb-4">🌐</div>
+              <h3 className="text-xl font-semibold mb-2">Threat Intelligence Collection</h3>
+              <p className="text-muted-foreground mb-4">
+                Every blocked attack is analyzed and anonymized. Patterns are shared across the network
+                to protect all users.
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>✓ 24-hour anonymization (GDPR/CCPA compliant)</li>
+                <li>✓ Hash-based pattern storage (no PII)</li>
+                <li>✓ Free tier contributes, Pro tier can opt-out</li>
+              </ul>
+            </div>
+
+            <div className="bg-card rounded-xl border border-border p-6">
+              <div className="text-4xl mb-4">🎯</div>
+              <h3 className="text-xl font-semibold mb-2">IP Reputation System</h3>
+              <p className="text-muted-foreground mb-4">
+                Track malicious IP addresses across the network. Pro tier can auto-block
+                repeat attackers before they even try.
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>✓ Real-time reputation scoring</li>
+                <li>✓ Auto-block at 70% attack rate (Pro tier)</li>
+                <li>✓ Privacy-first: Only hashed IPs stored</li>
+              </ul>
+            </div>
+
+            <div className="bg-card rounded-xl border border-border p-6">
+              <div className="text-4xl mb-4">🔗</div>
+              <h3 className="text-xl font-semibold mb-2">Multi-Turn Attack Detection</h3>
+              <p className="text-muted-foreground mb-4">
+                Detect attacks that span multiple conversation turns. Context priming,
+                RAG poisoning, and gradual jailbreaks don't work here.
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>✓ Session-based validation</li>
+                <li>✓ Fake context reference detection</li>
+                <li>✓ 2-hour session tracking</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border border-primary/30 p-8">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-bold mb-4">The Network Effect</h3>
+                <p className="text-muted-foreground mb-4">
+                  Unlike traditional security tools, SafePrompt gets smarter with every customer.
+                  Novel attacks discovered anywhere in the network are automatically detected everywhere.
+                </p>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <span className="text-primary text-xl">→</span>
+                    <div>
+                      <div className="font-semibold">Collective Intelligence</div>
+                      <div className="text-muted-foreground">Learn from attacks across all customers</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-primary text-xl">→</span>
+                    <div>
+                      <div className="font-semibold">Privacy by Design</div>
+                      <div className="text-muted-foreground">24-hour anonymization, GDPR/CCPA compliant</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-primary text-xl">→</span>
+                    <div>
+                      <div className="font-semibold">User Control</div>
+                      <div className="text-muted-foreground">Pro tier can opt-out without losing protection</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-card rounded-lg p-6 border border-border">
+                <h4 className="font-semibold mb-3 text-center">Free vs Pro Tier</h4>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <div className="font-semibold mb-1">Free Tier:</div>
+                    <ul className="space-y-1 text-muted-foreground pl-4">
+                      <li>• Contributes attack data (required)</li>
+                      <li>• Benefits from network intelligence</li>
+                      <li>• Same validation accuracy</li>
+                      <li>• No IP blocking capability</li>
+                    </ul>
+                  </div>
+                  <div className="border-t border-border pt-3">
+                    <div className="font-semibold mb-1">Pro Tier ($5-29/mo):</div>
+                    <ul className="space-y-1 text-muted-foreground pl-4">
+                      <li>• Can opt-out of intelligence sharing</li>
+                      <li>• IP reputation auto-blocking (opt-in)</li>
+                      <li>• Multi-turn session tracking</li>
+                      <li>• Same validation accuracy</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Code Example Section - Simplified */}
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-5xl">
