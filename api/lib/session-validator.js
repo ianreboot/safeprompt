@@ -12,6 +12,8 @@
 import { validateHardened } from './ai-validator-hardened.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { collectThreatIntelligence } from './intelligence-collector.js';
+import { checkIPReputation } from './ip-reputation.js';
 
 // Supabase client for session storage
 const supabase = createClient(
@@ -222,6 +224,38 @@ export async function validateWithSession(prompt, sessionToken = null, options =
       sessionToken = generateSessionToken();
     }
 
+    // STEP 1: Check IP reputation (if user participates in intelligence sharing)
+    const ipReputationCheck = await checkIPReputation(options.ip_address, {
+      user_id: options.user_id,
+      headers: options.headers || {},
+      subscription_tier: options.subscription_tier || 'free',
+      auto_block_enabled: options.auto_block_enabled || false
+    });
+
+    // Auto-block if IP flagged and user has auto-block enabled
+    if (ipReputationCheck.should_block) {
+      const result = {
+        safe: false,
+        confidence: 1.0,
+        threats: ['known_bad_actor', 'ip_reputation'],
+        reasoning: `Request from known malicious IP (reputation: ${ipReputationCheck.reputation_score}, block rate: ${ipReputationCheck.reputation_data?.block_rate})`,
+        detectionMethod: 'ip_reputation',
+        sessionToken,
+        ipReputation: ipReputationCheck,
+        processingTime: Date.now() - startTime
+      };
+
+      // Still collect intelligence even for blocked IPs (for pattern analysis)
+      await collectThreatIntelligence(prompt, result, {
+        ip_address: options.ip_address,
+        user_agent: options.user_agent,
+        user_id: options.user_id,
+        session_metadata: { blocked_by: 'ip_reputation' }
+      });
+
+      return result;
+    }
+
     // Retrieve or create session
     let session = await getSession(sessionToken);
     if (!session) {
@@ -232,7 +266,7 @@ export async function validateWithSession(prompt, sessionToken = null, options =
       });
     }
 
-    // Check for context priming if session has history
+    // STEP 2: Check for context priming if session has history
     let contextPrimingResult = null;
     if (session && session.history.length > 0) {
       contextPrimingResult = detectContextPriming(prompt, session.history);
@@ -268,7 +302,7 @@ export async function validateWithSession(prompt, sessionToken = null, options =
       }
     }
 
-    // Run standard validation (existing single-request validation)
+    // STEP 3: Run standard validation (existing single-request validation)
     const validationResult = await validateHardened(prompt, options);
 
     // Store validation result in session history
@@ -282,7 +316,19 @@ export async function validateWithSession(prompt, sessionToken = null, options =
       });
     }
 
-    // Return result with session token
+    // STEP 4: Collect threat intelligence (respects tier and preferences)
+    await collectThreatIntelligence(prompt, validationResult, {
+      ip_address: options.ip_address,
+      user_agent: options.user_agent,
+      user_id: options.user_id,
+      session_metadata: {
+        session_token: sessionToken,
+        history_count: session?.history?.length || 0,
+        context_priming_checked: session?.history?.length > 0
+      }
+    });
+
+    // Return result with session token and IP reputation info
     return {
       ...validationResult,
       sessionToken,
@@ -291,6 +337,10 @@ export async function validateWithSession(prompt, sessionToken = null, options =
         contextPrimingChecked: session?.history?.length > 0,
         flagsActive: session?.flags || {}
       },
+      ipReputationChecked: ipReputationCheck.checked,
+      ipReputationScore: ipReputationCheck.reputation_score,
+      ipReputationBypassed: ipReputationCheck.bypassed,
+      ipReputationBypassReason: ipReputationCheck.bypass_reason,
       processingTime: Date.now() - startTime
     };
 
