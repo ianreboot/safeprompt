@@ -1,13 +1,13 @@
 # Phase 1A Deployment Summary
 
 **Date**: 2025-10-06
-**Status**: Testing Complete ✅ | Database Deployment Manual Required ⚠️
+**Status**: PROD Deployment Complete ✅
 
 ---
 
 ## Executive Summary
 
-Phase 1A implementation and testing are complete. Test suite achieved 100% pass rate on runnable tests (50 passing, 166 skipped due to Supabase mocking limitations). Manual database deployment required via Supabase Dashboard SQL Editor.
+Phase 1A implementation, testing, and PROD database deployment are complete. Test suite achieved 100% pass rate on runnable tests (50 passing, 166 skipped due to Supabase mocking limitations). Database migrations successfully applied to PROD using Supabase CLI.
 
 ---
 
@@ -49,36 +49,53 @@ Phase 1A implementation and testing are complete. Test suite achieved 100% pass 
 
 ## Database Deployment
 
-### Status: Manual Deployment Required ⚠️
+### Status: PROD Deployment Complete ✅
 
-**Issue**: Supabase CLI connection issues prevent automated deployment
-- Database exists and is linked: `vkyggknknyfallmnrmfu`
-- Region: East US (North Virginia)
-- CLI attempts wrong port (5432 vs 6543) and pooler format
+**Method**: Supabase CLI migration workflow
+- **PROD Project**: `adyfhzbcsqzgqvyimycv` (https://adyfhzbcsqzgqvyimycv.supabase.co)
+- **DEV Project**: `vkyggknknyfallmnrmfu` (https://vkyggknknyfallmnrmfu.supabase.co)
+- **Deployment Date**: 2025-10-06 17:13 UTC
 
-**Root Cause**: Connection string format mismatch between Supabase CLI expectations and actual pooler configuration
+### Deployment Process
 
-### Manual Deployment Steps
+**1. Linked PROD Project** via Supabase CLI:
+```bash
+cd /home/projects/safeprompt
+export SUPABASE_ACCESS_TOKEN=sbp_...
+supabase link --project-ref adyfhzbcsqzgqvyimycv --password 'PROD_DB_PASSWORD'
+```
 
-**Required Actions**:
+**2. Created Migration Files** with proper timestamps:
+- `20251006000000_profiles_schema_update.sql` - Added tier & preferences columns
+- `20251006010000_session_storage.sql` - validation_sessions table
+- `20251006020000_threat_intelligence.sql` - Intelligence tables
 
-1. **Go to Supabase Dashboard**:
-   - URL: https://supabase.com/dashboard/project/vkyggknknyfallmnrmfu
-   - Navigate to: SQL Editor
+**3. Repaired Migration History** (previous failed attempt):
+```bash
+supabase migration repair 20251006 --status reverted
+```
 
-2. **Apply Base Schema** (if not already present):
-   - Run: `/home/projects/safeprompt/database/setup.sql`
-   - This creates `profiles` table and base infrastructure
+**4. Applied Migrations** to PROD:
+```bash
+supabase db push
+# Result: All 3 migrations applied successfully
+```
 
-3. **Apply Phase 1A Migrations**:
-   - Run: `/home/projects/safeprompt/supabase/migrations/20251006_session_storage.sql`
-   - Run: `/home/projects/safeprompt/supabase/migrations/20251006_threat_intelligence.sql`
+**5. Verified Deployment**:
+```bash
+supabase migration list
+# Confirmed: Local and remote migrations in sync
+```
 
-4. **Verify Tables Created**:
-   ```sql
-   SELECT tablename FROM pg_tables WHERE schemaname = 'public'
-   AND tablename IN ('validation_sessions', 'threat_intelligence_samples', 'ip_reputation', 'ip_allowlist');
-   ```
+### Migration Resolution Pattern
+
+**Issue Encountered**: Previous migration attempt created duplicate key in migration history
+**Solution**: Used `supabase migration repair` to revert failed migration, then re-applied
+
+**Key Learning**:
+- ✅ Supabase CLI is the CORRECT method for database migrations
+- ❌ psql direct connections are unreliable (pooler failures, password escaping issues)
+- ✅ Migration files provide version control and rollback capability
 
 ### Migration Files Summary
 
