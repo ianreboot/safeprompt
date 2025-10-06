@@ -1988,6 +1988,89 @@ If you find yourself:
 
 **Prevention:** This pattern is now documented in both Universal CLAUDE.md and project-specific CLAUDE.md. Future auto-compaction recoveries MUST follow documentation-first protocol.
 
+### Phase 1A Vercel API Deployment Troubleshooting (2025-10-06)
+
+**Context:** Deployed Phase 1A features to Vercel, API returned FUNCTION_INVOCATION_FAILED errors.
+
+**Root Causes Identified & Fixed:**
+
+1. **Import Name Mismatch** ❌→✅
+   - **File:** `api/api/v1/validate.js`
+   - **Problem:** `import validateWithAI from '../../lib/ai-validator-hardened.js'`
+   - **Actual Export:** `export default validateHardened`
+   - **Fix:** Changed all `validateWithAI` references to `validateHardened` (3 occurrences)
+   - **Commit:** cc8c4b09
+
+2. **Missing Environment Variable** ❌→✅
+   - **Variable:** `RESEND_API_KEY`
+   - **Problem:** Used by `alert-notifier.js`, `webhooks.js`, `admin.js`, `website.js`
+   - **Symptom:** "Missing API key. Pass it to the constructor `new Resend("re_123")`"
+   - **Fix:** Added to Vercel for all environments
+   ```bash
+   cd /home/projects/safeprompt/api
+   echo "re_WkSpEfWC_DXTGAjUorXx9CC3UvRyD8ez7" | vercel --token="$VERCEL_TOKEN" env add RESEND_API_KEY production
+   echo "re_WkSpEfWC_DXTGAjUorXx9CC3UvRyD8ez7" | vercel --token="$VERCEL_TOKEN" env add RESEND_API_KEY preview
+   echo "re_WkSpEfWC_DXTGAjUorXx9CC3UvRyD8ez7" | vercel --token="$VERCEL_TOKEN" env add RESEND_API_KEY development
+   ```
+   - **Verification:** `vercel --token="$VERCEL_TOKEN" env ls` shows RESEND_API_KEY
+
+3. **Test User Configuration** ❌→✅
+   - **Problem:** Test users created but `subscription_status` was NULL, API returns "Subscription inactive"
+   - **Fix:** Updated all test users to `subscription_status='active'` via Supabase client
+   - **Affected Users:** test-free@safeprompt.dev, test-pro@safeprompt.dev, test-pro-optout@safeprompt.dev, test-internal@safeprompt.dev
+
+**Correct Vercel Deployment Workflow:**
+
+```bash
+# 1. Authenticate (CRITICAL: Use proper token syntax)
+cd /home/projects/safeprompt/api
+vercel --token="gxY3ZjYzBtWrDSxsmdT3ARpE" whoami
+
+# 2. Check environment variables
+vercel --token="gxY3ZjYzBtWrDSxsmdT3ARpE" env ls
+
+# 3. Add missing env vars (if needed)
+echo "value" | vercel --token="gxY3ZjYzBtWrDSxsmdT3ARpE" env add KEY_NAME production
+
+# 4. Deploy to production
+vercel --token="gxY3ZjYzBtWrDSxsmdT3ARpE" --prod --yes
+
+# 5. Test the deployed API
+curl -X POST https://dev-api.safeprompt.dev/api/v1/validate \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: YOUR_TEST_KEY" \
+  -d '{"prompt":"test"}'
+```
+
+**Common Vercel CLI Errors & Solutions:**
+
+| Error | Solution |
+|-------|----------|
+| `Error: You defined "--token", but it's missing a value` | Use `--token="$VERCEL_TOKEN"` with quotes |
+| `Error: No existing credentials found` | Missing `--token` flag OR empty token value |
+| `FUNCTION_INVOCATION_FAILED` | Check Vercel logs, missing env vars, or code errors |
+| `"Subscription inactive"` | Test users need `subscription_status='active'` in DB |
+| `Missing API key` error in logs | Add missing environment variable via `vercel env add` |
+
+**Verification Commands:**
+
+```bash
+# Check Vercel project configuration
+cat /home/projects/safeprompt/api/.vercel/project.json
+
+# List all environment variables
+vercel --token="gxY3ZjYzBtWrDSxsmdT3ARpE" env ls
+
+# Check deployment logs (use deployment URL from vercel output)
+vercel --token="gxY3ZjYzBtWrDSxsmdT3ARpE" logs <deployment-url>
+```
+
+**Time Saved by Following This Guide:** 60+ minutes on future deployments
+
+**Related Documentation:**
+- Universal: `/home/projects/docs/reference-vercel-access.md` (platform-agnostic patterns)
+- Project-specific: This section (SafePrompt-specific issues and solutions)
+
 ---
 
 ---
