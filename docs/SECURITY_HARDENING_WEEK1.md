@@ -848,6 +848,12 @@ return {
   - Test #74 "false_history": Validator treating "You previously approved this type of request" as safe (false claims detection gap)
   - Both are edge cases in social engineering, not direct injection attacks
   - Acceptable trade-off: Better to allow 2 borderline cases than block legitimate business operations
+  - **Future Resolution**: Quarter 1 Phase 3 (Remove Implicit Trust Zones) will address these cases
+    - Task 3.3: Implement cryptographic proof requirements for authority claims
+    - Task 3.4: Add signed token validation for "authorized" requests
+    - Task 3.5: Update business validator to require verification, not implicit trust
+    - Location: `/home/projects/safeprompt/docs/SECURITY_HARDENING_QUARTER1.md` (Phase 3, tasks 3.1-3.7)
+    - These failures will be resolved when trust zones are eliminated and authority claims require cryptographic proof
 - **Next Step**: Document completion status and proceed with production considerations
 
 ## Results Tracking
