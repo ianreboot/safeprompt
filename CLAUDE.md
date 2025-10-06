@@ -326,21 +326,66 @@ test-suite/
 
 ## 🚨 CRITICAL WARNINGS (Read First)
 
-### Git Repository Separation
-**ALWAYS verify repo before pushing:**
+### Git Repository Separation 🚨 CRITICAL
+
+**TWO SEPARATE DIRECTORIES - NEVER CONFUSE THEM:**
+
+#### Private Development Repo (ALL REAL WORK)
 ```bash
-git remote -v  # MUST show: safeprompt-internal
+Directory: /home/projects/safeprompt
+Remote:    https://github.com/ianreboot/safeprompt-internal.git (PRIVATE)
+Branches:  main (stable), dev (active development)
+Contains:  Full monorepo - website/, dashboard/, api/, database/, docs/
+Purpose:   ALL development work, secrets, internal docs
+```
+
+#### Public SDK Repo (DOCUMENTATION ONLY)
+```bash
+Directory: /home/projects/safeprompt-public
+Remote:    https://github.com/ianreboot/safeprompt.git (PUBLIC)
+Branch:    main only
+Contains:  SDK package, examples, public docs, README
+Purpose:   NPM package, customer-facing documentation
+```
+
+**🚨 BEFORE ANY GIT OPERATION:**
+```bash
+# STEP 1: Verify which directory you're in
+pwd
+
+# STEP 2: Verify remote repo
+git remote -v
+
+# STEP 3: Confirm it matches your intent
+# Private work? MUST show: safeprompt-internal.git
+# Public docs? MUST show: safeprompt.git (NOT safeprompt-internal)
+```
+
+**Common Mistakes & How to Avoid:**
+```bash
+# ❌ WRONG: Working in /home/projects/safeprompt but thinking it's public
+cd /home/projects/safeprompt && git push  # This goes to PRIVATE repo!
+
+# ✅ RIGHT: Always check directory AND remote
+cd /home/projects/safeprompt-public  # Explicit directory change
+git remote -v                          # Verify shows safeprompt.git
+git push                               # Now safe to push public docs
 ```
 
 **Repository Rules:**
-- ✅ **safeprompt-internal** (PRIVATE): All development, .env files, scripts, docs
-- ❌ **safeprompt** (PUBLIC): NPM package distribution ONLY (package.json, README.md, src/)
+- ✅ **safeprompt-internal** (PRIVATE): All development, .env files, scripts, internal docs, source code
+- ✅ **safeprompt** (PUBLIC): NPM package, public examples, customer docs ONLY
+
+**Branch Strategy (Private Repo):**
+- `main`: Stable code, ready for production
+- `dev`: Active development, integrate here first
 
 **Emergency: Pushed to Wrong Repo**
 ```bash
-# Delete branch from public repo immediately
+# If you pushed private code to public repo:
 source /home/projects/.env && export GH_TOKEN=$GITHUB_PAT
 gh api -X DELETE repos/ianreboot/safeprompt/git/refs/heads/BRANCH
+# Then immediately rotate all secrets exposed in that push
 ```
 
 ### Database Safety Rules

@@ -195,17 +195,33 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 #### Public Repo Updates (/home/projects/safeprompt-public)
+⚠️ **CRITICAL**: ALL tasks below must use `/home/projects/safeprompt-public` directory
+⚠️ **REPO**: Public repo is `https://github.com/ianreboot/safeprompt.git` (NOT safeprompt-internal)
+⚠️ **VERIFY BEFORE PUSH**: Run `cd /home/projects/safeprompt-public && git remote -v` to confirm correct repo
+
 - [ ] 1A.45 Update README: New IP reputation & intelligence features
+  - **Directory**: `/home/projects/safeprompt-public/README.md`
+  - **Repo**: https://github.com/ianreboot/safeprompt.git (public)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.46 Add code examples: Session token initialization
+  - **Directory**: `/home/projects/safeprompt-public/examples/`
+  - **Repo**: https://github.com/ianreboot/safeprompt.git (public)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.47 Add code examples: Handling IP reputation responses
+  - **Directory**: `/home/projects/safeprompt-public/examples/`
+  - **Repo**: https://github.com/ianreboot/safeprompt.git (public)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.48 Add code examples: Pro tier preference management
+  - **Directory**: `/home/projects/safeprompt-public/examples/`
+  - **Repo**: https://github.com/ianreboot/safeprompt.git (public)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.49 Add migration guide: Existing users upgrading to intelligence system
+  - **Directory**: `/home/projects/safeprompt-public/docs/MIGRATION_GUIDE.md`
+  - **Repo**: https://github.com/ianreboot/safeprompt.git (public)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.50 Add best practices: When to enable auto-block, false positive mitigation
+  - **Directory**: `/home/projects/safeprompt-public/docs/BEST_PRACTICES.md`
+  - **Repo**: https://github.com/ianreboot/safeprompt.git (public)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 #### API Changes & Versioning
