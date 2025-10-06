@@ -80,7 +80,7 @@ Read /home/projects/safeprompt/CLAUDE.md
 ### Phase 1: Adversarial Test Suite Expansion
 - [x] 1.1 Review current realistic test suite (94 tests) - identify gaps from RED_TEAM_ANALYSIS.md (COMPLETED: 2025-10-06 02:00)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1.2 Add hybrid attack tests (business + encoding + external ref) - 5 tests
+- [x] 1.2 Add hybrid attack tests (business + encoding + external ref) - 5 tests (COMPLETED: 2025-10-06 02:10)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1.3 Add validator disagreement tests (2-2-1 splits) - 5 tests
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
