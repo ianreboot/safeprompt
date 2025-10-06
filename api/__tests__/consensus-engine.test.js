@@ -281,6 +281,33 @@ describe('Consensus Engine', () => {
       expect(result.needsReview).toBe(false);
       expect(result.stage).toBe('consensus');
     });
+
+    it('should block business context sandwich attack (ticket + SQL + justification)', () => {
+      const orchestrator = { fast_reject: false };
+      const validators = {
+        business: {
+          is_business: true,
+          confidence: 0.90,
+          signals: ['ticket #1234', 'approved by management', 'client meeting']
+        },
+        attack: {
+          is_attack: true,
+          confidence: 0.75, // High confidence attack
+          attack_types: ['sql_injection'],
+          reasoning: 'SQL injection detected: DROP TABLE users'
+        }
+      };
+
+      const result = buildConsensus(orchestrator, validators);
+
+      // Despite strong business signals, high-confidence attack (0.75) should escalate to Pass 2
+      // Attack confidence 0.75 > 0.7 threshold → NOT in borderline range
+      expect(result.safe).toBe(null); // Null = escalate to Pass 2
+      expect(result.needsPass2).toBe(true);
+      expect(result.needsReview).toBe(false); // Not borderline (0.6-0.7)
+      expect(result.stage).toBe('consensus');
+      expect(result.confidence).toBe(0.90); // Uses MAX confidence
+    });
   });
 
   describe('Attack Detection Consensus', () => {
