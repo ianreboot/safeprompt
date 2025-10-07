@@ -1,6 +1,7 @@
 // Consolidated validation endpoint that handles all check types
 import validateHardened from '../../lib/ai-validator-hardened.js';
 import { collectThreatIntelligence } from '../../lib/intelligence-collector.js';
+import { checkIPReputation } from '../../lib/ip-reputation.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sanitizeResponseWithMode } from '../../lib/response-sanitizer.js';
@@ -83,7 +84,7 @@ export default async function handler(req, res) {
     // Try plaintext match first (standard SaaS approach)
     let { data: profile, error } = await supabase
       .from('profiles')
-      .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier')
+      .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier, preferences')
       .eq('api_key', apiKey)
       .single();
 
@@ -92,7 +93,7 @@ export default async function handler(req, res) {
       const hashedKey = hashApiKey(apiKey);
       const result = await supabase
         .from('profiles')
-        .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier')
+        .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier, preferences')
         .eq('api_key_hash', hashedKey)
         .single();
 
@@ -210,6 +211,33 @@ export default async function handler(req, res) {
       });
     }
 
+    // Check IP reputation (Pro tier only)
+    const preferences = profile.preferences || {};
+    const autoBlockEnabled = preferences.enable_ip_blocking === true;
+    const ipReputationResult = await checkIPReputation(userIP, {
+      user_id: profileId,
+      headers: req.headers,
+      subscription_tier: profile.subscription_tier,
+      auto_block_enabled: autoBlockEnabled
+    });
+
+    // Block if IP is flagged and user has auto-block enabled
+    if (ipReputationResult.should_block) {
+      return res.status(403).json({
+        error: 'ip_blocked',
+        message: 'Request blocked due to IP reputation',
+        safe: false,
+        confidence: 1.0,
+        threats: ['malicious_ip'],
+        ipReputation: {
+          checked: ipReputationResult.checked,
+          reputationScore: ipReputationResult.reputation_score,
+          blocked: true,
+          blockReason: ipReputationResult.block_reason
+        }
+      });
+    }
+
     // Validate the prompt
     const startTime = Date.now();
     const result = await validateHardened(prompt, {
@@ -299,7 +327,16 @@ export default async function handler(req, res) {
       ...sanitizedResult,
       mode,
       cached: false,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      // Add IP reputation information if checked
+      ipReputation: ipReputationResult.checked || ipReputationResult.bypassed ? {
+        checked: ipReputationResult.checked,
+        bypassed: ipReputationResult.bypassed,
+        bypassReason: ipReputationResult.bypass_reason,
+        reputationScore: ipReputationResult.reputation_score,
+        blocked: false, // Not blocked if we got here
+        reputationData: ipReputationResult.reputation_data
+      } : undefined
     };
 
     return res.status(200).json(response);
