@@ -171,7 +171,7 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [x] 1A.31 Update pricing page: Free vs Pro feature matrix (IP blocking differentiation) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.32 Update documentation: Intelligence sharing guide, opt-out instructions
+- [x] 1A.32 Update documentation: Intelligence sharing guide, opt-out instructions ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.33 Update FAQ: Data collection, anonymization, why contribute
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
