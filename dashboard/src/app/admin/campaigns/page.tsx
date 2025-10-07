@@ -342,7 +342,7 @@ export default function CampaignsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Unique IPs</label>
-                    <p className="text-2xl font-bold text-gray-900">{selected Campaign.unique_ips}</p>
+                    <p className="text-2xl font-bold text-gray-900">{selectedCampaign.unique_ips}</p>
                   </div>
                 </div>
 
