@@ -23,6 +23,11 @@ interface JobSummary {
   totalRuns: number
   avgDuration: number
   lastError: string | null
+  isOverdue: boolean
+  overdueBy: number // minutes
+  expectedFrequency: string
+  healthStatus: 'healthy' | 'warning' | 'critical'
+  healthMessage: string
 }
 
 export default function JobMonitoring() {
@@ -83,6 +88,15 @@ export default function JobMonitoring() {
         const lastRun = jobRuns[0]
         const lastError = jobRuns.find(j => j.job_status === 'error')?.error_message || null
 
+        // Calculate health status
+        const health = calculateHealthStatus(
+          jobType,
+          lastRun?.created_at || null,
+          lastRun?.job_status || 'unknown',
+          successRate,
+          last24h.length
+        )
+
         newSummaries.push({
           name: jobType,
           lastRun: lastRun?.created_at || null,
@@ -90,7 +104,12 @@ export default function JobMonitoring() {
           successRate,
           totalRuns: last24h.length,
           avgDuration,
-          lastError
+          lastError,
+          isOverdue: health.isOverdue,
+          overdueBy: health.overdueBy,
+          expectedFrequency: getJobSchedule(jobType).displayName,
+          healthStatus: health.healthStatus,
+          healthMessage: health.healthMessage
         })
       }
 
@@ -99,6 +118,113 @@ export default function JobMonitoring() {
       console.error('Error in fetchJobMetrics:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  function getJobSchedule(jobName: string): { intervalMinutes: number, displayName: string, gracePeriodMinutes: number } {
+    const schedules: Record<string, { intervalMinutes: number, displayName: string, gracePeriodMinutes: number }> = {
+      'anonymization': { intervalMinutes: 60, displayName: 'Every hour', gracePeriodMinutes: 15 },
+      'ip_reputation_update': { intervalMinutes: 60, displayName: 'Every hour', gracePeriodMinutes: 15 },
+      'session_cleanup': { intervalMinutes: 60, displayName: 'Every hour', gracePeriodMinutes: 15 }
+    }
+    return schedules[jobName] || { intervalMinutes: 60, displayName: 'Every hour', gracePeriodMinutes: 15 }
+  }
+
+  function calculateHealthStatus(
+    jobName: string,
+    lastRun: string | null,
+    lastStatus: string,
+    successRate: number,
+    totalRuns: number
+  ): { healthStatus: 'healthy' | 'warning' | 'critical', healthMessage: string, isOverdue: boolean, overdueBy: number } {
+    const schedule = getJobSchedule(jobName)
+
+    if (!lastRun) {
+      return {
+        healthStatus: 'critical',
+        healthMessage: 'Job has never run - verify cron configuration',
+        isOverdue: true,
+        overdueBy: 999999
+      }
+    }
+
+    const now = new Date()
+    const lastRunTime = new Date(lastRun)
+    const minutesSinceLastRun = (now.getTime() - lastRunTime.getTime()) / 60000
+    const overdueBy = Math.max(0, minutesSinceLastRun - schedule.intervalMinutes - schedule.gracePeriodMinutes)
+    const isOverdue = overdueBy > 0
+
+    // CRITICAL: Job overdue AND has failures
+    if (isOverdue && successRate < 100) {
+      return {
+        healthStatus: 'critical',
+        healthMessage: `Overdue by ${Math.floor(overdueBy)}m AND has failures - immediate action required`,
+        isOverdue,
+        overdueBy
+      }
+    }
+
+    // CRITICAL: Job significantly overdue (>2x expected interval)
+    if (minutesSinceLastRun > schedule.intervalMinutes * 2) {
+      return {
+        healthStatus: 'critical',
+        healthMessage: `Last run ${Math.floor(minutesSinceLastRun / 60)}h ago (expected: ${schedule.displayName.toLowerCase()}) - cron may be broken`,
+        isOverdue: true,
+        overdueBy
+      }
+    }
+
+    // CRITICAL: Anonymization job with ANY failures
+    if (jobName === 'anonymization' && successRate < 100) {
+      return {
+        healthStatus: 'critical',
+        healthMessage: `Anonymization failures detected (${successRate.toFixed(1)}% success) - legal compliance risk`,
+        isOverdue: false,
+        overdueBy: 0
+      }
+    }
+
+    // WARNING: Job slightly overdue
+    if (isOverdue) {
+      return {
+        healthStatus: 'warning',
+        healthMessage: `Slightly overdue - last run ${Math.floor(minutesSinceLastRun)}m ago (expected: ${schedule.displayName.toLowerCase()})`,
+        isOverdue,
+        overdueBy
+      }
+    }
+
+    // WARNING: Non-critical job with failures
+    if (successRate < 100) {
+      return {
+        healthStatus: 'warning',
+        healthMessage: `Some failures in last 24h (${successRate.toFixed(1)}% success) - monitor closely`,
+        isOverdue: false,
+        overdueBy: 0
+      }
+    }
+
+    // WARNING: Job hasn't run enough times (less than expected)
+    const expectedRuns = Math.floor(24 * 60 / schedule.intervalMinutes) // Expected runs in 24h
+    if (totalRuns < expectedRuns * 0.8) { // Less than 80% of expected runs
+      return {
+        healthStatus: 'warning',
+        healthMessage: `Only ${totalRuns}/${expectedRuns} expected runs in 24h - may be intermittent`,
+        isOverdue: false,
+        overdueBy: 0
+      }
+    }
+
+    // HEALTHY: All good
+    const timeAgo = minutesSinceLastRun < 60
+      ? `${Math.floor(minutesSinceLastRun)}m ago`
+      : `${Math.floor(minutesSinceLastRun / 60)}h ago`
+
+    return {
+      healthStatus: 'healthy',
+      healthMessage: `✓ Healthy - last run ${timeAgo} (schedule: ${schedule.displayName.toLowerCase()})`,
+      isOverdue: false,
+      overdueBy: 0
     }
   }
 
@@ -184,9 +310,9 @@ export default function JobMonitoring() {
           <div
             key={summary.name}
             className={`bg-black/50 rounded-lg border p-4 ${
-              summary.lastStatus === 'error' ? 'border-red-500/50' :
-              summary.successRate < 100 ? 'border-yellow-500/50' :
-              'border-gray-800'
+              summary.healthStatus === 'critical' ? 'border-red-500 bg-red-500/5' :
+              summary.healthStatus === 'warning' ? 'border-yellow-500 bg-yellow-500/5' :
+              'border-green-500/30 bg-green-500/5'
             }`}
           >
             <div className="flex items-start justify-between mb-3">
@@ -194,19 +320,33 @@ export default function JobMonitoring() {
                 <h3 className="font-semibold text-sm">{getJobDisplayName(summary.name)}</h3>
                 <p className="text-xs text-gray-500 mt-1">{getJobDescription(summary.name)}</p>
               </div>
-              {summary.lastStatus === 'success' ? (
+              {summary.healthStatus === 'healthy' ? (
                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-              ) : summary.lastStatus === 'error' ? (
-                <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+              ) : summary.healthStatus === 'critical' ? (
+                <XCircle className="w-5 h-5 text-red-500 flex-shrink-0 animate-pulse" />
               ) : (
                 <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0" />
               )}
             </div>
 
+            {/* ACTIONABLE HEALTH STATUS */}
+            <div className={`mb-3 p-2 rounded text-xs font-medium ${
+              summary.healthStatus === 'critical' ? 'bg-red-500/20 text-red-300 border border-red-500/50' :
+              summary.healthStatus === 'warning' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/50' :
+              'bg-green-500/20 text-green-300 border border-green-500/50'
+            }`}>
+              {summary.healthMessage}
+            </div>
+
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
+                <span className="text-gray-400">Expected Schedule:</span>
+                <span className="font-medium">{summary.expectedFrequency}</span>
+              </div>
+
+              <div className="flex justify-between">
                 <span className="text-gray-400">Last Run:</span>
-                <span className={summary.lastStatus === 'error' ? 'text-red-400' : ''}>
+                <span className={summary.isOverdue ? 'text-red-400 font-medium' : 'text-gray-300'}>
                   {summary.lastRun ? getTimeSince(summary.lastRun) : 'Never'}
                 </span>
               </div>
@@ -216,7 +356,7 @@ export default function JobMonitoring() {
                 <span className={
                   summary.successRate === 100 ? 'text-green-400' :
                   summary.successRate >= 90 ? 'text-yellow-400' :
-                  'text-red-400'
+                  'text-red-400 font-medium'
                 }>
                   {summary.successRate.toFixed(1)}%
                 </span>
@@ -224,7 +364,7 @@ export default function JobMonitoring() {
 
               <div className="flex justify-between">
                 <span className="text-gray-400">Runs (24h):</span>
-                <span>{summary.totalRuns}</span>
+                <span>{summary.totalRuns} <span className="text-xs text-gray-500">/ ~24 expected</span></span>
               </div>
 
               <div className="flex justify-between">
@@ -235,7 +375,7 @@ export default function JobMonitoring() {
               {summary.lastError && (
                 <div className="mt-3 pt-3 border-t border-gray-800">
                   <p className="text-xs text-red-400 break-words">
-                    Last Error: {summary.lastError.substring(0, 100)}
+                    <strong>Last Error:</strong> {summary.lastError.substring(0, 100)}
                     {summary.lastError.length > 100 && '...'}
                   </p>
                 </div>
@@ -245,18 +385,79 @@ export default function JobMonitoring() {
         ))}
       </div>
 
-      {/* Critical Alert */}
-      {summaries.some(s => s.name === 'anonymization' && s.successRate < 100) && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
+      {/* Critical Alerts */}
+      {summaries.some(s => s.healthStatus === 'critical') && (
+        <div className="mb-6 space-y-3">
+          {summaries
+            .filter(s => s.healthStatus === 'critical')
+            .map(summary => (
+              <div key={summary.name} className="p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <XCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5 animate-pulse" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-red-400 mb-1">
+                      🚨 CRITICAL: {getJobDisplayName(summary.name)} Issue
+                    </h3>
+                    <p className="text-sm text-red-300 mb-2">
+                      {summary.healthMessage}
+                    </p>
+                    <div className="text-xs text-red-200 space-y-1">
+                      <div>• <strong>Job:</strong> {getJobDisplayName(summary.name)}</div>
+                      <div>• <strong>Schedule:</strong> {summary.expectedFrequency}</div>
+                      <div>• <strong>Last Run:</strong> {summary.lastRun ? getTimeSince(summary.lastRun) : 'Never'}</div>
+                      <div>• <strong>Success Rate:</strong> {summary.successRate.toFixed(1)}%</div>
+                      {summary.lastError && (
+                        <div>• <strong>Last Error:</strong> {summary.lastError.substring(0, 150)}</div>
+                      )}
+                    </div>
+                    {summary.name === 'anonymization' && (
+                      <p className="text-xs text-red-200 mt-2 pt-2 border-t border-red-500/30">
+                        ⚠️ <strong>Legal Compliance Risk:</strong> PII may not be properly deleted after 24 hours. Immediate investigation required.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      )}
+
+      {/* Warning Alerts */}
+      {summaries.some(s => s.healthStatus === 'warning') && !summaries.some(s => s.healthStatus === 'critical') && (
+        <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/50 rounded-lg">
           <div className="flex items-start gap-3">
-            <XCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-red-400 mb-1">
-                ⚠️ CRITICAL: Anonymization Job Failures Detected
+              <h3 className="font-semibold text-yellow-400 mb-1">
+                ⚠️ Warnings Detected
               </h3>
-              <p className="text-sm text-red-300">
-                The anonymization job has failed in the last 24 hours. This is a legal compliance issue.
-                PII may not be properly deleted after 24 hours. Check error logs immediately.
+              <ul className="text-sm text-yellow-300 space-y-1">
+                {summaries
+                  .filter(s => s.healthStatus === 'warning')
+                  .map(s => (
+                    <li key={s.name}>
+                      <strong>{getJobDisplayName(s.name)}:</strong> {s.healthMessage}
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* All Healthy Status */}
+      {summaries.every(s => s.healthStatus === 'healthy') && summaries.length > 0 && (
+        <div className="mb-6 p-4 bg-green-500/10 border border-green-500/50 rounded-lg">
+          <div className="flex items-start gap-3">
+            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-green-400 mb-1">
+                ✓ All Background Jobs Healthy
+              </h3>
+              <p className="text-sm text-green-300">
+                All background jobs are running on schedule with 100% success rate. No action required.
               </p>
             </div>
           </div>
