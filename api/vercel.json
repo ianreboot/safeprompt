@@ -8,6 +8,15 @@
     },
     "api/playground.js": {
       "maxDuration": 15
+    },
+    "api/cron/intelligence-cleanup.js": {
+      "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/intelligence-cleanup",
+      "schedule": "0 * * * *"
+    }
+  ]
 }
