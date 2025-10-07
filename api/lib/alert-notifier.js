@@ -470,3 +470,123 @@ export async function checkAnonymizationSuccessRate() {
     console.error('[JobMetrics] Error checking anonymization success rate:', error);
   }
 }
+
+/**
+ * Calculate IP blocking rate by tier (Phase 1A Task 1A.63)
+ * @returns {Object} Blocking metrics by tier
+ */
+export async function calculateIPBlockingMetrics() {
+  try {
+    // Get API logs from last 24 hours with tier information
+    const { data, error } = await supabase
+      .from('api_logs')
+      .select(`
+        safe,
+        threats,
+        profile_id,
+        profiles!inner(subscription_tier)
+      `)
+      .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+
+    if (error) {
+      console.error('[IPBlockingMetrics] Failed to get API logs:', error);
+      return null;
+    }
+
+    // Calculate metrics by tier
+    const metrics = {
+      free: { total: 0, ip_blocked: 0, block_rate: 0 },
+      pro: { total: 0, ip_blocked: 0, block_rate: 0 },
+      overall: { total: 0, ip_blocked: 0, block_rate: 0 }
+    };
+
+    data.forEach(log => {
+      const tier = log.profiles?.subscription_tier || 'free';
+      const isIPBlocked = log.threats?.includes('malicious_ip') || false;
+
+      // Update tier-specific metrics
+      if (tier === 'free' || tier === 'pro') {
+        metrics[tier].total++;
+        if (isIPBlocked) metrics[tier].ip_blocked++;
+      }
+
+      // Update overall metrics
+      metrics.overall.total++;
+      if (isIPBlocked) metrics.overall.ip_blocked++;
+    });
+
+    // Calculate block rates
+    metrics.free.block_rate = metrics.free.total > 0
+      ? (metrics.free.ip_blocked / metrics.free.total) * 100
+      : 0;
+
+    metrics.pro.block_rate = metrics.pro.total > 0
+      ? (metrics.pro.ip_blocked / metrics.pro.total) * 100
+      : 0;
+
+    metrics.overall.block_rate = metrics.overall.total > 0
+      ? (metrics.overall.ip_blocked / metrics.overall.total) * 100
+      : 0;
+
+    console.log('[IPBlockingMetrics] 24-hour metrics:', {
+      free_rate: `${metrics.free.block_rate.toFixed(2)}%`,
+      pro_rate: `${metrics.pro.block_rate.toFixed(2)}%`,
+      overall_rate: `${metrics.overall.block_rate.toFixed(2)}%`
+    });
+
+    return metrics;
+
+  } catch (error) {
+    console.error('[IPBlockingMetrics] Error calculating metrics:', error);
+    return null;
+  }
+}
+
+/**
+ * Check intelligence storage capacity and alert if >80% (Phase 1A Task 1A.65)
+ */
+export async function checkIntelligenceStorageCapacity() {
+  try {
+    // Count total intelligence samples
+    const { count: totalSamples, error: countError } = await supabase
+      .from('threat_intelligence_samples')
+      .select('*', { count: 'exact', head: true });
+
+    if (countError) {
+      console.error('[StorageCapacity] Failed to count samples:', countError);
+      return null;
+    }
+
+    // Define capacity thresholds (can be adjusted)
+    const MAX_SAMPLES = 10000000; // 10 million samples
+    const capacityPercent = (totalSamples / MAX_SAMPLES) * 100;
+
+    console.log('[StorageCapacity] Current usage:', {
+      total_samples: totalSamples,
+      max_capacity: MAX_SAMPLES,
+      capacity_percent: `${capacityPercent.toFixed(2)}%`
+    });
+
+    // Alert if capacity > 80%
+    if (capacityPercent > 80) {
+      await createAlert({
+        type: 'storage_capacity',
+        severity: capacityPercent > 90 ? 'critical' : 'warning',
+        title: `Intelligence Storage at ${capacityPercent.toFixed(1)}% Capacity`,
+        message: `Intelligence storage is approaching capacity limit. Current: ${totalSamples.toLocaleString()} samples (${capacityPercent.toFixed(1)}% of ${MAX_SAMPLES.toLocaleString()}). Consider scaling database or increasing retention policies.`,
+        metadata: {
+          total_samples: totalSamples,
+          max_capacity: MAX_SAMPLES,
+          capacity_percent: capacityPercent,
+          samples_until_full: MAX_SAMPLES - totalSamples
+        }
+      });
+    }
+
+    return { totalSamples, maxCapacity: MAX_SAMPLES, capacityPercent };
+
+  } catch (error) {
+    console.error('[StorageCapacity] Error checking capacity:', error);
+    return null;
+  }
+}
