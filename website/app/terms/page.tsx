@@ -12,15 +12,15 @@ export default function TermsPage() {
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold mb-4">Terms of Service</h1>
               <p className="text-muted-foreground">Effective Date: September 24, 2025</p>
-              <p className="text-sm text-muted-foreground mt-2">Last Updated: October 1, 2025</p>
+              <p className="text-sm text-muted-foreground mt-2">Last Updated: October 6, 2025 (Phase 1A Intelligence System)</p>
             </div>
 
             <div className="prose prose-invert max-w-none space-y-8">
               <div className="bg-warning/10 border border-warning/20 rounded-lg p-4">
                 <p className="text-sm text-foreground">
-                  <strong>TL;DR:</strong> Use our API responsibly, pay your bills on time, don't try to break our service,
-                  and understand that while we work hard to detect threats, no security is perfect. We're a startup doing
-                  our best to provide value.
+                  <strong>TL;DR:</strong> Use our API responsibly, pay your bills on time, don't try to break our service.
+                  Free tier automatically contributes blocked prompts for network intelligence (24h anonymization). Pro tier
+                  can opt-out. No security is perfect - we're a startup doing our best.
                 </p>
               </div>
 
@@ -39,10 +39,48 @@ export default function TermsPage() {
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
                   <li>Real-time prompt validation</li>
+                  <li>Network intelligence protection (threat intelligence across all customers)</li>
                   <li>API access with your unique key</li>
                   <li>Dashboard for usage tracking</li>
                   <li>Documentation and basic support</li>
                 </ul>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">2a. Threat Intelligence Collection (Phase 1A)</h2>
+
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
+                  <h3 className="font-semibold mb-2">Free Tier Requirements:</h3>
+                  <p className="text-muted-foreground text-sm mb-2">
+                    By using the Free tier, you agree that:
+                  </p>
+                  <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 ml-4">
+                    <li><strong>Automatic Collection:</strong> Blocked prompts are automatically collected for network intelligence</li>
+                    <li><strong>24-Hour Retention:</strong> Full prompt text + client IP stored for 24 hours</li>
+                    <li><strong>Automatic Anonymization:</strong> After 24 hours, prompt text & IP are automatically deleted</li>
+                    <li><strong>Permanent Hashes:</strong> Only cryptographic hashes remain (no personally identifiable information)</li>
+                    <li><strong>No Opt-Out:</strong> Intelligence collection is required for Free tier service</li>
+                    <li><strong>Network Benefit:</strong> You benefit from attacks detected across all customers</li>
+                  </ul>
+                </div>
+
+                <div className="bg-card/50 border border-border rounded-lg p-4">
+                  <h3 className="font-semibold mb-2">Pro Tier Opt-Out:</h3>
+                  <p className="text-muted-foreground text-sm mb-2">
+                    Pro tier subscribers may:
+                  </p>
+                  <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 ml-4">
+                    <li><strong>Opt-Out:</strong> Disable threat intelligence collection via dashboard settings</li>
+                    <li><strong>IP Blocking (Opt-In):</strong> Enable automatic blocking of malicious IPs</li>
+                    <li><strong>Same Accuracy:</strong> Validation accuracy is identical regardless of opt-out status</li>
+                    <li><strong>Network Protection:</strong> Still benefit from network intelligence even when opted out</li>
+                  </ul>
+                </div>
+
+                <p className="text-xs text-muted-foreground mt-4">
+                  <strong>Legal Basis:</strong> Legitimate interest (network security) for Free tier, Consent for Pro tier.
+                  See our <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> for complete details.
+                </p>
               </div>
 
               <div>
