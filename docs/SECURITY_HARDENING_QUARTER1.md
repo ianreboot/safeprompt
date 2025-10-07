@@ -293,14 +293,357 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
 - [x] 1B.4 Add context priming detection logic (ticket reference validation) ✅ (integrated in 1B.2)
 - [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
-- [ ] 1B.5 Update /api/v1/validate endpoint to support optional session_token parameter
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1B.6 Add unit tests for session validation (30+ test cases)
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1B.7 Add multi-turn attack test cases (context priming, RAG poisoning) - 10 tests
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1B.8 Deploy to DEV and test multi-turn protection
-- [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
+- [x] 1B.5 Update /api/v1/validate endpoint to support optional session_token parameter ✅
+- [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
+- [x] 1B.6 Add unit tests for session validation (54 test cases) ✅
+- [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
+- [x] 1B.7 Add multi-turn attack test cases (context priming, RAG poisoning) - 23 tests ✅
+- [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
+- [x] 1B.8 Deploy to DEV and PROD - test multi-turn protection ✅
+- [x] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above ✅
+
+**Phase 1B Status**: ✅ COMPLETE - Deployed 2025-10-07
+- Production URL: https://api.safeprompt.dev (verified working)
+- Test Coverage: 522/522 tests passing (100%)
+- New Features: Session tokens, context priming detection, multi-turn attack prevention
+
+### Phase 1C: IP Management & Dashboard Intelligence (NEW)
+
+**🎯 Purpose**: Comprehensive IP management interface with admin/user dashboard separation
+**Business Value**: Operational efficiency, false positive mitigation, customer self-service
+**Security Model**: Separation of concerns (customer data vs. system-wide security)
+
+#### 1C.1 Dashboard Architecture & UX Design
+
+**Critical UX Principle**: User Dashboard (customer-facing) vs Admin Dashboard (internal operations)
+
+##### User Dashboard (Customer Portal)
+**Audience**: Paying customers managing their own account
+**Access**: https://dashboard.safeprompt.dev (authenticated users only)
+
+**Features to Display**:
+- [ ] 1C.1.1 **API Key Management**
+  - View/create/revoke API keys
+  - Usage stats per key
+  - Rate limit status
+- [ ] 1C.1.2 **Validation History** (own account only)
+  - Recent validation requests
+  - Block/allow decisions with reasoning
+  - Filter by date range, safe/unsafe
+  - Export to CSV
+- [ ] 1C.1.3 **Usage Analytics** (own account only)
+  - Validations per day/week/month
+  - Block rate over time
+  - Cost tracking (per validation)
+  - Top blocked patterns
+- [ ] 1C.1.4 **Account Settings**
+  - Subscription tier status
+  - Billing information
+  - Team members (if business plan)
+  - Notification preferences
+- [ ] 1C.1.5 **Privacy Controls** (GDPR/CCPA)
+  - Intelligence sharing toggle (Pro only)
+  - Auto-block bad IPs toggle (Pro only, requires opt-in)
+  - Delete my data (<24h samples)
+  - Export my data (download identifiable data)
+- [ ] 1C.1.6 **Custom Rules** (Business Whitelist/Blacklist - Future)
+  - Define business-specific terms to always allow
+  - Define custom dangerous patterns to block
+  - Preview mode before applying rules
+  - Rule performance metrics
+
+**What Users SHOULD NOT See**:
+- ❌ Other customers' data
+- ❌ System-wide IP reputation database
+- ❌ Global threat intelligence
+- ❌ Admin operations (manual anonymization, system metrics)
+- ❌ Cross-customer pattern analysis
+
+##### Admin Dashboard (Internal Operations)
+**Audience**: SafePrompt team (internal only)
+**Access**: https://dashboard.safeprompt.dev/admin (requires admin role)
+
+**Features to Display**:
+- [ ] 1C.1.7 **IP Reputation Management** (System-Wide)
+  - View all blocked IPs with reputation scores
+  - IP details: first seen, last seen, threat count, reputation score
+  - Block reason breakdown (automatic vs manual)
+  - Threat pattern summary per IP
+  - Geographic distribution of threats
+  - Search by IP address or reputation score range
+- [ ] 1C.1.8 **IP Block/Unblock Operations** (Admin Actions)
+  - Manual block IP with reason
+  - Unblock IP (override automatic blocking)
+  - Bulk operations (block/unblock IP ranges)
+  - Audit trail of all admin actions (who, when, why)
+  - Expiration settings for temporary blocks
+- [ ] 1C.1.9 **IP Whitelist Management** (System-Wide)
+  - Add IPs to global whitelist (never block)
+  - Use cases: Internal IPs, CI/CD systems, trusted partners
+  - Whitelist with expiration dates
+  - Reason documentation required
+  - Audit trail of whitelist changes
+- [ ] 1C.1.10 **IP Blacklist Management** (System-Wide)
+  - Add IPs to global blacklist (always block)
+  - Use cases: Known attackers, repeat offenders, threat feeds
+  - Blacklist with severity levels (low/medium/high/critical)
+  - Source documentation (threat feed name, incident reference)
+  - Auto-expiration for temporary blacklists
+- [ ] 1C.1.11 **Threat Intelligence Dashboard** (System-Wide Analytics)
+  - Real-time threat map (geographic distribution)
+  - Top attacking IPs (by request count)
+  - Attack pattern frequency (which patterns most common)
+  - Time series graphs (attacks over time)
+  - Threat trend analysis (emerging patterns)
+- [ ] 1C.1.12 **Job Monitoring Dashboard** (Background Jobs)
+  - Anonymization job status (success rate, failures)
+  - IP reputation scoring job status
+  - Intelligence collection metrics (samples/day)
+  - Job health indicators (Critical/Warning/Healthy)
+  - Manual trigger buttons for admin operations
+- [ ] 1C.1.13 **Customer Account Management** (Admin View)
+  - View all customer accounts
+  - Subscription status
+  - Usage patterns (validations/day)
+  - Support ticket integration
+  - Ability to impersonate customer (for support debugging)
+
+**What Admins SHOULD See (that users don't)**:
+- ✅ System-wide IP reputation database
+- ✅ Global threat intelligence across all customers
+- ✅ Cross-customer pattern analysis
+- ✅ Manual override capabilities
+- ✅ Background job monitoring
+- ✅ Customer account management
+
+#### 1C.2 IP Management API Endpoints
+
+**Security Model**: All endpoints require authentication + admin role
+
+- [ ] 1C.2.1 **GET /api/admin/ip-reputation**
+  - List all IPs with reputation scores
+  - Pagination (50 per page)
+  - Filters: reputation range, blocked status, date range
+  - Sort: by reputation score, threat count, last seen
+  - Response: `{ ips: [...], total: 1234, page: 1, pages: 25 }`
+- [ ] 1C.2.2 **GET /api/admin/ip-reputation/:ip**
+  - Get detailed info for specific IP
+  - Response: reputation score, threat patterns, first/last seen, block status, block reason
+  - Include recent validation attempts (last 10)
+- [ ] 1C.2.3 **POST /api/admin/ip-reputation/:ip/block**
+  - Manually block IP
+  - Body: `{ reason: "string", expiresAt?: "ISO8601", severity: "low|medium|high|critical" }`
+  - Creates audit log entry
+  - Immediate effect (blocks future requests)
+- [ ] 1C.2.4 **POST /api/admin/ip-reputation/:ip/unblock**
+  - Unblock IP (override automatic blocking)
+  - Body: `{ reason: "string" }`
+  - Creates audit log entry
+  - Immediate effect (allows future requests)
+- [ ] 1C.2.5 **GET /api/admin/whitelist**
+  - List all whitelisted IPs
+  - Response: IP, reason, added by, added at, expires at
+- [ ] 1C.2.6 **POST /api/admin/whitelist**
+  - Add IP to global whitelist
+  - Body: `{ ip: "string", reason: "string", expiresAt?: "ISO8601" }`
+  - Requires reason documentation
+  - Creates audit log entry
+- [ ] 1C.2.7 **DELETE /api/admin/whitelist/:ip**
+  - Remove IP from whitelist
+  - Body: `{ reason: "string" }`
+  - Creates audit log entry
+- [ ] 1C.2.8 **GET /api/admin/blacklist**
+  - List all blacklisted IPs
+  - Response: IP, reason, severity, source, added by, added at
+- [ ] 1C.2.9 **POST /api/admin/blacklist**
+  - Add IP to global blacklist
+  - Body: `{ ip: "string", reason: "string", severity: "low|medium|high|critical", source?: "string" }`
+  - Creates audit log entry
+  - Immediate blocking effect
+- [ ] 1C.2.10 **DELETE /api/admin/blacklist/:ip**
+  - Remove IP from blacklist
+  - Body: `{ reason: "string" }`
+  - Creates audit log entry
+- [ ] 1C.2.11 **GET /api/admin/audit-log**
+  - List all admin actions (block/unblock/whitelist/blacklist changes)
+  - Pagination, filtering by action type, admin user, date range
+  - Response: timestamp, admin user, action, IP, reason, before/after state
+
+#### 1C.3 Database Schema Updates
+
+- [ ] 1C.3.1 **Create `ip_whitelist` table**
+  - Columns: ip (TEXT PRIMARY KEY), reason (TEXT), added_by (UUID), added_at (TIMESTAMP), expires_at (TIMESTAMP nullable)
+  - Index: expires_at for expiration cleanup job
+- [ ] 1C.3.2 **Create `ip_blacklist` table**
+  - Columns: ip (TEXT PRIMARY KEY), reason (TEXT), severity (TEXT), source (TEXT nullable), added_by (UUID), added_at (TIMESTAMP), expires_at (TIMESTAMP nullable)
+  - Index: severity for priority queries
+- [ ] 1C.3.3 **Create `ip_admin_actions` table** (Audit Trail)
+  - Columns: id (UUID PRIMARY KEY), action_type (TEXT), ip (TEXT), admin_user_id (UUID), reason (TEXT), before_state (JSONB nullable), after_state (JSONB nullable), created_at (TIMESTAMP)
+  - Index: created_at, admin_user_id for audit queries
+- [ ] 1C.3.4 **Update `ip_reputation` table**
+  - Add: manually_blocked (BOOLEAN DEFAULT false)
+  - Add: manual_block_reason (TEXT nullable)
+  - Add: manual_block_by (UUID nullable)
+  - Add: manual_block_at (TIMESTAMP nullable)
+- [ ] 1C.3.5 **Create `admin_roles` table**
+  - Columns: user_id (UUID PRIMARY KEY), is_admin (BOOLEAN), permissions (JSONB)
+  - Seed with initial admin users
+
+#### 1C.4 IP Management Business Logic
+
+- [ ] 1C.4.1 **Implement whitelist/blacklist checking in IP reputation flow**
+  - Check whitelist FIRST (always allow if whitelisted)
+  - Check blacklist SECOND (always block if blacklisted)
+  - Check automatic reputation scoring THIRD (only if not in whitelist/blacklist)
+  - Priority: Whitelist > Blacklist > Automatic
+- [ ] 1C.4.2 **Implement expiration cleanup job**
+  - Run hourly
+  - Remove expired whitelist entries
+  - Remove expired blacklist entries
+  - Log cleanup actions
+- [ ] 1C.4.3 **Implement audit logging for all admin actions**
+  - Capture before/after state for all modifications
+  - Include admin user ID, timestamp, reason
+  - Store in `ip_admin_actions` table
+- [ ] 1C.4.4 **Implement IP blocking statistics**
+  - Count blocked IPs by source (automatic vs manual vs blacklist)
+  - Track false positive rate (unblock frequency)
+  - Alert if false positive rate >10%
+- [ ] 1C.4.5 **Implement admin permission checks**
+  - Middleware to verify admin role on all admin endpoints
+  - Return 403 Forbidden if not admin
+  - Log unauthorized access attempts
+
+#### 1C.5 Admin Dashboard UI Components
+
+- [ ] 1C.5.1 **Create IP Reputation Table Component**
+  - Display: IP, reputation score, threat count, last seen, block status
+  - Actions: Block, Unblock, View Details
+  - Pagination, sorting, filtering
+  - Export to CSV functionality
+- [ ] 1C.5.2 **Create IP Details Modal Component**
+  - Show full IP history: validation attempts, threat patterns, geographic data
+  - Chart: Threat count over time
+  - Chart: Reputation score changes over time
+  - Recent validation attempts table
+- [ ] 1C.5.3 **Create Block/Unblock Modal Component**
+  - Form: Reason (required), Expiration date (optional), Severity (for blocks)
+  - Confirmation dialog
+  - Success/error notifications
+- [ ] 1C.5.4 **Create Whitelist Management Component**
+  - Table: IP, reason, added by, added at, expires at
+  - Add IP form with reason requirement
+  - Remove IP with confirmation
+  - Search and filter functionality
+- [ ] 1C.5.5 **Create Blacklist Management Component**
+  - Table: IP, reason, severity, source, added by, added at
+  - Add IP form with severity selector
+  - Remove IP with confirmation
+  - Severity color coding (red for critical, yellow for medium, etc.)
+- [ ] 1C.5.6 **Create Audit Log Component**
+  - Timeline view of all admin actions
+  - Filter by: action type, admin user, date range
+  - Expandable entries showing before/after state
+  - Export to CSV for compliance
+- [ ] 1C.5.7 **Create Threat Intelligence Dashboard Component**
+  - Geographic threat map (using IP geolocation)
+  - Top 10 attacking IPs table
+  - Attack pattern frequency chart
+  - Time series graph: Threats over time (hourly, daily, weekly)
+
+#### 1C.6 User Dashboard Privacy Controls
+
+- [ ] 1C.6.1 **Create Privacy Settings Component**
+  - Toggle: Intelligence sharing (Pro only)
+  - Toggle: Auto-block bad IPs (Pro only)
+  - Button: Delete my data (<24h samples)
+  - Button: Export my data
+  - Clear explanations of what each control does
+- [ ] 1C.6.2 **Create Validation History Component** (User View)
+  - Table: Timestamp, prompt (truncated), result (safe/unsafe), reasoning
+  - Filter: Date range, result type
+  - Export to CSV
+  - Privacy: Only show user's own validations
+- [ ] 1C.6.3 **Create Usage Analytics Component** (User View)
+  - Chart: Validations per day (last 30 days)
+  - Chart: Block rate over time
+  - Stat cards: Total validations, block rate, average cost
+  - Privacy: Only show user's own data
+
+#### 1C.7 Testing & Quality Assurance
+
+- [ ] 1C.7.1 **Unit tests for IP management API endpoints** (30+ tests)
+  - Test: Block/unblock operations
+  - Test: Whitelist/blacklist CRUD operations
+  - Test: Audit log creation
+  - Test: Permission checks (admin vs non-admin)
+  - Test: Expiration cleanup logic
+- [ ] 1C.7.2 **Unit tests for whitelist/blacklist priority logic** (15+ tests)
+  - Test: Whitelist overrides automatic blocking
+  - Test: Blacklist overrides automatic allow
+  - Test: Whitelist takes precedence over blacklist
+  - Test: Expired entries are ignored
+- [ ] 1C.7.3 **Integration tests for admin dashboard workflows** (20+ tests)
+  - Test: Admin blocks IP → IP is blocked in validation
+  - Test: Admin unblocks IP → IP is allowed in validation
+  - Test: Admin adds to whitelist → IP always allowed
+  - Test: Admin adds to blacklist → IP always blocked
+  - Test: Audit log captures all actions
+- [ ] 1C.7.4 **UI tests for dashboard components** (15+ tests)
+  - Test: IP table loads and displays data
+  - Test: Block/unblock modals function correctly
+  - Test: Whitelist/blacklist management works
+  - Test: Audit log displays correctly
+  - Test: Permission checks prevent non-admin access
+- [ ] 1C.7.5 **Security tests for admin endpoints** (10+ tests)
+  - Test: Non-admin users get 403 Forbidden
+  - Test: Missing auth token gets 401 Unauthorized
+  - Test: SQL injection attempts are blocked
+  - Test: Rate limiting on admin endpoints
+  - Test: Audit log captures unauthorized attempts
+
+#### 1C.8 Documentation & Deployment
+
+- [ ] 1C.8.1 **Update admin documentation** (Admin Operations Guide)
+  - How to use IP reputation dashboard
+  - When to manually block/unblock IPs
+  - Whitelist/blacklist best practices
+  - False positive investigation workflow
+  - Compliance: Audit log retention requirements
+- [ ] 1C.8.2 **Update user documentation** (Customer Help Center)
+  - How to view validation history
+  - Understanding block reasons
+  - Privacy controls explanation
+  - How to export data (GDPR compliance)
+  - Custom rules feature (when available)
+- [ ] 1C.8.3 **Create admin training materials**
+  - Video walkthrough of IP management dashboard
+  - Flowchart: When to whitelist vs blacklist
+  - Incident response playbook: Handling false positives
+  - Compliance checklist: GDPR/CCPA requirements
+- [ ] 1C.8.4 **Deploy Phase 1C to DEV**
+  - Database migrations
+  - API endpoints
+  - Dashboard UI components
+  - Verify admin permissions
+  - Test all workflows end-to-end
+- [ ] 1C.8.5 **Deploy Phase 1C to PROD**
+  - Staged rollout (10% → 50% → 100%)
+  - Monitor for errors and performance issues
+  - Verify audit logging working correctly
+  - Monitor false positive rate
+
+**Phase 1C Success Criteria**:
+- ✅ Admin can view all blocked IPs with justification stats
+- ✅ Admin can manually block/unblock IPs with reason tracking
+- ✅ Whitelist and blacklist fully functional with priority logic
+- ✅ Audit log captures all admin actions
+- ✅ User dashboard shows only user's own data
+- ✅ Admin dashboard shows system-wide data
+- ✅ All tests passing (90+ new tests)
+- ✅ Documentation complete
+
+**Phase 1C Estimated Timeline**: 2-3 weeks (40-60 hours)
 
 ### Phase 2: Validation Pipeline Consolidation (7 Stages → 3 Stages)
 - [ ] 2.1 Audit current validation flow (XSS → Template → External → SQL → Orchestrator → Validators → Consensus → Pass2)
