@@ -173,7 +173,7 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [x] 1A.32 Update documentation: Intelligence sharing guide, opt-out instructions ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.33 Update FAQ: Data collection, anonymization, why contribute
+- [x] 1A.33 Update FAQ: Data collection, anonymization, why contribute ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 #### Dashboard Updates (/home/projects/safeprompt/dashboard)
