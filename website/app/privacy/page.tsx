@@ -3,7 +3,7 @@ import Footer from '@/components/Footer'
 
 export default function PrivacyPage() {
   return (
-    <>
+    <div>
       <Header />
       <main className="min-h-screen bg-background text-foreground pt-20">
         <div className="container mx-auto px-4 py-20">
@@ -250,6 +250,6 @@ export default function PrivacyPage() {
       </div>
       </main>
       <Footer />
-    </>
+    </div>
   )
 }
