@@ -27,11 +27,19 @@ interface PatternCount {
   percentage: number
 }
 
+interface CountryCount {
+  country_code: string
+  country_name: string
+  count: number
+  percentage: number
+}
+
 export default function ThreatIntelligenceDashboard() {
   const [user, setUser] = useState<any>(null)
   const [samples, setSamples] = useState<ThreatSample[]>([])
   const [filteredSamples, setFilteredSamples] = useState<ThreatSample[]>([])
   const [patternCounts, setPatternCounts] = useState<PatternCount[]>([])
+  const [countryCounts, setCountryCounts] = useState<CountryCount[]>([])
   const [loading, setLoading] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -107,6 +115,23 @@ export default function ThreatIntelligenceDashboard() {
     }
   }
 
+  // Country code to name mapping
+  const countryNames: Record<string, string> = {
+    'US': 'United States', 'CN': 'China', 'RU': 'Russia', 'BR': 'Brazil',
+    'IN': 'India', 'DE': 'Germany', 'GB': 'United Kingdom', 'FR': 'France',
+    'JP': 'Japan', 'CA': 'Canada', 'AU': 'Australia', 'KR': 'South Korea',
+    'NL': 'Netherlands', 'IT': 'Italy', 'ES': 'Spain', 'SE': 'Sweden',
+    'PL': 'Poland', 'UA': 'Ukraine', 'TR': 'Turkey', 'ID': 'Indonesia',
+    'MX': 'Mexico', 'AR': 'Argentina', 'TH': 'Thailand', 'VN': 'Vietnam',
+    'PH': 'Philippines', 'MY': 'Malaysia', 'SG': 'Singapore', 'ZA': 'South Africa',
+    'EG': 'Egypt', 'SA': 'Saudi Arabia', 'AE': 'UAE', 'IL': 'Israel',
+    'NG': 'Nigeria', 'KE': 'Kenya', 'PK': 'Pakistan', 'BD': 'Bangladesh',
+    'BE': 'Belgium', 'CH': 'Switzerland', 'AT': 'Austria', 'CZ': 'Czech Republic',
+    'RO': 'Romania', 'HU': 'Hungary', 'GR': 'Greece', 'PT': 'Portugal',
+    'DK': 'Denmark', 'FI': 'Finland', 'NO': 'Norway', 'IE': 'Ireland',
+    'NZ': 'New Zealand', 'CL': 'Chile', 'CO': 'Colombia', 'PE': 'Peru'
+  }
+
   async function loadThreatSamples() {
     try {
       // Load last 24 hours of blocked samples (before anonymization)
@@ -124,6 +149,7 @@ export default function ThreatIntelligenceDashboard() {
 
       // Calculate pattern frequency
       const patternMap = new Map<string, number>()
+      const countryMap = new Map<string, number>()
       let totalBlocks = 0
       let novelAttacks = 0
 
@@ -138,11 +164,17 @@ export default function ThreatIntelligenceDashboard() {
           // Novel attack: AI validation triggered but no pattern match
           novelAttacks++
         }
+
+        // Count by country
+        const countryCode = (sample as any).ip_country
+        if (countryCode) {
+          countryMap.set(countryCode, (countryMap.get(countryCode) || 0) + 1)
+        }
       })
 
       setNovelCount(novelAttacks)
 
-      // Convert to sorted array
+      // Convert pattern counts to sorted array
       const counts: PatternCount[] = Array.from(patternMap.entries())
         .map(([pattern, count]) => ({
           pattern,
@@ -153,6 +185,19 @@ export default function ThreatIntelligenceDashboard() {
         .slice(0, 10)
 
       setPatternCounts(counts)
+
+      // Convert country counts to sorted array
+      const countries: CountryCount[] = Array.from(countryMap.entries())
+        .map(([country_code, count]) => ({
+          country_code,
+          country_name: countryNames[country_code] || country_code,
+          count,
+          percentage: totalBlocks > 0 ? (count / totalBlocks) * 100 : 0
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10)
+
+      setCountryCounts(countries)
 
     } catch (error) {
       console.error('Failed to load threat samples:', error)
@@ -465,19 +510,51 @@ export default function ThreatIntelligenceDashboard() {
           </div>
         </div>
 
-        {/* Geographic Placeholder */}
+        {/* Geographic Threat Distribution */}
         <div className="bg-white rounded-lg shadow p-6 mt-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <Globe className="h-5 w-5 text-blue-600" />
-            Geographic Threat Distribution
+            Top 10 Attacking Countries (Last 24h)
           </h2>
-          <div className="bg-gray-50 rounded-lg p-8 text-center">
-            <Globe className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Geographic visualization coming in Phase 6.1.4</p>
-            <p className="text-sm text-gray-500 mt-2">
-              Will display world map with attack count by country using IP geolocation
-            </p>
+          <div className="space-y-3">
+            {countryCounts.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg p-8 text-center">
+                <Globe className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">No geographic data available</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Country codes are extracted from IP geolocation
+                </p>
+              </div>
+            ) : (
+              countryCounts.map((item, idx) => (
+                <div key={item.country_code} className="flex items-center gap-3">
+                  <div className="w-8 text-right text-sm font-medium text-gray-600">#{idx + 1}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <span className="font-mono text-xs bg-gray-100 px-2 py-0.5 rounded">{item.country_code}</span>
+                        {item.country_name}
+                      </span>
+                      <span className="text-sm text-gray-600">{item.count} attacks ({item.percentage.toFixed(1)}%)</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(item.percentage, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
+          {countryCounts.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500 text-center">
+                Geographic data based on IP geolocation • {new Set(samples.map((s: any) => s.ip_country).filter(Boolean)).size} unique countries detected
+              </p>
+            </div>
+          )}
         </div>
       </main>
 
