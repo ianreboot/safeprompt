@@ -68,6 +68,21 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
         icon: 'check'
       },
       {
+        text: 'Network intelligence protection',
+        included: true,
+        icon: 'check'
+      },
+      {
+        text: 'Automatic IP blocking (malicious sources)',
+        included: true,
+        icon: 'check'
+      },
+      {
+        text: 'Intelligence sharing opt-out available',
+        included: true,
+        icon: 'check'
+      },
+      {
         text: 'High availability infrastructure',
         included: true,
         icon: 'check'
@@ -97,6 +112,26 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
         text: 'Access when capacity allows',
         included: true,
         icon: 'clock'
+      },
+      {
+        text: 'Network intelligence protection',
+        included: true,
+        icon: 'check'
+      },
+      {
+        text: 'Contributes to threat intelligence (required)',
+        included: true,
+        icon: 'check'
+      },
+      {
+        text: 'Automatic IP blocking',
+        included: false,
+        icon: 'x'
+      },
+      {
+        text: 'Intelligence sharing opt-out',
+        included: false,
+        icon: 'x'
       },
       {
         text: 'Community support only',
