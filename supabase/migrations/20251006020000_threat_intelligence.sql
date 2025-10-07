@@ -210,6 +210,30 @@ CREATE TABLE IF NOT EXISTS ip_reputation (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
+-- Add missing columns if table already exists (for gradual schema evolution)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_reputation' AND column_name = 'country_code') THEN
+    ALTER TABLE ip_reputation ADD COLUMN country_code CHAR(2);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_reputation' AND column_name = 'is_proxy') THEN
+    ALTER TABLE ip_reputation ADD COLUMN is_proxy BOOLEAN DEFAULT FALSE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_reputation' AND column_name = 'is_vpn') THEN
+    ALTER TABLE ip_reputation ADD COLUMN is_vpn BOOLEAN DEFAULT FALSE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_reputation' AND column_name = 'is_hosting') THEN
+    ALTER TABLE ip_reputation ADD COLUMN is_hosting BOOLEAN DEFAULT FALSE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_reputation' AND column_name = 'isp') THEN
+    ALTER TABLE ip_reputation ADD COLUMN isp TEXT;
+  END IF;
+END $$;
+
 -- Indexes for IP reputation lookups
 CREATE INDEX IF NOT EXISTS idx_ip_reputation_score
   ON ip_reputation(reputation_score DESC);
@@ -257,6 +281,30 @@ CREATE TABLE IF NOT EXISTS ip_allowlist (
   use_count INTEGER DEFAULT 0 CHECK (use_count >= 0)
 );
 
+-- Add missing columns if table already exists (for gradual schema evolution)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_allowlist' AND column_name = 'active') THEN
+    ALTER TABLE ip_allowlist ADD COLUMN active BOOLEAN DEFAULT TRUE NOT NULL;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_allowlist' AND column_name = 'expires_at') THEN
+    ALTER TABLE ip_allowlist ADD COLUMN expires_at TIMESTAMP WITH TIME ZONE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_allowlist' AND column_name = 'created_by') THEN
+    ALTER TABLE ip_allowlist ADD COLUMN created_by UUID REFERENCES profiles(id) ON DELETE SET NULL;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_allowlist' AND column_name = 'last_used') THEN
+    ALTER TABLE ip_allowlist ADD COLUMN last_used TIMESTAMP WITH TIME ZONE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'ip_allowlist' AND column_name = 'use_count') THEN
+    ALTER TABLE ip_allowlist ADD COLUMN use_count INTEGER DEFAULT 0 CHECK (use_count >= 0);
+  END IF;
+END $$;
+
 -- Indexes for fast allowlist lookup
 CREATE INDEX IF NOT EXISTS idx_ip_allowlist_hash
   ON ip_allowlist(ip_hash)
@@ -278,6 +326,7 @@ COMMENT ON COLUMN ip_allowlist.purpose IS 'Why this IP is allowlisted';
 -- ====================
 -- Deletes PII after 24 hours (GDPR/CCPA compliance)
 
+DROP FUNCTION IF EXISTS anonymize_threat_samples();
 CREATE OR REPLACE FUNCTION anonymize_threat_samples()
 RETURNS INTEGER AS $$
 DECLARE
@@ -305,6 +354,7 @@ COMMENT ON FUNCTION anonymize_threat_samples IS 'Removes PII from samples older 
 -- CLEANUP FUNCTION (90-day retention)
 -- ====================
 
+DROP FUNCTION IF EXISTS cleanup_expired_threat_samples();
 CREATE OR REPLACE FUNCTION cleanup_expired_threat_samples()
 RETURNS INTEGER AS $$
 DECLARE
