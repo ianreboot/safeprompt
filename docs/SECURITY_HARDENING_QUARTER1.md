@@ -245,13 +245,13 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 #### Background Jobs & Automation
-- [ ] 1A.57 Session cleanup cron: Delete sessions older than 2 hours (runs hourly)
+- [x] 1A.57 Session cleanup cron: Delete sessions older than 2 hours (runs hourly) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.58 Sample anonymization cron: Remove PII after 24 hours (runs hourly)
+- [x] 1A.58 Sample anonymization cron: Remove PII after 24 hours (runs hourly) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.59 IP reputation update cron: Recalculate scores from samples (runs hourly)
+- [x] 1A.59 IP reputation update cron: Recalculate scores from samples (runs hourly) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.60 Intelligence analysis job: AI pattern extraction (manual trigger initially)
+- [x] 1A.60 Intelligence analysis job: AI pattern extraction (manual trigger initially) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 #### Monitoring, Logging & Alerts
