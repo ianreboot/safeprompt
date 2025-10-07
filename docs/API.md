@@ -688,6 +688,82 @@ cache.set(cacheKey, result);
 setTimeout(() => cache.delete(cacheKey), 3600000); // 1 hour TTL
 ```
 
+## API Versioning & Backward Compatibility
+
+### Current Version: v1
+
+The SafePrompt API follows semantic versioning with a strong commitment to backward compatibility.
+
+### Versioning Strategy
+
+**Stable v1 API (`/api/v1/*`)**
+- All current endpoints are under `/api/v1/` namespace
+- **Backward compatibility guarantee**: We will never break existing integrations
+- **Additive changes only**: New fields, new endpoints, new optional parameters
+- **Existing field behavior preserved**: Response structure and data types remain consistent
+
+**Future Versions**
+- Breaking changes will be introduced via new version endpoints (e.g., `/api/v2/validate`)
+- Both versions will run in parallel during transition period
+- Minimum 6-month deprecation notice for any version sunset
+
+### Phase 1A Backward Compatibility
+
+The Phase 1A intelligence features maintain full backward compatibility:
+
+**Added Fields (Optional):**
+- `ipReputation` object in validation responses (only present if reputation checked)
+- Response structure unchanged - all existing fields remain in same format
+
+**New Required Header:**
+- `X-User-IP`: Required for threat intelligence (returns 400 if missing)
+- **Migration**: Existing clients must add this header to API calls
+
+**New Error Types:**
+- `ip_blocked`: 403 response when IP is auto-blocked (Pro tier only)
+- `reputation_check_failed`: Rare case when reputation check fails
+
+**Client Compatibility:**
+```javascript
+// Old client code (still works)
+const result = await validate(prompt);
+if (!result.safe) {
+  block();
+}
+
+// New client code (can use IP reputation)
+const result = await validate(prompt, clientIP);
+if (!result.safe) {
+  block();
+}
+if (result.ipReputation?.reputationScore < 0.3) {
+  logWarning('Low reputation IP');
+}
+```
+
+### Deprecation Policy
+
+1. **Announcement**: 6 months advance notice via email + changelog
+2. **Warning Period**: API returns `X-Deprecated: true` header
+3. **Sunset**: Deprecated endpoint returns 410 Gone
+4. **Migration Support**: Free migration assistance during transition
+
+### Version Detection
+
+Check current API version:
+```bash
+curl https://api.safeprompt.dev/status
+```
+
+Response includes:
+```json
+{
+  "version": "1.0.0",
+  "api_version": "v1",
+  "features": ["ip_reputation", "session_validation", "threat_intelligence"]
+}
+```
+
 ## Support
 
 - Contact: https://safeprompt.dev/contact
