@@ -1,7 +1,7 @@
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-export default function TermsPage() {
+export default function PrivacyPage() {
   return (
     <>
       <Header />
@@ -10,7 +10,7 @@ export default function TermsPage() {
         <div className="max-w-4xl mx-auto">
           <div className="bg-card rounded-xl border border-border p-8 lg:p-12">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4">Terms of Service</h1>
+              <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
               <p className="text-muted-foreground">Effective Date: September 24, 2025</p>
               <p className="text-sm text-muted-foreground mt-2">Last Updated: October 6, 2025 (Phase 1A Intelligence System)</p>
             </div>
@@ -18,226 +18,210 @@ export default function TermsPage() {
             <div className="prose prose-invert max-w-none space-y-8">
               <div className="bg-warning/10 border border-warning/20 rounded-lg p-4">
                 <p className="text-sm text-foreground">
-                  <strong>TL;DR:</strong> Use our API responsibly, pay your bills on time, don't try to break our service.
-                  Free tier automatically contributes blocked prompts for network intelligence (24h anonymization). Pro tier
-                  can opt-out. No security is perfect - we're a startup doing our best.
+                  <strong>TL;DR:</strong> We process your prompts to detect threats. Blocked prompts are stored for 24 hours then automatically anonymized.
+                  We use network intelligence to protect all customers (Pro tier can opt-out). We never sell your data.
+                  For privacy concerns, use our <a href="/contact" className="text-primary hover:underline">contact form</a>.
                 </p>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4">1. Acceptance of Terms</h2>
-                <p className="text-muted-foreground">
-                  By using SafePrompt's API service ("Service"), you agree to these terms. If you're using the Service
-                  for an organization, you're agreeing on their behalf.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">2. What We Provide</h2>
+                <h2 className="text-2xl font-semibold mb-4">1. What We Collect</h2>
                 <p className="text-muted-foreground mb-4">
-                  SafePrompt provides prompt injection detection via API. We offer:
+                  We collect only what's necessary to provide our service and protect the network:
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
-                  <li>Real-time prompt validation</li>
-                  <li>Network intelligence protection (threat intelligence across all customers)</li>
-                  <li>API access with your unique key</li>
-                  <li>Dashboard for usage tracking</li>
-                  <li>Documentation and basic support</li>
+                  <li><strong>Account Info:</strong> Email address and password (hashed)</li>
+                  <li><strong>API Usage:</strong> Request counts, response times, API keys</li>
+                  <li><strong>Payment:</strong> Billing info via Stripe (we don't store card numbers)</li>
+                  <li><strong>Prompts:</strong> Processed in memory only, not stored unless flagged as threats</li>
+                  <li><strong>Blocked Prompts (Phase 1A):</strong> Prompt text + client IP stored for 24 hours, then automatically anonymized</li>
+                  <li><strong>Client IP Addresses:</strong> Required for network defense, stored for 24 hours then deleted (hashes kept permanently)</li>
+                  <li><strong>Session Data:</strong> Multi-turn validation history, stored for 2 hours then automatically deleted</li>
+                  <li><strong>Attack Patterns:</strong> Cryptographic hashes stored permanently (no personally identifiable information)</li>
                 </ul>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4">2a. Threat Intelligence Collection (Phase 1A)</h2>
+                <h2 className="text-2xl font-semibold mb-4">2. How We Use Your Data</h2>
+                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+                  <li>Process your API requests</li>
+                  <li>Bill you for the service</li>
+                  <li>Send important account notifications</li>
+                  <li>Improve our threat detection</li>
+                  <li>Comply with legal requirements</li>
+                </ul>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">3. Data Security</h2>
+                <p className="text-muted-foreground mb-4">
+                  We use industry-standard security measures:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+                  <li>TLS encryption for all API traffic</li>
+                  <li>Encrypted database storage</li>
+                  <li>Regular security updates</li>
+                  <li>Limited access controls</li>
+                </ul>
+                <p className="text-muted-foreground mt-4">
+                  <strong>Note:</strong> As a startup, we use trusted third-party services (Supabase, Cloudflare, Stripe)
+                  that have their own security certifications.
+                </p>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">4. Your Prompts & Threat Intelligence (Phase 1A)</h2>
+                <p className="text-muted-foreground mb-4">
+                  <strong>Important:</strong> Here's what happens to prompts you send us:
+                </p>
 
                 <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
-                  <h3 className="font-semibold mb-2">Free Tier Requirements:</h3>
-                  <p className="text-muted-foreground text-sm mb-2">
-                    By using the Free tier, you agree that:
-                  </p>
-                  <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 ml-4">
-                    <li><strong>Automatic Collection:</strong> Blocked prompts are automatically collected for network intelligence</li>
-                    <li><strong>24-Hour Retention:</strong> Full prompt text + client IP stored for 24 hours</li>
-                    <li><strong>Automatic Anonymization:</strong> After 24 hours, prompt text & IP are automatically deleted</li>
-                    <li><strong>Permanent Hashes:</strong> Only cryptographic hashes remain (no personally identifiable information)</li>
-                    <li><strong>No Opt-Out:</strong> Intelligence collection is required for Free tier service</li>
-                    <li><strong>Network Benefit:</strong> You benefit from attacks detected across all customers</li>
+                  <h3 className="font-semibold mb-2">Safe Prompts:</h3>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+                    <li>Analyzed in real-time for threats</li>
+                    <li>Not stored (processed in memory only)</li>
+                    <li>Never used to train models</li>
                   </ul>
                 </div>
 
-                <div className="bg-card/50 border border-border rounded-lg p-4">
-                  <h3 className="font-semibold mb-2">Pro Tier Opt-Out:</h3>
-                  <p className="text-muted-foreground text-sm mb-2">
-                    Pro tier subscribers may:
-                  </p>
-                  <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 ml-4">
-                    <li><strong>Opt-Out:</strong> Disable threat intelligence collection via dashboard settings</li>
-                    <li><strong>IP Blocking (Opt-In):</strong> Enable automatic blocking of malicious IPs</li>
-                    <li><strong>Same Accuracy:</strong> Validation accuracy is identical regardless of opt-out status</li>
-                    <li><strong>Network Protection:</strong> Still benefit from network intelligence even when opted out</li>
+                <div className="bg-danger/5 border border-danger/20 rounded-lg p-4">
+                  <h3 className="font-semibold mb-2">Blocked Prompts (Threat Intelligence Collection):</h3>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+                    <li><strong>First 24 hours:</strong> Full prompt text + client IP stored for analysis</li>
+                    <li><strong>After 24 hours:</strong> Automatic anonymization - prompt text & IP deleted</li>
+                    <li><strong>Permanent storage:</strong> Only cryptographic hashes (cannot identify users)</li>
+                    <li><strong>Purpose:</strong> Network defense intelligence to protect all customers</li>
+                    <li><strong>Free Tier:</strong> Contributes attack data automatically (required for service)</li>
+                    <li><strong>Pro Tier:</strong> Can opt-out via dashboard preferences</li>
                   </ul>
                 </div>
 
-                <p className="text-xs text-muted-foreground mt-4">
+                <p className="text-muted-foreground mt-4 text-sm">
                   <strong>Legal Basis:</strong> Legitimate interest (network security) for Free tier, Consent for Pro tier.
-                  See our <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> for complete details.
+                  See our <a href="/docs" className="text-primary hover:underline">full documentation</a> for technical details.
                 </p>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4">3. Your Responsibilities</h2>
-                <p className="text-muted-foreground mb-4">You agree to:</p>
+                <h2 className="text-2xl font-semibold mb-4">5. Third-Party Services</h2>
+                <p className="text-muted-foreground mb-4">We use these services to operate:</p>
                 <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
-                  <li>Keep your API keys secure</li>
-                  <li>Use the Service legally and ethically</li>
-                  <li>Not attempt to reverse-engineer or resell our Service</li>
-                  <li>Not overload our systems or exceed rate limits</li>
-                  <li>Pay your subscription fees on time</li>
+                  <li><strong>Stripe:</strong> Payment processing</li>
+                  <li><strong>Supabase:</strong> Database and authentication</li>
+                  <li><strong>Cloudflare:</strong> CDN and DDoS protection</li>
+                  <li><strong>Vercel:</strong> API hosting</li>
+                  <li><strong>Resend:</strong> Transactional emails</li>
                 </ul>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4">4. Service Limitations</h2>
+                <h2 className="text-2xl font-semibold mb-4">6. Your Rights (GDPR & CCPA)</h2>
+                <p className="text-muted-foreground mb-4">You have the following rights:</p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+                  <li><strong>Right to Access:</strong> View all data we have about you via dashboard or API</li>
+                  <li><strong>Right to Deletion:</strong> Delete all identifiable data (&lt;24h old) immediately via API</li>
+                  <li><strong>Right to Export:</strong> Download all your data in JSON format</li>
+                  <li><strong>Right to Opt-Out (Pro Tier Only):</strong> Disable threat intelligence collection</li>
+                  <li><strong>Right to Rectification:</strong> Update your account information</li>
+                  <li><strong>Right to Object:</strong> Object to processing (Pro tier can opt-out)</li>
+                </ul>
+
+                <div className="bg-card/50 border border-border rounded-lg p-4 mt-4">
+                  <h3 className="font-semibold mb-2">How to Exercise Your Rights:</h3>
+                  <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                    <li>• <strong>Via Dashboard:</strong> Settings → Privacy → Delete Data / Export Data</li>
+                    <li>• <strong>Via API:</strong> <code>DELETE /api/v1/privacy/delete</code> or <code>GET /api/v1/privacy/export</code></li>
+                    <li>• <strong>Via Email:</strong> <a href="/contact" className="text-primary hover:underline">Contact form</a></li>
+                  </ul>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    <strong>Note:</strong> Anonymized data (cryptographic hashes) cannot be deleted as it contains no personally identifiable information.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">7. Data Retention (Phase 1A Updated)</h2>
+                <div className="bg-card/50 border border-border rounded-lg p-4">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-2 pr-4">Data Type</th>
+                        <th className="text-left py-2">Retention Period</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-muted-foreground">
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4"><strong>Session Data</strong></td>
+                        <td className="py-2">2 hours (auto-deleted)</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4"><strong>Prompt Text (blocked)</strong></td>
+                        <td className="py-2">24 hours (then anonymized)</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4"><strong>Client IP Addresses</strong></td>
+                        <td className="py-2">24 hours (then anonymized)</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4"><strong>API Logs</strong></td>
+                        <td className="py-2">30 days</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4"><strong>Usage Metrics</strong></td>
+                        <td className="py-2">90 days</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4"><strong>Account Data</strong></td>
+                        <td className="py-2">While active + 90 days</td>
+                      </tr>
+                      <tr className="border-b border-border/50">
+                        <td className="py-2 pr-4"><strong>Billing Records</strong></td>
+                        <td className="py-2">7 years (legal requirement)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 pr-4"><strong>Attack Pattern Hashes</strong></td>
+                        <td className="py-2">Indefinite (no PII)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-sm text-muted-foreground mt-4">
+                  <strong>Automatic Anonymization:</strong> Background jobs run hourly to delete personal data older than 24 hours.
+                  This is mandatory and cannot be disabled (GDPR/CCPA compliance).
+                </p>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">8. Compliance</h2>
                 <p className="text-muted-foreground mb-4">
-                  <strong>Important:</strong> Please understand:
+                  We aim to comply with major privacy regulations including GDPR and CCPA to the extent
+                  applicable. As a small startup, we may not have all enterprise-level compliance
+                  certifications, but we take privacy seriously and will work with you on any concerns.
                 </p>
-                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
-                  <li>No security solution is 100% perfect</li>
-                  <li>We significantly reduce, not eliminate, injection risks</li>
-                  <li>You remain responsible for your application's overall security</li>
-                  <li>We may have occasional downtime for maintenance</li>
-                  <li>As a startup, we're continuously improving the service</li>
-                </ul>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4">5. Pricing & Payment</h2>
-                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
-                  <li><strong>Free tier:</strong> 10,000 validations/month</li>
-                  <li><strong>Paid plans:</strong> Billed monthly via Stripe</li>
-                  <li><strong>Refunds:</strong> Generally no refunds for partial months</li>
-                  <li><strong>Price changes:</strong> We'll give 30 days notice</li>
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">6. Privacy & Data</h2>
+                <h2 className="text-2xl font-semibold mb-4">9. Children's Privacy</h2>
                 <p className="text-muted-foreground">
-                  We process prompts to detect threats but don't permanently store them. Your data is handled
-                  according to our <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>.
-                  We don't sell your data or use it to train models without permission.
+                  Our service is not for users under 16. If we learn we've collected data from a child,
+                  we'll delete it immediately.
                 </p>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4">7. Intellectual Property</h2>
+                <h2 className="text-2xl font-semibold mb-4">10. Changes to This Policy</h2>
                 <p className="text-muted-foreground">
-                  We own the Service and its technology. You own your content. Any feedback you provide
-                  becomes ours to use freely. Don't use our name or logo without permission.
+                  We may update this policy as we grow. We'll notify you of significant changes via email
+                  or dashboard notification.
                 </p>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4">8. Warranty Disclaimer</h2>
-                <p className="text-muted-foreground uppercase">
-                  The Service is provided "as is" without warranties of any kind. We don't guarantee it will
-                  be error-free, uninterrupted, or meet all your needs. Use at your own risk.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">9. Limitation of Liability</h2>
-                <p className="text-muted-foreground mb-4 uppercase">
-                  Our liability is limited to the amount you paid us in the past 12 months or $100,
-                  whichever is greater. We're not liable for indirect, consequential, or punitive damages.
-                </p>
-                <p className="text-muted-foreground">
-                  This means if a prompt injection gets through despite using our service, we're not liable
-                  for any resulting damages beyond the limit above.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">10. Indemnification</h2>
-                <p className="text-muted-foreground">
-                  You'll defend and indemnify us from claims arising from your use of the Service,
-                  violation of these terms, or violation of any laws or third-party rights.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">11. Dispute Resolution</h2>
-                <p className="text-muted-foreground mb-4">
-                  <strong>Let's talk first:</strong> Before any legal action, contact us through our
-                  <a href="/contact" className="text-primary hover:underline"> contact form</a> to try resolving issues informally.
-                </p>
-                <p className="text-muted-foreground">
-                  If that doesn't work, disputes will be resolved through binding arbitration in Orange County,
-                  California. No class actions allowed - disputes must be brought individually.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">12. Legal Fee Protection</h2>
-                <p className="text-muted-foreground mb-4">
-                  <strong>Frivolous Claims:</strong> If you bring a claim against us that a court or arbitrator
-                  determines to be frivolous, filed in bad faith, or brought for an improper purpose (such as to harass),
-                  you agree to reimburse us for our reasonable attorney's fees and costs.
-                </p>
-                <p className="text-muted-foreground mb-4">
-                  <strong>Prevailing Party:</strong> In any legal dispute, the prevailing party may be entitled to
-                  recover reasonable attorney's fees and costs.
-                </p>
-                <p className="text-muted-foreground">
-                  <strong>Good Faith Required:</strong> Before filing any legal action, you must attempt resolution
-                  through our contact form and allow 30 days for response. This helps avoid unnecessary legal costs
-                  for both parties.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">13. Account Termination</h2>
-                <p className="text-muted-foreground">
-                  Either party can terminate at any time. We may suspend or terminate accounts that violate
-                  these terms or pose security risks. You're responsible for charges incurred before termination.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">14. Changes to Terms</h2>
-                <p className="text-muted-foreground">
-                  We may update these terms as we grow. We'll notify you of significant changes.
-                  Continued use after changes means you accept them.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">15. General Provisions</h2>
-                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
-                  <li><strong>Governing law:</strong> California, USA</li>
-                  <li><strong>Entire agreement:</strong> These terms + Privacy Policy</li>
-                  <li><strong>Severability:</strong> Invalid provisions don't affect the rest</li>
-                  <li><strong>No waiver:</strong> Not enforcing a right doesn't waive it</li>
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">16. Beta Service Notice</h2>
-                <p className="text-muted-foreground">
-                  SafePrompt is currently in beta. This means:
-                </p>
-                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
-                  <li>Features may change or be discontinued</li>
-                  <li>There may be bugs or issues</li>
-                  <li>We especially appreciate feedback and patience</li>
-                  <li>Early bird pricing will increase after beta</li>
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-semibold mb-4">17. Contact Information</h2>
+                <h2 className="text-2xl font-semibold mb-4">11. Contact Us</h2>
                 <div className="bg-card/50 border border-border rounded-lg p-4">
                   <p className="text-muted-foreground mb-4">
-                    For all inquiries, please use our <a href="/contact" className="text-primary hover:underline">contact form</a>.
+                    For any privacy questions or to exercise your rights, please use our
+                    <a href="/contact" className="text-primary hover:underline"> contact form</a>.
                   </p>
                   <p className="text-muted-foreground">
                     <strong>Company:</strong><br />
@@ -251,10 +235,9 @@ export default function TermsPage() {
 
               <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
                 <p className="text-sm">
-                  <strong>Final Note:</strong> We're a small team building something we believe developers need.
-                  These terms protect both of us while we grow. If you have specific concerns about any terms,
-                  reach out through our <a href="/contact" className="text-primary hover:underline">contact form</a>
-                  and we'll do our best to address them.
+                  <strong>Transparency Note:</strong> We're a small startup doing our best to protect your privacy.
+                  If you have specific compliance requirements or concerns, please reach out through our
+                  <a href="/contact" className="text-primary hover:underline"> contact form</a> and we'll work with you.
                 </p>
               </div>
             </div>
