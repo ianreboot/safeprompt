@@ -233,11 +233,11 @@ Read /home/projects/safeprompt/CLAUDE.md
 #### API Changes & Versioning
 - [ ] 1A.51 Update /api/v1/validate response schema (add ipReputationChecked, ipReputationScore)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.52 Create /api/v1/account/preferences endpoint (GET/PATCH)
+- [x] 1A.52 Create /api/v1/account/preferences endpoint (GET/PATCH) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.53 Create /api/v1/privacy/delete endpoint (GDPR right to deletion)
+- [x] 1A.53 Create /api/v1/privacy/delete endpoint (GDPR right to deletion) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.54 Create /api/v1/privacy/export endpoint (GDPR right to access)
+- [x] 1A.54 Create /api/v1/privacy/export endpoint (GDPR right to access) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.55 Update API error responses (new: ip_blocked, reputation_check_failed)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
