@@ -9,7 +9,7 @@
  * - Multi-turn social engineering
  */
 
-import { validateHardened } from './ai-validator-hardened.js';
+import { validateUnified } from './ai-validator-unified.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { collectThreatIntelligence } from './intelligence-collector.js';
@@ -302,8 +302,8 @@ export async function validateWithSession(prompt, sessionToken = null, options =
       }
     }
 
-    // STEP 3: Run standard validation (existing single-request validation)
-    const validationResult = await validateHardened(prompt, options);
+    // STEP 3: Run standard validation (unified 3-stage pipeline)
+    const validationResult = await validateUnified(prompt, options);
 
     // Store validation result in session history
     if (session) {
@@ -347,8 +347,8 @@ export async function validateWithSession(prompt, sessionToken = null, options =
   } catch (error) {
     console.error('[SessionValidator] Error:', error.message);
 
-    // Fail gracefully - fall back to standard validation without session
-    const fallbackResult = await validateHardened(prompt, options);
+    // Fail gracefully - fall back to unified validation without session
+    const fallbackResult = await validateUnified(prompt, options);
     return {
       ...fallbackResult,
       sessionToken,
