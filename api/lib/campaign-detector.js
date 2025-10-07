@@ -515,3 +515,9 @@ async function storeCampaign(campaign) {
 export default {
   runCampaignDetection
 };
+
+// Export for testing
+export const _test = {
+  calculateSimilarity,
+  levenshteinDistance
+};
