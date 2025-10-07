@@ -313,7 +313,7 @@ export default function BlacklistManagement() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      <Header usage={usage} />
+      <Header user={user} usage={usage} />
 
       <main className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
