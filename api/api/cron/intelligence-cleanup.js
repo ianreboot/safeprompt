@@ -1,6 +1,7 @@
 // Vercel Cron Job: Intelligence System Cleanup (Phase 1A)
 // Runs hourly to maintain privacy compliance and system health
 import { createClient } from '@supabase/supabase-js';
+import { logJobMetrics, checkAnonymizationSuccessRate } from '../../lib/alert-notifier.js';
 
 const supabase = createClient(
   process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
@@ -45,16 +46,28 @@ export default async function handler(req, res) {
     // ====================================================================
     // JOB 2: Anonymize old intelligence samples (>24h)
     // ====================================================================
+    const anonStart = Date.now();
     try {
       const { data: anonymization, error: anonymizeError } = await supabase
         .rpc('anonymize_old_intelligence_samples');
 
       if (anonymizeError) throw anonymizeError;
 
+      const samplesAnonymized = anonymization?.[0]?.samples_anonymized || 0;
+
       results.jobs.push({
         name: 'sample_anonymization',
         status: 'success',
-        samples_anonymized: anonymization?.[0]?.samples_anonymized || 0
+        samples_anonymized: samplesAnonymized
+      });
+
+      // Log job metrics (Task 1A.62)
+      await logJobMetrics({
+        jobName: 'anonymization',
+        jobStatus: 'success',
+        duration: Date.now() - anonStart,
+        recordsProcessed: samplesAnonymized,
+        metadata: { samples_anonymized: samplesAnonymized }
       });
 
       // CRITICAL: Alert if anonymization failed (legal compliance issue)
@@ -68,9 +81,22 @@ export default async function handler(req, res) {
         error: error.message
       });
 
+      // Log failed job metrics (Task 1A.62)
+      await logJobMetrics({
+        jobName: 'anonymization',
+        jobStatus: 'error',
+        duration: Date.now() - anonStart,
+        recordsProcessed: 0,
+        errorMessage: error.message,
+        metadata: { error_code: error.code }
+      });
+
       // Critical alert
       await logCriticalError('ANONYMIZATION_FAILED', error.message);
     }
+
+    // Check anonymization success rate every hour (Task 1A.62)
+    await checkAnonymizationSuccessRate();
 
     // ====================================================================
     // JOB 3: Update IP reputation scores

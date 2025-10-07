@@ -390,3 +390,83 @@ export async function logIntelligence({
     // Don't throw - logging failures shouldn't break the API
   }
 }
+
+/**
+ * Log background job metrics (Phase 1A Task 1A.62-1A.63)
+ * @param {Object} metrics - Job metrics data
+ */
+export async function logJobMetrics({
+  jobName,
+  jobStatus, // 'success' or 'error'
+  duration = null,
+  recordsProcessed = 0,
+  errorMessage = null,
+  metadata = {}
+}) {
+  try {
+    await supabase
+      .from('job_metrics')
+      .insert({
+        job_name: jobName, // 'anonymization', 'ip_reputation_update', 'session_cleanup'
+        job_status: jobStatus,
+        duration_ms: duration,
+        records_processed: recordsProcessed,
+        error_message: errorMessage,
+        metadata
+      });
+
+    console.log(`[JobMetrics] ${jobName}: ${jobStatus}`, {
+      records: recordsProcessed,
+      duration_ms: duration
+    });
+
+  } catch (error) {
+    console.error('[JobMetrics] Failed to log metrics:', error);
+    // Don't throw - metrics failures shouldn't break jobs
+  }
+}
+
+/**
+ * Calculate and alert on anonymization job success rate (Phase 1A Task 1A.62)
+ */
+export async function checkAnonymizationSuccessRate() {
+  try {
+    // Get last 24 hours of anonymization job runs
+    const { data, error } = await supabase
+      .from('job_metrics')
+      .select('job_status')
+      .eq('job_name', 'anonymization')
+      .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
+
+    if (error) {
+      console.error('[JobMetrics] Failed to get anonymization metrics:', error);
+      return;
+    }
+
+    const totalRuns = data.length;
+    const successfulRuns = data.filter(run => run.job_status === 'success').length;
+    const successRate = totalRuns > 0 ? (successfulRuns / totalRuns) * 100 : 100;
+
+    // Alert if success rate is below 100% (critical for legal compliance)
+    if (successRate < 100 && totalRuns > 0) {
+      await createAlert({
+        type: 'anonymization_job',
+        severity: successRate < 90 ? 'critical' : 'warning',
+        title: `Anonymization Job Success Rate: ${successRate.toFixed(1)}%`,
+        message: `Anonymization job success rate has dropped below 100%. This is a legal compliance issue. Current rate: ${successRate.toFixed(1)}% (${successfulRuns}/${totalRuns} successful in last 24 hours).`,
+        metadata: {
+          success_rate: successRate,
+          successful_runs: successfulRuns,
+          total_runs: totalRuns,
+          failed_runs: totalRuns - successfulRuns,
+          time_window: '24 hours'
+        }
+      });
+    }
+
+    return { successRate, totalRuns, successfulRuns };
+
+  } catch (error) {
+    console.error('[JobMetrics] Error checking anonymization success rate:', error);
+  }
+}
