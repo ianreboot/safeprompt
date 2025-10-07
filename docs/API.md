@@ -469,9 +469,8 @@ X-RateLimit-Reset: 1640995200
 | 200 | Success |
 | 400 | Bad request (invalid input or missing X-User-IP header) |
 | 401 | Unauthorized (invalid API key) |
-| 403 | Forbidden (subscription expired or feature not available for tier) |
+| 403 | Forbidden (subscription expired, feature not available for tier, or IP blocked) |
 | 429 | Too many requests (rate limited) |
-| 451 | IP address blocked (Pro tier with IP blocking enabled) |
 | 500 | Internal server error |
 
 **Error Response Format:**
@@ -499,11 +498,31 @@ X-RateLimit-Reset: 1640995200
   "error": "Rate limit exceeded"
 }
 
-// IP address blocked (Pro tier - Phase 1A)
+// IP blocked (Pro tier with auto-block enabled - Phase 1A)
 {
-  "error": "IP address blocked",
-  "message": "This IP address has been automatically blocked due to high attack rate",
-  "ipReputationScore": 0.15
+  "error": "ip_blocked",
+  "message": "Request blocked due to IP reputation",
+  "safe": false,
+  "confidence": 1.0,
+  "threats": ["malicious_ip"],
+  "ipReputation": {
+    "checked": true,
+    "reputationScore": 0.15,
+    "blocked": true,
+    "blockReason": "ip_auto_block"
+  }
+}
+
+// IP reputation check failed (Phase 1A)
+{
+  "error": "reputation_check_failed",
+  "message": "Unable to verify IP reputation, request allowed",
+  "safe": true,
+  "confidence": 0.0,
+  "ipReputation": {
+    "checked": false,
+    "error": true
+  }
 }
 
 // Feature not available for tier
