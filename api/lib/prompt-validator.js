@@ -70,22 +70,7 @@ function decodeEncodingBypasses(input) {
  * Business context whitelist patterns
  * Legitimate security discussions that should not be filtered
  */
-const BUSINESS_WHITELIST = [
-  /cybersecurity\s+(strategy|plan|policy|framework|assessment|audit|review)/i,
-  /comprehensive\s+cybersecurity/i,
-  /(financial|business|enterprise|corporate)\s+cybersecurity/i,
-  /cybersecurity\s+(best\s+practices|compliance|governance|consulting)/i,
-  /information\s+security\s+(strategy|plan|policy)/i,
-  /security\s+(assessment|audit|review|framework)\s+for/i,
-  /implement\s+cybersecurity/i,
-  /design\s+(a\s+)?(comprehensive\s+)?security\s+module/i,
-  /security\s+module\s+for\s+(an\s+)?AI\s+system/i,
-  /protect\s+against\s+(prompt\s+injection|XSS|code\s+injection)/i,
-  /discussing\s+(prompt\s+)?security/i,
-  /educational\s+(example|purpose|discussion)/i,
-  /academic\s+(research|discussion|context)/i,
-  /security\s+training\s+(material|course|program)/i
-];
+// BUSINESS_WHITELIST removed - replaced by custom lists feature (Phase 2)
 
 /**
  * Prompt injection patterns
@@ -218,10 +203,8 @@ export function validatePromptSync(prompt) {
       };
     }
 
-    // Check if it's a legitimate business use
-    const isBusinessUse = BUSINESS_WHITELIST.some(pattern => pattern.test(normalizedPrompt));
+    // Check for obvious attack patterns
     const containsObviousAttack = /ignore\s+(all\s+)?previous\s+instructions|reveal\s+your\s+(prompt|system|instructions)/i.test(normalizedPrompt);
-    const isLegitimate = isBusinessUse && !containsObviousAttack;
 
     const threats = [];
     let mixedSignals = false;
@@ -234,15 +217,16 @@ export function validatePromptSync(prompt) {
       }
     }
 
-    // Check for prompt injection (skip if legitimate business use)
-    if (!isLegitimate) {
-      for (const pattern of PROMPT_INJECTION_PATTERNS) {
-        if (pattern.test(normalizedPrompt)) {
-          threats.push('prompt_injection');
-          break;
-        }
+    // Check for prompt injection
+    for (const pattern of PROMPT_INJECTION_PATTERNS) {
+      if (pattern.test(normalizedPrompt)) {
+        threats.push('prompt_injection');
+        break;
       }
-    } else if (containsObviousAttack) {
+    }
+
+    // Check if obvious attack (for mixed signals detection)
+    if (containsObviousAttack) {
       mixedSignals = true;
     }
 
@@ -285,7 +269,6 @@ export function validatePromptSync(prompt) {
     const confidence = calculateConfidence({
       threats,
       inputLength: prompt.length,
-      isLegitimateBusinessUse: isLegitimate,
       mixedSignals
     });
 
@@ -297,7 +280,6 @@ export function validatePromptSync(prompt) {
       threats,
       confidence,
       processingTime: Date.now() - startTime,
-      isLegitimateBusinessUse: isLegitimate,
       mixedSignals
     };
 
@@ -327,11 +309,6 @@ export function calculateConfidence(validationResult) {
     // Slightly lower if it's very short (could be incomplete)
     if (validationResult.inputLength < 10) {
       confidence = 0.90;
-    }
-
-    // Perfect confidence for legitimate business use
-    if (validationResult.isLegitimateBusinessUse) {
-      confidence = 0.98;
     }
   } else {
     // Calculate based on threat severity
