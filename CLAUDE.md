@@ -83,12 +83,12 @@ API=/home/projects/safeprompt/api
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
 cd /home/projects/safeprompt/dashboard && npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main
 cd /home/projects/safeprompt/website && npm run build && wrangler pages deploy out --project-name safeprompt-dev --branch main
-cd /home/projects/safeprompt/api && vercel --token="$VERCEL_TOKEN" --prod
+cd /home/projects/safeprompt/api && vercel --token $VERCEL_TOKEN --prod --yes
 
 # Deploy to PROD
 cd /home/projects/safeprompt/dashboard && npm run build && wrangler pages deploy out --project-name safeprompt-dashboard --branch main
 cd /home/projects/safeprompt/website && npm run build && wrangler pages deploy out --project-name safeprompt --branch main
-cd /home/projects/safeprompt/api && vercel --token="$VERCEL_TOKEN" --prod
+cd /home/projects/safeprompt/api && vercel --token $VERCEL_TOKEN --prod --yes
 
 # Test API
 curl -X POST https://api.safeprompt.dev/api/v1/validate \
@@ -213,7 +213,7 @@ Database (Supabase)
 1. Load credentials: `source /home/projects/.env && export CLOUDFLARE_API_TOKEN`
 2. Deploy dashboard: `cd dashboard && npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main`
 3. Deploy website: `cd website && npm run build && wrangler pages deploy out --project-name safeprompt-dev --branch main`
-4. Deploy API (if changes): `cd api && vercel --token="$VERCEL_TOKEN" --prod`
+4. Deploy API (if changes): `cd api && vercel --token $VERCEL_TOKEN --prod --yes`
 5. Verify: Test API endpoint with curl
 
 ### PROD Deployment
@@ -223,7 +223,7 @@ Database (Supabase)
 4. Verify: Test API + monitor logs for 5-10 minutes
 
 ### Common Deployment Errors
-- **Vercel auth error**: Use `--token="$VERCEL_TOKEN"` with quotes
+- **Vercel auth error**: Token must be passed WITHOUT quotes: `--token $VERCEL_TOKEN` (not `--token="$VERCEL_TOKEN"`)
 - **Cloudflare old version**: Add `--branch main` flag
 - **API fails after deploy**: Check environment variables (`vercel env ls`)
 - **Database connection fails**: Verify `.env.local` removed from dashboard
