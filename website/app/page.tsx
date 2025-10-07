@@ -671,6 +671,57 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* Step 4 - Phase 1A Intelligence */}
+            <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border border-primary/30 p-6">
+              <div className="flex items-start space-x-4">
+                <span className="text-2xl font-bold text-primary">4</span>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold mb-3">🧠 Network Intelligence (Optional)</h3>
+                  <p className="text-muted-foreground mb-4">
+                    SafePrompt learns from attacks across all customers. When one user gets attacked, everyone benefits.
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="bg-card/50 rounded-lg p-3">
+                      <h4 className="font-semibold text-sm mb-2">Free Tier (Automatic):</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                        <li>• Blocked prompts contribute to network intelligence</li>
+                        <li>• Data anonymized after 24 hours (only hashes kept)</li>
+                        <li>• You benefit from collective defense</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-card/50 rounded-lg p-3">
+                      <h4 className="font-semibold text-sm mb-2">Pro Tier (Opt-Out Available):</h4>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Disable intelligence sharing in Dashboard → Settings → Privacy:
+                      </p>
+                      <pre className="bg-background p-3 rounded text-xs overflow-x-auto">
+                        <code>{`// Opt-out via dashboard settings
+// Settings → Privacy → Intelligence Sharing
+// Toggle: "Contribute to Network Intelligence" OFF
+
+// Still get protection from network intelligence
+// Just don't contribute your blocked prompts`}</code>
+                      </pre>
+                    </div>
+
+                    <div className="bg-card/50 rounded-lg p-3">
+                      <h4 className="font-semibold text-sm mb-2">IP Blocking (Pro Tier Only):</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Enable automatic blocking of malicious IPs in Dashboard → Settings → Security
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground mt-4">
+                    Learn more: <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> |
+                    <a href="/terms" className="text-primary hover:underline ml-1">Terms of Service</a>
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="mt-12 text-center">
