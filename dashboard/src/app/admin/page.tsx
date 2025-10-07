@@ -5,6 +5,9 @@ import { supabase } from '@/lib/supabase'
 import { Shield, Users, Clock, CheckCircle, XCircle, Mail, Search, Activity, DollarSign, Eye } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import IntelligenceSamplesTable from '@/components/IntelligenceSamplesTable'
+import IPReputationManager from '@/components/IPReputationManager'
+import AdminIntelligenceTools from '@/components/AdminIntelligenceTools'
 
 // Simple admin auth - in production, use proper role-based access
 const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
@@ -341,6 +344,13 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Phase 1A Intelligence Management */}
+        <div className="mt-8 space-y-8">
+          <IntelligenceSamplesTable />
+          <IPReputationManager />
+          <AdminIntelligenceTools />
         </div>
 
         {/* User Details Modal */}
