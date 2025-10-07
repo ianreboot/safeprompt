@@ -10,6 +10,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { logIntelligence } from './alert-notifier.js';
 
 // Supabase client
 const supabase = createClient(
@@ -180,6 +181,20 @@ export async function collectThreatIntelligence(prompt, validationResult, option
       const isAllowlisted = await isIPAllowlisted(ip_address);
       if (isAllowlisted) {
         console.log('[IntelligenceCollector] Skipping collection - IP is allowlisted');
+
+        // Log skip event
+        await logIntelligence({
+          eventType: 'collection_skipped',
+          userId: user_id,
+          subscriptionTier: 'unknown',
+          promptLength: prompt.length,
+          threatSeverity: calculateSeverity(validationResult.confidence, validationResult.safe),
+          ipHash: ip_address ? createIPHash(ip_address) : null,
+          collectionResult: 'skipped',
+          skipReason: 'ip_allowlisted',
+          metadata: { is_allowlisted: true }
+        });
+
         return false;
       }
     }
@@ -191,6 +206,23 @@ export async function collectThreatIntelligence(prompt, validationResult, option
     const shouldCollect = determineCollection(profile, validationResult);
 
     if (!shouldCollect) {
+      // Log skip event
+      await logIntelligence({
+        eventType: 'collection_skipped',
+        userId: user_id,
+        subscriptionTier: profile.tier,
+        promptLength: prompt.length,
+        threatSeverity: calculateSeverity(validationResult.confidence, validationResult.safe),
+        ipHash: ip_address ? createIPHash(ip_address) : null,
+        collectionResult: 'skipped',
+        skipReason: 'opt_out_or_safe',
+        metadata: {
+          tier: profile.tier,
+          intelligence_sharing: profile.preferences?.intelligence_sharing,
+          is_safe: validationResult.safe
+        }
+      });
+
       return false;
     }
 
@@ -230,6 +262,22 @@ export async function collectThreatIntelligence(prompt, validationResult, option
 
     if (error) {
       console.error('[IntelligenceCollector] Error storing sample:', error.message);
+
+      // Log collection error
+      await logIntelligence({
+        eventType: 'collection_error',
+        userId: user_id,
+        subscriptionTier: profile.tier,
+        promptLength: prompt.length,
+        threatSeverity: sample.threat_severity,
+        ipHash: ipHash,
+        collectionResult: 'error',
+        metadata: {
+          error_message: error.message,
+          error_code: error.code
+        }
+      });
+
       return false;
     }
 
@@ -240,10 +288,42 @@ export async function collectThreatIntelligence(prompt, validationResult, option
       prompt_length: prompt.length
     });
 
+    // Log successful collection
+    await logIntelligence({
+      eventType: 'sample_stored',
+      userId: user_id,
+      subscriptionTier: profile.tier,
+      promptLength: prompt.length,
+      threatSeverity: sample.threat_severity,
+      ipHash: ipHash,
+      collectionResult: 'success',
+      metadata: {
+        attack_vectors: sample.attack_vectors,
+        confidence_score: sample.confidence_score,
+        has_session_id: !!sample.session_id
+      }
+    });
+
     return true;
 
   } catch (error) {
     console.error('[IntelligenceCollector] Error:', error.message);
+
+    // Log collection error
+    await logIntelligence({
+      eventType: 'collection_error',
+      userId: user_id,
+      subscriptionTier: 'unknown',
+      promptLength: prompt?.length || 0,
+      threatSeverity: 'unknown',
+      ipHash: ip_address ? createIPHash(ip_address) : null,
+      collectionResult: 'error',
+      metadata: {
+        error_message: error.message,
+        error_stack: error.stack
+      }
+    });
+
     return false;
   }
 }

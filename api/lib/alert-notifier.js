@@ -346,3 +346,47 @@ export async function checkDailySpend() {
     console.error('[AlertNotifier] Error checking daily spend:', error);
   }
 }
+
+/**
+ * Log intelligence collection events (Phase 1A)
+ * @param {Object} event - Intelligence event data
+ */
+export async function logIntelligence({
+  eventType,
+  userId = null,
+  subscriptionTier = 'unknown',
+  promptLength = 0,
+  threatSeverity = 'low',
+  ipHash = null,
+  collectionResult = 'success',
+  skipReason = null,
+  samplesAnonymized = null,
+  metadata = {}
+}) {
+  try {
+    await supabase
+      .from('intelligence_logs')
+      .insert({
+        event_type: eventType, // 'sample_stored', 'sample_anonymized', 'collection_skipped', 'collection_error'
+        user_id: userId,
+        subscription_tier: subscriptionTier,
+        prompt_length: promptLength,
+        threat_severity: threatSeverity,
+        ip_hash: ipHash,
+        collection_result: collectionResult,
+        skip_reason: skipReason,
+        samples_anonymized: samplesAnonymized,
+        metadata
+      });
+
+    console.log(`[Intelligence] ${eventType}: ${collectionResult}`, {
+      tier: subscriptionTier,
+      severity: threatSeverity,
+      skip_reason: skipReason
+    });
+
+  } catch (error) {
+    console.error('[Intelligence] Failed to log event:', error);
+    // Don't throw - logging failures shouldn't break the API
+  }
+}
