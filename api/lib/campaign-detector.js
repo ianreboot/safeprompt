@@ -24,14 +24,22 @@ import os from 'os';
 // Load environment variables
 dotenv.config({ path: path.join(os.homedir(), 'projects/safeprompt/.env') });
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Lazy Supabase client initialization to allow importing pure functions without credentials
+let supabaseClient = null;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing Supabase credentials for campaign detection');
+function getSupabaseClient() {
+  if (!supabaseClient) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Missing Supabase credentials for campaign detection');
+    }
+
+    supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+  }
+  return supabaseClient;
 }
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Campaign detection thresholds
 const TEMPORAL_WINDOW_MINUTES = 10;
@@ -105,7 +113,7 @@ export async function runCampaignDetection() {
 async function loadRecentSamples(hours) {
   const cutoffTime = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('threat_intelligence_samples')
     .select('*')
     .gte('created_at', cutoffTime)
@@ -329,7 +337,8 @@ function clusterSimilarPrompts(samples, threshold) {
  * Calculate similarity between two strings (Levenshtein-based)
  */
 function calculateSimilarity(str1, str2) {
-  if (!str1 || !str2) return 0;
+  if (!str1 && !str2) return 1.0; // Both empty = identical
+  if (!str1 || !str2) return 0;   // One empty = completely different
 
   const maxLength = Math.max(str1.length, str2.length);
   if (maxLength === 0) return 1.0;
@@ -476,7 +485,7 @@ function mergeCampaigns(c1, c2) {
  */
 async function storeCampaign(campaign) {
   // Check if campaign already exists (prevent duplicates)
-  const { data: existing } = await supabase
+  const { data: existing } = await getSupabaseClient()
     .from('attack_campaigns')
     .select('id')
     .eq('window_start', campaign.windowStart)
@@ -489,7 +498,7 @@ async function storeCampaign(campaign) {
   }
 
   // Insert new campaign
-  const { error } = await supabase
+  const { error } = await getSupabaseClient()
     .from('attack_campaigns')
     .insert({
       detected_at: new Date().toISOString(),

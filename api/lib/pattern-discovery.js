@@ -20,14 +20,22 @@ import { analyzeAndProposePatterns } from './ai-pattern-analyzer.js';
 // Load environment variables with absolute path
 dotenv.config({ path: path.join(os.homedir(), 'projects/safeprompt/.env') });
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Lazy Supabase client initialization to allow importing pure functions without credentials
+let supabaseClient = null;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing Supabase credentials for pattern discovery');
+function getSupabaseClient() {
+  if (!supabaseClient) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Missing Supabase credentials for pattern discovery');
+    }
+
+    supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+  }
+  return supabaseClient;
 }
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Common words to exclude from pattern analysis
 const COMMON_WORDS = new Set([
@@ -133,7 +141,7 @@ async function loadAnonymizedSamples(daysBack = 7) {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - daysBack);
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('threat_intelligence_samples')
     .select('id, prompt_text, pattern_detected, created_at')
     .eq('is_anonymized', true) // CRITICAL: Only anonymized data
@@ -164,12 +172,14 @@ export function findFrequentSubstrings(texts, options = {}) {
   } = options;
 
   const substringCounts = new Map();
+  const substringTexts = new Map(); // Track which texts contain each substring
 
   // Extract all substrings of varying lengths
-  texts.forEach(text => {
+  texts.forEach((text, textIndex) => {
     if (!text) return;
 
     const normalized = text.toLowerCase().trim();
+    const seenInThisText = new Set(); // Avoid counting same substring multiple times per text
 
     // Try different substring lengths (5 to 30 chars)
     for (let len = minLength; len <= Math.min(30, normalized.length); len++) {
@@ -186,6 +196,15 @@ export function findFrequentSubstrings(texts, options = {}) {
         if (!/[a-z0-9]/.test(substring)) continue;
 
         substringCounts.set(substring, (substringCounts.get(substring) || 0) + 1);
+
+        // Track unique texts containing this substring
+        if (!seenInThisText.has(substring)) {
+          if (!substringTexts.has(substring)) {
+            substringTexts.set(substring, new Set());
+          }
+          substringTexts.get(substring).add(textIndex);
+          seenInThisText.add(substring);
+        }
       }
     }
   });
@@ -193,11 +212,14 @@ export function findFrequentSubstrings(texts, options = {}) {
   // Filter by minimum occurrences and sort by frequency
   const results = Array.from(substringCounts.entries())
     .filter(([_, count]) => count >= minOccurrences)
-    .map(([substring, count]) => ({
-      substring,
-      count,
-      percentage: ((count / texts.length) * 100).toFixed(2)
-    }))
+    .map(([substring, count]) => {
+      const uniqueTextCount = substringTexts.get(substring)?.size || 0;
+      return {
+        substring,
+        count,
+        percentage: ((uniqueTextCount / texts.length) * 100).toFixed(2)
+      };
+    })
     .sort((a, b) => b.count - a.count)
     .slice(0, maxResults);
 
@@ -225,7 +247,7 @@ function startsOrEndsWithCommonWord(substring) {
  */
 export function detectEncodingSchemes(texts) {
   const patterns = {
-    base64: /(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?/g,
+    base64: /\b[A-Za-z0-9+/]{8,}={0,2}/g,
     urlEncoded: /%[0-9A-Fa-f]{2}/g,
     hexEncoded: /(?:0x|\\x)[0-9A-Fa-f]{2}/g,
     unicodeEscape: /\\u[0-9A-Fa-f]{4}/g,
@@ -341,7 +363,7 @@ async function storeFindingsForReview(findings) {
   }
 
   // Insert proposals (will be reviewed by admin in dashboard)
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('pattern_proposals')
     .insert(proposals)
     .select('id');
@@ -361,7 +383,7 @@ async function storeFindingsForReview(findings) {
 export async function getPatternDiscoveryStats() {
   try {
     // Get total proposals by status
-    const { data: proposals, error: proposalsError } = await supabase
+    const { data: proposals, error: proposalsError } = await getSupabaseClient()
       .from('pattern_proposals')
       .select('status');
 
