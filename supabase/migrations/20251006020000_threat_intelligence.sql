@@ -64,6 +64,80 @@ CREATE TABLE IF NOT EXISTS threat_intelligence_samples (
   )
 );
 
+-- Add missing columns if table already exists (for gradual schema evolution)
+DO $$
+BEGIN
+  -- Add core columns first
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'profile_id') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'subscription_tier') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN subscription_tier TEXT NOT NULL DEFAULT 'free' CHECK (subscription_tier IN ('free', 'pro'));
+  END IF;
+
+  -- Add columns from Phase 1A updates
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'intelligence_sharing') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN intelligence_sharing BOOLEAN NOT NULL DEFAULT TRUE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'reviewed') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN reviewed BOOLEAN DEFAULT FALSE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'ai_analysis') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN ai_analysis JSONB;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'pattern_extracted') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN pattern_extracted BOOLEAN DEFAULT FALSE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'anonymized_at') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN anonymized_at TIMESTAMP WITH TIME ZONE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'expires_at') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '90 days') NOT NULL;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'prompt_compressed') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN prompt_compressed BYTEA;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'detection_method') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN detection_method TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'ip_country') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN ip_country CHAR(2);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'ip_is_proxy') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN ip_is_proxy BOOLEAN DEFAULT FALSE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'ip_is_hosting') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN ip_is_hosting BOOLEAN DEFAULT FALSE;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'ip_isp') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN ip_isp TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'session_metadata') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN session_metadata JSONB;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'user_agent_category') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN user_agent_category TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'threat_intelligence_samples' AND column_name = 'request_timing_pattern') THEN
+    ALTER TABLE threat_intelligence_samples ADD COLUMN request_timing_pattern TEXT;
+  END IF;
+END $$;
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_threat_samples_unreviewed
   ON threat_intelligence_samples(reviewed, created_at)
@@ -256,11 +330,13 @@ ALTER TABLE ip_reputation ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ip_allowlist ENABLE ROW LEVEL SECURITY;
 
 -- Users can only access their own samples
+DROP POLICY IF EXISTS threat_samples_select_own ON threat_intelligence_samples;
 CREATE POLICY threat_samples_select_own ON threat_intelligence_samples
   FOR SELECT
   USING (auth.uid() = profile_id);
 
 -- Internal/admin can access all samples
+DROP POLICY IF EXISTS threat_samples_internal_access ON threat_intelligence_samples;
 CREATE POLICY threat_samples_internal_access ON threat_intelligence_samples
   FOR ALL
   USING (
@@ -271,12 +347,14 @@ CREATE POLICY threat_samples_internal_access ON threat_intelligence_samples
   );
 
 -- IP reputation is read-only for authenticated users
+DROP POLICY IF EXISTS ip_reputation_select_all ON ip_reputation;
 CREATE POLICY ip_reputation_select_all ON ip_reputation
   FOR SELECT
   TO authenticated
   USING (true);
 
 -- Only internal/admin can modify IP reputation
+DROP POLICY IF EXISTS ip_reputation_modify_internal ON ip_reputation;
 CREATE POLICY ip_reputation_modify_internal ON ip_reputation
   FOR ALL
   USING (
@@ -287,6 +365,7 @@ CREATE POLICY ip_reputation_modify_internal ON ip_reputation
   );
 
 -- Only admin can manage allowlist
+DROP POLICY IF EXISTS ip_allowlist_admin_only ON ip_allowlist;
 CREATE POLICY ip_allowlist_admin_only ON ip_allowlist
   FOR ALL
   USING (

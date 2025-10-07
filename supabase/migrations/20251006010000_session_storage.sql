@@ -67,11 +67,13 @@ COMMENT ON COLUMN validation_sessions.request_count IS 'Number of validations in
 ALTER TABLE validation_sessions ENABLE ROW LEVEL SECURITY;
 
 -- Users can only access their own sessions
+DROP POLICY IF EXISTS sessions_select_own ON validation_sessions;
 CREATE POLICY sessions_select_own ON validation_sessions
   FOR SELECT
   USING (auth.uid() = user_id OR user_id IS NULL);
 
 -- Internal system can access all sessions (for API validation)
+DROP POLICY IF EXISTS sessions_internal_access ON validation_sessions;
 CREATE POLICY sessions_internal_access ON validation_sessions
   FOR ALL
   USING (
