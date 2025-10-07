@@ -1,5 +1,6 @@
 -- Phase 6.2: Pattern Discovery Pipeline
 -- Create tables for pattern proposals, attack campaigns, and honeypot requests
+-- IDEMPOTENT: Safe to run multiple times
 
 -- ============================================================================
 -- TABLE: pattern_proposals
@@ -33,13 +34,13 @@ CREATE TABLE IF NOT EXISTS pattern_proposals (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Indexes for pattern_proposals
-CREATE INDEX idx_pattern_proposals_status ON pattern_proposals(status);
-CREATE INDEX idx_pattern_proposals_reviewed_at ON pattern_proposals(reviewed_at);
-CREATE INDEX idx_pattern_proposals_created_at ON pattern_proposals(created_at);
-CREATE INDEX idx_pattern_proposals_pattern_type ON pattern_proposals(pattern_type);
+-- Indexes for pattern_proposals (IDEMPOTENT)
+CREATE INDEX IF NOT EXISTS idx_pattern_proposals_status ON pattern_proposals(status);
+CREATE INDEX IF NOT EXISTS idx_pattern_proposals_reviewed_at ON pattern_proposals(reviewed_at);
+CREATE INDEX IF NOT EXISTS idx_pattern_proposals_created_at ON pattern_proposals(created_at);
+CREATE INDEX IF NOT EXISTS idx_pattern_proposals_pattern_type ON pattern_proposals(pattern_type);
 
--- Updated_at trigger for pattern_proposals
+-- Updated_at trigger for pattern_proposals (IDEMPOTENT)
 CREATE OR REPLACE FUNCTION update_pattern_proposals_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -48,14 +49,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS pattern_proposals_updated_at ON pattern_proposals;
 CREATE TRIGGER pattern_proposals_updated_at
   BEFORE UPDATE ON pattern_proposals
   FOR EACH ROW
   EXECUTE FUNCTION update_pattern_proposals_updated_at();
 
--- RLS policies for pattern_proposals (admin-only access)
-ALTER TABLE pattern_proposals ENABLE ROW LEVEL SECURITY;
+-- RLS policies for pattern_proposals (IDEMPOTENT)
+DO $$
+BEGIN
+  ALTER TABLE pattern_proposals ENABLE ROW LEVEL SECURITY;
+EXCEPTION
+  WHEN OTHERS THEN NULL;
+END $$;
 
+DROP POLICY IF EXISTS pattern_proposals_admin_all ON pattern_proposals;
 CREATE POLICY pattern_proposals_admin_all ON pattern_proposals
   FOR ALL
   USING (
@@ -99,12 +107,12 @@ CREATE TABLE IF NOT EXISTS attack_campaigns (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Indexes for attack_campaigns
-CREATE INDEX idx_attack_campaigns_detected_at ON attack_campaigns(detected_at);
-CREATE INDEX idx_attack_campaigns_status ON attack_campaigns(status);
-CREATE INDEX idx_attack_campaigns_window_start ON attack_campaigns(window_start);
+-- Indexes for attack_campaigns (IDEMPOTENT)
+CREATE INDEX IF NOT EXISTS idx_attack_campaigns_detected_at ON attack_campaigns(detected_at);
+CREATE INDEX IF NOT EXISTS idx_attack_campaigns_status ON attack_campaigns(status);
+CREATE INDEX IF NOT EXISTS idx_attack_campaigns_window_start ON attack_campaigns(window_start);
 
--- Updated_at trigger for attack_campaigns
+-- Updated_at trigger for attack_campaigns (IDEMPOTENT)
 CREATE OR REPLACE FUNCTION update_attack_campaigns_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -113,14 +121,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS attack_campaigns_updated_at ON attack_campaigns;
 CREATE TRIGGER attack_campaigns_updated_at
   BEFORE UPDATE ON attack_campaigns
   FOR EACH ROW
   EXECUTE FUNCTION update_attack_campaigns_updated_at();
 
--- RLS policies for attack_campaigns (admin-only access)
-ALTER TABLE attack_campaigns ENABLE ROW LEVEL SECURITY;
+-- RLS policies for attack_campaigns (IDEMPOTENT)
+DO $$
+BEGIN
+  ALTER TABLE attack_campaigns ENABLE ROW LEVEL SECURITY;
+EXCEPTION
+  WHEN OTHERS THEN NULL;
+END $$;
 
+DROP POLICY IF EXISTS attack_campaigns_admin_all ON attack_campaigns;
 CREATE POLICY attack_campaigns_admin_all ON attack_campaigns
   FOR ALL
   USING (
@@ -156,15 +171,21 @@ CREATE TABLE IF NOT EXISTS honeypot_requests (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Indexes for honeypot_requests
-CREATE INDEX idx_honeypot_requests_created_at ON honeypot_requests(created_at);
-CREATE INDEX idx_honeypot_requests_endpoint ON honeypot_requests(endpoint);
-CREATE INDEX idx_honeypot_requests_auto_deployed ON honeypot_requests(auto_deployed);
-CREATE INDEX idx_honeypot_requests_ip_hash ON honeypot_requests(ip_hash);
+-- Indexes for honeypot_requests (IDEMPOTENT)
+CREATE INDEX IF NOT EXISTS idx_honeypot_requests_created_at ON honeypot_requests(created_at);
+CREATE INDEX IF NOT EXISTS idx_honeypot_requests_endpoint ON honeypot_requests(endpoint);
+CREATE INDEX IF NOT EXISTS idx_honeypot_requests_auto_deployed ON honeypot_requests(auto_deployed);
+CREATE INDEX IF NOT EXISTS idx_honeypot_requests_ip_hash ON honeypot_requests(ip_hash);
 
--- RLS policies for honeypot_requests (admin-only access)
-ALTER TABLE honeypot_requests ENABLE ROW LEVEL SECURITY;
+-- RLS policies for honeypot_requests (IDEMPOTENT)
+DO $$
+BEGIN
+  ALTER TABLE honeypot_requests ENABLE ROW LEVEL SECURITY;
+EXCEPTION
+  WHEN OTHERS THEN NULL;
+END $$;
 
+DROP POLICY IF EXISTS honeypot_requests_admin_all ON honeypot_requests;
 CREATE POLICY honeypot_requests_admin_all ON honeypot_requests
   FOR ALL
   USING (
