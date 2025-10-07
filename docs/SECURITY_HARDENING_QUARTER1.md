@@ -181,9 +181,9 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [x] 1A.35 Add user settings: Auto-block bad IPs toggle (Pro only, requires opt-in) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.36 Add privacy controls: Data deletion UI (delete <24h samples)
+- [x] 1A.36 Add privacy controls: Data deletion UI (delete <24h samples) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.37 Add privacy controls: Data export UI (download identifiable data)
+- [x] 1A.37 Add privacy controls: Data export UI (download identifiable data) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.38 Add admin panel: View intelligence samples (paginated table)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
