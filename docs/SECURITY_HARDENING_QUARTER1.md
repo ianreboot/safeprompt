@@ -185,15 +185,15 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [x] 1A.37 Add privacy controls: Data export UI (download identifiable data) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.38 Add admin panel: View intelligence samples (paginated table)
+- [x] 1A.38 Add admin panel: View intelligence samples (paginated table) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.39 Add admin panel: IP reputation management (view/edit scores)
+- [x] 1A.39 Add admin panel: IP reputation management (view/edit scores) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.40 Add admin panel: Trigger manual anonymization
+- [x] 1A.40 Add admin panel: Trigger manual anonymization ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.41 Add admin panel: Intelligence analysis dashboard (pattern discovery)
+- [x] 1A.41 Add admin panel: Intelligence analysis dashboard (pattern discovery) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.42 Add analytics: Intelligence collection metrics (samples/day, anonymization rate)
+- [x] 1A.42 Add analytics: Intelligence collection metrics (samples/day, anonymization rate) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.43 Update playground: Show IP reputation scores in validation responses
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
