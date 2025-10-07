@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import PasswordSettings from '@/components/PasswordSettings'
 import IntelligenceSettings from '@/components/IntelligenceSettings'
+import PrivacyControls from '@/components/PrivacyControls'
 import {
   Key, Eye, EyeOff, Copy, RefreshCw, LogOut, BarChart, CreditCard,
   FileText, HelpCircle, TrendingUp, Clock, Check, ExternalLink,
@@ -742,6 +743,11 @@ For questions, contact: support@safeprompt.dev`
           {/* Intelligence Settings (Phase 1A) */}
           <div className="bg-gray-900 rounded-lg border border-gray-800 min-w-0">
             <IntelligenceSettings />
+          </div>
+
+          {/* Privacy Controls (Phase 1A) */}
+          <div className="bg-gray-900 rounded-lg border border-gray-800 min-w-0">
+            <PrivacyControls />
           </div>
         </div>
 

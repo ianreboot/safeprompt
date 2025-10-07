@@ -177,9 +177,9 @@ Read /home/projects/safeprompt/CLAUDE.md
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 
 #### Dashboard Updates (/home/projects/safeprompt/dashboard)
-- [ ] 1A.34 Add user settings: Intelligence sharing toggle (Pro only)
+- [x] 1A.34 Add user settings: Intelligence sharing toggle (Pro only) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
-- [ ] 1A.35 Add user settings: Auto-block bad IPs toggle (Pro only, requires opt-in)
+- [x] 1A.35 Add user settings: Auto-block bad IPs toggle (Pro only, requires opt-in) ✅
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
 - [ ] 1A.36 Add privacy controls: Data deletion UI (delete <24h samples)
 - [ ] 🧠 CONTEXT REFRESH: Execute "📝 Document Update Instructions" above
