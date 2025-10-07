@@ -1,7 +1,5 @@
 // Consolidated validation endpoint that handles all check types
-import validateHardened from '../../lib/ai-validator-hardened.js';
-import { collectThreatIntelligence } from '../../lib/intelligence-collector.js';
-import { checkIPReputation } from '../../lib/ip-reputation.js';
+import { validateWithSession } from '../../lib/session-validator.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sanitizeResponseWithMode } from '../../lib/response-sanitizer.js';
@@ -131,7 +129,8 @@ export default async function handler(req, res) {
       prompt,
       prompts, // For batch processing
       mode = 'standard', // standard, optimized, ai-only, with-cache
-      include_stats = false
+      include_stats = false,
+      session_token = null // For multi-turn attack detection
     } = req.body;
 
     // Handle batch processing
@@ -146,9 +145,15 @@ export default async function handler(req, res) {
             return { prompt: p, ...cached.result, cached: true };
           }
 
-          const result = await validateHardened(p, {
+          const result = await validateWithSession(p, session_token, {
             skipPatterns: mode === 'ai-only',
-            skipExternalCheck: mode === 'ai-only'
+            skipExternalCheck: mode === 'ai-only',
+            user_id: profileId,
+            ip_address: userIP,
+            user_agent: req.headers['user-agent'],
+            subscription_tier: profile.subscription_tier,
+            auto_block_enabled: preferences.enable_ip_blocking === true,
+            headers: req.headers
           });
           const batchProcessingTime = Date.now() - batchStartTime;
 
@@ -211,64 +216,24 @@ export default async function handler(req, res) {
       });
     }
 
-    // Check IP reputation (Pro tier only)
+    // Validate the prompt with session tracking
+    // Session validator handles: IP reputation, context priming, threat intelligence
     const preferences = profile.preferences || {};
-    const autoBlockEnabled = preferences.enable_ip_blocking === true;
-    const ipReputationResult = await checkIPReputation(userIP, {
-      user_id: profileId,
-      headers: req.headers,
-      subscription_tier: profile.subscription_tier,
-      auto_block_enabled: autoBlockEnabled
-    });
-
-    // Block if IP is flagged and user has auto-block enabled
-    if (ipReputationResult.should_block) {
-      return res.status(403).json({
-        error: 'ip_blocked',
-        message: 'Request blocked due to IP reputation',
-        safe: false,
-        confidence: 1.0,
-        threats: ['malicious_ip'],
-        ipReputation: {
-          checked: ipReputationResult.checked,
-          reputationScore: ipReputationResult.reputation_score,
-          blocked: true,
-          blockReason: ipReputationResult.block_reason
-        }
-      });
-    }
-
-    // Validate the prompt
     const startTime = Date.now();
-    const result = await validateHardened(prompt, {
+    const result = await validateWithSession(prompt, session_token, {
       skipPatterns: mode === 'ai-only',
-      skipExternalCheck: mode === 'ai-only'
+      skipExternalCheck: mode === 'ai-only',
+      user_id: profileId,
+      ip_address: userIP,
+      user_agent: req.headers['user-agent'],
+      subscription_tier: profile.subscription_tier,
+      auto_block_enabled: preferences.enable_ip_blocking === true,
+      headers: req.headers
     });
     const processingTime = Date.now() - startTime;
 
-    // Add processing time to result
-    result.processingTime = processingTime;
-
-    // Collect threat intelligence (non-blocking, fire-and-forget)
-    if (profileId) {
-      const userAgent = req.headers['user-agent'];
-      const isTestSuite = req.headers['x-safeprompt-test-suite'] === 'true';
-
-      // Fire and forget - don't wait for collection to complete
-      // Use userIP from X-User-IP header (end user's IP, not API caller's server IP)
-      collectThreatIntelligence(prompt, result, {
-        ip_address: userIP, // End user's IP for tracking actual attackers
-        user_agent: userAgent,
-        user_id: profileId,
-        session_metadata: {
-          is_test_suite: isTestSuite,
-          mode: mode
-        }
-      }).catch(err => {
-        console.error('[SafePrompt] Intelligence collection failed:', err.message);
-        // Don't fail the request if collection fails
-      });
-    }
+    // Add processing time to result (session validator also adds this, but ensure it's set)
+    result.processingTime = result.processingTime || processingTime;
 
     // Cache the result
     if (cache.size >= CACHE_MAX_SIZE) {
@@ -328,14 +293,16 @@ export default async function handler(req, res) {
       mode,
       cached: false,
       timestamp: new Date().toISOString(),
-      // Add IP reputation information if checked
-      ipReputation: ipReputationResult.checked || ipReputationResult.bypassed ? {
-        checked: ipReputationResult.checked,
-        bypassed: ipReputationResult.bypassed,
-        bypassReason: ipReputationResult.bypass_reason,
-        reputationScore: ipReputationResult.reputation_score,
-        blocked: false, // Not blocked if we got here
-        reputationData: ipReputationResult.reputation_data
+      // Session information (from session validator)
+      sessionToken: result.sessionToken,
+      sessionAnalysis: result.sessionAnalysis,
+      // IP reputation information (from session validator)
+      ipReputation: result.ipReputationChecked ? {
+        checked: result.ipReputationChecked,
+        bypassed: result.ipReputationBypassed,
+        bypassReason: result.ipReputationBypassReason,
+        reputationScore: result.ipReputationScore,
+        blocked: false // Not blocked if we got here
       } : undefined
     };
 
