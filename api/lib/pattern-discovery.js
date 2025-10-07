@@ -15,6 +15,7 @@ import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import path from 'path';
 import os from 'os';
+import { analyzeAndProposePatterns } from './ai-pattern-analyzer.js';
 
 // Load environment variables with absolute path
 dotenv.config({ path: path.join(os.homedir(), 'projects/safeprompt/.env') });
@@ -83,16 +84,22 @@ export async function runPatternDiscovery() {
     const encodings = detectEncodingSchemes(promptTexts);
     console.log(`[Pattern Discovery] Detected ${encodings.length} encoding patterns`);
 
-    // 5. Combine findings
+    // 5. AI-powered pattern analysis (Phase 6.2.4)
+    console.log('[Pattern Discovery] Running AI pattern analysis...');
+    const aiProposals = await analyzeAndProposePatterns(substrings, encodings);
+    console.log(`[Pattern Discovery] AI generated ${aiProposals.length} proposals`);
+
+    // 6. Combine findings
     const findings = {
       substrings,
       encodings,
+      aiProposals,
       totalSamples: samples.length,
       analyzedTexts: promptTexts.length,
       timeWindow: '7 days'
     };
 
-    // 6. Store findings for admin review (no AI proposals yet - that's 6.2.4)
+    // 7. Store findings for admin review
     const proposalCount = await storeFindingsForReview(findings);
 
     const duration = Date.now() - startTime;
@@ -103,7 +110,8 @@ export async function runPatternDiscovery() {
       samplesAnalyzed: samples.length,
       substringsFound: substrings.length,
       encodingsFound: encodings.length,
-      proposalsGenerated: proposalCount,
+      aiProposalsGenerated: aiProposals.length,
+      proposalsStored: proposalCount,
       duration
     };
 
@@ -309,6 +317,23 @@ async function storeFindingsForReview(findings) {
       status: 'pending'
     });
   });
+
+  // Add AI-generated proposals (Phase 6.2.4)
+  if (findings.aiProposals && findings.aiProposals.length > 0) {
+    findings.aiProposals.forEach(item => {
+      proposals.push({
+        proposed_pattern: item.proposed_pattern,
+        pattern_type: item.pattern_type,
+        reasoning: item.reasoning,
+        frequency_count: item.frequency_count,
+        example_matches: item.ai_metadata || {},
+        status: 'pending',
+        // Additional AI metadata
+        confidence_score: item.confidence_score,
+        ai_generated: true
+      });
+    });
+  }
 
   if (proposals.length === 0) {
     console.log('[Pattern Discovery] No proposals to store');

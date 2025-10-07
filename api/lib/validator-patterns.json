@@ -1,0 +1,11 @@
+{
+  "metadata": {
+    "lastUpdated": "2025-10-07T00:00:00.000Z",
+    "totalPatterns": 0,
+    "description": "Dynamically deployed attack patterns from pattern discovery system",
+    "version": "1.0.0"
+  },
+  "substrings": [],
+  "encodings": [],
+  "regexes": []
+}
