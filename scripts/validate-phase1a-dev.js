@@ -15,14 +15,14 @@
 
 const https = require('https');
 const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: require('path').join(require('os').homedir(), 'projects/safeprompt/.env') });
+require('dotenv').config({ path: '/home/projects/.env' });
 
 // Configuration
 const DEV_API_URL = 'https://dev-api.safeprompt.dev';
 const DEV_DASHBOARD_URL = 'https://dev-dashboard.safeprompt.dev';
 const TEST_API_KEY = process.env.SAFEPROMPT_DEV_TEST_KEY || process.env.SAFEPROMPT_TEST_API_KEY;
-const DEV_SUPABASE_URL = process.env.DEV_SUPABASE_URL || process.env.SUPABASE_URL;
-const DEV_SUPABASE_KEY = process.env.DEV_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const DEV_SUPABASE_URL = process.env.SAFEPROMPT_SUPABASE_URL;
+const DEV_SUPABASE_KEY = process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY;
 
 // Initialize Supabase client
 const supabase = createClient(DEV_SUPABASE_URL, DEV_SUPABASE_KEY);
