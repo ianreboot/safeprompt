@@ -11,6 +11,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { updateIPReputationScores } from './ip-reputation.js';
+import { runPatternDiscovery } from './pattern-discovery.js';
 
 // Supabase client
 const supabase = createClient(
@@ -306,6 +307,18 @@ export async function runDailyJobs() {
 
   // Job 1: Clean up expired samples (90-day retention)
   results.jobs.sampleCleanup = await cleanupExpiredSamples();
+
+  // Job 2: Pattern discovery analysis (Phase 6.2)
+  try {
+    console.log('[BackgroundJobs] Running pattern discovery...');
+    results.jobs.patternDiscovery = await runPatternDiscovery();
+  } catch (error) {
+    console.error('[BackgroundJobs] Pattern discovery failed:', error);
+    results.jobs.patternDiscovery = {
+      success: false,
+      error: error.message
+    };
+  }
 
   console.log('[BackgroundJobs] Daily jobs complete:', results);
 
