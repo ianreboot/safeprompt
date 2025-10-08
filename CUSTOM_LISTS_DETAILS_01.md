@@ -10,9 +10,9 @@
 
 ## 📊 This Document Progress
 - **Tasks in this doc**: 45 (from master task list)
-- **Tasks completed**: 13/45 (28.9%)
-- **Current task**: Task 2.2 - Create custom-lists-validator.js
-- **Last update**: 2025-10-07 19:25
+- **Tasks completed**: 14/45 (31.1%)
+- **Current task**: Task 2.3 - Create custom-lists-checker.js
+- **Last update**: 2025-10-07 19:30
 
 ---
 
@@ -49,7 +49,7 @@
 
 ```yaml
 CURRENT_PHASE: "Phase 2 - Core Custom Lists Logic"
-CURRENT_TASK: "2.2 Create custom-lists-validator.js"
+CURRENT_TASK: "2.3 Create custom-lists-checker.js"
 
 # Phase Completion Flags
 PHASE_0_COMPLETE: true     # ✅ Planning complete (2025-10-07 18:31)
@@ -73,7 +73,7 @@ DEPLOYED_PROD: false
 # File Locations (Update when created)
 DEFAULT_LISTS_FILE: "/home/projects/safeprompt/api/lib/default-lists.js"
 SANITIZER_FILE: "/home/projects/safeprompt/api/lib/custom-lists-sanitizer.js"
-VALIDATOR_FILE: ""
+VALIDATOR_FILE: "/home/projects/safeprompt/api/lib/custom-lists-validator.js"
 INTEGRATION_FILE: ""
 MIGRATION_FILE: ""
 DASHBOARD_UI_FILE: ""
@@ -223,12 +223,19 @@ BLOCKER_DESCRIPTION: ""
   - Evidence: npm test shows 39/39 tests passing
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
-- [ ] 2.2 Create custom-lists-validator.js with tier limit enforcement
-  - File: `/home/projects/safeprompt/api/lib/custom-lists-validator.js` (NEW)
-  - Constant: TIER_LIMITS object (free: 0, starter: 10, business: 50, enterprise: 200, internal: 50)
-  - Function: validateCustomRulesForTier(rules, tier)
-  - Function: getEffectiveLists(customRules, profile, tier)
-  - Logic: Merge default lists + custom lists - removed items
+- [x] 2.2 Create custom-lists-validator.js with tier limit enforcement (COMPLETED: 2025-10-07 19:30)
+  - File: `/home/projects/safeprompt/api/lib/custom-lists-validator.js` (NEW - 260 lines)
+  - Exports: TIER_LIMITS, validateCustomRulesForTier(), getEffectiveLists(), validateAndGetEffectiveLists()
+  - Constants: TIER_LIMITS object (free: 0/0, starter: 10/10, business: 50/50, enterprise: 200/200, internal: 50/50)
+  - Function: validateCustomRulesForTier() - enforces whitelist/blacklist count limits per tier
+  - Function: getEffectiveLists() - merges defaults + profile custom + request custom - removed defaults
+  - Function: canEditDefaults() - checks if tier can remove default phrases
+  - Function: getTierLimits() - returns tier configuration
+  - Logic: Three-layer merge (defaults → profile custom → request custom)
+  - Logic: Deduplication (case-insensitive)
+  - Logic: Source tracking (defaults, profile, request counts)
+  - Tests: Created `/home/projects/safeprompt/api/__tests__/custom-lists-validator.test.js` (37 tests, all passing)
+  - Evidence: npm test shows 37/37 tests passing
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
 - [ ] 2.3 Create custom-lists-checker.js with match logic
