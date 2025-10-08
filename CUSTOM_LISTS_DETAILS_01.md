@@ -10,9 +10,9 @@
 
 ## 📊 This Document Progress
 - **Tasks in this doc**: 45 (from master task list)
-- **Tasks completed**: 12/45 (26.7%)
-- **Current task**: Task 2.1 - Create custom-lists-sanitizer.js
-- **Last update**: 2025-10-07 19:05
+- **Tasks completed**: 13/45 (28.9%)
+- **Current task**: Task 2.2 - Create custom-lists-validator.js
+- **Last update**: 2025-10-07 19:25
 
 ---
 
@@ -49,7 +49,7 @@
 
 ```yaml
 CURRENT_PHASE: "Phase 2 - Core Custom Lists Logic"
-CURRENT_TASK: "2.1 Create custom-lists-sanitizer.js"
+CURRENT_TASK: "2.2 Create custom-lists-validator.js"
 
 # Phase Completion Flags
 PHASE_0_COMPLETE: true     # ✅ Planning complete (2025-10-07 18:31)
@@ -72,7 +72,7 @@ DEPLOYED_PROD: false
 
 # File Locations (Update when created)
 DEFAULT_LISTS_FILE: "/home/projects/safeprompt/api/lib/default-lists.js"
-SANITIZER_FILE: ""
+SANITIZER_FILE: "/home/projects/safeprompt/api/lib/custom-lists-sanitizer.js"
 VALIDATOR_FILE: ""
 INTEGRATION_FILE: ""
 MIGRATION_FILE: ""
@@ -212,13 +212,15 @@ BLOCKER_DESCRIPTION: ""
 
 **Purpose**: Implement custom lists as routing/override signals in validation pipeline
 
-- [ ] 2.1 Create custom-lists-sanitizer.js with input validation
-  - File: `/home/projects/safeprompt/api/lib/custom-lists-sanitizer.js` (NEW)
-  - Function: sanitizeCustomRules(rules, tier)
-  - Logic: Character whitelist, length limits, tier limits
-  - Logic: FORBIDDEN_PATTERNS array (script, eval, exec, base64, etc.)
-  - Logic: Single-word warning flag (allow but flag for user)
-  - Tests: Create `/home/projects/safeprompt/api/__tests__/custom-lists-sanitizer.test.js`
+- [x] 2.1 Create custom-lists-sanitizer.js with input validation (COMPLETED: 2025-10-07 19:25)
+  - File: `/home/projects/safeprompt/api/lib/custom-lists-sanitizer.js` (NEW - 180 lines)
+  - Exports: sanitizeCustomPhrase(), sanitizeCustomPhrases(), sanitizeCustomRules()
+  - Constants: ALLOWED_CHARACTERS, MIN_PHRASE_LENGTH (2), MAX_PHRASE_LENGTH (100)
+  - Constants: FORBIDDEN_PATTERNS array (11 patterns: script, eval, exec, system, rm -rf, .., .env, /etc/passwd, DROP TABLE, base64, hex)
+  - Logic: Character validation, length validation, forbidden pattern check
+  - Logic: Single-word warning (not error) - returns {phrase, warning}
+  - Tests: Created `/home/projects/safeprompt/api/__tests__/custom-lists-sanitizer.test.js` (39 tests, all passing)
+  - Evidence: npm test shows 39/39 tests passing
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
 - [ ] 2.2 Create custom-lists-validator.js with tier limit enforcement
