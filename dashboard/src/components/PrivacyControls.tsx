@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { ShieldCheck, Download, Trash2, Check, AlertCircle, Info } from 'lucide-react'
+import { ShieldCheck, Download, Trash2, Check, AlertCircle, Info, Shield, Settings } from 'lucide-react'
 
 export default function PrivacyControls() {
   const [deletingData, setDeletingData] = useState(false)
@@ -11,6 +12,38 @@ export default function PrivacyControls() {
   const [exportSuccess, setExportSuccess] = useState(false)
   const [error, setError] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [privacySettings, setPrivacySettings] = useState<{
+    intelligence_sharing: boolean
+    auto_block_enabled: boolean
+    subscription_tier: string
+  } | null>(null)
+
+  useEffect(() => {
+    loadPrivacySettings()
+  }, [])
+
+  async function loadPrivacySettings() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('intelligence_sharing, auto_block_enabled, subscription_tier')
+        .eq('id', user.id)
+        .single()
+
+      if (data) {
+        setPrivacySettings({
+          intelligence_sharing: data.intelligence_sharing ?? true,
+          auto_block_enabled: data.auto_block_enabled ?? true,
+          subscription_tier: data.subscription_tier || 'free'
+        })
+      }
+    } catch (error) {
+      console.error('Error loading privacy settings:', error)
+    }
+  }
 
   async function handleDataDeletion() {
     setDeletingData(true)
@@ -131,6 +164,43 @@ export default function PrivacyControls() {
       </h2>
 
       <div className="space-y-6">
+        {/* Privacy Settings Summary (Phase 1A) */}
+        {privacySettings && privacySettings.subscription_tier !== 'free' && (
+          <div className="bg-purple-900/20 border border-purple-800 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-purple-400 flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                Network Defense Settings
+              </h3>
+              <Link
+                href="/settings/privacy"
+                className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1 transition-colors"
+              >
+                <Settings className="w-3 h-3" />
+                Manage
+              </Link>
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Intelligence Sharing:</span>
+                <span className={`font-medium ${privacySettings.intelligence_sharing ? 'text-green-400' : 'text-gray-400'}`}>
+                  {privacySettings.intelligence_sharing ? 'ON' : 'OFF'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">IP Auto-Blocking:</span>
+                <span className={`font-medium ${privacySettings.auto_block_enabled ? 'text-green-400' : 'text-gray-400'}`}>
+                  {privacySettings.auto_block_enabled ? 'ON' : 'OFF'}
+                </span>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 mt-3">
+              {privacySettings.intelligence_sharing
+                ? 'Contributing to global threat intelligence network'
+                : 'Not sharing validation data with network'}
+            </p>
+          </div>
+        )}
         {/* Data Export */}
         <div className="bg-black/50 rounded-lg border border-gray-800 p-4">
           <div className="flex items-start gap-4">
