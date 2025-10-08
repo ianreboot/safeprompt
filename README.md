@@ -35,16 +35,30 @@ if (result.ipReputationScore < 0.5) {
 }
 ```
 
+## What's New (October 2025)
+
+### ✨ Custom Whitelist/Blacklist (NEW)
+Define business-specific phrases to guide validation decisions:
+- **Custom Whitelist**: Mark safe business phrases (e.g., "shipping address", "customer service")
+- **Custom Blacklist**: Block specific attack patterns unique to your use case
+- **Default Lists**: Pre-configured phrases for common business scenarios
+- **Tier Limits**: Free (defaults only), Starter (25/25), Business (100/100)
+- **Dashboard Management**: Add/edit/remove phrases at `/custom-lists` with real-time validation
+- **API Integration**: Pass `customRules` in request body for per-request overrides
+
+See the [Custom Lists documentation](#custom-lists) for details.
+
 ## Features
 
 - **🚀 One-Line Integration**: Literally just POST to /validate
 - **⚡ Lightning Fast**: <100ms pattern detection (67% of requests), 2-3s AI validation when needed
 - **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
+- **✨ Custom Lists**: Define business-specific whitelist/blacklist phrases (NEW)
 - **🧠 Network Intelligence**: IP reputation system learns from attacks across all customers (Pro tier)
 - **🔗 Multi-Turn Protection**: Session-based validation detects context priming and RAG poisoning
 - **📊 Batch Processing**: Validate multiple prompts in one call
 - **💰 Cost Optimized**: 67% requests require $0 AI cost (instant pattern/reference matching)
-- **📈 Usage Dashboard**: See threats blocked, track usage, view IP reputation scores
+- **📈 Usage Dashboard**: See threats blocked, track usage, manage custom lists
 
 ## Quick Start
 
@@ -143,6 +157,73 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 ## API Documentation
 
 See [docs/API.md](docs/API.md) for complete API reference.
+
+### Custom Lists
+
+**NEW (October 2025)**: Define business-specific phrases to guide AI validation decisions.
+
+#### How It Works
+Custom lists provide **confidence signals** to the AI validator, not instant block/allow decisions:
+- **Blacklist match** (0.9 confidence) → Routes to AI with high attack signal
+- **Whitelist match** (0.8 confidence) → Routes to AI with high business signal
+- **Pattern detection always runs** (XSS, SQL injection cannot be overridden)
+
+#### API Usage
+
+```javascript
+// Option 1: Per-request custom rules
+const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'sp_live_YOUR_KEY',
+    'X-User-IP': userIP,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    prompt: userInput,
+    customRules: {
+      whitelist: ['shipping address', 'customer service', 'order tracking'],
+      blacklist: ['admin override', 'system prompt']
+    }
+  })
+});
+
+// Option 2: Use profile-level lists (managed in dashboard)
+// No need to pass customRules - uses your saved lists
+const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'sp_live_YOUR_KEY',
+    'X-User-IP': userIP,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ prompt: userInput })
+});
+
+// Check if custom rule matched
+if (result.customRuleMatched) {
+  console.log(`Matched ${result.customRuleMatched.type}: "${result.customRuleMatched.phrase}"`);
+}
+```
+
+#### Dashboard Management
+Manage your custom lists at `https://dashboard.safeprompt.dev/custom-lists`:
+- Add/edit/delete custom phrases
+- View tier limits (X/Y phrases used)
+- Toggle default lists on/off
+- Remove specific default phrases (paid tiers)
+
+#### Tier Limits
+- **Free**: Default lists only (read-only)
+- **Starter**: 25 whitelist + 25 blacklist phrases
+- **Business**: 100 whitelist + 100 blacklist phrases
+- **Internal**: 200 whitelist + 200 blacklist phrases
+
+#### Important Notes
+- **Blacklist priority**: Blacklist always wins over whitelist
+- **Security first**: XSS/SQL patterns cannot be overridden by whitelist
+- **Three-layer merging**: Request custom rules > Profile custom rules > Default lists
+- **Case insensitive**: Matching is case-insensitive ("Admin" matches "admin")
 
 ## Development
 

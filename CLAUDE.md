@@ -1,10 +1,12 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-07 (Quarter 1 Security Hardening COMPLETE)
-**Status**: Production Ready with Advanced Intelligence Architecture
+**Last Updated**: 2025-10-08 (Custom Lists V2 Feature COMPLETE)
+**Status**: Production Ready with Advanced Intelligence Architecture + Custom Lists
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
 
-**🎉 Quarter 1 Complete**: All 135+ security hardening tasks completed (2 days). See `/home/projects/safeprompt/docs/SECURITY_HARDENING_QUARTER1.md` for full details.
+**🎉 Recent Milestones**:
+- **Custom Lists V2** (2025-10-08): Custom whitelist/blacklist feature deployed to production
+- **Quarter 1 Security** (2025-10-07): All 135+ security hardening tasks completed
 
 **🚨 Intelligence Architecture**:
 - **Threat Intelligence**: 24-hour anonymization, GDPR/CCPA compliant data collection
@@ -12,6 +14,13 @@
 - **Pattern Discovery**: ML-powered automated pattern detection from real attacks
 - **Campaign Detection**: Temporal clustering and similarity analysis for coordinated attacks
 - **Admin Dashboard**: Complete IP management, pattern proposals, campaign response tools
+
+**✨ Custom Lists (NEW)**:
+- **Custom Whitelist**: Business-specific phrases that provide high confidence signals (0.8)
+- **Custom Blacklist**: Attack patterns that provide high attack confidence (0.9)
+- **Default Lists**: Curated phrases for common business scenarios (replace old business keywords)
+- **Tier Limits**: Free (defaults only), Starter (25/25), Business (100/100), Internal (200/200)
+- **Dashboard UI**: Manage custom lists at `/custom-lists` with real-time validation
 
 For complete architecture details, see:
 - `/home/projects/safeprompt/docs/PHASE_1A_INTELLIGENCE_ARCHITECTURE.md` (Threat Intelligence & IP Reputation)
@@ -115,16 +124,17 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
 **Complete documentation**: `/home/projects/safeprompt/docs/TESTING_REGIMENT.md`
 
 ### Test Tiers
-1. **Unit Tests** (Automatic): `npm test` - 386 tests, <40s, runs on every push
+1. **Unit Tests** (Automatic): `npm test` - 852 tests, <60s, runs on every push
 2. **Smoke Tests** (Before prod): `npm run test:smoke` - 5 critical tests, 30s
-3. **Realistic Tests** (Manual): `npm run test:realistic` - 94 tests, 8-10min, requires OPENROUTER_API_KEY
+3. **Realistic Tests** (Manual): `npm run test:realistic` - 104 tests, 8-10min, requires OPENROUTER_API_KEY
 4. **Manual Validation**: Ad-hoc testing with curl
 
 ### Current Coverage
-- **Unit tests**: 386 tests (100% pass rate)
+- **Unit tests**: 852 tests (100% pass rate)
+  - Custom lists tests: 132 tests (sanitizer, validator, checker, integration)
 - **Overall coverage**: 52.71%
 - **Critical path coverage**: 74-96% on validation logic
-- **Accuracy**: 98.9% (93/94 professional tests passed)
+- **Accuracy**: 98.9% (93/94 professional tests passed, 10 custom lists tests added)
 
 ---
 
@@ -210,6 +220,49 @@ Database (Supabase)
 
 ---
 
+## VALIDATION PIPELINE (Updated 2025-10-08)
+
+**Complete flow** (from fastest to most thorough):
+
+### Stage 0: External Reference Detection (0ms, 5% of requests)
+- Detects external URLs, IP addresses, file paths
+- **CANNOT be overridden** by custom lists
+- Instant block if dangerous references found
+
+### Stage 0.5: Custom Lists Check (NEW - 0ms, instant)
+- Checks against custom whitelist/blacklist phrases
+- **Blacklist match** (0.9 confidence) → Routes to AI with high attack signal
+- **Whitelist match** (0.8 confidence) → Routes to AI with high business signal
+- **No match** → Continue to pattern detection
+- Three-layer merging: defaults → profile custom → request custom
+- **IMPORTANT**: This is a routing signal, not an instant decision
+
+### Stage 1: Pattern Detection (<100ms, 67% of requests)
+- XSS, SQL injection, template injection, command injection
+- **CANNOT be overridden** by custom lists (security first)
+- Instant block if pattern matched WITHOUT business context
+- Routes to AI if pattern matched WITH business context (whitelist signal)
+
+### Stage 2: Pass 1 AI Validation (2-3s, Gemini 2.0 Flash)
+- Fast model for clear-cut cases
+- Uses custom list confidence signals in decision
+- High confidence (>0.7) → Return decision
+- Low confidence → Escalate to Pass 2
+
+### Stage 3: Pass 2 AI Validation (3-4s, Gemini 2.5 Flash)
+- Accurate model for edge cases
+- Final decision with custom list signals considered
+- Returns detailed reasoning and confidence
+
+**Custom Lists Architecture**:
+- Blacklist always wins over whitelist (priority: blacklist > whitelist)
+- Pattern detection always runs (cannot be bypassed)
+- Custom lists provide confidence signals to AI, not instant decisions
+- Free tier: Default lists only (read-only)
+- Paid tiers: Can add custom phrases with tier-based limits
+
+---
+
 ## DEPLOYMENT CHECKLIST
 
 **For detailed procedures**: See `/home/projects/safeprompt/docs/DEPLOYMENT-DETAILED.md`
@@ -287,17 +340,32 @@ BUSINESS = $99/month, 250,000 validations
 
 ### Source Code
 ```
-/home/projects/safeprompt/api/lib/ai-validator-hardened.js      # Core 2-pass validator
+# Core Validators
+/home/projects/safeprompt/api/lib/ai-validator-unified.js       # Production validator (3-stage)
+/home/projects/safeprompt/api/lib/ai-validator-hardened.js      # Legacy 2-pass validator
 /home/projects/safeprompt/api/lib/external-reference-detector.js # URL/IP detection
 /home/projects/safeprompt/api/lib/prompt-validator.js           # Pattern matching
+
+# Custom Lists (NEW)
+/home/projects/safeprompt/api/lib/custom-lists-checker.js       # Match logic
+/home/projects/safeprompt/api/lib/custom-lists-validator.js     # Three-layer merging
+/home/projects/safeprompt/api/lib/custom-lists-sanitizer.js     # Input validation
+/home/projects/safeprompt/api/lib/default-lists.js              # Default phrases
+/home/projects/safeprompt/api/api/v1/custom-lists/index.js      # CRUD API
+
+# Main Endpoint
 /home/projects/safeprompt/api/api/v1/validate.js                 # Main API endpoint
 ```
 
 ### Testing
 ```
-/home/projects/safeprompt/api/__tests__/                # Unit tests (386 tests)
-/home/projects/safeprompt/test-suite/smoke-test-suite.js       # Smoke tests (5)
-/home/projects/safeprompt/test-suite/realistic-test-suite.js   # Realistic tests (94)
+/home/projects/safeprompt/api/__tests__/                         # Unit tests (852 tests)
+  ├── custom-lists-sanitizer.test.js                            # 39 tests
+  ├── custom-lists-validator.test.js                            # 37 tests
+  ├── custom-lists-checker.test.js                              # 31 tests
+  └── custom-lists-integration.test.js                          # 25 tests
+/home/projects/safeprompt/test-suite/smoke-test-suite.js        # Smoke tests (5)
+/home/projects/safeprompt/test-suite/realistic-test-suite.js    # Realistic tests (104)
 ```
 
 ---
