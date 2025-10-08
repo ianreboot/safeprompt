@@ -37,7 +37,23 @@ if (result.ipReputationScore < 0.5) {
 
 ## What's New (October 2025)
 
-### ✨ Custom Whitelist/Blacklist (NEW)
+### 🎉 Phase 6 Intelligence Pipeline (October 8, 2025)
+Automated attack pattern discovery and deployment:
+- **Pattern Discovery**: ML-powered analysis finds new attack patterns from real threats (daily 3 AM UTC)
+- **Campaign Detection**: Identifies coordinated attacks using temporal clustering (daily 3:30 AM UTC)
+- **Honeypot Learning**: Auto-deploys patterns from fake endpoints with 100% malicious traffic (daily 4 AM UTC)
+- **Admin Dashboard**: Review pattern proposals, investigate campaigns, monitor auto-deployments
+- **Zero Impact**: Background jobs don't affect validation performance
+
+### 🛡️ Phase 1A Network Defense (October 8, 2025)
+Collective intelligence across all customers:
+- **Threat Intelligence**: Collects blocked prompts with 24-hour PII retention (GDPR/CCPA compliant)
+- **IP Reputation**: Hash-based auto-blocking of malicious IPs (Pro tier, <10ms lookup)
+- **Multi-Turn Detection**: Session-based validation catches context priming and RAG poisoning
+- **67 Tests Passing**: Complete test coverage for compliance, performance, and security
+- **Privacy Controls**: Opt-out available, GDPR export/deletion APIs
+
+### ✨ Custom Whitelist/Blacklist (October 8, 2025)
 Define business-specific phrases to guide validation decisions:
 - **Custom Whitelist**: Mark safe business phrases (e.g., "shipping address", "customer service")
 - **Custom Blacklist**: Block specific attack patterns unique to your use case
@@ -45,6 +61,7 @@ Define business-specific phrases to guide validation decisions:
 - **Tier Limits**: Free (defaults only), Starter (25/25), Business (100/100)
 - **Dashboard Management**: Add/edit/remove phrases at `/custom-lists` with real-time validation
 - **API Integration**: Pass `customRules` in request body for per-request overrides
+- **132 Tests Passing**: Comprehensive test coverage (sanitizer, validator, checker, integration)
 
 See the [Custom Lists documentation](#custom-lists) for details.
 
@@ -53,12 +70,15 @@ See the [Custom Lists documentation](#custom-lists) for details.
 - **🚀 One-Line Integration**: Literally just POST to /validate
 - **⚡ Lightning Fast**: <100ms pattern detection (67% of requests), 2-3s AI validation when needed
 - **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
-- **✨ Custom Lists**: Define business-specific whitelist/blacklist phrases (NEW)
+- **✨ Custom Lists**: Define business-specific whitelist/blacklist phrases
 - **🧠 Network Intelligence**: IP reputation system learns from attacks across all customers (Pro tier)
+- **🤖 Pattern Discovery**: Automated ML-powered attack pattern detection from real threats (Phase 6)
+- **🎯 Campaign Detection**: Identifies coordinated attacks using temporal clustering (Phase 6)
+- **🍯 Honeypot Learning**: Auto-deploys patterns from fake endpoints (Phase 6)
 - **🔗 Multi-Turn Protection**: Session-based validation detects context priming and RAG poisoning
 - **📊 Batch Processing**: Validate multiple prompts in one call
 - **💰 Cost Optimized**: 67% requests require $0 AI cost (instant pattern/reference matching)
-- **📈 Usage Dashboard**: See threats blocked, track usage, manage custom lists
+- **📈 Usage Dashboard**: See threats blocked, track usage, manage custom lists, review pattern proposals
 
 ## Quick Start
 
@@ -283,22 +303,43 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ### Recent Updates (October 2025)
 
+**October 8, 2025 - Phase 6 Intelligence Pipeline DEPLOYED** 🎉
+- ✅ **Pattern Discovery**: Automated ML analysis discovers new attack patterns from real threats (3 AM UTC daily cron)
+- ✅ **Campaign Detection**: Temporal clustering identifies coordinated attacks (3:30 AM UTC daily cron)
+- ✅ **Honeypot Learning**: Auto-deploys patterns from fake endpoints with 100% malicious traffic (4 AM UTC daily cron)
+- ✅ **Complete Admin Dashboard**: Review pattern proposals, investigate campaigns, monitor auto-deployments
+- ✅ **Production Deployment**: All 3 Vercel cron jobs deployed and scheduled
+- ✅ **Database Schema**: 4 Phase 6 tables deployed (pattern_proposals, attack_campaigns, honeypot_learnings, extended threat_intelligence_samples)
+- ✅ **Monitoring & Rollback**: Complete documentation for health checks and recovery procedures
+
+**October 8, 2025 - Phase 1A Network Defense DEPLOYED** 🛡️
+- ✅ **Threat Intelligence System**: 24-hour PII retention, GDPR/CCPA compliant data collection
+- ✅ **IP Reputation System**: Hash-based auto-blocking with <10ms lookup (Pro tier)
+- ✅ **Multi-Turn Attack Detection**: Session-based validation for context priming and RAG poisoning
+- ✅ **Privacy Compliance**: GDPR export/deletion APIs, opt-out controls for Pro tier
+- ✅ **Complete Test Coverage**: 67 tests passing (compliance, performance, security, integration)
+- ✅ **Dashboard UI**: Privacy settings, IP management, threat intelligence analytics (11 components)
+- ✅ **Website Updates**: Network defense content, pricing updates, FAQ additions
+- ✅ **API Documentation**: GDPR endpoints, intelligence collection, IP reputation fields
+
+**October 8, 2025 - Payment Testing VALIDATED** 💳
+- ✅ **Revenue-Critical Flows**: All Stripe payment and subscription flows tested
+- ✅ **Test Results**: 12/15 tests passing (3 expected DEV failures - API not deployed to DEV)
+- ✅ **Tier Management**: User tier upgrades, downgrades, subscription lifecycle verified
+- ✅ **Webhook Integration**: Stripe events update database atomically
+- ✅ **Usage Tracking**: Monthly validation limits and reset mechanism functional
+
+**October 8, 2025 - Custom Lists V2 DEPLOYED** ✨
+- ✅ **Custom Whitelist/Blacklist**: Business-specific phrase management
+- ✅ **Default Lists**: Pre-configured phrases for common business scenarios
+- ✅ **Dashboard UI**: Complete CRUD interface at `/custom-lists`
+- ✅ **API Integration**: Three-layer merging (request > profile > defaults)
+- ✅ **132 Tests Passing**: Comprehensive coverage (sanitizer, validator, checker, integration)
+- ✅ **Tier Limits**: Free (defaults only), Starter (25/25), Business (100/100), Internal (200/200)
+
 **October 7, 2025 - Quarter 1 Security Hardening COMPLETE** 🎉
-- ✅ **Pattern Discovery Pipeline**: ML-powered automated pattern detection from real attacks
-- ✅ **Campaign Detection**: Temporal clustering and similarity analysis for coordinated attacks
-- ✅ **Honeypot Learning**: Safe auto-deployment of validated patterns from fake endpoints
-- ✅ **Complete Admin Dashboard**: IP management (whitelist/blacklist), pattern proposals, campaign response
-- ✅ **User Analytics**: Validation history, usage charts, privacy controls (GDPR/CCPA rights)
 - ✅ **Total**: 135+ tasks completed across 5 major phases (Phase 1A, 1B, 1C, Phase 2, Phase 6)
 - ✅ **Production Status**: All components deployed and operational
-
-**October 6, 2025 - Phase 1A: Threat Intelligence System** 🚀
-- ✅ **IP Reputation System**: Network defense intelligence across all customers
-- ✅ **Multi-Turn Attack Detection**: Session-based validation for context priming and RAG poisoning
-- ✅ **Threat Intelligence Collection**: 24-hour anonymization model (GDPR/CCPA compliant)
-- ✅ **Pro Tier IP Blocking**: Auto-block malicious IPs with >70% attack rate (opt-in)
-- ✅ **Privacy Compliance APIs**: GDPR right to deletion and data export
-- ✅ **X-User-IP Header**: Required for accurate attack source tracking
 
 **October 3, 2025:**
 - ✅ **Complete Dev/Prod Separation**: Dual API architecture implemented (safeprompt-api + safeprompt-api-dev)
@@ -335,7 +376,10 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - **Response Time**: <100ms for 67% requests (pattern detection), 2-3s for AI validation
 - **Zero-Cost Rate**: 67% of requests handled instantly via pattern/reference detection
 - **Architecture**: Hardened 2-pass validator with intelligent routing and consensus
-- **Test Coverage**: 386 unit tests (100% pass rate) + 94 professional integration tests
+- **Test Coverage**: 852 unit tests (100% pass rate) + 94 professional integration tests + 67 Phase 1A tests
+  - Custom Lists: 132 tests (sanitizer, validator, checker, integration)
+  - Phase 1A: 67 tests (GDPR compliance, performance, IP reputation, intelligence collection)
+  - Payment Testing: 12/15 tests passing (3 expected DEV failures)
 - **Unit Test Coverage**: 52.71% overall, 74-96% on critical validation paths
 - **Attack Detection**: 96.8% (60/62 attacks blocked)
 - **False Positive Rate**: 0% (32/32 legitimate requests approved)

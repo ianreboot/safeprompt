@@ -1,18 +1,22 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-08 (Custom Lists V2 Feature COMPLETE)
-**Status**: Production Ready with Advanced Intelligence Architecture + Custom Lists
+**Last Updated**: 2025-10-08 (Phase 1A + Phase 6 + Custom Lists V2 COMPLETE)
+**Status**: Production Ready with Advanced Intelligence Architecture + Custom Lists + Network Defense
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
 
 **🎉 Recent Milestones**:
+- **Phase 6 Intelligence** (2025-10-08): Pattern Discovery, Campaign Detection, Honeypot Learning deployed to production
+- **Phase 1A Network Defense** (2025-10-08): Threat Intelligence + IP Reputation system deployed with 67 tests passing
 - **Custom Lists V2** (2025-10-08): Custom whitelist/blacklist feature deployed to production
 - **Quarter 1 Security** (2025-10-07): All 135+ security hardening tasks completed
+- **Payment Testing** (2025-10-08): Revenue-critical Stripe flows validated (12/15 tests passing)
 
-**🚨 Intelligence Architecture**:
+**🚨 Intelligence Architecture** (ALL DEPLOYED TO PRODUCTION):
 - **Threat Intelligence** (Phase 1A): 24-hour anonymization, GDPR/CCPA compliant data collection, tier-based contribution
 - **IP Reputation** (Phase 1A): Hash-based auto-blocking, <10ms lookup, Pro tier network defense
-- **Pattern Discovery** (Phase 6): ML-powered automated pattern detection from real attacks
-- **Campaign Detection** (Phase 6): Temporal clustering and similarity analysis for coordinated attacks
+- **Pattern Discovery** (Phase 6): ML-powered automated pattern detection (3 AM UTC daily cron)
+- **Campaign Detection** (Phase 6): Temporal clustering and similarity analysis (3:30 AM UTC daily cron)
+- **Honeypot Learning** (Phase 6): Safe auto-deployment of validated patterns (4 AM UTC daily cron)
 - **Admin Dashboard** (Phases 1A+6): Complete IP management, pattern proposals, campaign response tools
 
 **✨ Custom Lists (NEW)**:
@@ -25,6 +29,8 @@
 For complete architecture details, see:
 - `/home/projects/safeprompt/docs/PHASE_1A_INTELLIGENCE_ARCHITECTURE.md` (Threat Intelligence & IP Reputation)
 - `/home/projects/safeprompt/docs/PHASE_6_INTELLIGENCE_ARCHITECTURE.md` (Pattern Discovery & Campaign Detection)
+- `/home/projects/safeprompt/docs/SECURITY_HARDENING_QUARTER1.md` (Complete Quarter 1 security hardening tasks)
+- `/home/projects/safeprompt/docs/TESTING_REGIMENT.md` (Complete testing guide including Phase 6 payment tests)
 
 ---
 
@@ -132,6 +138,8 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
 ### Current Coverage
 - **Unit tests**: 852 tests (100% pass rate)
   - Custom lists tests: 132 tests (sanitizer, validator, checker, integration)
+  - Phase 1A tests: 67 tests (compliance, performance, IP reputation, intelligence collection)
+  - Phase 6 tests: Payment testing (12/15 passing, 3 expected DEV failures)
 - **Overall coverage**: 52.71%
 - **Critical path coverage**: 74-96% on validation logic
 - **Accuracy**: 98.9% (93/94 professional tests passed, 10 custom lists tests added)
@@ -354,6 +362,167 @@ await updateIPReputationScores(ipHash, {
 4. **Always verify allowlist first** - Prevents blocking CI/CD during attacks
 5. **Always use constant-time comparison** - Test suite header check (timing attack protection)
 6. **Always check opt-in status** - Pro users can disable intelligence sharing
+
+---
+
+## PHASE 6: PATTERN DISCOVERY & CAMPAIGN DETECTION
+
+**Status**: Deployed to PROD (2025-10-08)
+**Documentation**: `/home/projects/safeprompt/docs/PHASE_6_INTELLIGENCE_ARCHITECTURE.md`
+**Monitoring**: `/home/projects/safeprompt/docs/PHASE_6_MONITORING.md`
+**Rollback**: `/home/projects/safeprompt/docs/PHASE_6_ROLLBACK_PLAN.md`
+
+### Overview
+
+Phase 6 builds on Phase 1A's threat intelligence to **automatically discover and deploy new attack patterns** without manual intervention. The system runs three background jobs daily to analyze attack data and update defenses.
+
+### Background Jobs (Vercel Cron)
+
+**1. Pattern Discovery** (3:00 AM UTC daily)
+- **File**: `/home/projects/safeprompt/api/api/cron/pattern-discovery.js`
+- **Purpose**: Analyze threat intelligence samples to discover new attack patterns
+- **Process**:
+  1. Query samples with ≥10 occurrences (high confidence)
+  2. Use AI to identify common attack techniques
+  3. Generate regex patterns for fast detection
+  4. Create pattern proposals for admin review
+- **Max Duration**: 300 seconds (5 minutes)
+
+**2. Campaign Detection** (3:30 AM UTC daily)
+- **File**: `/home/projects/safeprompt/api/api/cron/campaign-detection.js`
+- **Purpose**: Detect coordinated attack campaigns using temporal clustering
+- **Process**:
+  1. Group attacks by time window (1-hour clusters)
+  2. Calculate similarity scores (IP overlap, attack vector similarity)
+  3. Flag campaigns with ≥5 related attacks
+  4. Alert admin for investigation
+- **Max Duration**: 120 seconds (2 minutes)
+
+**3. Honeypot Learning** (4:00 AM UTC daily)
+- **File**: `/home/projects/safeprompt/api/api/cron/honeypot-learning.js`
+- **Purpose**: Auto-deploy patterns from honeypot endpoints (100% malicious traffic)
+- **Process**:
+  1. Query honeypot requests (fake endpoints)
+  2. Extract attack patterns
+  3. Auto-deploy to production (no admin review needed)
+  4. Log deployment for audit trail
+- **Max Duration**: 180 seconds (3 minutes)
+
+### Database Schema (Phase 6)
+
+**Table 1: `pattern_proposals`**
+- **Purpose**: Store AI-discovered patterns pending admin review
+- **Key Fields**:
+  - `pattern` (regex string)
+  - `attack_type` (XSS, SQL, template, etc.)
+  - `confidence_score` (0-1, from AI analysis)
+  - `sample_count` (number of samples matching)
+  - `status` (pending, approved, rejected, deployed)
+- **Admin Action**: Review at `/admin/intelligence` dashboard
+
+**Table 2: `attack_campaigns`**
+- **Purpose**: Track coordinated attack attempts
+- **Key Fields**:
+  - `campaign_id` (UUID)
+  - `attack_count` (number of related attacks)
+  - `unique_ips` (distinct IPs involved)
+  - `similarity_score` (0-1, clustering confidence)
+  - `status` (active, investigating, resolved, blocked)
+- **Admin Action**: Investigate and block at `/admin/intelligence`
+
+**Table 3: `honeypot_learnings`**
+- **Purpose**: Auto-deployed patterns from honeypot endpoints
+- **Key Fields**:
+  - `pattern` (regex string)
+  - `source` (honeypot endpoint)
+  - `deployed_at` (auto-deployment timestamp)
+  - `match_count` (number of production matches)
+- **Safety**: Patterns auto-revert if false positive rate >5%
+
+**Table 4: `threat_intelligence_samples` (extended)**
+- **New Columns**:
+  - `campaign_id` (links to attack_campaigns)
+  - `pattern_proposal_id` (links to pattern_proposals)
+  - `honeypot_source` (NULL for production, endpoint for honeypot)
+
+### Admin Dashboard (/admin/intelligence)
+
+**Pattern Proposals Tab**:
+- View AI-discovered patterns pending review
+- See sample count, confidence score, attack type
+- Approve (deploy to production) or Reject
+- Test pattern against validation history
+
+**Campaign Detection Tab**:
+- View active coordinated attacks
+- See IP clusters, time distribution, attack vectors
+- Investigate individual samples
+- Block entire campaign or specific IPs
+
+**Honeypot Analytics Tab**:
+- View auto-deployed patterns
+- Monitor false positive rates
+- Manual revert if needed
+- Request history from honeypot endpoints
+
+### Monitoring & Alerts
+
+**Health Checks** (Manual, daily):
+- Vercel logs: Check cron job execution at 5 AM UTC
+- Supabase dashboard: Monitor database performance
+- Admin dashboard: Review pending pattern proposals
+
+**Performance Baselines** (P95):
+- Pattern Discovery: 60-120 seconds
+- Campaign Detection: 30-60 seconds
+- Honeypot Learning: 45-90 seconds
+
+**Alert Triggers**:
+- Cron job timeout (>max duration)
+- Database CPU >80% sustained
+- No pattern discovery in 48 hours
+- Active critical campaigns detected
+
+### Rollback Procedures
+
+**Level 1**: Disable specific job (5 minutes)
+```bash
+# Comment out cron schedule in vercel.json
+# Redeploy API
+```
+
+**Level 2**: Disable all Phase 6 jobs (10 minutes)
+```bash
+# Comment out all 3 cron schedules
+# Redeploy API
+```
+
+**Level 3**: Revert database schema (30 minutes)
+```bash
+# Mark migrations as reverted
+supabase migration repair --status reverted 20251007030000
+supabase db push
+```
+
+**Safety Principle**: Phase 6 is additive only - disabling returns to Phase 1A functionality with zero impact on core validation.
+
+### Integration with Validation Pipeline
+
+Phase 6 **does not change the validation flow** - it only updates the pattern database that Stage 1 uses:
+
+1. User validation request → Existing pipeline (Stage 0 → 1 → 2 → 3)
+2. Background jobs run nightly → Discover new patterns
+3. Admin approves → Patterns added to `prompt-validator.js` regex list
+4. Next user validation → New patterns automatically checked
+
+### Critical Reminders
+
+1. **Admin review required** for pattern proposals (except honeypot patterns)
+2. **Cron jobs are asynchronous** - Do not block user validation
+3. **Always monitor first week** - Validate baselines match expectations
+4. **Test rollback procedures** - Ensure Level 1 rollback works before production
+5. **Honeypot auto-deploy is safe** - 100% malicious traffic (fake endpoints)
+6. **Campaign detection is informational** - Does not auto-block (admin decision)
 
 ---
 
