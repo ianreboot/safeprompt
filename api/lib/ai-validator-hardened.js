@@ -16,6 +16,8 @@ import { validateBusiness } from './validators/business-validator.js';
 import { detectAttack } from './validators/attack-detector.js';
 import { analyzeSemantic } from './validators/semantic-analyzer.js';
 import { buildConsensus, calculateTotalCost, calculateProcessingTime } from './consensus-engine.js';
+import { checkCustomLists } from './custom-lists-checker.js';
+import { getEffectiveLists } from './custom-lists-validator.js';
 
 // Load environment variables - works both locally and on Vercel
 dotenv.config();
@@ -714,6 +716,9 @@ export async function validateHardened(prompt, options = {}) {
   const {
     skipPatterns = false,
     skipExternalCheck = false,
+    customRules = null,  // { whitelist: [], blacklist: [] } from API request
+    profile = null,       // User profile with custom_whitelist, custom_blacklist, removed_defaults
+    tier = 'free',        // User tier for limit validation
     preFilterThreshold = {
       high: 0.9,
       low: 0.7
@@ -1001,9 +1006,58 @@ export async function validateHardened(prompt, options = {}) {
     }
   }
 
+  // Stage 0.5: Custom Lists Check
+  // Check prompt against user's custom whitelist/blacklist
+  // Returns confidence signals for routing, NOT instant decisions
+  let customListContext = null;
+
+  if (customRules || profile) {
+    // Get effective lists (defaults + profile custom + request custom)
+    const effectiveLists = getEffectiveLists({ customRules, profile, tier });
+
+    // Check prompt against lists
+    const customListMatch = checkCustomLists(
+      prompt,
+      effectiveLists.whitelist,
+      effectiveLists.blacklist
+    );
+
+    if (customListMatch) {
+      customListContext = {
+        matched: true,
+        type: customListMatch.type,
+        phrase: customListMatch.matchedPhrase,
+        confidence: customListMatch.confidence,
+        source: customListMatch.source
+      };
+
+      stats.stages.push({
+        stage: 'custom_lists',
+        result: customListMatch.type,
+        matched_phrase: customListMatch.matchedPhrase,
+        confidence: customListMatch.confidence,
+        time: Date.now() - startTime,
+        cost: 0
+      });
+
+      // Note: Custom lists are routing signals, not instant decisions
+      // Blacklist match → Pass to orchestrator with attack signal (0.9 confidence)
+      // Whitelist match → Pass to orchestrator with business signal (0.8 confidence)
+      // The orchestrator and consensus engine will make the final decision
+    }
+  }
+
   // Stage 1: AI Orchestrator - Intelligent routing
-  // Pass pattern context if suspicious patterns were detected
-  const orchestratorResult = await orchestrate(prompt, patternContext.detected ? patternContext : null);
+  // Pass pattern context AND custom list context if detected
+  const contextForOrchestrator = {
+    ...(patternContext.detected ? patternContext : {}),
+    ...(customListContext ? { customList: customListContext } : {})
+  };
+
+  const orchestratorResult = await orchestrate(
+    prompt,
+    Object.keys(contextForOrchestrator).length > 0 ? contextForOrchestrator : null
+  );
 
   stats.stages.push({
     stage: 'orchestrator',

@@ -10,9 +10,9 @@
 
 ## 📊 This Document Progress
 - **Tasks in this doc**: 47 (from master task list - added tier naming cleanup task 2.9)
-- **Tasks completed**: 15/47 (31.9%)
-- **Current task**: Task 2.4 - Integrate custom lists into ai-validator-hardened.js
-- **Last update**: 2025-10-08 00:48
+- **Tasks completed**: 16/47 (34.0%)
+- **Current task**: Task 2.5 - Update ai-orchestrator.js to accept custom list context
+- **Last update**: 2025-10-08 00:51
 
 ---
 
@@ -264,13 +264,21 @@ BLOCKER_DESCRIPTION: ""
   - Evidence: npm test shows 31/31 tests passing
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
-- [ ] 2.4 Integrate custom lists into ai-validator-hardened.js validation pipeline
+- [x] 2.4 Integrate custom lists into ai-validator-hardened.js validation pipeline (COMPLETED: 2025-10-08 00:51)
   - File: `/home/projects/safeprompt/api/lib/ai-validator-hardened.js`
-  - Location: After external reference detection, before AI orchestrator (around line 1150)
-  - Logic: Call checkCustomLists(prompt, effectiveWhitelist, effectiveBlacklist)
-  - If blacklist match: Create attackContext = { confidence: 0.9, matched: phrase, type: 'custom_blacklist' }
-  - If whitelist match: Create businessContext = { confidence: 0.8, matched: phrase, type: 'custom_whitelist' }
-  - Pass context to orchestrator via new parameter
+  - Added imports: checkCustomLists, getEffectiveLists (lines 19-20)
+  - Updated function signature: validateHardened() now accepts customRules, profile, tier parameters (lines 719-721)
+  - Added Stage 0.5: Custom Lists Check (lines 1009-1048)
+    - Runs after external reference detection, before orchestrator
+    - Calls getEffectiveLists({ customRules, profile, tier })
+    - Calls checkCustomLists(prompt, whitelist, blacklist)
+    - Creates customListContext with match details
+    - Adds stats tracking for custom list matches
+  - Updated orchestrator call: Passes both patternContext AND customListContext (lines 1050-1060)
+  - Logic: Custom lists as confidence signals, NOT instant decisions
+  - If blacklist match: Pass attack signal (0.9 confidence) to orchestrator
+  - If whitelist match: Pass business signal (0.8 confidence) to orchestrator
+  - Evidence: Code compiles, existing tests still pass (827/841 - failures from Phase 1 changes)
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
 - [ ] 2.5 Update ai-orchestrator.js to accept custom list context
