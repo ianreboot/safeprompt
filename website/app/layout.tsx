@@ -10,8 +10,8 @@ const websiteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://safeprompt.de
 
 export const metadata: Metadata = {
   title: 'SafePrompt - Stop Prompt Injection in One Line of Code',
-  description: 'Protect your AI applications from prompt injection attacks with simple, transparent, developer-first security.',
-  keywords: 'prompt injection, ai security, chatgpt security, llm security, api security',
+  description: 'Protect your AI applications from prompt injection attacks with simple, transparent, developer-first security. Network defense learns from attacks across all users for collective intelligence.',
+  keywords: 'prompt injection, ai security, chatgpt security, llm security, api security, network defense, IP reputation, threat intelligence, collective security',
   authors: [{ name: 'SafePrompt' }],
   icons: {
     icon: '/favicon.webp',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'SafePrompt - Stop Prompt Injection in One Line of Code',
-    description: 'Protect your AI applications from prompt injection attacks.',
+    description: 'Protect your AI applications from prompt injection attacks. Network defense learns from attacks across all users for collective intelligence.',
     url: websiteUrl,
     siteName: 'SafePrompt',
     images: [
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'SafePrompt - Stop Prompt Injection in One Line of Code',
-    description: 'Protect your AI applications from prompt injection attacks.',
+    description: 'Protect your AI applications from prompt injection attacks. Network defense learns from attacks across all users for collective intelligence.',
     images: [`${websiteUrl}/og-image.png`],
   },
   robots: {

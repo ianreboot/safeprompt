@@ -68,17 +68,22 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
         icon: 'check'
       },
       {
-        text: 'Network intelligence protection',
+        text: 'Network Defense: Contributes attack data',
         included: true,
         icon: 'check'
       },
       {
-        text: 'Automatic IP blocking (malicious sources)',
+        text: 'IP Auto-Blocking: Block known bad actors',
         included: true,
         icon: 'check'
       },
       {
-        text: 'Intelligence sharing opt-out available',
+        text: 'Intelligence Opt-out: Disable data collection',
+        included: true,
+        icon: 'check'
+      },
+      {
+        text: 'GDPR Export/Delete: Full data control',
         included: true,
         icon: 'check'
       },
@@ -114,24 +119,24 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
         icon: 'clock'
       },
       {
-        text: 'Network intelligence protection',
+        text: 'Network Defense: Contributes attack data',
         included: true,
         icon: 'check'
       },
       {
-        text: 'Contributes to threat intelligence (required)',
+        text: 'IP Auto-Blocking: Block known bad actors',
+        included: false,
+        icon: 'x'
+      },
+      {
+        text: 'Intelligence Opt-out: Disable data collection',
+        included: false,
+        icon: 'x'
+      },
+      {
+        text: 'GDPR Export/Delete: Full data control',
         included: true,
         icon: 'check'
-      },
-      {
-        text: 'Automatic IP blocking',
-        included: false,
-        icon: 'x'
-      },
-      {
-        text: 'Intelligence sharing opt-out',
-        included: false,
-        icon: 'x'
       },
       {
         text: 'Community support only',

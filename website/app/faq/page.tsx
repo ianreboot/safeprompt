@@ -60,18 +60,24 @@ export default function FAQPage() {
 
                 <div className="space-y-6">
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold mb-3">What data does SafePrompt collect?</h3>
+                    <h3 className="text-lg font-semibold mb-3">What data does SafePrompt collect for threat intelligence?</h3>
                     <p className="text-muted-foreground mb-3">
-                      <strong>Safe prompts:</strong> Analyzed in real-time, NOT stored (processed in memory only)
+                      We collect validation results (safe/unsafe), attack patterns, and metadata. For Free tier, only blocked
+                      requests. For Pro tier (if opted in), all requests. Personal data (actual prompts and IP addresses) is
+                      automatically deleted after 24 hours. Only anonymized hashes are retained for pattern analysis.
                     </p>
-                    <p className="text-muted-foreground mb-3">
-                      <strong>Blocked prompts (threats):</strong>
-                    </p>
-                    <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
-                      <li><strong>First 24 hours:</strong> Full prompt text + client IP stored for threat analysis</li>
-                      <li><strong>After 24 hours:</strong> Automatic anonymization - prompt text & IP permanently deleted</li>
-                      <li><strong>Permanent storage:</strong> Only cryptographic hashes (SHA-256) with no personally identifiable information</li>
-                    </ul>
+                    <div className="space-y-3">
+                      <div className="bg-card/50 rounded-lg p-3">
+                        <h4 className="font-semibold text-sm mb-2">Data Collection Details:</h4>
+                        <ul className="list-disc list-inside text-muted-foreground text-sm space-y-2 ml-4">
+                          <li><strong>Free Tier:</strong> Only blocked requests collected automatically</li>
+                          <li><strong>Pro Tier:</strong> All requests if opted in (default: ON, can disable)</li>
+                          <li><strong>First 24 hours:</strong> Full prompt text + client IP stored for analysis</li>
+                          <li><strong>After 24 hours:</strong> Automatic anonymization - prompt text & IP deleted permanently</li>
+                          <li><strong>Permanent storage:</strong> Only cryptographic hashes (SHA-256, no PII, cannot reverse)</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
@@ -119,34 +125,39 @@ export default function FAQPage() {
                   </div>
 
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold mb-3">Can I opt-out of threat intelligence sharing?</h3>
+                    <h3 className="text-lg font-semibold mb-3">Can I opt out of intelligence sharing?</h3>
+                    <p className="text-muted-foreground mb-3">
+                      Pro tier users can disable intelligence sharing in Privacy Settings. Free tier users contribute blocked
+                      requests as part of the service (this helps protect all users). Disabling on Pro tier keeps IP blocking active.
+                    </p>
                     <div className="space-y-3">
                       <div className="bg-card/50 rounded-lg p-3">
                         <h4 className="font-semibold text-sm mb-2">Free Tier:</h4>
                         <p className="text-sm text-muted-foreground">
                           <strong>No opt-out.</strong> Intelligence contribution is required for free service. This is how we can
-                          offer a free tier - by building a collective defense network.
+                          offer a free tier - by building a collective defense network. Only blocked requests are contributed.
                         </p>
                       </div>
                       <div className="bg-card/50 rounded-lg p-3">
                         <h4 className="font-semibold text-sm mb-2">Pro Tier:</h4>
                         <p className="text-sm text-muted-foreground mb-2">
-                          <strong>Opt-out available.</strong> Go to Dashboard → Settings → Privacy → Toggle "Contribute to Network Intelligence" OFF
+                          <strong>Opt-out available.</strong> Dashboard → Settings → Privacy → "Contribute to Network Intelligence" toggle OFF
                         </p>
                         <ul className="text-sm text-muted-foreground space-y-1 ml-4">
                           <li>• Validation accuracy remains identical (same detection models)</li>
-                          <li>• You still benefit from network intelligence (receive protection)</li>
-                          <li>• You just don't contribute your blocked prompts to the network</li>
+                          <li>• IP blocking remains active (you still benefit from protection)</li>
+                          <li>• You just don't contribute your data to the network</li>
                         </ul>
                       </div>
                     </div>
                   </div>
 
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold mb-3">What is IP blocking and who gets it?</h3>
+                    <h3 className="text-lg font-semibold mb-3">How does IP auto-blocking work?</h3>
                     <p className="text-muted-foreground mb-3">
-                      <strong>IP Blocking (Pro Tier Only):</strong> Automatically block requests from IP addresses with
-                      malicious activity across the SafePrompt network.
+                      When an IP address has &gt;80% block rate across ≥5 requests, we automatically block future requests
+                      from that IP (Pro tier only). We use cryptographic hashes, so the actual IP cannot be reversed.
+                      You can allowlist specific IPs in your dashboard.
                     </p>
                     <div className="space-y-3">
                       <div className="bg-card/50 rounded-lg p-3">
@@ -161,10 +172,55 @@ export default function FAQPage() {
                         <h4 className="font-semibold text-sm mb-2">Pro Tier:</h4>
                         <p className="text-sm text-muted-foreground mb-2">
                           ✅ Automatic IP blocking available (opt-in)<br />
-                          ✅ Enable in Dashboard → Settings → Security → "Auto-block malicious IPs"
+                          ✅ Enable in Dashboard → Settings → Security<br />
+                          ✅ Privacy-first: Only hashed IPs stored
                         </p>
                         <p className="text-xs text-muted-foreground">
                           IP reputation score is based on attack patterns across all customers. High-confidence malicious IPs are blocked automatically.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold mb-3">Is SafePrompt GDPR compliant?</h3>
+                    <p className="text-muted-foreground mb-3">
+                      <strong>Yes.</strong> You can export or delete your data anytime from the dashboard. We delete personal
+                      data after 24 hours, retaining only anonymized hashes under GDPR Article 17(3)(d) scientific research exception.
+                    </p>
+                    <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+                      <li><strong>Data Export:</strong> Dashboard → Settings → Privacy → Export Data (JSON format)</li>
+                      <li><strong>Data Deletion:</strong> Dashboard → Settings → Privacy → Delete Data (immediate for &lt;24h data)</li>
+                      <li><strong>API Access:</strong> Programmatic export/delete via REST API endpoints</li>
+                      <li><strong>Anonymization:</strong> Automatic after 24 hours (prompt text + IP addresses deleted)</li>
+                      <li><strong>Hash Retention:</strong> Only cryptographic hashes remain (no PII, cannot reverse)</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold mb-3">What's the benefit of network defense for Free users?</h3>
+                    <p className="text-muted-foreground mb-3">
+                      Free users help build the threat intelligence database by contributing blocked requests. While you don't
+                      get IP blocking, you benefit from improved pattern detection as the system learns from attacks.
+                      Upgrading to Pro adds IP auto-blocking.
+                    </p>
+                    <div className="space-y-3">
+                      <div className="bg-card/50 rounded-lg p-3">
+                        <h4 className="font-semibold text-sm mb-2">Free Tier Benefits:</h4>
+                        <ul className="text-sm text-muted-foreground space-y-1 ml-4">
+                          <li>✅ Same validation accuracy as Pro tier</li>
+                          <li>✅ Benefit from network-wide pattern detection</li>
+                          <li>✅ Protection from novel attacks discovered across network</li>
+                          <li>✅ Automatic GDPR export/delete capabilities</li>
+                          <li>❌ No automatic IP blocking capability</li>
+                        </ul>
+                      </div>
+                      <div className="bg-card/50 rounded-lg p-3">
+                        <h4 className="font-semibold text-sm mb-2">Why Contribute?</h4>
+                        <p className="text-sm text-muted-foreground">
+                          By contributing blocked requests, you help protect the entire SafePrompt community. Think of it
+                          like antivirus definitions - when one user gets attacked, everyone's protection improves. All
+                          data is anonymized after 24 hours (only hashes remain).
                         </p>
                       </div>
                     </div>
