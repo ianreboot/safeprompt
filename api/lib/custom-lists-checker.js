@@ -107,8 +107,62 @@ export function phraseMatches(prompt, phrase) {
   return prompt.toLowerCase().includes(phrase.toLowerCase());
 }
 
+/**
+ * Log custom rule usage for analytics
+ *
+ * @param {string} userId - User ID
+ * @param {string} ruleType - 'whitelist' or 'blacklist'
+ * @param {string} matchedPhrase - The phrase that matched
+ * @param {string} ruleSource - 'default', 'profile', or 'request'
+ * @param {string} action - 'allowed', 'blocked', or 'escalated_to_ai'
+ * @param {number} confidence - Confidence score (0-1)
+ * @param {object} options - Additional options (promptLength, promptHash, finalDecision, sessionId, apiKeyId)
+ */
+export async function logCustomRuleUsage(userId, ruleType, matchedPhrase, ruleSource, action, confidence, options = {}) {
+  try {
+    // Import Supabase dynamically to avoid circular dependencies
+    const { createClient } = await import('@supabase/supabase-js');
+    const crypto = await import('crypto');
+
+    const supabase = createClient(
+      process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL,
+      process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const { promptLength, promptHash, finalDecision, sessionId, apiKeyId } = options;
+
+    // Create prompt hash if not provided
+    let hash = promptHash;
+    if (!hash && options.prompt) {
+      hash = crypto.default.createHash('sha256').update(options.prompt).digest('hex');
+    }
+
+    await supabase
+      .from('custom_rule_usage')
+      .insert({
+        user_id: userId,
+        api_key_id: apiKeyId || null,
+        rule_type: ruleType,
+        matched_phrase: matchedPhrase,
+        rule_source: ruleSource,
+        action,
+        confidence,
+        prompt_length: promptLength || null,
+        prompt_hash: hash || null,
+        final_decision: finalDecision !== undefined ? finalDecision : null,
+        session_id: sessionId || null
+      });
+
+    console.log(`[CustomLists] Logged ${ruleType} match: "${matchedPhrase}" (${action})`);
+  } catch (error) {
+    console.error('[CustomLists] Error logging usage:', error.message);
+    // Don't fail the request if logging fails
+  }
+}
+
 export default {
   checkCustomLists,
   getMatchDescription,
-  phraseMatches
+  phraseMatches,
+  logCustomRuleUsage
 };

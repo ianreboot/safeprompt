@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sanitizeResponseWithMode } from '../../lib/response-sanitizer.js';
 import { logError, logCost } from '../../lib/alert-notifier.js';
+import { sanitizeCustomRules } from '../../lib/custom-lists-sanitizer.js';
 
 const supabase = createClient(
   process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
@@ -82,7 +83,7 @@ export default async function handler(req, res) {
     // Try plaintext match first (standard SaaS approach)
     let { data: profile, error } = await supabase
       .from('profiles')
-      .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier, preferences')
+      .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier, preferences, custom_whitelist, custom_blacklist, removed_defaults, uses_default_whitelist, uses_default_blacklist')
       .eq('api_key', apiKey)
       .single();
 
@@ -91,7 +92,7 @@ export default async function handler(req, res) {
       const hashedKey = hashApiKey(apiKey);
       const result = await supabase
         .from('profiles')
-        .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier, preferences')
+        .select('id, api_requests_used, api_requests_limit, subscription_status, subscription_tier, preferences, custom_whitelist, custom_blacklist, removed_defaults, uses_default_whitelist, uses_default_blacklist')
         .eq('api_key_hash', hashedKey)
         .single();
 
@@ -130,8 +131,22 @@ export default async function handler(req, res) {
       prompts, // For batch processing
       mode = 'standard', // standard, optimized, ai-only, with-cache
       include_stats = false,
-      session_token = null // For multi-turn attack detection
+      session_token = null, // For multi-turn attack detection
+      customRules = null // Custom whitelist/blacklist from request
     } = req.body;
+
+    // Sanitize custom rules if provided
+    let sanitizedCustomRules = null;
+    if (customRules) {
+      const sanitizeResult = sanitizeCustomRules(customRules, profile.subscription_tier);
+      if (!sanitizeResult.valid) {
+        return res.status(400).json({
+          error: 'Invalid custom rules',
+          details: sanitizeResult.errors
+        });
+      }
+      sanitizedCustomRules = sanitizeResult.sanitized;
+    }
 
     // Handle batch processing
     if (prompts && Array.isArray(prompts)) {
@@ -153,7 +168,10 @@ export default async function handler(req, res) {
             user_agent: req.headers['user-agent'],
             subscription_tier: profile.subscription_tier,
             auto_block_enabled: preferences.enable_ip_blocking === true,
-            headers: req.headers
+            headers: req.headers,
+            customRules: sanitizedCustomRules,
+            profile: profile,
+            tier: profile.subscription_tier
           });
           const batchProcessingTime = Date.now() - batchStartTime;
 
@@ -228,7 +246,10 @@ export default async function handler(req, res) {
       user_agent: req.headers['user-agent'],
       subscription_tier: profile.subscription_tier,
       auto_block_enabled: preferences.enable_ip_blocking === true,
-      headers: req.headers
+      headers: req.headers,
+      customRules: sanitizedCustomRules,
+      profile: profile,
+      tier: profile.subscription_tier
     });
     const processingTime = Date.now() - startTime;
 

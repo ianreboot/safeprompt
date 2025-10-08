@@ -38,11 +38,7 @@ BEGIN
   END IF;
 END $$;
 
--- Add new constraint with correct tier names
-ALTER TABLE profiles ADD CONSTRAINT profiles_subscription_tier_check
-  CHECK (subscription_tier IN ('free', 'early_bird', 'starter', 'business', 'internal'));
-
--- Update existing tier values (idempotent with WHERE clause)
+-- Update existing tier values FIRST (before adding constraint)
 -- beta → early_bird (launch pricing tier)
 UPDATE profiles
 SET subscription_tier = 'early_bird'
@@ -57,6 +53,10 @@ WHERE subscription_tier = 'pro';
 UPDATE profiles
 SET subscription_tier = 'business'
 WHERE subscription_tier = 'enterprise';
+
+-- Add new constraint with correct tier names (after data is cleaned)
+ALTER TABLE profiles ADD CONSTRAINT profiles_subscription_tier_check
+  CHECK (subscription_tier IN ('free', 'early_bird', 'starter', 'business', 'internal'));
 
 -- ============================================================================
 -- VERIFICATION QUERIES (comment out - for manual verification only)

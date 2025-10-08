@@ -18,6 +18,8 @@ import crypto from 'crypto';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import { detectPatterns } from './pattern-detector-unified.js';
+import { checkCustomLists } from './custom-lists-checker.js';
+import { getEffectiveLists } from './custom-lists-validator.js';
 
 // Load environment variables
 dotenv.config();
@@ -448,6 +450,70 @@ export async function validateUnified(prompt, options = {}) {
     totalCost: 0
   };
 
+  // Extract custom lists options
+  const { customRules, profile, tier = 'free' } = options;
+  let customRuleMatched = null;
+
+  // ========================================================================
+  // STAGE 0.5: CUSTOM LISTS CHECK (zero-cost, instant)
+  // ========================================================================
+  if (customRules || profile) {
+    // Get effective lists (defaults + profile custom + request custom)
+    const effectiveLists = getEffectiveLists({ customRules, profile, tier });
+
+    // Check prompt against lists
+    const customListMatch = checkCustomLists(
+      prompt,
+      effectiveLists.whitelist,
+      effectiveLists.blacklist
+    );
+
+    if (customListMatch) {
+      stats.stages.push({
+        stage: 'custom_lists',
+        result: customListMatch.type,
+        matched_phrase: customListMatch.matchedPhrase,
+        confidence: customListMatch.confidence,
+        time: Date.now() - startTime,
+        cost: 0
+      });
+
+      // Blacklist match (0.9 confidence) - Strong attack signal
+      if (customListMatch.type === 'blacklist') {
+        customRuleMatched = {
+          type: 'blacklist',
+          phrase: customListMatch.matchedPhrase,
+          source: customListMatch.source
+        };
+
+        // Return blocked (unless we need AI validation for context)
+        return {
+          safe: false,
+          confidence: customListMatch.confidence,
+          threats: ['custom_blacklist_match'],
+          reasoning: `Matched custom blacklist phrase: "${customListMatch.matchedPhrase}"`,
+          processingTime: Date.now() - startTime,
+          stage: 'custom_blacklist',
+          cost: 0,
+          customRuleMatched,
+          stats
+        };
+      }
+
+      // Whitelist match (0.8 confidence) - Strong business signal
+      if (customListMatch.type === 'whitelist') {
+        customRuleMatched = {
+          type: 'whitelist',
+          phrase: customListMatch.matchedPhrase,
+          source: customListMatch.source
+        };
+
+        // Continue to pattern detection to check for XSS/SQL
+        // (Whitelist CANNOT override pattern detection)
+      }
+    }
+  }
+
   // ========================================================================
   // STAGE 1: PATTERN DETECTION (zero-cost, instant)
   // ========================================================================
@@ -472,6 +538,7 @@ export async function validateUnified(prompt, options = {}) {
       processingTime: Date.now() - startTime,
       stage: 'pattern',
       cost: 0,
+      customRuleMatched,
       stats
     };
   }
@@ -540,6 +607,7 @@ export async function validateUnified(prompt, options = {}) {
         stage: 'pass1',
         cost: stats.totalCost,
         model: pass1Result.model,
+        customRuleMatched,
         stats
       };
     }
@@ -554,6 +622,7 @@ export async function validateUnified(prompt, options = {}) {
         stage: 'pass1',
         cost: stats.totalCost,
         model: pass1Result.model,
+        customRuleMatched,
         stats
       };
     }
@@ -617,6 +686,7 @@ export async function validateUnified(prompt, options = {}) {
         stage: 'pass2',
         cost: stats.totalCost,
         model: pass2Result.model,
+        customRuleMatched,
         stats
       };
     } catch (pass2Error) {
@@ -634,6 +704,7 @@ export async function validateUnified(prompt, options = {}) {
         stage: 'pass1_fallback',
         cost: stats.totalCost,
         needsReview: true,
+        customRuleMatched,
         stats
       };
     }
@@ -650,6 +721,7 @@ export async function validateUnified(prompt, options = {}) {
       stage: 'pass1_error',
       cost: stats.totalCost,
       needsReview: true,
+      customRuleMatched,
       stats
     };
   }
