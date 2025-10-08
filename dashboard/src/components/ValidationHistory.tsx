@@ -292,7 +292,7 @@ export default function ValidationHistory({ userId }: { userId: string }) {
                         {validation.prompt_text ? (
                           <span className="text-gray-300">{formatPrompt(validation.prompt_text)}</span>
                         ) : (
-                          <span className="text-gray-600 italic">Anonymized (>24h old)</span>
+                          <span className="text-gray-600 italic">Anonymized (&gt;24h old)</span>
                         )}
                       </div>
                     </td>

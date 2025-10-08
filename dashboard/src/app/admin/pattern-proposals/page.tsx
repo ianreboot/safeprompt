@@ -200,7 +200,8 @@ export default function PatternProposalsPage() {
 
     } catch (error) {
       console.error('Failed to deploy proposal:', error);
-      alert(`Failed to deploy proposal: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Failed to deploy proposal: ${errorMessage}`);
     } finally {
       setActionLoading(false);
     }
