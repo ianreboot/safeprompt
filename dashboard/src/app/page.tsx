@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -10,7 +11,7 @@ import PrivacyControls from '@/components/PrivacyControls'
 import {
   Key, Eye, EyeOff, Copy, RefreshCw, LogOut, BarChart, CreditCard,
   FileText, HelpCircle, TrendingUp, Clock, Check, ExternalLink,
-  AlertCircle, ChevronRight, Shield, Zap, Users, Download
+  AlertCircle, ChevronRight, Shield, Zap, Users, Download, ListFilter
 } from 'lucide-react'
 
 interface ApiKey {
@@ -748,6 +749,25 @@ For questions, contact: support@safeprompt.dev`
           {/* Privacy Controls (Phase 1A) */}
           <div className="bg-gray-900 rounded-lg border border-gray-800 min-w-0">
             <PrivacyControls />
+          </div>
+
+          {/* Custom Lists (Phase 5) */}
+          <div className="bg-gray-900 rounded-lg border border-gray-800 min-w-0 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <ListFilter className="w-5 h-5 text-green-400" />
+                Custom Lists
+              </h2>
+            </div>
+            <p className="text-sm text-gray-400 mb-4">
+              Customize whitelist and blacklist phrases for your AI validation pipeline.
+            </p>
+            <Link href="/custom-lists">
+              <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors flex items-center justify-center gap-2">
+                <Shield className="w-4 h-4" />
+                Manage Custom Lists
+              </button>
+            </Link>
           </div>
         </div>
 
