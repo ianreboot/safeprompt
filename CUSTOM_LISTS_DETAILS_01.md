@@ -10,9 +10,9 @@
 
 ## 📊 This Document Progress
 - **Tasks in this doc**: 47 (from master task list - added tier naming cleanup task 2.9)
-- **Tasks completed**: 14/47 (29.8%)
-- **Current task**: Task 2.3 - Create custom-lists-checker.js
-- **Last update**: 2025-10-08 00:46
+- **Tasks completed**: 15/47 (31.9%)
+- **Current task**: Task 2.4 - Integrate custom lists into ai-validator-hardened.js
+- **Last update**: 2025-10-08 00:48
 
 ---
 
@@ -74,6 +74,7 @@ DEPLOYED_PROD: false
 DEFAULT_LISTS_FILE: "/home/projects/safeprompt/api/lib/default-lists.js"
 SANITIZER_FILE: "/home/projects/safeprompt/api/lib/custom-lists-sanitizer.js"
 VALIDATOR_FILE: "/home/projects/safeprompt/api/lib/custom-lists-validator.js"
+CHECKER_FILE: "/home/projects/safeprompt/api/lib/custom-lists-checker.js"
 INTEGRATION_FILE: ""
 MIGRATION_FILE: ""
 DASHBOARD_UI_FILE: ""
@@ -246,14 +247,21 @@ BLOCKER_DESCRIPTION: ""
   - **Added Task 2.9**: Fix tier naming across entire codebase (database, migrations, etc.)
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
-- [ ] 2.3 Create custom-lists-checker.js with match logic
-  - File: `/home/projects/safeprompt/api/lib/custom-lists-checker.js` (NEW)
+- [x] 2.3 Create custom-lists-checker.js with match logic (COMPLETED: 2025-10-08 00:48)
+  - File: `/home/projects/safeprompt/api/lib/custom-lists-checker.js` (NEW - 115 lines)
   - Function: checkCustomLists(prompt, whitelist, blacklist)
-  - Logic: Check blacklist first → if matched, return { type: 'blacklist', phrase, confidence: 0.9 }
-  - Logic: Check whitelist next → if matched, return { type: 'whitelist', phrase, confidence: 0.8 }
-  - Logic: Return null if no match (proceed to AI validation)
-  - Note: Simple substring matching (case-insensitive)
-  - Note: Returns CONFIDENCE SIGNALS, not instant block/allow decisions
+    - Returns: { type: 'blacklist', matchedPhrase, confidence: 0.9, source: 'custom_blacklist' }
+    - Returns: { type: 'whitelist', matchedPhrase, confidence: 0.8, source: 'custom_whitelist' }
+    - Returns: null (no match - proceed to AI validation)
+  - Function: getMatchDescription(matchResult) - Human-readable match description
+  - Function: phraseMatches(prompt, phrase) - Utility for testing
+  - Logic: BLACKLIST ALWAYS WINS - checked first before whitelist
+  - Logic: Case-insensitive substring matching
+  - Logic: Returns confidence signals, NOT instant block/allow decisions
+  - Logic: Validates inputs (null/empty/non-string handling)
+  - Tests: Created `/home/projects/safeprompt/api/__tests__/custom-lists-checker.test.js` (31 tests)
+  - Tests: Covers blacklist priority, case-insensitivity, edge cases, validation
+  - Evidence: npm test shows 31/31 tests passing
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
 - [ ] 2.4 Integrate custom lists into ai-validator-hardened.js validation pipeline
