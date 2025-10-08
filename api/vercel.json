@@ -11,12 +11,33 @@
     },
     "api/cron/intelligence-cleanup.js": {
       "maxDuration": 60
+    },
+    "api/cron/pattern-discovery.js": {
+      "maxDuration": 300
+    },
+    "api/cron/campaign-detection.js": {
+      "maxDuration": 120
+    },
+    "api/cron/honeypot-learning.js": {
+      "maxDuration": 180
     }
   },
   "crons": [
     {
       "path": "/api/cron/intelligence-cleanup",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/pattern-discovery",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/campaign-detection",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/cron/honeypot-learning",
+      "schedule": "0 4 * * *"
     }
   ]
 }
