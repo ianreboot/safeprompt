@@ -296,7 +296,128 @@ Content-Type: application/json
 }
 ```
 
-### Privacy & Compliance Endpoints (Phase 1A)
+### GDPR Compliance Endpoints
+
+#### GDPR Right to Deletion
+
+**Endpoint:** `POST /api/gdpr/delete-user-data`
+
+**Headers:**
+- `Authorization: Bearer <user_jwt_token>` (from Supabase auth)
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "User data deletion complete",
+  "details": {
+    "threat_samples_deleted": 42,
+    "pii_fields_nulled": ["prompt_text", "client_ip"],
+    "retained_data": ["prompt_hash", "ip_hash", "validation_result"]
+  }
+}
+```
+
+**What gets deleted:**
+- `threat_intelligence_samples.prompt_text` → NULL
+- `threat_intelligence_samples.client_ip` → NULL
+- User privacy preferences reset
+
+**What's retained (GDPR Article 17(3)(d)):**
+- Anonymized hashes: `prompt_hash`, `ip_hash` (cannot identify individuals)
+- Aggregated statistics: validation results, attack patterns
+- Rationale: Scientific research exception for threat intelligence
+
+---
+
+#### GDPR Right to Access
+
+**Endpoint:** `GET /api/gdpr/export-user-data`
+
+**Headers:**
+- `Authorization: Bearer <user_jwt_token>` (from Supabase auth)
+
+**Response:**
+```json
+{
+  "user_id": "550e8400-e29b-41d4-a716-446655440000",
+  "export_date": "2025-10-08T15:30:00Z",
+  "data": {
+    "threat_intelligence_samples": [
+      {
+        "created_at": "2025-10-08T10:00:00Z",
+        "prompt_hash": "abc123...",
+        "ip_hash": "def456...",
+        "validation_result": "unsafe",
+        "threat_severity": 0.85
+      }
+    ],
+    "privacy_settings": {
+      "intelligence_sharing": true,
+      "auto_block_enabled": true,
+      "opt_in_date": "2025-10-01T00:00:00Z"
+    },
+    "retention_policy": "24 hours PII, 90 days anonymized"
+  }
+}
+```
+
+**Rate Limit:** 1 request per day per user
+
+---
+
+#### Intelligence Collection (Automatic)
+
+**How it works:**
+- Triggered automatically after validation (async, fire-and-forget)
+- 0ms impact on API response time
+- Tier-based collection rules:
+  - **Free tier**: Blocked requests only (`safe: false`)
+  - **Pro tier**: All requests if `intelligence_sharing: true` (default ON)
+  - **Internal tier**: Never collects
+
+**Privacy compliance:**
+- PII retention: 24 hours
+- Anonymized data: 90 days
+- User rights: GDPR export/deletion available
+- Legal basis: GDPR Article 17(3)(d) scientific research
+
+---
+
+#### IP Reputation Check (Pro Tier)
+
+**Automatic check before validation** (if enabled):
+
+**Conditions for auto-block:**
+- User has Pro tier or higher
+- `auto_block_enabled: true` in profile
+- IP hash found in `ip_reputation` table
+- Block rate > 80% AND sample count ≥ 5
+
+**Response when blocked:**
+```json
+{
+  "safe": false,
+  "reason": "ip_reputation_block",
+  "confidence": 1.0,
+  "reputation_score": 0.15,
+  "blocked_by": "network_intelligence",
+  "message": "This IP has a history of malicious activity"
+}
+```
+
+**Performance:** <10ms lookup (hash index on `ip_hash`)
+
+**Bypass mechanisms:**
+1. Test suite header: `X-SafePrompt-Test-Suite: <token>`
+2. IP allowlist: Add IP to `ip_allowlist` table (for CI/CD)
+3. Internal tier: Always bypasses reputation checks
+
+---
+
+### Privacy & Compliance Endpoints (Phase 1A - Deprecated)
+
+**Note**: The endpoints below are deprecated. Use the new GDPR endpoints above instead.
 
 #### DELETE /v1/privacy/delete
 
@@ -772,14 +893,17 @@ Response includes:
 
 ## Changelog
 
-### Phase 1A (October 6, 2025)
-- **IP Reputation System**: Network defense intelligence across all customers
+### Phase 1A (October 8, 2025) - Network Defense Launch
+- **Network Defense Intelligence**: Cross-customer threat intelligence sharing with privacy-first design
+- **IP Reputation System**: Automatic tracking and blocking of malicious IP addresses (Pro tier)
 - **Multi-Turn Attack Detection**: Session-based validation for context priming and RAG poisoning
-- **Threat Intelligence Collection**: 24-hour anonymization model (GDPR/CCPA compliant)
-- **Pro Tier IP Blocking**: Auto-block malicious IPs with >70% attack rate (opt-in)
-- **Privacy Compliance APIs**: GDPR right to deletion and data export
-- **New Endpoints**: `/v1/account/preferences`, `/v1/privacy/delete`, `/v1/privacy/export`, `/v1/admin/ip-allowlist`
+- **Threat Intelligence Collection**: 24-hour PII retention, 90-day anonymized storage (GDPR/CCPA compliant)
+- **Pro Tier IP Auto-Blocking**: Block IPs with >80% attack rate and ≥5 samples (opt-in)
+- **GDPR Compliance Endpoints**: Right to deletion and data access via dashboard
+- **New Endpoints**: `/api/gdpr/delete-user-data`, `/api/gdpr/export-user-data`, `/v1/account/preferences`, `/v1/admin/ip-allowlist`
 - **X-User-IP Header**: Now required for accurate attack source tracking
+- **Dashboard Features**: Privacy settings, GDPR data export/deletion, admin intelligence panels (internal tier)
+- **Website Updates**: Network defense section, updated privacy policy, pricing tier comparison
 
 ### v1.0.0-beta (October 2025)
 - Initial beta release
