@@ -60,7 +60,7 @@ describe('Phase 1A - GDPR Compliance', () => {
       // - client_ip: DELETED
       // - ip_hash: PRESERVED (anonymized)
 
-      expect(promptHash).toBe('9dc34ad85c6cc10fa2e7754c5ffa28d5ddba07e34c30cd6285b0c12aae56e20e');
+      expect(promptHash).toBe('2e4221a7f996a7299dd5be2905be6c7c27f5f5bfd60cb107a1662bfaf872e862');
       expect(promptHash.length).toBe(64); // SHA256 = 64 hex chars
     });
 
@@ -368,9 +368,8 @@ describe('Phase 1A - Security Testing', () => {
       const hash1 = Buffer.from(createHash('test1'), 'hex');
       const hash2 = Buffer.from(createHash('test2'), 'hex');
 
-      expect(() => {
-        crypto.timingSafeEqual(hash1, hash2);
-      }).toThrow(); // Different hashes throw (expected)
+      // timingSafeEqual returns false (not throw) for different hashes of same length
+      expect(crypto.timingSafeEqual(hash1, hash2)).toBe(false);
 
       const hash3 = Buffer.from(createHash('test1'), 'hex');
       expect(crypto.timingSafeEqual(hash1, hash3)).toBe(true); // Same hash

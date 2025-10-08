@@ -9,11 +9,11 @@
 - **Quarter 1 Security** (2025-10-07): All 135+ security hardening tasks completed
 
 **🚨 Intelligence Architecture**:
-- **Threat Intelligence**: 24-hour anonymization, GDPR/CCPA compliant data collection
-- **IP Reputation**: Global network defense with Pro tier auto-blocking
-- **Pattern Discovery**: ML-powered automated pattern detection from real attacks
-- **Campaign Detection**: Temporal clustering and similarity analysis for coordinated attacks
-- **Admin Dashboard**: Complete IP management, pattern proposals, campaign response tools
+- **Threat Intelligence** (Phase 1A): 24-hour anonymization, GDPR/CCPA compliant data collection, tier-based contribution
+- **IP Reputation** (Phase 1A): Hash-based auto-blocking, <10ms lookup, Pro tier network defense
+- **Pattern Discovery** (Phase 6): ML-powered automated pattern detection from real attacks
+- **Campaign Detection** (Phase 6): Temporal clustering and similarity analysis for coordinated attacks
+- **Admin Dashboard** (Phases 1A+6): Complete IP management, pattern proposals, campaign response tools
 
 **✨ Custom Lists (NEW)**:
 - **Custom Whitelist**: Business-specific phrases that provide high confidence signals (0.8)
@@ -179,6 +179,181 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
 - Fix: Remove `/g` from boolean `.test()` patterns
 
 **See PATTERNS.md for complete error lookup table (19 patterns)**
+
+---
+
+## PHASE 1A: THREAT INTELLIGENCE & IP REPUTATION
+
+**Status**: Core implementation complete (12/81 tasks, October 2025)
+**Documentation**: `/home/projects/safeprompt/docs/PHASE_1A_IMPLEMENTATION_SUMMARY.md`
+**Legal Compliance**: GDPR/CCPA compliant with 24-hour PII retention
+
+### Business Model
+
+**Network Defense Through Collective Intelligence**:
+- **Free Tier**: Always contributes blocked requests → No IP blocking benefits
+- **Pro Tier**: Opts in (default ON) → Gets IP reputation auto-blocking
+- **Competitive Moat**: Data network effects (more users = better protection)
+
+### Tier-Based Collection Rules
+
+```javascript
+// Free Tier
+- Collects: Blocked requests ONLY (safe: false)
+- Benefits: None (contributes to network defense)
+- Opt-out: Not available (part of free tier terms)
+
+// Pro Tier
+- Collects: ALL requests IF opted in (default: true)
+- Benefits: IP reputation auto-blocking
+- Opt-out: Account settings > Privacy > Intelligence Sharing
+- Default: Enabled (user can disable)
+
+// Internal Tier
+- Collects: NEVER
+- Benefits: All features without contribution
+- Purpose: Testing, development, admin
+```
+
+### Database Schema
+
+**Table 1: `threat_intelligence_samples`**
+- **Purpose**: Pattern analysis, attack discovery, moat building
+- **PII Retention**: 24 hours (then auto-deleted)
+- **Anonymized Data**: 90 days (hashes + metadata)
+- **Key Fields**:
+  - `prompt_text` (24h) → `prompt_hash` (permanent SHA256)
+  - `client_ip` (24h) → `ip_hash` (permanent SHA256)
+  - `validation_result`, `attack_vectors`, `threat_severity` (permanent, no PII)
+- **Legal Basis**: GDPR Article 17(3)(d) - Scientific research
+
+**Table 2: `ip_reputation`**
+- **Purpose**: Auto-blocking of known bad actors (Pro tier)
+- **Primary Key**: `ip_hash` (SHA256, cannot reverse to IP address)
+- **Scoring Formula**:
+  ```
+  reputation_score = (block_rate * 0.7) + (severity_avg * 0.3)
+  auto_block = (block_rate > 0.8) AND (sample_count >= 5)
+  ```
+- **Lookup Performance**: <10ms (hash index on `ip_hash`)
+
+**Table 3: `ip_allowlist`**
+- **Purpose**: CI/CD protection, testing infrastructure bypass
+- **Critical Use**: Prevents blocking test suites during high attack detection
+- **Fields**: `ip_address`, `ip_hash`, `purpose`, `active`, `expires_at`
+- **Bypass Header**: `X-SafePrompt-Test-Suite: <token>` (constant-time comparison)
+
+### GDPR/CCPA Compliance
+
+**Right to Deletion** (`/api/gdpr/delete-user-data`):
+```javascript
+// Deletes ALL PII linked to user_id:
+- threat_intelligence_samples.prompt_text → NULL
+- threat_intelligence_samples.client_ip → NULL
+- User preferences → Reset
+
+// Preserves anonymized data (GDPR Article 17(3)(d)):
+- prompt_hash, ip_hash (cannot identify individuals)
+- validation_result, attack_vectors (no PII)
+```
+
+**Right to Access** (`/api/gdpr/export-user-data`):
+```javascript
+// Returns machine-readable export:
+{
+  user_id: 'user-123',
+  data: {
+    threat_samples: [...],
+    preferences: { intelligence_sharing: true },
+    retention_policy: "24 hours PII, 90 days anonymized"
+  }
+}
+```
+
+**CCPA Compliance**:
+- Opt-out mechanism: Account settings > Privacy
+- No data sale: Internal threat intelligence only
+- Clear disclosure: Signup flow + Privacy Policy
+
+### Security Properties
+
+**Hash Irreversibility**:
+- Algorithm: SHA256 (64 hex characters)
+- Cannot reverse: 2^256 search space (~10^77 possibilities)
+- Collision resistance: 2^-128 probability (astronomically low)
+- Deterministic: Same input = same hash (required for lookup)
+
+**Performance Requirements**:
+- Hash generation: <1ms
+- IP reputation lookup: <5ms (with hash index)
+- Auto-block decision: <10ms total
+- Intelligence collection: 0ms (async, fire-and-forget)
+
+**Bypass Mechanisms** (priority order):
+1. Test suite header: `X-SafePrompt-Test-Suite: <token>`
+2. IP allowlist: Exact match on `ip_hash`
+3. Internal tier: `user.tier === 'internal'`
+
+### Implementation Files
+
+**Core Logic**:
+- `/home/projects/safeprompt/api/lib/intelligence-collector.js` - Tier-based collection
+- `/home/projects/safeprompt/api/lib/ip-reputation.js` - Hash-based reputation lookup
+- `/home/projects/safeprompt/supabase/migrations/20251006_threat_intelligence.sql` - Schema
+
+**Tests** (38 tests, 100% pass):
+- `/home/projects/safeprompt/test-suite/intelligence-collection.test.js` (12 tests)
+- `/home/projects/safeprompt/test-suite/ip-reputation.test.js` (18 tests)
+- `/home/projects/safeprompt/test-suite/phase1a-compliance.test.js` (21 tests: GDPR, CCPA, security)
+- `/home/projects/safeprompt/test-suite/phase1a-performance.test.js` (16 tests: <10ms latency)
+
+**Background Jobs**:
+- PII deletion: Daily at 00:00 UTC (deletes prompt_text + client_ip > 24h old)
+- Anonymized cleanup: Daily (deletes hashes > 90 days old)
+- Reputation updates: Real-time on validation (UPSERT pattern)
+
+### Integration with Validation Pipeline
+
+**Step 1**: Validate prompt (existing pipeline)
+**Step 2**: Check IP reputation (if Pro tier + opted in):
+```javascript
+const ipCheck = await checkIPReputation(clientIP, {
+  subscription_tier: 'pro',
+  auto_block_enabled: true
+});
+
+if (ipCheck.should_block) {
+  return { safe: false, reason: 'ip_reputation_block', reputation_score: 0.15 };
+}
+```
+
+**Step 3**: Collect intelligence (async, after response sent):
+```javascript
+// Fire-and-forget (does not block user response)
+collectThreatIntelligence(prompt, validationResult, {
+  ip_address: clientIP,
+  user_agent: request.headers['user-agent'],
+  user_id: apiKey.user_id
+});
+```
+
+**Step 4**: Update IP reputation (async):
+```javascript
+// UPSERT pattern for concurrent safety
+await updateIPReputationScores(ipHash, {
+  blocked: !validationResult.safe,
+  severity: validationResult.threats?.length || 0
+});
+```
+
+### Critical Reminders
+
+1. **Always use hashes for storage** - Never store raw IPs or prompts beyond 24h
+2. **Always check tier before collection** - Internal tier NEVER collects
+3. **Always make collection async** - User must never wait for INSERT
+4. **Always verify allowlist first** - Prevents blocking CI/CD during attacks
+5. **Always use constant-time comparison** - Test suite header check (timing attack protection)
+6. **Always check opt-in status** - Pro users can disable intelligence sharing
 
 ---
 

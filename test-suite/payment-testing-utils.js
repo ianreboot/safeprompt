@@ -36,19 +36,45 @@ export const testUtils = {
 
     if (authError) throw authError
 
-    const { data: profile, error: profileError } = await supabase
+    // Profile should be auto-created by Supabase trigger
+    // Wait a moment then fetch it
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // Fetch the auto-created profile
+    let { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .insert({
-        id: authData.user.id,
-        email,
-        subscription_tier: tier,
-        api_requests_used: 0,
-        is_active: true
-      })
-      .select()
+      .select('*')
+      .eq('id', authData.user.id)
       .single()
 
-    if (profileError) throw profileError
+    // If no profile exists, create one
+    if (!profile || profileError) {
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          email,
+          subscription_tier: tier,
+          api_requests_used: 0,
+          is_active: true
+        })
+        .select()
+        .single()
+
+      if (insertError) throw insertError
+      profile = newProfile
+    }
+
+    // Update tier if different from default
+    if (profile.subscription_tier !== tier) {
+      const { data: updated } = await supabase
+        .from('profiles')
+        .update({ subscription_tier: tier })
+        .eq('id', authData.user.id)
+        .select()
+        .single()
+      profile = updated
+    }
 
     return { user: authData.user, profile, password }
   },
