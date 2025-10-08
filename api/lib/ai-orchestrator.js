@@ -49,6 +49,15 @@ If the user message includes "pattern_context", a suspicious pattern was detecte
 - This means the pattern LOOKS malicious BUT has context suggesting it might be legitimate discussion
 - Route to attack_detector to make final determination - they will use context to decide
 
+CUSTOM LIST CONTEXT (if provided):
+If the user message includes "custom_list_context", the prompt matched a user's custom whitelist or blacklist:
+- type: "whitelist" or "blacklist"
+- phrase: The matched phrase from the user's list
+- confidence: 0.8 (whitelist) or 0.9 (blacklist)
+- If type="whitelist": Strong business signal - increase business_validator priority
+- If type="blacklist": Strong attack signal - increase attack_detector priority
+- Note: Custom lists are routing signals, NOT instant decisions
+
 ROUTING LOGIC:
 
 **FAST REJECT (obvious attacks)**:
@@ -99,9 +108,9 @@ Respond with ONLY this JSON structure:
 /**
  * Call orchestrator to determine routing
  * @param {string} prompt - The untrusted input to analyze
- * @param {Object|null} patternContext - Optional pattern context from pattern detection
+ * @param {Object|null} context - Optional context object with patternContext and/or customList
  */
-export async function orchestrate(prompt, patternContext = null) {
+export async function orchestrate(prompt, context = null) {
   const startTime = Date.now();
   const validationToken = parseInt(crypto.randomBytes(8).toString('hex'), 16);
 
@@ -109,7 +118,11 @@ export async function orchestrate(prompt, patternContext = null) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), ORCHESTRATOR_MODEL.timeout);
 
-    // Encapsulate prompt in JSON, including pattern context if available
+    // Extract pattern context and custom list context from combined context object
+    const patternContext = context?.patternType ? context : null;
+    const customListContext = context?.customList || null;
+
+    // Encapsulate prompt in JSON, including pattern and custom list context if available
     const userMessage = JSON.stringify({
       request_type: "route_validation",
       untrusted_input: sanitizeForJSON(prompt),
@@ -119,6 +132,12 @@ export async function orchestrate(prompt, patternContext = null) {
         context_type: patternContext.contextType,
         confidence: patternContext.confidence,
         reasoning: patternContext.reasoning
+      } : null,
+      custom_list_context: customListContext ? {
+        type: customListContext.type,
+        phrase: customListContext.phrase,
+        confidence: customListContext.confidence,
+        source: customListContext.source
       } : null
     });
 

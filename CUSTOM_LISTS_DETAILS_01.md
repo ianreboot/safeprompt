@@ -10,9 +10,9 @@
 
 ## 📊 This Document Progress
 - **Tasks in this doc**: 47 (from master task list - added tier naming cleanup task 2.9)
-- **Tasks completed**: 16/47 (34.0%)
-- **Current task**: Task 2.5 - Update ai-orchestrator.js to accept custom list context
-- **Last update**: 2025-10-08 00:51
+- **Tasks completed**: 19/47 (40.4%)
+- **Current task**: Task 2.9 - Fix tier naming inconsistencies across codebase
+- **Last update**: 2025-10-08 01:05
 
 ---
 
@@ -281,27 +281,42 @@ BLOCKER_DESCRIPTION: ""
   - Evidence: Code compiles, existing tests still pass (827/841 - failures from Phase 1 changes)
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
-- [ ] 2.5 Update ai-orchestrator.js to accept custom list context
+- [x] 2.5 Update ai-orchestrator.js to accept custom list context (COMPLETED: 2025-10-08 01:00)
   - File: `/home/projects/safeprompt/api/lib/ai-orchestrator.js`
-  - Function signature: orchestrate(prompt, patternContext, customListContext)
-  - Logic: Include customListContext in routing decisions
-  - If blacklist matched → Increase attack routing priority
-  - If whitelist matched → Increase business routing priority
+  - Updated function signature: orchestrate(prompt, context) - context can contain patternContext and/or customList
+  - Added to system prompt: CUSTOM LIST CONTEXT documentation (lines 52-59)
+  - Logic: Extract customListContext from combined context object
+  - Include custom_list_context in userMessage JSON sent to orchestrator
+  - Fields: type, phrase, confidence, source
+  - Routing guidance: whitelist → business_validator priority, blacklist → attack_detector priority
+  - Evidence: Code updated, compiles successfully
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
-- [ ] 2.6 Update consensus-engine.js to use custom list signals
+- [x] 2.6 Update consensus-engine.js to use custom list signals (COMPLETED: 2025-10-08 01:02)
   - File: `/home/projects/safeprompt/api/lib/consensus-engine.js`
-  - Logic: If whitelist matched → Treat as business signal (confidence 0.8)
-  - Logic: If blacklist matched → Treat as attack signal (confidence 0.9)
-  - Logic: Blacklist always wins: if both matched, blacklist takes precedence
-  - Logic: Apply same override rules as business context (lines 36-64)
+  - Updated function signature: buildConsensus(orchestrator, validators, customListContext)
+  - Added custom list logic BEFORE other consensus logic (lines 23-98)
+  - Blacklist logic (confidence 0.9):
+    - Blocks unless very strong business signal (0.85+)
+    - Borderline case → escalate to Pass 2 review
+  - Whitelist logic (confidence 0.8):
+    - Allows unless high-confidence attack (0.75+)
+    - High attack → Attack wins, whitelist overridden
+  - Returns customRuleMatched object with match details
+  - Evidence: Blacklist always wins (checked first), proper confidence thresholds
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
-- [ ] 2.7 Add response attribution for custom list matches
+- [x] 2.7 Add response attribution for custom list matches (COMPLETED: 2025-10-08 01:03)
   - File: `/home/projects/safeprompt/api/lib/ai-validator-hardened.js`
-  - Response format: Add customRuleMatched object
-  - Fields: { type: 'whitelist|blacklist', matchedPhrase, originalDecision, overriddenBy }
-  - Example: "Allowed by whitelist 'shipping address'. AI said unsafe, whitelist override applied."
+  - Updated buildConsensus call: Pass customListContext as third parameter (line 1127)
+  - Response format: customRuleMatched object included in all return paths
+  - Fields in consensus engine:
+    - type: 'whitelist', 'blacklist', or 'whitelist_overridden'
+    - phrase: matched phrase from user's list
+    - source: 'custom_whitelist' or 'custom_blacklist'
+    - overriddenBy: 'attack_detection' (when whitelist overridden)
+  - Added to validator responses: consensus (line 1139), pass2 success (line 1207), pass2 error (line 1228)
+  - Evidence: Attribution flows through entire validation pipeline
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
 - [ ] 2.9 Fix tier naming inconsistencies across entire codebase

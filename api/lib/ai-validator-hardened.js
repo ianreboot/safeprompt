@@ -1123,7 +1123,8 @@ export async function validateHardened(prompt, options = {}) {
   }
 
   // Stage 3: Consensus Engine - Aggregate validator results
-  const consensus = buildConsensus(orchestratorResult, validators);
+  // Pass custom list context to consensus for override logic
+  const consensus = buildConsensus(orchestratorResult, validators, customListContext);
 
   // If consensus is confident, return immediately
   if (!consensus.needsPass2) {
@@ -1134,7 +1135,8 @@ export async function validateHardened(prompt, options = {}) {
       reasoning: consensus.reasoning,
       processingTime: calculateProcessingTime(orchestratorResult, validators),
       stage: consensus.stage,
-      cost: calculateTotalCost(orchestratorResult, validators)
+      cost: calculateTotalCost(orchestratorResult, validators),
+      ...(consensus.customRuleMatched ? { customRuleMatched: consensus.customRuleMatched } : {})
     };
   }
 
@@ -1201,7 +1203,8 @@ export async function validateHardened(prompt, options = {}) {
       stage: 'pass2',
       cost: stats.totalCost,
       model: pass2Result.model,
-      stats
+      stats,
+      ...(consensus.customRuleMatched ? { customRuleMatched: consensus.customRuleMatched } : {})
     };
   } catch (error) {
     // Log the actual error for debugging
@@ -1221,7 +1224,8 @@ export async function validateHardened(prompt, options = {}) {
       processingTime: Date.now() - startTime,
       stage: 'pass2',
       cost: stats.totalCost,
-      needsReview: true // Flag for manual review when Pass 2 fails
+      needsReview: true, // Flag for manual review when Pass 2 fails
+      ...(consensus.customRuleMatched ? { customRuleMatched: consensus.customRuleMatched } : {})
     };
   }
 }

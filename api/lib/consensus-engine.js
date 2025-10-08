@@ -14,10 +14,88 @@
  *
  * @param {Object} orchestrator - Orchestrator result
  * @param {Object} validators - Object with business, attack, semantic results
+ * @param {Object|null} customListContext - Optional custom list match context
  * @returns {Object} Consensus verdict
  */
-export function buildConsensus(orchestrator, validators) {
+export function buildConsensus(orchestrator, validators, customListContext = null) {
   const { business, attack, semantic } = validators;
+
+  // Custom List Signals - Apply BEFORE other logic
+  // Blacklist always wins - highest confidence attack signal (0.9)
+  if (customListContext?.type === 'blacklist') {
+    // Blacklist match is a strong attack signal (0.9 confidence)
+    // But NOT instant block - still check for very strong business signals
+    if (!business?.is_business || business.confidence < 0.85) {
+      return {
+        safe: false,
+        confidence: customListContext.confidence,
+        threats: ['custom_blacklist_match'],
+        reasoning: `Matched custom blacklist phrase: "${customListContext.phrase}"`,
+        stage: 'custom_blacklist',
+        needsPass2: false,
+        needsReview: false,
+        customRuleMatched: {
+          type: 'blacklist',
+          phrase: customListContext.phrase,
+          source: customListContext.source
+        }
+      };
+    }
+
+    // Borderline: Blacklist vs very strong business (0.85+) → Pass 2 review
+    return {
+      safe: null,
+      confidence: Math.max(customListContext.confidence, business.confidence),
+      threats: ['custom_blacklist_match'],
+      reasoning: `Blacklist match (0.9) vs strong business (${business.confidence.toFixed(2)}) - escalating to Pass 2`,
+      stage: 'consensus_review',
+      needsPass2: true,
+      needsReview: true,
+      customRuleMatched: {
+        type: 'blacklist',
+        phrase: customListContext.phrase,
+        source: customListContext.source
+      }
+    };
+  }
+
+  // Whitelist match is a strong business signal (0.8 confidence)
+  if (customListContext?.type === 'whitelist') {
+    // Whitelist overrides low-confidence attacks (< 0.75)
+    if (!attack?.is_attack || attack.confidence < 0.75) {
+      return {
+        safe: true,
+        confidence: customListContext.confidence,
+        threats: [],
+        reasoning: `Matched custom whitelist phrase: "${customListContext.phrase}"`,
+        stage: 'custom_whitelist',
+        needsPass2: false,
+        needsReview: false,
+        customRuleMatched: {
+          type: 'whitelist',
+          phrase: customListContext.phrase,
+          source: customListContext.source
+        }
+      };
+    }
+
+    // Whitelist vs high-confidence attack (0.75+) → Attack wins
+    return {
+      safe: false,
+      confidence: attack.confidence,
+      threats: attack.attack_types || ['ai_manipulation'],
+      reasoning: `High-confidence attack (${attack.confidence.toFixed(2)}) overrides whitelist match`,
+      stage: 'attack_detected',
+      needsPass2: false,
+      needsReview: false,
+      customRuleMatched: {
+        type: 'whitelist_overridden',
+        phrase: customListContext.phrase,
+        source: customListContext.source,
+        overriddenBy: 'attack_detection'
+        }
+    };
+  }
 
   // Fast reject from orchestrator
   if (orchestrator.fast_reject && orchestrator.confidence > 0.85) {
