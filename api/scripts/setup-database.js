@@ -31,7 +31,7 @@ async function setupDatabase() {
         email TEXT UNIQUE NOT NULL,
         stripe_customer_id TEXT UNIQUE,
         stripe_subscription_id TEXT,
-        tier TEXT DEFAULT 'free' CHECK (tier IN ('free', 'starter', 'business', 'enterprise', 'beta')),
+        tier TEXT DEFAULT 'free' CHECK (tier IN ('free', 'early_bird', 'starter', 'business', 'internal')),
         is_beta_user BOOLEAN DEFAULT false,
         beta_price DECIMAL(10,2),
         monthly_limit INTEGER DEFAULT 100,
@@ -165,7 +165,7 @@ async function setupDatabase() {
       .from('users')
       .insert({
         email: 'test@safeprompt.dev',
-        tier: 'beta',
+        tier: 'early_bird',  // Early bird pricing tier
         is_beta_user: true,
         beta_price: 5.00,
         monthly_limit: 50000

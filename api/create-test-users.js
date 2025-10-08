@@ -26,13 +26,13 @@ async function createTestUsers() {
       preferences: { intelligence_sharing: true }
     },
     {
-      email: 'test-pro@safeprompt.dev',
-      tier: 'pro',
+      email: 'test-business@safeprompt.dev',  // Updated from pro
+      tier: 'business',  // Updated to match Stripe tier names
       preferences: { intelligence_sharing: true, auto_block_enabled: true }
     },
     {
-      email: 'test-pro-optout@safeprompt.dev',
-      tier: 'pro',
+      email: 'test-business-optout@safeprompt.dev',  // Updated from pro
+      tier: 'business',  // Updated to match Stripe tier names
       preferences: { intelligence_sharing: false, auto_block_enabled: false }
     },
     {

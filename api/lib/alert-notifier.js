@@ -496,18 +496,23 @@ export async function calculateIPBlockingMetrics() {
     // Calculate metrics by tier
     const metrics = {
       free: { total: 0, ip_blocked: 0, block_rate: 0 },
-      pro: { total: 0, ip_blocked: 0, block_rate: 0 },
+      paid: { total: 0, ip_blocked: 0, block_rate: 0 },  // Combines all paid tiers
       overall: { total: 0, ip_blocked: 0, block_rate: 0 }
     };
+
+    const paidTiers = ['early_bird', 'starter', 'business', 'internal'];
 
     data.forEach(log => {
       const tier = log.profiles?.subscription_tier || 'free';
       const isIPBlocked = log.threats?.includes('malicious_ip') || false;
 
       // Update tier-specific metrics
-      if (tier === 'free' || tier === 'pro') {
-        metrics[tier].total++;
-        if (isIPBlocked) metrics[tier].ip_blocked++;
+      if (tier === 'free') {
+        metrics.free.total++;
+        if (isIPBlocked) metrics.free.ip_blocked++;
+      } else if (paidTiers.includes(tier)) {
+        metrics.paid.total++;
+        if (isIPBlocked) metrics.paid.ip_blocked++;
       }
 
       // Update overall metrics
@@ -520,8 +525,8 @@ export async function calculateIPBlockingMetrics() {
       ? (metrics.free.ip_blocked / metrics.free.total) * 100
       : 0;
 
-    metrics.pro.block_rate = metrics.pro.total > 0
-      ? (metrics.pro.ip_blocked / metrics.pro.total) * 100
+    metrics.paid.block_rate = metrics.paid.total > 0
+      ? (metrics.paid.ip_blocked / metrics.paid.total) * 100
       : 0;
 
     metrics.overall.block_rate = metrics.overall.total > 0
@@ -530,7 +535,7 @@ export async function calculateIPBlockingMetrics() {
 
     console.log('[IPBlockingMetrics] 24-hour metrics:', {
       free_rate: `${metrics.free.block_rate.toFixed(2)}%`,
-      pro_rate: `${metrics.pro.block_rate.toFixed(2)}%`,
+      paid_rate: `${metrics.paid.block_rate.toFixed(2)}%`,  // Updated from pro_rate
       overall_rate: `${metrics.overall.block_rate.toFixed(2)}%`
     });
 

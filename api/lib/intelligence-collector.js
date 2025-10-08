@@ -340,8 +340,9 @@ function determineCollection(profile, validationResult) {
     return !validationResult.safe;  // Only blocked requests
   }
 
-  // Pro tier: Collect if opted in
-  if (tier === 'pro') {
+  // Paid tiers: Collect if opted in
+  const paidTiers = ['early_bird', 'starter', 'business'];
+  if (paidTiers.includes(tier)) {
     if (!sharing) {
       return false;  // User opted out
     }

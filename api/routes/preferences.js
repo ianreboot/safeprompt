@@ -55,13 +55,17 @@ export async function getPreferences(req, res) {
       ...(profile.preferences || {})
     };
 
+    // Paid tiers can modify preferences
+    const paidTiers = ['early_bird', 'starter', 'business', 'internal'];
+    const canModify = paidTiers.includes(profile.tier);
+
     return res.json({
       tier: profile.tier,
       preferences,
-      can_modify: profile.tier === 'pro',  // Only Pro can modify
+      can_modify: canModify,  // Paid tiers can modify
       message: profile.tier === 'free'
         ? 'Free tier automatically participates in collective defense'
-        : 'Pro tier can opt in/out of intelligence sharing'
+        : 'Paid tiers can opt in/out of intelligence sharing'
     });
 
   } catch (error) {
@@ -120,11 +124,12 @@ export async function updatePreferences(req, res) {
       });
     }
 
-    // Only Pro tier can modify preferences
-    if (profile.tier !== 'pro') {
+    // Only paid tiers can modify preferences
+    const paidTiers = ['early_bird', 'starter', 'business', 'internal'];
+    if (!paidTiers.includes(profile.tier)) {
       return res.status(403).json({
         error: 'Forbidden',
-        message: 'Intelligence sharing preferences are only available for Pro tier',
+        message: 'Intelligence sharing preferences are only available for paid tiers',
         current_tier: profile.tier,
         upgrade_required: true
       });

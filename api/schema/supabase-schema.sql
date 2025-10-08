@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS public.users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
     -- Subscription details
-    tier TEXT DEFAULT 'free' CHECK (tier IN ('free', 'beta', 'starter', 'pro', 'enterprise')),
+    -- TIER NAMES: Must match Stripe subscription names (see api/stripe-checkout.js PRICE_IDS)
+    -- early_bird: $5/mo launch pricing | starter: regular pricing | business: higher tier
+    tier TEXT DEFAULT 'free' CHECK (tier IN ('free', 'early_bird', 'starter', 'business', 'internal')),
     stripe_customer_id TEXT UNIQUE,
     stripe_subscription_id TEXT,
     subscription_status TEXT DEFAULT 'inactive',

@@ -173,7 +173,7 @@ describe('API Validate Endpoint Logic', () => {
     it('should allow active subscriptions', () => {
       const profile = {
         subscription_status: 'active',
-        subscription_tier: 'pro'
+        subscription_tier: 'business'  // Updated to match Stripe tier names
       };
 
       const isAllowed = profile.subscription_status === 'active';
