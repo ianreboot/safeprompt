@@ -10,9 +10,17 @@ import { DEFAULT_WHITELIST, DEFAULT_BLACKLIST, getEffectiveLists as getDefaultLi
 
 /**
  * Tier limits for custom lists
- * Free tier gets read-only defaults, paid tiers can add custom phrases
+ *
+ * IMPORTANT: These tier names MUST match Stripe subscription names
+ * See api/api/stripe-checkout.js PRICE_IDS for definitive list
+ *
+ * Stripe tiers: early_bird, starter, business
+ * System tiers: free, internal (SafePrompt team)
+ *
+ * To add new tiers: Add to Stripe, update PRICE_IDS, then add limits here
  */
 export const TIER_LIMITS = {
+  // Free tier - Read-only defaults
   free: {
     customRulesEnabled: false,    // Cannot add custom rules
     defaultListsEnabled: true,     // Gets read-only default lists
@@ -22,40 +30,44 @@ export const TIER_LIMITS = {
     maxTotalRules: 98              // Just the defaults (70 whitelist + 28 blacklist)
   },
 
-  starter: {
+  // Early Bird - $5/mo locked launch pricing (same limits as starter)
+  early_bird: {
     customRulesEnabled: true,
     defaultListsEnabled: true,
     canEditDefaults: true,         // Can remove default phrases
-    maxCustomWhitelist: 10,
-    maxCustomBlacklist: 10,
-    maxTotalRules: 118             // Defaults (98) + custom (20)
+    maxCustomWhitelist: 25,
+    maxCustomBlacklist: 25,
+    maxTotalRules: 148             // Defaults (98) + custom (50)
   },
 
+  // Starter - Regular paid tier (same limits as early_bird, different price)
+  starter: {
+    customRulesEnabled: true,
+    defaultListsEnabled: true,
+    canEditDefaults: true,
+    maxCustomWhitelist: 25,
+    maxCustomBlacklist: 25,
+    maxTotalRules: 148             // Defaults (98) + custom (50)
+  },
+
+  // Business - Higher tier with more custom rules
   business: {
     customRulesEnabled: true,
     defaultListsEnabled: true,
     canEditDefaults: true,
-    maxCustomWhitelist: 50,
-    maxCustomBlacklist: 50,
-    maxTotalRules: 198             // Defaults (98) + custom (100)
+    maxCustomWhitelist: 100,
+    maxCustomBlacklist: 100,
+    maxTotalRules: 298             // Defaults (98) + custom (200)
   },
 
-  enterprise: {
-    customRulesEnabled: true,
-    defaultListsEnabled: true,
-    canEditDefaults: true,
-    maxCustomWhitelist: 200,
-    maxCustomBlacklist: 200,
-    maxTotalRules: 498             // Defaults (98) + custom (400)
-  },
-
+  // Internal - SafePrompt team (for testing and internal use)
   internal: {
     customRulesEnabled: true,
     defaultListsEnabled: true,
     canEditDefaults: true,
-    maxCustomWhitelist: 50,
-    maxCustomBlacklist: 50,
-    maxTotalRules: 198
+    maxCustomWhitelist: 200,       // Higher for testing
+    maxCustomBlacklist: 200,
+    maxTotalRules: 498
   }
 };
 

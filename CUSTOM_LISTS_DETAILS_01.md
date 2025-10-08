@@ -9,10 +9,10 @@
 ---
 
 ## 📊 This Document Progress
-- **Tasks in this doc**: 45 (from master task list)
-- **Tasks completed**: 14/45 (31.1%)
+- **Tasks in this doc**: 47 (from master task list - added tier naming cleanup task 2.9)
+- **Tasks completed**: 14/47 (29.8%)
 - **Current task**: Task 2.3 - Create custom-lists-checker.js
-- **Last update**: 2025-10-07 19:30
+- **Last update**: 2025-10-08 00:46
 
 ---
 
@@ -223,10 +223,16 @@ BLOCKER_DESCRIPTION: ""
   - Evidence: npm test shows 39/39 tests passing
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
-- [x] 2.2 Create custom-lists-validator.js with tier limit enforcement (COMPLETED: 2025-10-07 19:30)
-  - File: `/home/projects/safeprompt/api/lib/custom-lists-validator.js` (NEW - 260 lines)
+- [x] 2.2 Create custom-lists-validator.js with tier limit enforcement (COMPLETED: 2025-10-08 00:46)
+  - File: `/home/projects/safeprompt/api/lib/custom-lists-validator.js` (NEW - 274 lines)
   - Exports: TIER_LIMITS, validateCustomRulesForTier(), getEffectiveLists(), validateAndGetEffectiveLists()
-  - Constants: TIER_LIMITS object (free: 0/0, starter: 10/10, business: 50/50, enterprise: 200/200, internal: 50/50)
+  - Constants: TIER_LIMITS object - CORRECTED to match Stripe tiers:
+    - free: 0/0 (no custom rules)
+    - early_bird: 25/25 ($5/mo launch pricing)
+    - starter: 25/25 (regular pricing, same limits as early_bird)
+    - business: 100/100
+    - internal: 200/200 (SafePrompt team)
+  - **CRITICAL FIX**: Initially used wrong tier names (beta, pro, enterprise) - user corrected to match Stripe
   - Function: validateCustomRulesForTier() - enforces whitelist/blacklist count limits per tier
   - Function: getEffectiveLists() - merges defaults + profile custom + request custom - removed defaults
   - Function: canEditDefaults() - checks if tier can remove default phrases
@@ -234,8 +240,10 @@ BLOCKER_DESCRIPTION: ""
   - Logic: Three-layer merge (defaults → profile custom → request custom)
   - Logic: Deduplication (case-insensitive)
   - Logic: Source tracking (defaults, profile, request counts)
-  - Tests: Created `/home/projects/safeprompt/api/__tests__/custom-lists-validator.test.js` (37 tests, all passing)
-  - Evidence: npm test shows 37/37 tests passing
+  - Tests: Created `/home/projects/safeprompt/api/__tests__/custom-lists-validator.test.js` (37 tests)
+  - Tests: Fixed 4 test expectations to match correct tier limits
+  - Evidence: npm test shows 37/37 tests passing after tier name corrections
+  - **Added Task 2.9**: Fix tier naming across entire codebase (database, migrations, etc.)
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
 - [ ] 2.3 Create custom-lists-checker.js with match logic
@@ -280,9 +288,24 @@ BLOCKER_DESCRIPTION: ""
   - Example: "Allowed by whitelist 'shipping address'. AI said unsafe, whitelist override applied."
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
-- [ ] 2.8 Commit Phase 2 changes
-  - Command: `git add -A && git commit -m "Phase 2: Core custom lists logic as routing/override signals"`
-  - Verification: `git status` clean, unit tests exist (not running yet - AI key needed)
+- [ ] 2.9 Fix tier naming inconsistencies across entire codebase
+  - **Purpose**: Synchronize all tier references to match Stripe subscription names (early_bird, starter, business)
+  - **Investigation locations**:
+    - `/home/projects/safeprompt/api/schema/supabase-schema.sql` - Database constraint uses (beta, pro, enterprise)
+    - `/home/projects/safeprompt/supabase/migrations/` - Check all migration files for tier references
+    - Intelligence logging - May reference old tier names
+  - **Actions**:
+    - Update database tier constraint to: `CHECK (tier IN ('free', 'early_bird', 'starter', 'business', 'internal'))`
+    - Create migration to rename existing tier values in database
+    - Update any code referencing beta/pro/enterprise tier names
+    - Grep codebase for tier references: `grep -r "tier.*beta\|tier.*pro\|tier.*enterprise" api/`
+  - **Source of truth**: `/home/projects/safeprompt/api/api/stripe-checkout.js` PRICE_IDS object
+  - **Verification**: All tier references match Stripe names, no orphaned tier names exist
+- [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
+
+- [ ] 2.10 Commit Phase 2 changes
+  - Command: `git add -A && git commit -m "Phase 2: Core custom lists logic as routing/override signals + tier naming fixes"`
+  - Verification: `git status` clean, all tests passing
 - [ ] 🧠 CONTEXT REFRESH: Read `/home/projects/safeprompt/CUSTOM_LISTS_MASTER.md` and execute section "📝 Document Update Instructions"
 
 ### Phase 3: Database Schema & API Integration

@@ -15,11 +15,11 @@ import {
 
 describe('custom-lists-validator', () => {
   describe('TIER_LIMITS', () => {
-    test('should have all required tiers', () => {
+    test('should have all actual tiers (matching Stripe subscriptions)', () => {
       expect(TIER_LIMITS.free).toBeDefined();
+      expect(TIER_LIMITS.early_bird).toBeDefined();
       expect(TIER_LIMITS.starter).toBeDefined();
       expect(TIER_LIMITS.business).toBeDefined();
-      expect(TIER_LIMITS.enterprise).toBeDefined();
       expect(TIER_LIMITS.internal).toBeDefined();
     });
 
@@ -31,15 +31,21 @@ describe('custom-lists-validator', () => {
     });
 
     test('paid tiers should allow custom rules', () => {
+      expect(TIER_LIMITS.early_bird.customRulesEnabled).toBe(true);
       expect(TIER_LIMITS.starter.customRulesEnabled).toBe(true);
       expect(TIER_LIMITS.business.customRulesEnabled).toBe(true);
-      expect(TIER_LIMITS.enterprise.customRulesEnabled).toBe(true);
+    });
+
+    test('early_bird and starter should have same limits', () => {
+      expect(TIER_LIMITS.early_bird.maxCustomWhitelist).toBe(TIER_LIMITS.starter.maxCustomWhitelist);
+      expect(TIER_LIMITS.early_bird.maxCustomBlacklist).toBe(TIER_LIMITS.starter.maxCustomBlacklist);
     });
 
     test('limits should increase with tier', () => {
-      expect(TIER_LIMITS.starter.maxCustomWhitelist).toBe(10);
-      expect(TIER_LIMITS.business.maxCustomWhitelist).toBe(50);
-      expect(TIER_LIMITS.enterprise.maxCustomWhitelist).toBe(200);
+      expect(TIER_LIMITS.early_bird.maxCustomWhitelist).toBe(25);
+      expect(TIER_LIMITS.starter.maxCustomWhitelist).toBe(25);
+      expect(TIER_LIMITS.business.maxCustomWhitelist).toBe(100);
+      expect(TIER_LIMITS.internal.maxCustomWhitelist).toBe(200);
     });
   });
 
@@ -81,8 +87,8 @@ describe('custom-lists-validator', () => {
     describe('starter tier', () => {
       test('should accept rules within limits', () => {
         const rules = {
-          whitelist: ['meeting', 'review'],  // 2 <= 10
-          blacklist: ['password']             // 1 <= 10
+          whitelist: ['meeting', 'review'],  // 2 <= 25
+          blacklist: ['password']             // 1 <= 25
         };
 
         const result = validateCustomRulesForTier(rules, 'starter');
@@ -93,7 +99,7 @@ describe('custom-lists-validator', () => {
 
       test('should reject whitelist exceeding limit', () => {
         const rules = {
-          whitelist: new Array(11).fill('test'),  // 11 > 10
+          whitelist: new Array(26).fill('test'),  // 26 > 25
           blacklist: []
         };
 
@@ -101,13 +107,13 @@ describe('custom-lists-validator', () => {
 
         expect(result.valid).toBe(false);
         expect(result.errors[0]).toContain('Whitelist exceeds limit');
-        expect(result.errors[0]).toContain('11/10');
+        expect(result.errors[0]).toContain('26/25');
       });
 
       test('should reject blacklist exceeding limit', () => {
         const rules = {
           whitelist: [],
-          blacklist: new Array(11).fill('test')  // 11 > 10
+          blacklist: new Array(26).fill('test')  // 26 > 25
         };
 
         const result = validateCustomRulesForTier(rules, 'starter');
@@ -118,8 +124,8 @@ describe('custom-lists-validator', () => {
 
       test('should accept exactly at limit', () => {
         const rules = {
-          whitelist: new Array(10).fill('test'),
-          blacklist: new Array(10).fill('test')
+          whitelist: new Array(25).fill('test'),
+          blacklist: new Array(25).fill('test')
         };
 
         const result = validateCustomRulesForTier(rules, 'starter');
@@ -131,8 +137,8 @@ describe('custom-lists-validator', () => {
     describe('business tier', () => {
       test('should accept larger limits', () => {
         const rules = {
-          whitelist: new Array(50).fill('test'),
-          blacklist: new Array(50).fill('test')
+          whitelist: new Array(100).fill('test'),
+          blacklist: new Array(100).fill('test')
         };
 
         const result = validateCustomRulesForTier(rules, 'business');
@@ -142,26 +148,13 @@ describe('custom-lists-validator', () => {
 
       test('should reject exceeding larger limits', () => {
         const rules = {
-          whitelist: new Array(51).fill('test'),
+          whitelist: new Array(101).fill('test'),
           blacklist: []
         };
 
         const result = validateCustomRulesForTier(rules, 'business');
 
         expect(result.valid).toBe(false);
-      });
-    });
-
-    describe('enterprise tier', () => {
-      test('should accept very large limits', () => {
-        const rules = {
-          whitelist: new Array(200).fill('test'),
-          blacklist: new Array(200).fill('test')
-        };
-
-        const result = validateCustomRulesForTier(rules, 'enterprise');
-
-        expect(result.valid).toBe(true);
       });
     });
 
@@ -373,7 +366,7 @@ describe('custom-lists-validator', () => {
 
     test('should return errors when tier limits exceeded', () => {
       const customRules = {
-        whitelist: new Array(11).fill('test'),
+        whitelist: new Array(26).fill('test'),  // 26 > 25 (starter limit)
         blacklist: []
       };
 
@@ -410,9 +403,9 @@ describe('custom-lists-validator', () => {
     });
 
     test('should return true for paid tiers', () => {
+      expect(canEditDefaults('early_bird')).toBe(true);
       expect(canEditDefaults('starter')).toBe(true);
       expect(canEditDefaults('business')).toBe(true);
-      expect(canEditDefaults('enterprise')).toBe(true);
       expect(canEditDefaults('internal')).toBe(true);
     });
 
@@ -431,8 +424,8 @@ describe('custom-lists-validator', () => {
       const limits = getTierLimits('starter');
 
       expect(limits).toBeDefined();
-      expect(limits.maxCustomWhitelist).toBe(10);
-      expect(limits.maxCustomBlacklist).toBe(10);
+      expect(limits.maxCustomWhitelist).toBe(25);
+      expect(limits.maxCustomBlacklist).toBe(25);
     });
 
     test('should return null for invalid tier', () => {
@@ -443,7 +436,7 @@ describe('custom-lists-validator', () => {
       const limits = getTierLimits('BUSINESS');
 
       expect(limits).toBeDefined();
-      expect(limits.maxCustomWhitelist).toBe(50);
+      expect(limits.maxCustomWhitelist).toBe(100);
     });
   });
 });
