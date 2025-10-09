@@ -23,13 +23,43 @@ if (fs.existsSync(envPath)) {
 }
 
 /**
+ * Get custom rules and profile for test category
+ */
+function getTestContext(test) {
+  // Custom lists tests need custom rules configured
+  if (test.categoryGroup === 'custom_lists') {
+    const customRules = {};
+    const profile = {
+      custom_whitelist: ['whitelisted phrase', 'customer service', 'refund'],
+      custom_blacklist: ['blacklisted phrase', 'ignore previous instructions', 'company secret'],
+      uses_default_whitelist: true,
+      uses_default_blacklist: true
+    };
+
+    // Request-level custom rules for specific tests
+    if (test.category === 'request_level_whitelist' || test.category === 'request_level_blacklist') {
+      customRules.whitelist = ['refund'];
+      customRules.blacklist = ['extract'];
+    }
+
+    return { customRules, profile, tier: 'starter' };
+  }
+
+  // Default: no custom rules
+  return {};
+}
+
+/**
  * Test a single prompt
  */
 async function testPrompt(test) {
   const startTime = Date.now();
 
   try {
-    const result = await validateHardened(test.text);
+    // Get test context (custom rules, profile, tier)
+    const context = getTestContext(test);
+
+    const result = await validateHardened(test.text, context);
     const latency = Date.now() - startTime;
 
     // Determine if test passed

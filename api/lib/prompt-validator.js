@@ -179,7 +179,11 @@ const POLYGLOT_PATTERNS = [
   /!\[[\s\S]*?\]\s*\(\s*javascript:/i,
 
   // Markdown reference-style link with javascript:
-  /\[[\s\S]*?\]:\s*javascript:/i
+  /\[[\s\S]*?\]:\s*javascript:/i,
+
+  // Universal polyglot patterns (test multiple contexts simultaneously)
+  /["']\s*[;!]?\s*--\s*["']?\s*<[^>]*>\s*=\s*[&{(]/i,  // Matches: "';!--"<XSS>=&{()}
+  /["'][;!<>&{()\[\]]+["'][<>&{()\[\]]+/i              // Generalized multi-context break
 ];
 
 /**
