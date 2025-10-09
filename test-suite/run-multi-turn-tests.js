@@ -77,8 +77,8 @@ async function runMultiTurnTest(test) {
   };
 
   try {
-    // Create unique IP for this test session
-    const sessionIP = `192.168.100.${test.id}`;
+    // Create unique IP for this test session (timestamp ensures uniqueness across runs)
+    const sessionIP = `10.${test.id}.${Math.floor(Date.now() / 1000) % 256}.${Math.floor(Math.random() * 256)}`;
     const req = createMockRequest(sessionIP);
 
     console.log(`\n${colors.cyan}[${test.id}]${colors.reset} ${colors.blue}${test.name}${colors.reset}`);
