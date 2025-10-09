@@ -9,7 +9,8 @@
  */
 
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
+import { writeFileSync } from 'fs';
 import { config } from 'dotenv';
 import { validateWithMultiTurn, SessionManager } from '../api/lib/multi-turn-validator.js';
 import { multiTurnTests } from './multi-turn-tests.js';
@@ -274,9 +275,8 @@ async function runAllTests() {
   console.log('='.repeat(60) + '\n');
 
   // Save results
-  const fs = require('fs');
-  fs.writeFileSync(
-    require('path').join(__dirname, 'multi-turn-test-results.json'),
+  writeFileSync(
+    join(__dirname, 'multi-turn-test-results.json'),
     JSON.stringify({ summary: { totalTests, passed, failed, accuracy, duration }, results: allResults }, null, 2)
   );
 
