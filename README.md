@@ -37,6 +37,15 @@ if (result.ipReputationScore < 0.5) {
 
 ## What's New (October 2025)
 
+### 🎯 Attack Gallery & Test Suite Improvements (October 9, 2025)
+Enhanced demonstration and validation coverage:
+- **Attack Gallery Expansion**: Added 7 sophisticated attacks to playground (semantic extraction, business context masking)
+- **Total Examples**: 25 attack demonstrations (22 attacks + 3 legitimate examples)
+- **New Categories**: Indirect extraction (ASCII/length/encoding), business authority bypass, emergency override exploitation
+- **Test Accuracy**: 93.5% (130/139 realistic tests passing)
+- **AI Prompt Enhancements**: Explicit semantic extraction detection, critical override rules for security keywords
+- **Real-World Impacts**: Each example includes actual breach references (Gandalf AI, OWASP LLM01 2025, CEO fraud patterns)
+
 ### 🎉 Phase 6 Intelligence Pipeline (October 8, 2025)
 Automated attack pattern discovery and deployment:
 - **Pattern Discovery**: ML-powered analysis finds new attack patterns from real threats (daily 3 AM UTC)
