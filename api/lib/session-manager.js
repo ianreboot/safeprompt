@@ -16,11 +16,17 @@
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL,
-  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+// Lazy initialize Supabase client (allows env to be loaded first)
+let supabase = null;
+function getSupabase() {
+  if (!supabase) {
+    supabase = createClient(
+      process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL,
+      process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+  }
+  return supabase;
+}
 
 /**
  * Session Manager for multi-turn attack detection
@@ -80,7 +86,7 @@ class SessionManager {
     const deviceFingerprint = this.createDeviceFingerprint(req, clientData);
 
     // Try to find active session for this client
-    const { data: existingSessions, error: findError } = await supabase
+    const { data: existingSessions, error: findError } = await getSupabase()
       .from('validation_sessions')
       .select('*')
       .eq('client_ip_hash', clientIpHash)
@@ -98,7 +104,7 @@ class SessionManager {
       const session = existingSessions[0];
 
       // Update last_activity
-      await supabase
+      await getSupabase()
         .from('validation_sessions')
         .update({ last_activity: new Date().toISOString() })
         .eq('session_id', session.session_id);
@@ -107,7 +113,7 @@ class SessionManager {
     }
 
     // Create new session
-    const { data: newSession, error: createError } = await supabase
+    const { data: newSession, error: createError } = await getSupabase()
       .from('validation_sessions')
       .insert({
         user_id: userId,
@@ -138,7 +144,7 @@ class SessionManager {
     const promptHash = this.hashPrompt(promptText);
 
     // Get current request count for sequence number
-    const { data: session } = await supabase
+    const { data: session } = await getSupabase()
       .from('validation_sessions')
       .select('request_count')
       .eq('session_id', sessionId)
@@ -153,7 +159,7 @@ class SessionManager {
     const contextAnalysis = this.analyzeContextBuilding(promptText);
 
     // Insert request
-    const { data: request, error } = await supabase
+    const { data: request, error } = await getSupabase()
       .from('session_requests')
       .insert({
         session_id: sessionId,
@@ -232,7 +238,7 @@ class SessionManager {
    */
   static async detectMultiTurnPatterns(sessionId) {
     // Use database function for pattern detection
-    const { data: patterns, error } = await supabase
+    const { data: patterns, error } = await getSupabase()
       .rpc('detect_multiturn_patterns', { p_session_id: sessionId });
 
     if (error) {
@@ -242,7 +248,7 @@ class SessionManager {
 
     // Store detected patterns
     for (const pattern of patterns) {
-      await supabase.from('session_attack_patterns').insert({
+      await getSupabase().from('session_attack_patterns').insert({
         session_id: sessionId,
         pattern_type: pattern.pattern_type,
         pattern_description: pattern.description,
@@ -261,7 +267,7 @@ class SessionManager {
    * @returns {Promise<number>} Updated risk score
    */
   static async updateRiskScore(sessionId) {
-    const { data: riskScore, error } = await supabase
+    const { data: riskScore, error } = await getSupabase()
       .rpc('calculate_session_risk_score', { p_session_id: sessionId });
 
     if (error) {
@@ -278,7 +284,7 @@ class SessionManager {
    * @returns {Promise<Object>} { shouldBlock: boolean, reason: string, riskScore: number }
    */
   static async shouldBlockSession(sessionId) {
-    const { data: session } = await supabase
+    const { data: session } = await getSupabase()
       .from('validation_sessions')
       .select('risk_score, blocked_at, max_risk_level')
       .eq('session_id', sessionId)
@@ -330,7 +336,7 @@ class SessionManager {
    * @returns {Promise<void>}
    */
   static async blockSession(sessionId, reason) {
-    await supabase
+    await getSupabase()
       .from('validation_sessions')
       .update({
         is_active: false,
@@ -345,7 +351,7 @@ class SessionManager {
    * @returns {Promise<number>} Number of sessions deleted
    */
   static async cleanupExpiredSessions() {
-    const { data: deletedCount, error } = await supabase
+    const { data: deletedCount, error } = await getSupabase()
       .rpc('cleanup_expired_sessions');
 
     if (error) {
@@ -362,7 +368,7 @@ class SessionManager {
    * @returns {Promise<Object>} Session statistics
    */
   static async getSessionStats(sessionId) {
-    const { data: session } = await supabase
+    const { data: session } = await getSupabase()
       .from('validation_sessions')
       .select(`
         *,
@@ -377,7 +383,7 @@ class SessionManager {
     }
 
     // Get request breakdown
-    const { data: requestStats } = await supabase
+    const { data: requestStats } = await getSupabase()
       .from('session_requests')
       .select('is_safe, risk_level')
       .eq('session_id', sessionId);
