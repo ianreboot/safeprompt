@@ -14,8 +14,8 @@ import crypto from 'crypto';
 
 // Supabase client
 const supabase = createClient(
-  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL,
-  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
+  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
 // Test suite secret token (set in environment)

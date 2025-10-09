@@ -189,12 +189,12 @@ export function getEffectiveLists({ customRules = {}, profile = {}, tier = 'free
   }
 
   // 3. Add request-level custom rules (merge, not replace)
-  if (customRules.whitelist && Array.isArray(customRules.whitelist)) {
+  if (customRules && customRules.whitelist && Array.isArray(customRules.whitelist)) {
     effectiveWhitelist = effectiveWhitelist.concat(customRules.whitelist);
     sources.request += customRules.whitelist.length;
   }
 
-  if (customRules.blacklist && Array.isArray(customRules.blacklist)) {
+  if (customRules && customRules.blacklist && Array.isArray(customRules.blacklist)) {
     effectiveBlacklist = effectiveBlacklist.concat(customRules.blacklist);
     sources.request += customRules.blacklist.length;
   }

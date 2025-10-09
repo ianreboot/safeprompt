@@ -14,8 +14,8 @@ import { logIntelligence } from './alert-notifier.js';
 
 // Supabase client
 const supabase = createClient(
-  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL,
-  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SAFEPROMPT_SUPABASE_URL || process.env.SUPABASE_URL || '',
+  process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
 /**
