@@ -653,6 +653,46 @@ Database (Supabase)
 - **Always verify** which database before schema changes
 - **Always backup**: `pg_dump` before schema changes
 
+### Database Migrations (Verified 2025-10-09)
+
+**Complete workflow for deploying schema changes:**
+
+```bash
+# Step 1: Initialize Supabase (one-time per project)
+cd /home/projects/safeprompt
+supabase init
+# Press N for VS Code/IntelliJ prompts
+
+# Step 2: Export BOTH required environment variables
+source /home/projects/.env
+export SUPABASE_ACCESS_TOKEN              # For API authentication
+export SUPABASE_DB_PASSWORD="${SAFEPROMPT_SUPABASE_DB_PASSWORD}"  # For DB auth
+
+# Step 3: Link project (one-time, stores config in .supabase/)
+supabase link --project-ref vkyggknknyfallmnrmfu  # DEV
+# OR: supabase link --project-ref adyfhzbcsqzgqvyimycv  # PROD
+
+# Step 4: Push migrations from supabase/migrations/
+echo "y" | supabase db push
+```
+
+**Migration File Best Practices:**
+- **Always use DROP first**: Handles partial schemas from failed attempts
+- **Format**: `YYYYMMDDHHMMSS_description.sql`
+- **Pattern**:
+  ```sql
+  DROP TABLE IF EXISTS my_table CASCADE;
+  CREATE TABLE my_table (...);  -- Not CREATE IF NOT EXISTS
+  ```
+
+**Common Errors:**
+- **"Access token not provided"**: Export `SUPABASE_ACCESS_TOKEN`
+- **"password authentication failed"**: Export `SUPABASE_DB_PASSWORD` before link
+- **"column doesn't exist"**: Add DROP statements to migration
+- **"Network unreachable"**: Use CLI (not psql) - handles routing automatically
+
+**Complete Reference**: `/home/projects/docs/reference-supabase-access.md`
+
 ### Pricing (NEVER Change Without User)
 ```javascript
 FREE_TIER = 1,000 validations/month
