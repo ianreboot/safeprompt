@@ -553,4 +553,4 @@ const multiTurnTests = [
   }
 ];
 
-module.exports = { multiTurnTests };
+export { multiTurnTests };

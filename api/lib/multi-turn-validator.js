@@ -5,7 +5,7 @@
  * multi-turn attack detection capabilities.
  *
  * Usage:
- *   const { validateWithMultiTurn } = require('./multi-turn-validator');
+ *   import { validateWithMultiTurn } from './multi-turn-validator.js';
  *
  *   const result = await validateWithMultiTurn(promptText, {
  *     req,              // Express request object
@@ -15,8 +15,8 @@
  *   });
  */
 
-const { validatePrompt } = require('./ai-validator-hardened');
-const SessionManager = require('./session-manager');
+import { validatePrompt } from './ai-validator-hardened.js';
+import SessionManager from './session-manager.js';
 
 /**
  * Validate prompt with multi-turn attack detection
@@ -182,7 +182,7 @@ async function blockSession(sessionId, reason) {
   return SessionManager.blockSession(sessionId, reason);
 }
 
-module.exports = {
+export {
   validateWithMultiTurn,
   getSessionStats,
   cleanupExpiredSessions,
