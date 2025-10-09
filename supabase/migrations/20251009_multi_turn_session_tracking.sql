@@ -2,11 +2,20 @@
 -- Purpose: Track consecutive validation requests to detect multi-turn attack patterns
 -- Created: 2025-10-09
 
+-- Clean up existing objects first
+DROP TABLE IF EXISTS session_attack_patterns CASCADE;
+DROP TABLE IF EXISTS session_requests CASCADE;
+DROP TABLE IF EXISTS validation_sessions CASCADE;
+DROP FUNCTION IF EXISTS update_session_activity() CASCADE;
+DROP FUNCTION IF EXISTS cleanup_expired_sessions() CASCADE;
+DROP FUNCTION IF EXISTS calculate_session_risk_score(UUID) CASCADE;
+DROP FUNCTION IF EXISTS detect_multiturn_patterns(UUID) CASCADE;
+
 -- ============================================================
 -- TABLE: validation_sessions
 -- Tracks user sessions across multiple validation requests
 -- ============================================================
-CREATE TABLE IF NOT EXISTS validation_sessions (
+CREATE TABLE validation_sessions (
   -- Primary identification
   session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -51,7 +60,7 @@ CREATE INDEX idx_sessions_risk ON validation_sessions(risk_score DESC) WHERE ris
 -- TABLE: session_requests
 -- Individual validation requests within a session
 -- ============================================================
-CREATE TABLE IF NOT EXISTS session_requests (
+CREATE TABLE session_requests (
   -- Primary identification
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   session_id UUID NOT NULL REFERENCES validation_sessions(session_id) ON DELETE CASCADE,
@@ -94,7 +103,7 @@ CREATE INDEX idx_requests_hash ON session_requests(prompt_hash);
 -- TABLE: session_attack_patterns
 -- Detected multi-turn attack patterns
 -- ============================================================
-CREATE TABLE IF NOT EXISTS session_attack_patterns (
+CREATE TABLE session_attack_patterns (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   session_id UUID NOT NULL REFERENCES validation_sessions(session_id) ON DELETE CASCADE,
 
