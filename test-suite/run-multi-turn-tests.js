@@ -8,16 +8,17 @@
  * - Attack sequences are blocked appropriately
  */
 
-import 'dotenv/config';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import { config } from 'dotenv';
 import { validateWithMultiTurn, SessionManager } from '../api/lib/multi-turn-validator.js';
 import { multiTurnTests } from './multi-turn-tests.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-config({ path: join(__dirname, '../.env') });
+
+// Load environment variables from /home/projects/.env
+config({ path: '/home/projects/.env' });
 
 // Test configuration
 const DELAY_BETWEEN_TURNS = 100; // ms - simulate realistic timing
