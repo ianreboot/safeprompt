@@ -15,8 +15,11 @@
  *   });
  */
 
-import { validatePrompt } from './ai-validator-hardened.js';
+import validateHardened from './ai-validator-hardened.js';
 import SessionManager from './session-manager.js';
+
+// Alias for compatibility
+const validatePrompt = validateHardened;
 
 /**
  * Validate prompt with multi-turn attack detection
