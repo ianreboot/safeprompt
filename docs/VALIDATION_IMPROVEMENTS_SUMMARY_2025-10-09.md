@@ -449,28 +449,38 @@ User Input
 
 ### 📋 NEXT STEPS (Deployment)
 
-1. **Run Database Migration**
+**See Complete Deployment Guide**: `/home/projects/safeprompt/docs/MULTI_TURN_DEPLOYMENT.md`
+
+1. **Run Database Migration** (Manual via Dashboard)
+   - **Recommended**: Use Supabase Dashboard SQL Editor
+   - **DEV**: https://supabase.com/dashboard/project/vkyggknknyfallmnrmfu/sql/new
+   - **Migration**: Copy contents of `supabase/migrations/20251009_multi_turn_session_tracking.sql`
+   - **Reason**: psql/CLI have authentication issues (password special characters, network)
+
+2. **Verify Migration**
+   ```sql
+   SELECT tablename FROM pg_tables WHERE schemaname = 'public'
+   AND tablename IN ('validation_sessions', 'session_requests', 'session_attack_patterns');
+   ```
+   Expected: 3 tables
+
+3. **Execute Multi-Turn Test Suite**
    ```bash
    cd /home/projects/safeprompt
-   supabase db push --include-all
-   ```
-
-2. **Execute Multi-Turn Test Suite**
-   ```bash
    node test-suite/run-multi-turn-tests.js
    ```
    - Target: ≥95% accuracy on 20 tests
    - Verify pattern detection works
 
-3. **Tune Detection Thresholds**
+4. **Tune Detection Thresholds**
    - Adjust risk scoring if needed
    - Optimize pattern confidence levels
 
-4. **Integrate with API**
+5. **Integrate with API**
    - Update validation endpoints to use `validateWithMultiTurn`
    - Add client-side fingerprinting
 
-5. **Production Monitoring**
+6. **Production Monitoring**
    - Set up session cleanup cron job
    - Configure alerts for high-risk sessions
    - Create pattern detection dashboard
