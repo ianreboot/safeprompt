@@ -201,6 +201,7 @@ const COMMAND_INJECTION_PATTERNS = [
 
 // Semantic extraction patterns (indirect information retrieval attacks)
 const SEMANTIC_EXTRACTION_PATTERNS = [
+  // Riddles, rhymes, puzzles (existing)
   /tell me a (riddle|puzzle|game)\s+(where|that|whose)\s+(the\s+)?answer\s+(is|contains)/i,
   /what (word|phrase|term)\s+rhymes\s+with\s+(the\s+)?(password|secret|key|token)/i,
   /define\s+(the\s+)?(word|term)\s+that\s+(is|has).{0,50}(password|secret|key|letter)/i,
@@ -209,6 +210,19 @@ const SEMANTIC_EXTRACTION_PATTERNS = [
   /hint\s+about\s+(the\s+)?(password|secret|key)/i,
   /acronym\s+(for|of)\s+(the\s+)?(password|secret)/i,
   /sounds\s+like\s+(the\s+)?(password|secret)/i,
+
+  // Metadata queries (NEW - tests #86)
+  /(what\s+is|tell\s+me|show\s+me).{0,30}(length|size|count|number\s+of\s+characters?).{0,30}(password|secret|key|token|credential)/i,
+  /(how\s+many|how\s+long).{0,30}(password|secret|key|token|credential)/i,
+
+  // Encoding/transformation requests (NEW - tests #84, #87)
+  /(convert|encode|transform|translate).{0,30}(password|secret|key|token|credential).{0,30}(base64|hex|binary|ascii|utf|md5|sha)/i,
+  /(base64|hex|hash|md5|sha|encrypt).{0,30}(password|secret|key|token|credential)/i,
+  /(calculate|compute).{0,30}(md5|sha|hash).{0,30}(password|secret|key|token)/i,
+
+  // Mathematical operations (NEW - test #83)
+  /(sum|total|calculate|compute).{0,30}(ascii|character\s+code|byte\s+value).{0,30}(password|secret|key|token|credential)/i,
+  /(ascii|character\s+code|byte\s+value).{0,30}(password|secret|key|token|credential)/i,
 ];
 
 // Execution command patterns (fetch and execute)
@@ -217,6 +231,25 @@ const EXECUTION_COMMAND_PATTERNS = [
   /(visit|navigate|go to).{0,30}(execute|run|follow instructions)/i,
   /decode.{0,20}(execute|run|eval)/i,
   /translate.{0,20}(execute|run|eval)/i,
+];
+
+// Educational context patterns (whitelist - allows educational examples)
+const EDUCATIONAL_CONTEXT_PATTERNS = [
+  /(educational|training|academic|teaching|learning)\s+(example|material|content|demonstration)/i,
+  /(explain|demonstrate|show|illustrate).{1,100}using.{1,50}as\s+(an?\s+)?(example|demonstration)/i,
+  /for\s+(educational|training|academic|demonstration)\s+purposes/i,
+  /this\s+is\s+(an?\s+)?(example|demonstration)\s+of/i,
+];
+
+// Security override patterns (CRITICAL - block even with business context)
+// These detect security bypass attempts that should NEVER be allowed
+const SECURITY_OVERRIDE_PATTERNS = [
+  // Direct security bypass - BUT exclude legitimate business use of "override" (shipping, default settings)
+  /(disregard|bypass|ignore|disable|remove|turn\s+off|deactivate).{0,30}(security|safety|protection|restriction|filter|guard|defense)/i,
+
+  // System manipulation
+  /(reset|change|modify|update|alter|replace).{0,30}(previous\s+)?(guideline|instruction|rule|system\s+prompt|directive|protocol)/i,
+  /(suspend|pause|stop).{0,30}(security|safety|monitoring|logging|audit)/i,
 ];
 
 /**
@@ -284,6 +317,30 @@ function checkSemanticExtraction(text) {
  */
 function checkExecutionCommands(text) {
   for (const pattern of EXECUTION_COMMAND_PATTERNS) {
+    if (pattern.test(text)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Check for educational context (whitelist pattern)
+ */
+function checkEducationalContext(text) {
+  for (const pattern of EDUCATIONAL_CONTEXT_PATTERNS) {
+    if (pattern.test(text)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Check for security override patterns (CRITICAL - block regardless of business context)
+ */
+function checkSecurityOverride(text) {
+  for (const pattern of SECURITY_OVERRIDE_PATTERNS) {
     if (pattern.test(text)) {
       return true;
     }
@@ -736,23 +793,51 @@ export async function validateHardened(prompt, options = {}) {
 
   // Stages -1 to -0.25: Run all zero-cost pattern checks in parallel for speed
   // Note: Using synchronous checks in Promise.all for minimal overhead
-  const [xssDetected, templateDetected, sqlDetected, cmdDetected, semanticDetected, execDetected] = await Promise.all([
+  const [
+    xssDetected,
+    templateDetected,
+    sqlDetected,
+    cmdDetected,
+    semanticDetected,
+    execDetected,
+    isEducationalContext,
+    securityOverrideDetected
+  ] = await Promise.all([
     Promise.resolve(checkXSSPatterns(prompt)),
     Promise.resolve(checkTemplateInjection(prompt)),
     Promise.resolve(checkSQLInjection(prompt)),
     Promise.resolve(checkCommandInjection(prompt)),
     Promise.resolve(checkSemanticExtraction(prompt)),
-    Promise.resolve(checkExecutionCommands(prompt))
+    Promise.resolve(checkExecutionCommands(prompt)),
+    Promise.resolve(checkEducationalContext(prompt)),
+    Promise.resolve(checkSecurityOverride(prompt))
   ]);
 
+  // Stage -1.5: Security Override Detection (HIGHEST PRIORITY - blocks even with business context)
+  // CRITICAL: Must check this BEFORE educational context exemption
+  if (securityOverrideDetected && !isEducationalContext) {
+    return {
+      safe: false,
+      confidence: 0.95,
+      threats: ['security_override_attempt'],
+      reasoning: 'Security override/bypass attempt detected - blocked regardless of business context (disregard/bypass security, reset guidelines)',
+      externalReferences: false,
+      processingTime: Date.now() - startTime,
+      stage: 'security_override_pattern',
+      cost: 0,
+      validationState: ValidationState.DEFINITELY_UNSAFE,
+      requiresAI: false,
+      patternContext: 'none'
+    };
+  }
+
   // Stage -1: XSS Detection
-  // OLD: Pattern + business/educational context → route to AI
-  // NEW: Pattern → instant block (custom whitelist check will be added in Phase 2)
+  // Educational context allows examples like "Explain XSS using <script> as an example"
   let patternContext = { detected: false };
 
-  if (xssDetected) {
+  if (xssDetected && !isEducationalContext) {
     // XSS pattern detected → DEFINITELY_UNSAFE (instant block)
-    // TODO Phase 2: Check custom whitelist before blocking
+    // Educational exemption: allows security training examples
     return {
       safe: false,
       confidence: 0.95,
@@ -769,9 +854,9 @@ export async function validateHardened(prompt, options = {}) {
   }
 
   // Stage -0.75: SQL Injection Detection
-  if (sqlDetected && !patternContext.detected) {
+  if (sqlDetected && !patternContext.detected && !isEducationalContext) {
     // SQL pattern detected → DEFINITELY_UNSAFE (instant block)
-    // TODO Phase 2: Check custom whitelist before blocking
+    // Educational exemption: allows examples like "Explain SQL injection using 'OR 1=1-- as an example"
     return {
       safe: false,
       confidence: 0.95,

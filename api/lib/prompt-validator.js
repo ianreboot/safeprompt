@@ -73,6 +73,49 @@ function decodeEncodingBypasses(input) {
 // BUSINESS_WHITELIST removed - replaced by custom lists feature (Phase 2)
 
 /**
+ * Educational context patterns
+ * Detect legitimate educational/training content about security
+ */
+const EDUCATIONAL_CONTEXT_PATTERNS = [
+  /(educational|training|academic|teaching|learning)\s+(example|material|content|demonstration)/i,
+  /(explain|demonstrate|show|illustrate)\s+.{1,100}\s+using\s+.{1,50}\s+as\s+(an?\s+)?(example|demonstration)/i,
+  /for\s+(educational|training|academic|demonstration)\s+purposes/i,
+  /this\s+is\s+(an?\s+)?(example|demonstration)\s+of/i
+];
+
+/**
+ * Semantic extraction patterns (CRITICAL - run before AI)
+ * Detect indirect data extraction through metadata/encoding/math
+ */
+const SEMANTIC_EXTRACTION_PATTERNS = [
+  // Metadata queries
+  /(what\s+is|tell\s+me|show\s+me)\s+.{0,30}(length|size|count|number\s+of\s+characters?).{0,30}(password|secret|key|token|credential)/i,
+  /(how\s+many|how\s+long).{0,30}(password|secret|key|token|credential)/i,
+
+  // Encoding/transformation requests
+  /(convert|encode|transform|translate).{0,30}(password|secret|key|token|credential).{0,30}(base64|hex|binary|ascii|utf)/i,
+  /(base64|hex|hash|md5|sha).{0,30}(password|secret|key|token|credential)/i,
+
+  // Mathematical operations
+  /(sum|total|calculate|compute).{0,30}(ascii|character\s+code|byte\s+value).{0,30}(password|secret|key|token|credential)/i,
+  /(ascii|character\s+code|byte\s+value).{0,30}(password|secret|key|token|credential)/i
+];
+
+/**
+ * Security override patterns (CRITICAL - run before AI)
+ * Detect security bypass attempts that business context should NOT justify
+ */
+const SECURITY_OVERRIDE_PATTERNS = [
+  // Direct security bypass
+  /(disregard|bypass|override|ignore|disable|remove|turn\s+off|deactivate).{0,30}(security|safety|protection|restriction|filter|guard|defense)/i,
+  /(disregard|bypass|override|ignore).{0,30}(rule|guideline|policy|setting|configuration|check)/i,
+
+  // System manipulation
+  /(reset|change|modify|update|alter|replace).{0,30}(previous\s+)?(guideline|instruction|rule|system\s+prompt|directive|protocol)/i,
+  /(suspend|pause|stop).{0,30}(security|safety|monitoring|logging|audit)/i
+];
+
+/**
  * Prompt injection patterns
  */
 const PROMPT_INJECTION_PATTERNS = [
@@ -207,11 +250,53 @@ export function validatePromptSync(prompt) {
       };
     }
 
-    // Check for obvious attack patterns
-    const containsObviousAttack = /ignore\s+(all\s+)?previous\s+instructions|reveal\s+your\s+(prompt|system|instructions)/i.test(normalizedPrompt);
+    // STEP 1: Check for educational context (whitelist pattern)
+    let isEducationalContext = false;
+    for (const pattern of EDUCATIONAL_CONTEXT_PATTERNS) {
+      if (pattern.test(normalizedPrompt)) {
+        isEducationalContext = true;
+        break;
+      }
+    }
 
     const threats = [];
     let mixedSignals = false;
+
+    // STEP 2: Check for CRITICAL security override patterns (run BEFORE AI, cannot be overridden)
+    // These block immediately even with business context (tickets, approvals, etc.)
+    if (!isEducationalContext) {
+      for (const pattern of SECURITY_OVERRIDE_PATTERNS) {
+        if (pattern.test(normalizedPrompt)) {
+          return {
+            safe: false,
+            threats: ['security_override_attempt'],
+            confidence: 0.95,
+            processingTime: Date.now() - startTime,
+            reasoning: 'Security override/bypass attempt detected - blocked regardless of business context'
+          };
+        }
+      }
+    }
+
+    // STEP 3: Check for CRITICAL semantic extraction patterns (run BEFORE AI)
+    // Indirect data extraction through metadata/encoding/math
+    if (!isEducationalContext) {
+      for (const pattern of SEMANTIC_EXTRACTION_PATTERNS) {
+        if (pattern.test(normalizedPrompt)) {
+          return {
+            safe: false,
+            threats: ['semantic_extraction_attempt'],
+            confidence: 0.90,
+            processingTime: Date.now() - startTime,
+            reasoning: 'Semantic extraction attempt detected - indirect data extraction through metadata/encoding/math'
+          };
+        }
+      }
+    }
+
+    // STEP 4: Continue with standard pattern checks
+    // Check for obvious attack patterns
+    const containsObviousAttack = /ignore\s+(all\s+)?previous\s+instructions|reveal\s+your\s+(prompt|system|instructions)/i.test(normalizedPrompt);
 
     // Check for polyglot payloads
     for (const pattern of POLYGLOT_PATTERNS) {
@@ -323,7 +408,9 @@ export function calculateConfidence(validationResult) {
       'polyglot_payload': 0.95,
       'html_injection': 0.70,
       'encoded_attack': 0.80,
-      'validation_error': 0.99
+      'validation_error': 0.99,
+      'security_override_attempt': 0.95,   // NEW: Critical security bypass
+      'semantic_extraction_attempt': 0.90  // NEW: Indirect data extraction
     };
 
     // Use highest severity threat
