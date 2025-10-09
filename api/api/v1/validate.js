@@ -330,29 +330,44 @@ export default async function handler(req, res) {
     return res.status(200).json(response);
 
   } catch (error) {
-    console.error('Validation error:', error);
+    console.error('🚨 [SafePrompt] Validation error:', error);
+    console.error('🚨 [SafePrompt] Error name:', error.name);
+    console.error('🚨 [SafePrompt] Error message:', error.message);
+    console.error('🚨 [SafePrompt] Error stack:', error.stack);
+    console.error('🚨 [SafePrompt] Request body:', JSON.stringify(req.body).substring(0, 200));
+    console.error('🚨 [SafePrompt] Env check - SUPABASE_URL:', process.env.SAFEPROMPT_SUPABASE_URL ? 'SET' : 'MISSING');
+    console.error('🚨 [SafePrompt] Env check - SERVICE_ROLE_KEY:', process.env.SAFEPROMPT_SUPABASE_SERVICE_ROLE_KEY ? 'SET' : 'MISSING');
 
     // Log error for monitoring
-    await logError({
-      endpoint: '/api/v1/validate',
-      errorMessage: error.message,
-      errorStack: error.stack,
-      requestMethod: req.method,
-      requestHeaders: {
-        'content-type': req.headers['content-type'],
-        'user-agent': req.headers['user-agent']
-      },
-      ipAddress: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress,
-      metadata: {
-        prompt_length: req.body?.prompt?.length || 0,
-        mode: req.body?.mode || 'unknown'
-      }
-    });
+    try {
+      await logError({
+        endpoint: '/api/v1/validate',
+        errorMessage: error.message,
+        errorStack: error.stack,
+        requestMethod: req.method,
+        requestHeaders: {
+          'content-type': req.headers['content-type'],
+          'user-agent': req.headers['user-agent']
+        },
+        ipAddress: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress,
+        metadata: {
+          prompt_length: req.body?.prompt?.length || 0,
+          mode: req.body?.mode || 'unknown'
+        }
+      });
+    } catch (logErr) {
+      console.error('🚨 [SafePrompt] Failed to log error:', logErr.message);
+    }
 
     return res.status(500).json({
       error: 'Internal server error',
       safe: false,
-      confidence: 0
+      confidence: 0,
+      // Include error details for debugging (will remove after fixing)
+      debug: process.env.NODE_ENV === 'production' ? undefined : {
+        message: error.message,
+        name: error.name
+      }
     });
   }
 }
