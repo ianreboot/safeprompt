@@ -27,8 +27,10 @@ function getCacheKey(prompt, mode, profileId) {
 
 export default async function handler(req, res) {
   // Environment-based CORS (no localhost in production)
-  const isProd = process.env.NODE_ENV === 'production' ||
-                 process.env.VERCEL_ENV === 'production';
+  // AI: NODE_ENV takes precedence over VERCEL_ENV to allow explicit environment override
+  const isProd = process.env.NODE_ENV
+    ? process.env.NODE_ENV === 'production'
+    : process.env.VERCEL_ENV === 'production';
 
   const allowedOrigins = isProd
     ? [
