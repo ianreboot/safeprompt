@@ -302,6 +302,7 @@ export default function PlaygroundPage() {
           method: 'POST',
           headers: {
             'X-API-Key': 'sp_test_unlimited_dogfood_key_2025',
+            'X-User-IP': '203.0.113.10', // Playground demo IP (TEST-NET-3 RFC 5737) - allowlisted to prevent bans
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
