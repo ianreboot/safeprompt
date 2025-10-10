@@ -1,5 +1,5 @@
 // Consolidated validation endpoint that handles all check types
-import { validateWithSession } from '../../lib/session-validator.js';
+import { validateWithMultiTurn } from '../../lib/multi-turn-validator.js';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { sanitizeResponseWithMode } from '../../lib/response-sanitizer.js';
@@ -14,6 +14,17 @@ const supabase = createClient(
 const hashApiKey = (key) => {
   return crypto.createHash('sha256').update(key).digest('hex');
 };
+
+/**
+ * Adapt Vercel request to Express-style request for validateWithMultiTurn
+ */
+function adaptVercelRequest(req, userIP) {
+  return {
+    ip: userIP,
+    connection: { remoteAddress: userIP },
+    headers: req.headers
+  };
+}
 
 // Simple in-memory cache
 const cache = new Map();
@@ -162,18 +173,13 @@ export default async function handler(req, res) {
             return { prompt: p, ...cached.result, cached: true };
           }
 
-          const result = await validateWithSession(p, session_token, {
-            skipPatterns: mode === 'ai-only',
-            skipExternalCheck: mode === 'ai-only',
-            user_id: profileId,
-            ip_address: userIP,
-            user_agent: req.headers['user-agent'],
-            subscription_tier: profile.subscription_tier,
-            auto_block_enabled: preferences.enable_ip_blocking === true,
-            headers: req.headers,
-            customRules: sanitizedCustomRules,
-            profile: profile,
-            tier: profile.subscription_tier
+          const adaptedReq = adaptVercelRequest(req, userIP);
+          const result = await validateWithMultiTurn(p, {
+            req: adaptedReq,
+            userId: profileId,
+            enableMultiTurn: !!session_token,
+            whitelist: sanitizedCustomRules?.whitelist || [],
+            blacklist: sanitizedCustomRules?.blacklist || []
           });
           const batchProcessingTime = Date.now() - batchStartTime;
 
@@ -240,18 +246,13 @@ export default async function handler(req, res) {
     // Session validator handles: IP reputation, context priming, threat intelligence
     const preferences = profile.preferences || {};
     const startTime = Date.now();
-    const result = await validateWithSession(prompt, session_token, {
-      skipPatterns: mode === 'ai-only',
-      skipExternalCheck: mode === 'ai-only',
-      user_id: profileId,
-      ip_address: userIP,
-      user_agent: req.headers['user-agent'],
-      subscription_tier: profile.subscription_tier,
-      auto_block_enabled: preferences.enable_ip_blocking === true,
-      headers: req.headers,
-      customRules: sanitizedCustomRules,
-      profile: profile,
-      tier: profile.subscription_tier
+    const adaptedReq = adaptVercelRequest(req, userIP);
+    const result = await validateWithMultiTurn(prompt, {
+      req: adaptedReq,
+      userId: profileId,
+      enableMultiTurn: !!session_token,
+      whitelist: sanitizedCustomRules?.whitelist || [],
+      blacklist: sanitizedCustomRules?.blacklist || []
     });
     const processingTime = Date.now() - startTime;
 
@@ -316,17 +317,15 @@ export default async function handler(req, res) {
       mode,
       cached: false,
       timestamp: new Date().toISOString(),
-      // Session information (from session validator)
-      sessionToken: result.sessionToken,
-      sessionAnalysis: result.sessionAnalysis,
-      // IP reputation information (from session validator)
-      ipReputation: result.ipReputationChecked ? {
-        checked: result.ipReputationChecked,
-        bypassed: result.ipReputationBypassed,
-        bypassReason: result.ipReputationBypassReason,
-        reputationScore: result.ipReputationScore,
-        blocked: false // Not blocked if we got here
-      } : undefined
+      // Multi-turn session information (from validateWithMultiTurn)
+      sessionToken: result.session_id || null,
+      sessionAnalysis: result.session_id ? {
+        sessionId: result.session_id,
+        riskScore: result.session_risk_score || 0,
+        historyCount: (result.session_request_count || 1) - 1, // -1 because current request is included
+        detectedPatterns: result.detected_patterns || [],
+        blocked: result.blocked || false
+      } : null
     };
 
     return res.status(200).json(response);
