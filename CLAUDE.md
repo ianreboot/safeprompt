@@ -108,13 +108,13 @@ API=/home/projects/safeprompt/api
 ```bash
 # Deploy to DEV (after code changes)
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
-cd /home/projects/safeprompt/dashboard && npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main
-cd /home/projects/safeprompt/website && npm run build && wrangler pages deploy out --project-name safeprompt-dev --branch main
+cd /home/projects/safeprompt/dashboard && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main
+cd /home/projects/safeprompt/website && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt-dev --branch main
 cd /home/projects/safeprompt/api && vercel --token $VERCEL_TOKEN --prod --yes
 
 # Deploy to PROD
-cd /home/projects/safeprompt/dashboard && npm run build && wrangler pages deploy out --project-name safeprompt-dashboard --branch main
-cd /home/projects/safeprompt/website && npm run build && wrangler pages deploy out --project-name safeprompt --branch main
+cd /home/projects/safeprompt/dashboard && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt-dashboard --branch main
+cd /home/projects/safeprompt/website && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt --branch main
 cd /home/projects/safeprompt/api && vercel --token $VERCEL_TOKEN --prod --yes
 
 # Test API
@@ -621,8 +621,8 @@ Database (Supabase)
 
 ### DEV Deployment
 1. Load credentials: `source /home/projects/.env && export CLOUDFLARE_API_TOKEN`
-2. Deploy dashboard: `cd dashboard && npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main`
-3. Deploy website: `cd website && npm run build && wrangler pages deploy out --project-name safeprompt-dev --branch main`
+2. Deploy dashboard: `cd dashboard && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main`
+3. Deploy website: `cd website && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt-dev --branch main`
 4. Deploy API (if changes): `cd api && vercel --token $VERCEL_TOKEN --prod --yes`
 5. Verify: Test API endpoint with curl
 
