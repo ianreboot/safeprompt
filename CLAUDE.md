@@ -105,17 +105,39 @@ API=/home/projects/safeprompt/api
 - **Accurate**: 98.9% accuracy with 2-pass validation
 
 ### Quick Commands
+
+**🚨 CRITICAL - API Deployment Uses Separate Vercel Projects**
+
+SafePrompt API has TWO separate Vercel projects (discovered 2025-10-10):
+- **DEV**: `safeprompt-api-dev` (prj_b0nTXs7q9e2SfpG7M3JJ8Pf9rQz5) → dev-api.safeprompt.dev
+- **PROD**: `safeprompt-api` (prj_vEUOowUKqyUzHVH8v56iMoHBatLe) → api.safeprompt.dev
+
+**Deploy to DEV requires swapping project.json files**:
+
 ```bash
 # Deploy to DEV (after code changes)
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
+
+# Frontend (Cloudflare Pages)
 cd /home/projects/safeprompt/dashboard && NODE_ENV=development npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main
 cd /home/projects/safeprompt/website && NODE_ENV=development npm run build && wrangler pages deploy out --project-name safeprompt-dev --branch main
-cd /home/projects/safeprompt/api && vercel --token $VERCEL_TOKEN --prod --yes
+
+# API (Vercel - requires DEV project link)
+cd /home/projects/safeprompt/api
+cp .vercel/project.json.dev .vercel/project.json  # Switch to DEV project
+vercel --token $VERCEL_TOKEN --prod --yes
+# Note: .vercel/project.json.dev already exists with DEV project ID
 
 # Deploy to PROD
 cd /home/projects/safeprompt/dashboard && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt-dashboard --branch main
 cd /home/projects/safeprompt/website && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt --branch main
-cd /home/projects/safeprompt/api && vercel --token $VERCEL_TOKEN --prod --yes
+
+# API (Vercel - requires PROD project link)
+cd /home/projects/safeprompt/api
+cp .vercel/project.json.prod .vercel/project.json  # Switch to PROD project
+vercel --token $VERCEL_TOKEN --prod --yes
+cp .vercel/project.json.dev .vercel/project.json  # Restore DEV as default
+# Note: .vercel/project.json.prod contains PROD project ID
 
 # Test API
 curl -X POST https://api.safeprompt.dev/api/v1/validate \
@@ -123,6 +145,13 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
   -H "X-API-Key: sp_test_..." \
   -d '{"prompt":"test input"}'
 ```
+
+**Hard-Fought Knowledge (2025-10-10)**:
+- DEV and PROD API are **separate Vercel projects**, not the same project with different domains
+- The same `vercel --prod --yes` command deploys to whichever project is in `.vercel/project.json`
+- `.vercel/project.json.dev` and `.vercel/project.json.prod` files maintain both configurations
+- Always restore DEV config after PROD deployment to prevent accidental PROD deployments
+- GitHub integration does **NOT** auto-deploy - manual CLI deployment required after every git push
 
 ---
 
