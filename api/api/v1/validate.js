@@ -49,7 +49,7 @@ export default async function handler(req, res) {
   }
 
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key, X-User-IP');
   // OpenRouter API key updated 2025-10-03
 
   if (req.method === 'OPTIONS') {
