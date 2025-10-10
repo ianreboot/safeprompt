@@ -30,6 +30,7 @@ const validatePrompt = validateHardened;
  * @param {string} options.userId - User ID if authenticated (optional)
  * @param {Object} options.clientData - Client fingerprinting data (optional)
  * @param {boolean} options.enableMultiTurn - Enable multi-turn detection (default: true)
+ * @param {string} options.sessionToken - Explicit session ID from client (for multi-turn tracking)
  * @param {Array} options.whitelist - Custom whitelist phrases (optional)
  * @param {Array} options.blacklist - Custom blacklist phrases (optional)
  * @returns {Promise<Object>} Enhanced validation result with session data
@@ -40,6 +41,7 @@ async function validateWithMultiTurn(promptText, options = {}) {
     userId = null,
     clientData = {},
     enableMultiTurn = true,
+    sessionToken = null,
     whitelist = [],
     blacklist = []
   } = options;
@@ -55,7 +57,7 @@ async function validateWithMultiTurn(promptText, options = {}) {
 
   if (enableMultiTurn) {
     try {
-      session = await SessionManager.getOrCreateSession(req, userId, clientData);
+      session = await SessionManager.getOrCreateSession(req, userId, clientData, sessionToken);
       sessionId = session.session_id;
 
       // Check if session is already blocked

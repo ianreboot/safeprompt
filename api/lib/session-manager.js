@@ -78,14 +78,37 @@ class SessionManager {
    * @param {Object} req - Express request object
    * @param {string|null} userId - User ID if authenticated
    * @param {Object} clientData - Client fingerprinting data
+   * @param {string|null} sessionToken - Explicit session ID from client (for multi-turn tracking)
    * @returns {Promise<Object>} Session object
    */
-  static async getOrCreateSession(req, userId = null, clientData = {}) {
+  static async getOrCreateSession(req, userId = null, clientData = {}, sessionToken = null) {
+    // PRIORITY 1: If explicit session_token provided, look it up first
+    if (sessionToken) {
+      const { data: explicitSession, error: explicitError } = await getSupabase()
+        .from('validation_sessions')
+        .select('*')
+        .eq('session_id', sessionToken)
+        .eq('is_active', true)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (!explicitError && explicitSession) {
+        // Update last_activity
+        await getSupabase()
+          .from('validation_sessions')
+          .update({ last_activity: new Date().toISOString() })
+          .eq('session_id', explicitSession.session_id);
+
+        return explicitSession;
+      }
+      // If explicit session not found or expired, fall through to IP-based lookup or creation
+    }
+
+    // PRIORITY 2: Try to find active session by IP hash (fallback for implicit tracking)
     const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
     const clientIpHash = this.hashIP(clientIp);
     const deviceFingerprint = this.createDeviceFingerprint(req, clientData);
 
-    // Try to find active session for this client
     const { data: existingSessions, error: findError } = await getSupabase()
       .from('validation_sessions')
       .select('*')
@@ -112,7 +135,7 @@ class SessionManager {
       return session;
     }
 
-    // Create new session
+    // PRIORITY 3: Create new session
     const { data: newSession, error: createError } = await getSupabase()
       .from('validation_sessions')
       .insert({

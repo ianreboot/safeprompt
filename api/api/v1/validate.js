@@ -178,6 +178,7 @@ export default async function handler(req, res) {
             req: adaptedReq,
             userId: profileId,
             enableMultiTurn: !!session_token,
+            sessionToken: session_token,
             whitelist: sanitizedCustomRules?.whitelist || [],
             blacklist: sanitizedCustomRules?.blacklist || []
           });
@@ -251,6 +252,7 @@ export default async function handler(req, res) {
       req: adaptedReq,
       userId: profileId,
       enableMultiTurn: !!session_token,
+      sessionToken: session_token,
       whitelist: sanitizedCustomRules?.whitelist || [],
       blacklist: sanitizedCustomRules?.blacklist || []
     });
