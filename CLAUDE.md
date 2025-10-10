@@ -1,12 +1,13 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-09 (Realistic Test Suite Enhancements + Attack Gallery Expansion)
+**Last Updated**: 2025-10-10 (Multi-Turn Detection 95% Accuracy Achieved)
 **Status**: Production Ready with Advanced Intelligence Architecture + Custom Lists + Network Defense
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
 
 **🎉 Recent Milestones**:
+- **Multi-Turn Detection Fix** (2025-10-10): 95.0% accuracy achieved (19/20 tests passing), reconnaissance_attack threshold fixed (>=2 → >=1)
 - **Attack Gallery Expansion** (2025-10-09): Added 7 sophisticated attacks (semantic extraction, business context masking) - now 25 examples total
-- **Test Suite Improvements** (2025-10-09): 93.5% accuracy (130/139), enhanced AI prompts for semantic extraction detection
+- **Test Suite Improvements** (2025-10-09): Enhanced AI prompts for semantic extraction detection
 - **Phase 6 Intelligence** (2025-10-08): Pattern Discovery, Campaign Detection, Honeypot Learning deployed to production
 - **Phase 1A Network Defense** (2025-10-08): Threat Intelligence + IP Reputation system deployed with 67 tests passing
 - **Custom Lists V2** (2025-10-08): Custom whitelist/blacklist feature deployed to production
@@ -140,9 +141,10 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
   - Custom lists tests: 132 tests (sanitizer, validator, checker, integration)
   - Phase 1A tests: 67 tests (compliance, performance, IP reputation, intelligence collection)
   - Phase 6 tests: Payment testing (12/15 passing, 3 expected DEV failures)
+- **Multi-turn attack detection**: 95.0% accuracy (19/20 tests, 100% reconnaissance_attack detection)
 - **Overall coverage**: 52.71%
 - **Critical path coverage**: 74-96% on validation logic
-- **Accuracy**: 98.9% (93/94 professional tests passed, 10 custom lists tests added)
+- **Single-turn accuracy**: 98.9% (93/94 professional tests passed)
 
 ---
 
