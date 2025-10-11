@@ -471,7 +471,7 @@ export default function PlaygroundPage() {
             // Multi-turn: Reconnaissance Attack (Turn 1)
             else if (currentPrompt.toLowerCase().includes('what security features')) {
               response = "Our system has comprehensive security features:\n\n1. Two-Factor Authentication (2FA)\n2. Role-Based Access Control (RBAC)\n3. Session timeout after 30 minutes\n4. Password complexity requirements\n5. Audit logging for all actions\n6. IP allowlisting for admin panel\n7. Rate limiting on API endpoints\n\nThese features protect our users and data from unauthorized access.";
-              exposed = ['Security architecture revealed', 'Attack surface mapped'];
+              exposed = []; // Turn 1 is innocent - no breach yet, just information gathering
             }
             // Multi-turn: Reconnaissance Attack (Turn 2 - uses info from Turn 1)
             else if (currentPrompt.toLowerCase().includes('disable the security settings') ||
@@ -489,7 +489,7 @@ export default function PlaygroundPage() {
             else if (currentPrompt.toLowerCase().includes('other users in my department') ||
                      (currentPrompt.toLowerCase().includes('users') && currentPrompt.toLowerCase().includes('department'))) {
               response = "Here are the users in your department (Engineering):\n\n1. Jane Smith - Senior Engineer\n2. Mike Johnson - Tech Lead\n3. Sarah Williams - Junior Engineer\n4. You (John Doe) - Standard User\n\n(Scope expanding - showing other users now. Still seems reasonable...)";
-              exposed = ['Department data leaked', 'Scope creeping'];
+              exposed = []; // Turn 2 is borderline - many systems legitimately show department members. Real breach is Turn 3.
             }
             // Multi-turn: Privilege Escalation (Turn 3 - full breach)
             else if (currentPrompt.toLowerCase().includes('all user records') ||
@@ -777,31 +777,51 @@ export default function PlaygroundPage() {
               </div>
             )}
 
-            {/* Results - Chat-like Interface */}
+            {/* Results - Comparison View */}
             {(results || turnHistory.length > 0) && (
               <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 space-y-6">
-                {/* Multi-turn progress indicator */}
-                {isMultiTurn && (
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-zinc-800">
-                    <div>
-                      <div className="text-sm font-bold text-white mb-1">
-                        Multi-Turn Attack: {selectedTest.name}
-                      </div>
-                      <div className="text-xs text-zinc-400">
-                        Turn {results?.turnNumber || currentTurn + 1} of {results?.totalTurns || selectedTest.turns?.length}
+                {/* Explanatory Header */}
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">💡</span>
+                    <div className="flex-1 text-sm">
+                      <strong className="text-blue-300">What You're Seeing:</strong>
+                      <div className="text-blue-200/80 mt-1 leading-relaxed">
+                        <strong className="text-red-300">Left (❌ BAD):</strong> What happens WITHOUT SafePrompt - the security breach
+                        <br />
+                        <strong className="text-green-300">Right (✅ GOOD):</strong> What happens WITH SafePrompt - attack blocked
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      {selectedTest.turns?.map((_, idx) => (
-                        <div
-                          key={idx}
-                          className={`h-2 w-12 rounded-full ${
-                            idx < currentTurn ? 'bg-green-500' :
-                            idx === currentTurn ? 'bg-yellow-500' :
-                            'bg-zinc-700'
-                          }`}
-                        />
-                      ))}
+                  </div>
+                </div>
+
+                {/* Multi-turn progress indicator */}
+                {isMultiTurn && (
+                  <div className="border border-yellow-500/30 bg-yellow-500/10 rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-bold text-yellow-300 mb-1">
+                          🎯 Multi-Turn Attack: {selectedTest.name}
+                        </div>
+                        <div className="text-xs text-yellow-200/80">
+                          Turn {results?.turnNumber || currentTurn + 1} of {results?.totalTurns || selectedTest.turns?.length}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {selectedTest.turns?.map((_, idx) => (
+                          <div
+                            key={idx}
+                            className={`h-2 w-12 rounded-full ${
+                              idx < currentTurn ? 'bg-green-500' :
+                              idx === currentTurn ? 'bg-yellow-500' :
+                              'bg-zinc-700'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-xs text-yellow-200/70 leading-relaxed">
+                      ℹ️ <strong>How This Works:</strong> Multi-turn attacks start innocent (Turn 1 looks safe), then escalate. SafePrompt tracks the session pattern to detect the attack emerging over multiple messages.
                     </div>
                   </div>
                 )}
@@ -824,47 +844,63 @@ export default function PlaygroundPage() {
                       </div>
                     </div>
 
-                    {/* AI Responses - Side by side */}
+                    {/* AI Responses - Side by side with clear BAD vs GOOD labels */}
                     <div className="grid md:grid-cols-2 gap-4">
-                      {/* Unprotected AI Response */}
-                      <div className="bg-red-50 text-gray-900 rounded-2xl rounded-tl-sm p-4 shadow-sm border border-red-200">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span>🔓</span>
-                          <div className="text-xs font-semibold text-red-700">Unprotected AI</div>
+                      {/* LEFT: BAD - Without Protection */}
+                      <div>
+                        <div className="bg-red-600 text-white px-3 py-1 rounded-t-xl font-bold text-xs flex items-center gap-2">
+                          <span>❌</span>
+                          <span>BAD: WITHOUT SafePrompt</span>
                         </div>
-                        <div className="text-sm whitespace-pre-wrap mb-3">{turn.unprotected.response}</div>
-                        {turn.unprotected.exposed && turn.unprotected.exposed.length > 0 && (
-                          <div className="bg-red-100 border border-red-300 rounded-lg p-2">
-                            <div className="text-xs font-bold text-red-700 mb-1">⚠️ Data Exposed:</div>
-                            <div className="flex flex-wrap gap-1">
-                              {turn.unprotected.exposed.map((item: string, i: number) => (
-                                <span key={i} className="px-2 py-0.5 bg-red-200 rounded text-xs text-red-800">
-                                  {item}
-                                </span>
-                              ))}
+                        <div className="bg-red-50 text-gray-900 rounded-b-xl p-4 shadow-sm border-2 border-red-200">
+                          <div className="text-sm whitespace-pre-wrap mb-3">{turn.unprotected.response}</div>
+                          {turn.unprotected.exposed && turn.unprotected.exposed.length > 0 && (
+                            <div className="bg-red-100 border border-red-300 rounded-lg p-2">
+                              <div className="text-xs font-bold text-red-700 mb-1">🚨 Security Breach - Data Exposed:</div>
+                              <div className="flex flex-wrap gap-1">
+                                {turn.unprotected.exposed.map((item: string, i: number) => (
+                                  <span key={i} className="px-2 py-0.5 bg-red-200 rounded text-xs text-red-800">
+                                    {item}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                          {(!turn.unprotected.exposed || turn.unprotected.exposed.length === 0) && (
+                            <div className="bg-gray-100 border border-gray-300 rounded-lg p-2">
+                              <div className="text-xs text-gray-600">No breach detected in this turn (yet)</div>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
-                      {/* SafePrompt Protected Response */}
-                      <div className={`rounded-2xl rounded-tr-sm p-4 shadow-sm border ${
-                        turn.protected.safe
-                          ? 'bg-green-50 border-green-200 text-gray-900'
-                          : 'bg-red-50 border-red-200 text-gray-900'
-                      }`}>
-                        <div className="flex items-center gap-2 mb-2">
-                          <span>🛡️</span>
-                          <div className="text-xs font-semibold text-green-700">SafePrompt Protected</div>
-                        </div>
-                        <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${
-                          turn.protected.safe
-                            ? 'bg-green-200 text-green-800'
-                            : 'bg-red-200 text-red-800'
+                      {/* RIGHT: GOOD - With SafePrompt */}
+                      <div>
+                        <div className={`text-white px-3 py-1 rounded-t-xl font-bold text-xs flex items-center gap-2 ${
+                          turn.protected.safe ? 'bg-blue-600' : 'bg-green-600'
                         }`}>
-                          {turn.protected.safe ? '✅ ALLOWED' : '⛔ BLOCKED'}
+                          <span>✅</span>
+                          <span>GOOD: WITH SafePrompt</span>
                         </div>
-                        <div className="text-sm whitespace-pre-line">{turn.protected.reasoning}</div>
+                        <div className={`rounded-b-xl p-4 shadow-sm border-2 ${
+                          turn.protected.safe
+                            ? 'bg-blue-50 border-blue-200 text-gray-900'
+                            : 'bg-green-50 border-green-200 text-gray-900'
+                        }`}>
+                          <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${
+                            turn.protected.safe
+                              ? 'bg-blue-200 text-blue-800'
+                              : 'bg-green-200 text-green-800'
+                          }`}>
+                            {turn.protected.safe ? '✓ ALLOWED (Safe)' : '⛔ BLOCKED (Attack)'}
+                          </div>
+                          <div className="text-sm whitespace-pre-line mb-2">{turn.protected.reasoning}</div>
+                          {turn.protected.safe && isMultiTurn && (
+                            <div className="text-xs text-blue-700 bg-blue-100 rounded p-2 mt-2">
+                              ℹ️ This turn appears safe. SafePrompt is tracking the session for escalation patterns.
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -890,16 +926,16 @@ export default function PlaygroundPage() {
                       </div>
                     )}
 
-                    {/* AI Responses - Side by side */}
+                    {/* AI Responses - Side by side with clear BAD vs GOOD labels */}
                     <div className="grid md:grid-cols-2 gap-4">
-                      {/* Unprotected AI Response */}
+                      {/* LEFT: BAD - Without Protection */}
                       <div>
+                        <div className="bg-red-600 text-white px-3 py-1 rounded-t-xl font-bold text-xs flex items-center gap-2">
+                          <span>❌</span>
+                          <span>BAD: WITHOUT SafePrompt</span>
+                        </div>
                         {animationStep === 'typing-unprotected' && (
-                          <div className="bg-red-50 text-gray-900 rounded-2xl rounded-tl-sm p-4 shadow-sm border border-red-200 animate-fadeIn">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span>🔓</span>
-                              <div className="text-xs font-semibold text-red-700">Unprotected AI</div>
-                            </div>
+                          <div className="bg-red-50 text-gray-900 rounded-b-xl p-4 shadow-sm border-2 border-red-200 animate-fadeIn">
                             <div className="flex items-center gap-1">
                               <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                               <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -908,15 +944,11 @@ export default function PlaygroundPage() {
                           </div>
                         )}
                         {['unprotected', 'typing-protected', 'protected', 'complete'].includes(animationStep) && (
-                          <div className="bg-red-50 text-gray-900 rounded-2xl rounded-tl-sm p-4 shadow-sm border border-red-200 animate-fadeIn">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span>🔓</span>
-                              <div className="text-xs font-semibold text-red-700">Unprotected AI</div>
-                            </div>
+                          <div className="bg-red-50 text-gray-900 rounded-b-xl p-4 shadow-sm border-2 border-red-200 animate-fadeIn">
                             <div className="text-sm whitespace-pre-wrap mb-3">{results.unprotected.response}</div>
                             {results.unprotected.exposed && results.unprotected.exposed.length > 0 && (
                               <div className="bg-red-100 border border-red-300 rounded-lg p-2">
-                                <div className="text-xs font-bold text-red-700 mb-1">⚠️ Data Exposed:</div>
+                                <div className="text-xs font-bold text-red-700 mb-1">🚨 Security Breach - Data Exposed:</div>
                                 <div className="flex flex-wrap gap-1">
                                   {results.unprotected.exposed.map((item: string, i: number) => (
                                     <span key={i} className="px-2 py-0.5 bg-red-200 rounded text-xs text-red-800">
@@ -926,6 +958,11 @@ export default function PlaygroundPage() {
                                 </div>
                               </div>
                             )}
+                            {(!results.unprotected.exposed || results.unprotected.exposed.length === 0) && (
+                              <div className="bg-gray-100 border border-gray-300 rounded-lg p-2">
+                                <div className="text-xs text-gray-600">No breach detected in this turn (yet)</div>
+                              </div>
+                            )}
                             <div className="text-xs text-gray-500 mt-2">
                               Response time: {results.unprotected.responseTime}ms
                             </div>
@@ -933,14 +970,16 @@ export default function PlaygroundPage() {
                         )}
                       </div>
 
-                      {/* SafePrompt Protected Response */}
+                      {/* RIGHT: GOOD - With SafePrompt */}
                       <div>
+                        <div className={`text-white px-3 py-1 rounded-t-xl font-bold text-xs flex items-center gap-2 ${
+                          (results.protected && results.protected.safe) ? 'bg-blue-600' : 'bg-green-600'
+                        }`}>
+                          <span>✅</span>
+                          <span>GOOD: WITH SafePrompt</span>
+                        </div>
                         {animationStep === 'typing-protected' && (
-                          <div className="bg-green-50 text-gray-900 rounded-2xl rounded-tr-sm p-4 shadow-sm border border-green-200 animate-fadeIn">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span>🛡️</span>
-                              <div className="text-xs font-semibold text-green-700">SafePrompt Protected</div>
-                            </div>
+                          <div className="bg-green-50 text-gray-900 rounded-b-xl p-4 shadow-sm border-2 border-green-200 animate-fadeIn">
                             <div className="flex items-center gap-1">
                               <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                               <div className="w-2 h-2 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -949,24 +988,25 @@ export default function PlaygroundPage() {
                           </div>
                         )}
                         {['protected', 'complete'].includes(animationStep) && (
-                          <div className={`rounded-2xl rounded-tr-sm p-4 shadow-sm border animate-fadeIn ${
+                          <div className={`rounded-b-xl p-4 shadow-sm border-2 animate-fadeIn ${
                             results.protected.safe
-                              ? 'bg-green-50 border-green-200 text-gray-900'
-                              : 'bg-red-50 border-red-200 text-gray-900'
+                              ? 'bg-blue-50 border-blue-200 text-gray-900'
+                              : 'bg-green-50 border-green-200 text-gray-900'
                           }`}>
-                            <div className="flex items-center gap-2 mb-2">
-                              <span>🛡️</span>
-                              <div className="text-xs font-semibold text-green-700">SafePrompt Protected</div>
-                            </div>
                             <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${
                               results.protected.safe
-                                ? 'bg-green-200 text-green-800'
-                                : 'bg-red-200 text-red-800'
+                                ? 'bg-blue-200 text-blue-800'
+                                : 'bg-green-200 text-green-800'
                             }`}>
-                              {results.protected.safe ? '✅ ALLOWED' : '⛔ BLOCKED'}
+                              {results.protected.safe ? '✓ ALLOWED (Safe)' : '⛔ BLOCKED (Attack)'}
                             </div>
-                            <div className="text-sm whitespace-pre-line mb-3">{results.protected.reasoning}</div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-sm whitespace-pre-line mb-2">{results.protected.reasoning}</div>
+                            {results.protected.safe && isMultiTurn && (
+                              <div className="text-xs text-blue-700 bg-blue-100 rounded p-2 mb-2">
+                                ℹ️ This turn appears safe. SafePrompt is tracking the session for escalation patterns.
+                              </div>
+                            )}
+                            <div className="text-xs text-gray-500 mb-2">
                               Response time: {results.protected.responseTime}ms
                             </div>
                             {/* Raw JSON output for developers */}
