@@ -115,12 +115,16 @@ SafePrompt API has TWO separate Vercel projects (discovered 2025-10-10):
 **Deploy to DEV requires swapping project.json files**:
 
 ```bash
+# 🚨 CRITICAL: Use environment-specific build commands
+# Next.js static export bakes env vars at BUILD TIME
+# Must use correct build script for each environment
+
 # Deploy to DEV (after code changes)
 source /home/projects/.env && export CLOUDFLARE_API_TOKEN
 
 # Frontend (Cloudflare Pages)
-cd /home/projects/safeprompt/dashboard && NODE_ENV=development npm run build && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main
-cd /home/projects/safeprompt/website && NODE_ENV=development npm run build && wrangler pages deploy out --project-name safeprompt-dev --branch main
+cd /home/projects/safeprompt/dashboard && npm run build:dev && wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main
+cd /home/projects/safeprompt/website && npm run build:dev && wrangler pages deploy out --project-name safeprompt-dev --branch main
 
 # API (Vercel - requires DEV project link)
 cd /home/projects/safeprompt/api
@@ -129,8 +133,8 @@ vercel --token $VERCEL_TOKEN --prod --yes
 # Note: .vercel/project.json.dev already exists with DEV project ID
 
 # Deploy to PROD
-cd /home/projects/safeprompt/dashboard && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt-dashboard --branch main
-cd /home/projects/safeprompt/website && NODE_ENV=production npm run build && wrangler pages deploy out --project-name safeprompt --branch main
+cd /home/projects/safeprompt/dashboard && npm run build:prod && wrangler pages deploy out --project-name safeprompt-dashboard --branch main
+cd /home/projects/safeprompt/website && npm run build:prod && wrangler pages deploy out --project-name safeprompt --branch main
 
 # API (Vercel - requires PROD project link)
 cd /home/projects/safeprompt/api
@@ -152,6 +156,15 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
 - `.vercel/project.json.dev` and `.vercel/project.json.prod` files maintain both configurations
 - Always restore DEV config after PROD deployment to prevent accidental PROD deployments
 - GitHub integration does **NOT** auto-deploy - manual CLI deployment required after every git push
+
+**Critical Environment Variable Pattern (2025-10-11)**:
+- **Next.js static export (`output: 'export'`) BAKES environment variables at BUILD TIME**
+- This means: One build cannot work for both DEV and PROD
+- Wrong build = wrong API URLs hardcoded = "Failed to fetch" errors
+- **Solution**: Use `npm run build:dev` for DEV, `npm run build:prod` for PROD
+- **Never**: Use `npm run build` or `NODE_ENV=development npm run build` - use the named scripts
+- **Why this matters**: Website must talk to matching API (DEV website → DEV API, PROD website → PROD API)
+- **Common mistake**: Deploying PROD-built website to DEV domain → calls PROD API → works until PROD has different data
 
 ---
 
