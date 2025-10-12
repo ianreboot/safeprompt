@@ -188,6 +188,76 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
 - **Why this matters**: Website must talk to matching API (DEV website → DEV API, PROD website → PROD API)
 - **Common mistake**: Deploying PROD-built website to DEV domain → calls PROD API → works until PROD has different data
 
+**🚨 CRITICAL: NetworkError Diagnosis & Fix (2025-10-12)**:
+
+**SYMPTOMS**:
+- "NetworkError when attempting to fetch resource" in browser console
+- CORS errors or "Failed to fetch" errors
+- API works via curl but fails in deployed website
+- Playground shows network error immediately on attack launch
+
+**ROOT CAUSE**:
+1. Next.js static export bakes `NEXT_PUBLIC_API_URL` at BUILD time (not runtime)
+2. Built with wrong command → wrong API URL frozen in JavaScript bundles
+3. Deploy to DEV with PROD API URL baked in → CORS mismatch → NetworkError
+4. Deploy to PROD with DEV API URL baked in → wrong environment data
+
+**DIAGNOSIS STEPS**:
+1. Open browser console on deployed site
+2. Look for "🔧 API Config" log - shows build-time vs runtime URLs
+3. If mismatch detected → wrong build command was used
+4. Verify with: `curl -I https://{EXPECTED_API}/api/v1/validate` (should return 405)
+
+**PERMANENT FIX**:
+```bash
+# For DEV deployment - ALWAYS use build:dev
+cd /home/projects/safeprompt/website
+npm run build:dev  # Copies .env.development to .env.local before build
+wrangler pages deploy out --project-name safeprompt-dev
+
+# For PROD deployment - ALWAYS use build:prod
+cd /home/projects/safeprompt/website
+npm run build:prod  # Removes .env.local, uses .env.production
+wrangler pages deploy out --project-name safeprompt
+
+# NEVER use these commands:
+npm run build                    # ❌ Uses .env.production by default
+NODE_ENV=development npm run build  # ❌ Still uses .env.production
+```
+
+**VERIFICATION**:
+```bash
+# Check what API URL is baked into build
+grep -r "dev-api.safeprompt.dev" out/  # Should find matches for DEV build
+grep -r "api.safeprompt.dev" out/      # Should find matches for PROD build
+
+# Test API connectivity from command line
+curl -X POST https://dev-api.safeprompt.dev/api/v1/validate \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: sp_test_unlimited_dogfood_key_2025" \
+  -H "X-User-IP: 203.0.113.10" \
+  -d '{"prompt":"test","mode":"optimized"}'
+```
+
+**SAFETY NET (Runtime Detection)**:
+The playground now includes runtime environment detection as a fallback:
+- Detects hostname (e.g., safeprompt-dev.pages.dev → use DEV API)
+- Logs warning if build-time URL doesn't match runtime environment
+- Automatically uses correct API URL even if built wrong
+- See code comments in `/home/projects/safeprompt/website/app/playground/page.tsx:298-382`
+
+**WHY THIS KEEPS HAPPENING**:
+- Build commands are easy to forget (muscle memory defaults to `npm run build`)
+- No visual indication during build which env vars are used
+- Error only appears after deployment, not during build
+- CORS errors are generic and don't immediately indicate wrong build
+
+**PREVENTION**:
+1. Add to deployment checklist: "Verify build:dev used for DEV, build:prod for PROD"
+2. Check browser console "🔧 API Config" log after every deployment
+3. Test playground immediately after deployment to catch issues early
+4. Document in code with AI markers (already added to playground)
+
 ---
 
 ## TESTING QUICK REFERENCE
