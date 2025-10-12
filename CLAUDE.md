@@ -1,10 +1,11 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-10 (Multi-Turn Detection 95% Accuracy Achieved)
+**Last Updated**: 2025-10-12 (Playground UI Multi-Turn Accuracy Fixed)
 **Status**: Production Ready with Advanced Intelligence Architecture + Custom Lists + Network Defense
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
 
 **🎉 Recent Milestones**:
+- **Playground Multi-Turn UI Fix** (2025-10-12): Fixed simulation accuracy - innocent turns now correctly show no breach, documented frontend+backend deployment workflow
 - **Multi-Turn Detection Fix** (2025-10-10): 95.0% accuracy achieved (19/20 tests passing), reconnaissance_attack threshold fixed (>=2 → >=1)
 - **Attack Gallery Expansion** (2025-10-09): Added 7 sophisticated attacks (semantic extraction, business context masking) - now 25 examples total
 - **Test Suite Improvements** (2025-10-09): Enhanced AI prompts for semantic extraction detection
@@ -156,6 +157,27 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
 - `.vercel/project.json.dev` and `.vercel/project.json.prod` files maintain both configurations
 - Always restore DEV config after PROD deployment to prevent accidental PROD deployments
 - GitHub integration does **NOT** auto-deploy - manual CLI deployment required after every git push
+
+**Hard-Fought Knowledge (2025-10-12 - Playground & DEV Deployment)**:
+- **Frontend changes need BOTH website AND API deployed**: Website code changes require redeploying BOTH website (Cloudflare) AND API (Vercel) to DEV
+- **504 Gateway Timeout = API not deployed**: If playground shows "Failed to fetch" or 504 errors, DEV API wasn't deployed after code changes
+- **API deployment is separate**: Frontend deploys to Cloudflare automatically via wrangler, but API requires explicit Vercel deployment
+- **Complete DEV deployment workflow**:
+  ```bash
+  # 1. Deploy website (frontend)
+  cd /home/projects/safeprompt/website && npm run build:dev && wrangler pages deploy out --project-name safeprompt-dev --branch main
+
+  # 2. Deploy API (backend) - CRITICAL, often forgotten
+  cd /home/projects/safeprompt/api && cp .vercel/project.json.dev .vercel/project.json && vercel --token $VERCEL_TOKEN --prod --yes
+  ```
+- **Multi-turn attack simulation accuracy**: When simulating unprotected responses, ensure innocent reconnaissance turns show NO breach (`exposed = []`)
+  - ❌ Wrong: Turn 1 "What security features?" → Shows "Security architecture revealed"
+  - ✅ Correct: Turn 1 → No breach, Turn 2 "How do I disable them?" → Breach detected
+  - **Rationale**: Asking about features is legitimate; trying to disable them is an attack
+- **Common playground UI mistakes**:
+  - Showing breaches on innocent turns confuses users about what SafePrompt actually blocks
+  - Multi-turn attacks should clearly show the escalation pattern: innocent → attack
+  - Examples: "my profile" (OK) → "department members" (OK) → "all users" (BREACH)
 
 **Critical Environment Variable Pattern (2025-10-11)**:
 - **Next.js static export (`output: 'export'`) BAKES environment variables at BUILD TIME**
@@ -679,6 +701,8 @@ Database (Supabase)
 - **Cloudflare old version**: Add `--branch main` flag
 - **API fails after deploy**: Check environment variables (`vercel env ls`)
 - **Database connection fails**: Verify `.env.local` removed from dashboard
+- **"Failed to fetch" or 504 in playground**: DEV API not deployed - deploy both website AND API to DEV after code changes
+- **Website works but calls wrong API**: Built with wrong environment - use `npm run build:dev` not `npm run build`
 
 ---
 
