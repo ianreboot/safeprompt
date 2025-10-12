@@ -893,22 +893,54 @@ export default function PlaygroundPage() {
               <textarea
                 value={currentPrompt}
                 onChange={(e) => {
-                  if (mode === 'gallery' && !isMultiTurn) {
-                    // Allow editing of gallery prompts (non-multi-turn only)
-                    setSelectedTest({ ...selectedTest, prompt: e.target.value.slice(0, 500) } as typeof selectedTest);
-                  } else if (mode === 'custom') {
+                  if (mode === 'custom') {
                     setCustomPrompt(e.target.value.slice(0, 500));
                   }
                 }}
-                readOnly={isMultiTurn}
-                className={`w-full h-24 px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white font-mono text-sm resize-none ${isMultiTurn ? 'cursor-not-allowed opacity-70' : ''}`}
-                placeholder={isMultiTurn ? 'Multi-turn attack - see turn sequence below' : 'Edit the prompt to test variations...'}
+                readOnly={mode === 'gallery'}
+                className={`w-full h-24 px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white font-mono text-sm resize-none ${mode === 'gallery' ? 'cursor-not-allowed opacity-70' : ''}`}
+                placeholder={mode === 'gallery' ? (isMultiTurn ? 'Multi-turn attack - see turn sequence below' : 'Attack prompt') : 'Enter your custom prompt...'}
                 maxLength={500}
               />
-              <div className="flex items-center justify-between mt-4">
-                <div className="text-xs text-zinc-500">
-                  {mode === 'gallery' && '✏️ Editable - Try variations of this attack'}
+
+              {/* Attack Intelligence - shown for gallery mode before launch button */}
+              {mode === 'gallery' && selectedTest && (
+                <div className="mt-4 bg-zinc-800/50 rounded-xl p-4 space-y-3">
+                  <div className="text-sm font-bold text-white mb-3">🧠 ATTACK INTELLIGENCE</div>
+                  <div className="grid md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <div className="text-xs text-zinc-500 mb-1">Attack Type</div>
+                      <div className="font-medium text-zinc-300">{selectedTest.category}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-zinc-500 mb-1">Danger Level</div>
+                      <div className="flex items-center gap-2">
+                        {selectedTest.dangerLevel === 'critical' ? (
+                          <>
+                            <span className="text-red-400">🔴🔴🔴🔴🔴</span>
+                            <span className="text-xs text-red-400 font-bold">CRITICAL</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-green-400">🟢🟢🟢</span>
+                            <span className="text-xs text-green-400 font-bold">SAFE</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-zinc-500 mb-1">Real-World Impact</div>
+                      <div className="text-xs text-zinc-300">{selectedTest.impact}</div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-zinc-500 mb-1">Why This Matters</div>
+                    <div className="text-xs text-zinc-300 leading-relaxed">{selectedTest.explanation}</div>
+                  </div>
                 </div>
+              )}
+
+              <div className="flex justify-end mt-4">
                 <button
                   onClick={runAttack}
                   disabled={isRunning || !currentPrompt.trim()}
@@ -991,14 +1023,6 @@ export default function PlaygroundPage() {
                       </div>
                     )}
 
-                    {/* User message */}
-                    <div className="flex justify-end">
-                      <div className="max-w-[80%] bg-blue-100 text-gray-900 rounded-2xl rounded-tr-sm p-4 shadow-sm">
-                        <div className="text-xs font-semibold text-blue-700 mb-1">👤 You</div>
-                        <div className="text-sm">{turn.prompt}</div>
-                      </div>
-                    </div>
-
                     {/* AI Responses - Side by side with clear BAD vs GOOD labels */}
                     <div className="grid md:grid-cols-2 gap-4">
                       {/* LEFT: BAD - Without Protection */}
@@ -1060,55 +1084,6 @@ export default function PlaygroundPage() {
                     </div>
                   </div>
                 ))}
-
-                {/* Reset button for completed attacks */}
-                {turnHistory.length > 0 && !isRunning && animationStep === 'complete' && (
-                  <div className="flex justify-center gap-4 pt-4">
-                    <button
-                      onClick={resetAttack}
-                      className="px-6 py-3 bg-zinc-700 rounded-lg font-bold hover:bg-zinc-600 transition"
-                    >
-                      🔄 Reset Attack
-                    </button>
-                  </div>
-                )}
-
-                {/* Intelligence Section - shown after attack completes */}
-                {mode === 'gallery' && selectedTest && turnHistory.length > 0 && animationStep === 'complete' && (
-                  <div className="bg-zinc-800/50 rounded-xl p-4 space-y-3">
-                    <div className="text-sm font-bold text-white mb-3">🧠 ATTACK INTELLIGENCE</div>
-                    <div className="grid md:grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <div className="text-xs text-zinc-500 mb-1">Attack Type</div>
-                        <div className="font-medium text-zinc-300">{selectedTest.category}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-zinc-500 mb-1">Danger Level</div>
-                        <div className="flex items-center gap-2">
-                          {selectedTest.dangerLevel === 'critical' ? (
-                            <>
-                              <span className="text-red-400">🔴🔴🔴🔴🔴</span>
-                              <span className="text-xs text-red-400 font-bold">CRITICAL</span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="text-green-400">🟢🟢🟢</span>
-                              <span className="text-xs text-green-400 font-bold">SAFE</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-zinc-500 mb-1">Real-World Impact</div>
-                        <div className="text-xs text-zinc-300">{selectedTest.impact}</div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-zinc-500 mb-1">Why This Matters</div>
-                      <div className="text-xs text-zinc-300 leading-relaxed">{selectedTest.explanation}</div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
