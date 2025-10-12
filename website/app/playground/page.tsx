@@ -951,6 +951,20 @@ export default function PlaygroundPage() {
               </div>
             </div>
 
+            {/* Initial Loading Animation - Shows immediately after Launch Attack is pressed */}
+            {isRunning && turnHistory.length === 0 && !error && (
+              <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-8">
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-primary rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                    <div className="w-3 h-3 bg-primary rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                    <div className="w-3 h-3 bg-primary rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                  </div>
+                  <span className="text-sm text-zinc-400">Analyzing attack with SafePrompt...</span>
+                </div>
+              </div>
+            )}
+
             {/* Error Display */}
             {error && (
               <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
