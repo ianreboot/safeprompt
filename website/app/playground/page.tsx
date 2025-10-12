@@ -1015,13 +1015,22 @@ export default function PlaygroundPage() {
 
                 {/* Conversation history for multi-turn */}
                 {turnHistory.map((turn, idx) => (
-                  <div key={idx} className="space-y-4 pb-6 border-b border-zinc-800">
-                    {/* Turn label */}
-                    {isMultiTurn && (
-                      <div className="text-xs font-bold text-zinc-500 uppercase tracking-wide">
-                        Turn {turn.turnNumber} {turn.turnNote}
-                      </div>
-                    )}
+                  <div key={idx}>
+                    <div className="space-y-4 pb-6 border-b border-zinc-800">
+                      {/* Turn label with prominent prompt display */}
+                      {isMultiTurn && (
+                        <div className="bg-zinc-800/30 rounded-lg p-4 mb-4">
+                          <div className="flex items-start gap-3 mb-2">
+                            <div className="text-sm font-bold text-zinc-400 uppercase tracking-wide">
+                              Turn {turn.turnNumber} {turn.turnNote}
+                            </div>
+                          </div>
+                          <div className="bg-zinc-900 rounded-lg p-3 border-l-4 border-primary">
+                            <div className="text-xs text-zinc-500 mb-1 font-semibold">PROMPT:</div>
+                            <div className="text-base font-mono text-white leading-relaxed">{turn.prompt}</div>
+                          </div>
+                        </div>
+                      )}
 
                     {/* AI Responses - Side by side with clear BAD vs GOOD labels */}
                     <div className="grid md:grid-cols-2 gap-4">
@@ -1082,6 +1091,21 @@ export default function PlaygroundPage() {
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                    {/* Loading indicator between turns */}
+                    {isMultiTurn && idx < turnHistory.length - 1 && isRunning && (
+                      <div className="flex justify-center py-6">
+                        <div className="bg-zinc-800/50 rounded-lg p-4 flex items-center gap-3">
+                          <div className="flex space-x-2">
+                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                          </div>
+                          <span className="text-sm text-zinc-400">Loading next turn...</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
