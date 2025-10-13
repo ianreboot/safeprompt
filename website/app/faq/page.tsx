@@ -63,7 +63,7 @@ export default function FAQPage() {
                     <h3 className="text-lg font-semibold mb-3">What data does SafePrompt collect for threat intelligence?</h3>
                     <p className="text-muted-foreground mb-3">
                       We collect validation results (safe/unsafe), attack patterns, and metadata. For Free tier, only blocked
-                      requests. For Pro tier (if opted in), all requests. Personal data (actual prompts and IP addresses) is
+                      requests. For paid tiers (if opted in), all requests. Personal data (actual prompts and IP addresses) is
                       automatically deleted after 24 hours. Only anonymized hashes are retained for pattern analysis.
                     </p>
                     <div className="space-y-3">
@@ -71,7 +71,7 @@ export default function FAQPage() {
                         <h4 className="font-semibold text-sm mb-2">Data Collection Details:</h4>
                         <ul className="list-disc list-inside text-muted-foreground text-sm space-y-2 ml-4">
                           <li><strong>Free Tier:</strong> Only blocked requests collected automatically</li>
-                          <li><strong>Pro Tier:</strong> All requests if opted in (default: ON, can disable)</li>
+                          <li><strong>Paid Tiers (Early Bird/Starter/Business):</strong> All requests if opted in (default: ON, can disable)</li>
                           <li><strong>First 24 hours:</strong> Full prompt text + client IP stored for analysis</li>
                           <li><strong>After 24 hours:</strong> Automatic anonymization - prompt text & IP deleted permanently</li>
                           <li><strong>Permanent storage:</strong> Only cryptographic hashes (SHA-256, no PII, cannot reverse)</li>
@@ -127,8 +127,8 @@ export default function FAQPage() {
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
                     <h3 className="text-lg font-semibold mb-3">Can I opt out of intelligence sharing?</h3>
                     <p className="text-muted-foreground mb-3">
-                      Pro tier users can disable intelligence sharing in Privacy Settings. Free tier users contribute blocked
-                      requests as part of the service (this helps protect all users). Disabling on Pro tier keeps IP blocking active.
+                      Paid tier users can disable intelligence sharing in Privacy Settings. Free tier users contribute blocked
+                      requests as part of the service (this helps protect all users). Disabling on paid tiers keeps IP blocking active.
                     </p>
                     <div className="space-y-3">
                       <div className="bg-card/50 rounded-lg p-3">
@@ -139,7 +139,7 @@ export default function FAQPage() {
                         </p>
                       </div>
                       <div className="bg-card/50 rounded-lg p-3">
-                        <h4 className="font-semibold text-sm mb-2">Pro Tier:</h4>
+                        <h4 className="font-semibold text-sm mb-2">Paid Tiers (Early Bird/Starter/Business):</h4>
                         <p className="text-sm text-muted-foreground mb-2">
                           <strong>Opt-out available.</strong> Dashboard → Settings → Privacy → "Contribute to Network Intelligence" toggle OFF
                         </p>
@@ -156,7 +156,7 @@ export default function FAQPage() {
                     <h3 className="text-lg font-semibold mb-3">How does IP auto-blocking work?</h3>
                     <p className="text-muted-foreground mb-3">
                       When an IP address has &gt;80% block rate across ≥5 requests, we automatically block future requests
-                      from that IP (Pro tier only). We use cryptographic hashes, so the actual IP cannot be reversed.
+                      from that IP (paid tiers only). We use cryptographic hashes, so the actual IP cannot be reversed.
                       You can allowlist specific IPs in your dashboard.
                     </p>
                     <div className="space-y-3">
@@ -169,7 +169,7 @@ export default function FAQPage() {
                         </p>
                       </div>
                       <div className="bg-card/50 rounded-lg p-3">
-                        <h4 className="font-semibold text-sm mb-2">Pro Tier:</h4>
+                        <h4 className="font-semibold text-sm mb-2">Paid Tiers (Early Bird/Starter/Business):</h4>
                         <p className="text-sm text-muted-foreground mb-2">
                           ✅ Automatic IP blocking available (opt-in)<br />
                           ✅ Enable in Dashboard → Settings → Security<br />
@@ -202,13 +202,13 @@ export default function FAQPage() {
                     <p className="text-muted-foreground mb-3">
                       Free users help build the threat intelligence database by contributing blocked requests. While you don't
                       get IP blocking, you benefit from improved pattern detection as the system learns from attacks.
-                      Upgrading to Pro adds IP auto-blocking.
+                      Upgrading to a paid tier adds IP auto-blocking.
                     </p>
                     <div className="space-y-3">
                       <div className="bg-card/50 rounded-lg p-3">
                         <h4 className="font-semibold text-sm mb-2">Free Tier Benefits:</h4>
                         <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                          <li>✅ Same validation accuracy as Pro tier</li>
+                          <li>✅ Same validation accuracy as paid tiers</li>
                           <li>✅ Benefit from network-wide pattern detection</li>
                           <li>✅ Protection from novel attacks discovered across network</li>
                           <li>✅ Automatic GDPR export/delete capabilities</li>
@@ -245,9 +245,11 @@ export default function FAQPage() {
                   </div>
 
                   <div className="bg-card/50 border border-border rounded-lg p-6">
-                    <h3 className="text-lg font-semibold mb-3">What's the Pro tier pricing?</h3>
+                    <h3 className="text-lg font-semibold mb-3">What are the paid tier options?</h3>
                     <p className="text-muted-foreground mb-3">
-                      <strong>Early Access Beta: $5/month</strong> (regular $29/month)
+                      <strong>Early Bird: $5/month</strong> (limited to first 50 users, price locked forever)<br/>
+                      <strong>Starter: $29/month</strong> (same features as Early Bird)<br/>
+                      <strong>Business: $99/month</strong> (250K validations/month)
                     </p>
                     <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
                       <li>10,000 validations/month</li>

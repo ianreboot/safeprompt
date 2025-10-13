@@ -78,15 +78,15 @@ export default async function handler(req, res) {
       if (enable_intelligence_sharing === false && tier === 'free') {
         return res.status(403).json({
           error: 'Free tier users cannot opt-out of intelligence sharing',
-          message: 'Upgrade to Pro to disable intelligence collection',
+          message: 'Upgrade to a paid tier (Early Bird/Starter/Business) to disable intelligence collection',
           upgrade_required: true
         });
       }
 
       if (enable_ip_blocking === true && tier === 'free') {
         return res.status(403).json({
-          error: 'IP blocking is only available on Pro tier',
-          message: 'Upgrade to Pro to enable automatic IP blocking',
+          error: 'IP blocking is only available on paid tiers',
+          message: 'Upgrade to a paid tier (Early Bird/Starter/Business) to enable automatic IP blocking',
           upgrade_required: true
         });
       }

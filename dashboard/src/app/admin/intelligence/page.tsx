@@ -164,7 +164,7 @@ export default function ThreatIntelligenceDashboard() {
     anonymized: samples.filter(s => s.anonymized_at !== null).length,
     uniqueIPs: new Set(samples.map(s => s.ip_hash)).size,
     freeTier: samples.filter(s => s.subscription_tier === 'free').length,
-    proTier: samples.filter(s => s.subscription_tier === 'pro').length
+    paidTiers: samples.filter(s => ['early_bird', 'starter', 'business', 'pro'].includes(s.subscription_tier)).length
   }
 
   // Get unique values for filters
@@ -241,7 +241,7 @@ export default function ThreatIntelligenceDashboard() {
                 <Shield className="w-12 h-12 text-purple-400 opacity-80" />
               </div>
               <div className="mt-3 text-xs text-gray-400">
-                Free: {stats.freeTier} | Pro: {stats.proTier}
+                Free: {stats.freeTier} | Paid: {stats.paidTiers}
               </div>
             </div>
 
@@ -330,7 +330,10 @@ export default function ThreatIntelligenceDashboard() {
                 >
                   <option value="all">All Tiers</option>
                   <option value="free">Free</option>
-                  <option value="pro">Pro</option>
+                  <option value="early_bird">Early Bird</option>
+                  <option value="starter">Starter</option>
+                  <option value="business">Business</option>
+                  <option value="pro">Pro (Legacy)</option>
                 </select>
               </div>
             </div>
@@ -391,7 +394,7 @@ export default function ThreatIntelligenceDashboard() {
                         </td>
                         <td className="px-4 py-3 text-sm">
                           <span className={`px-2 py-1 rounded text-xs ${
-                            sample.subscription_tier === 'pro' ? 'bg-purple-500/20 text-purple-300' : 'bg-gray-600 text-gray-300'
+                            ['early_bird', 'starter', 'business', 'pro'].includes(sample.subscription_tier) ? 'bg-purple-500/20 text-purple-300' : 'bg-gray-600 text-gray-300'
                           }`}>
                             {sample.subscription_tier}
                           </span>

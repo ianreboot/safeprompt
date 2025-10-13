@@ -273,7 +273,7 @@ export default function PrivacySettingsPage() {
                     <>Free tier users automatically contribute blocked requests to our threat intelligence network. This data helps protect all SafePrompt users.</>
                   )}
                   {tier !== 'free' && tier !== 'internal' && (
-                    <>Pro tier users can choose to contribute all validation requests (not just blocked ones) to improve network defense. In return, you benefit from IP reputation auto-blocking.</>
+                    <>Paid tier users can choose to contribute all validation requests (not just blocked ones) to improve network defense. In return, you benefit from IP reputation auto-blocking.</>
                   )}
                   {tier === 'internal' && (
                     <>Internal tier accounts are exempt from intelligence collection.</>

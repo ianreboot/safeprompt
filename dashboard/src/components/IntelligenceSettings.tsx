@@ -61,11 +61,11 @@ export default function IntelligenceSettings() {
 
       // Validate tier-specific restrictions
       if (key === 'enable_intelligence_sharing' && tier === 'free') {
-        throw new Error('Free tier users cannot opt-out of intelligence sharing. Upgrade to Pro to disable.')
+        throw new Error('Free tier users cannot opt-out of intelligence sharing. Upgrade to a paid tier to disable.')
       }
 
       if (key === 'enable_ip_blocking' && tier === 'free') {
-        throw new Error('IP blocking is only available on Pro tier. Upgrade to enable automatic blocking.')
+        throw new Error('IP blocking is only available on paid tiers. Upgrade to enable automatic blocking.')
       }
 
       // Build updated preferences
@@ -140,7 +140,7 @@ export default function IntelligenceSettings() {
                   <strong className="text-gray-400">Privacy:</strong> Prompt text + IP deleted after 24 hours.
                   Only cryptographic hashes remain (no personally identifiable information).
                   {!isPro && ' Free tier users must contribute to receive network protection.'}
-                  {isPro && ' Pro users can opt-out while still benefiting from network protection.'}
+                  {isPro && ' Paid tier users can opt-out while still benefiting from network protection.'}
                 </div>
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function IntelligenceSettings() {
                 <div>
                   <strong className="text-gray-400">How it works:</strong> IPs with block rate &gt;70% and 10+ attempts
                   are marked for auto-blocking. Legitimate IPs with low block rates are never affected.
-                  {!isPro && ' Upgrade to Pro to enable this feature.'}
+                  {!isPro && ' Upgrade to a paid tier to enable this feature.'}
                 </div>
               </div>
             </div>
@@ -224,7 +224,7 @@ export default function IntelligenceSettings() {
         {/* Upgrade CTA for Free Tier */}
         {!isPro && (
           <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-            <h4 className="font-semibold text-primary mb-2">Upgrade to Pro</h4>
+            <h4 className="font-semibold text-primary mb-2">Upgrade to Paid Tier</h4>
             <p className="text-sm text-gray-400 mb-3">
               Get control over intelligence sharing and enable automatic IP blocking for enhanced security.
             </p>
@@ -232,7 +232,7 @@ export default function IntelligenceSettings() {
               href="/upgrade"
               className="inline-block px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-blue-500 transition-colors text-sm"
             >
-              Upgrade to Pro - $5/mo
+              View Pricing - Starting at $5/mo
             </a>
           </div>
         )}

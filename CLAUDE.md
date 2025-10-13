@@ -15,7 +15,7 @@
 
 **🚨 Intelligence Architecture** (ALL DEPLOYED TO PRODUCTION):
 - **Threat Intelligence** (Phase 1A): 24-hour anonymization, GDPR/CCPA compliant data collection, tier-based contribution
-- **IP Reputation** (Phase 1A): Hash-based auto-blocking, <10ms lookup, Pro tier network defense
+- **IP Reputation** (Phase 1A): Hash-based auto-blocking, <10ms lookup, paid tiers network defense (Early Bird/Starter/Business)
 - **Pattern Discovery** (Phase 6): ML-powered automated pattern detection (3 AM UTC daily cron)
 - **Campaign Detection** (Phase 6): Temporal clustering and similarity analysis (3:30 AM UTC daily cron)
 - **Honeypot Learning** (Phase 6): Safe auto-deployment of validated patterns (4 AM UTC daily cron)
@@ -336,7 +336,7 @@ The playground now includes runtime environment detection as a fallback:
 
 **Network Defense Through Collective Intelligence**:
 - **Free Tier**: Always contributes blocked requests → No IP blocking benefits
-- **Pro Tier**: Opts in (default ON) → Gets IP reputation auto-blocking
+- **Paid Tiers (Early Bird/Starter/Business)**: Opts in (default ON) → Gets IP reputation auto-blocking
 - **Competitive Moat**: Data network effects (more users = better protection)
 
 ### Tier-Based Collection Rules
@@ -347,7 +347,7 @@ The playground now includes runtime environment detection as a fallback:
 - Benefits: None (contributes to network defense)
 - Opt-out: Not available (part of free tier terms)
 
-// Pro Tier
+// Paid Tiers (Early Bird, Starter, Business)
 - Collects: ALL requests IF opted in (default: true)
 - Benefits: IP reputation auto-blocking
 - Opt-out: Account settings > Privacy > Intelligence Sharing
@@ -372,7 +372,7 @@ The playground now includes runtime environment detection as a fallback:
 - **Legal Basis**: GDPR Article 17(3)(d) - Scientific research
 
 **Table 2: `ip_reputation`**
-- **Purpose**: Auto-blocking of known bad actors (Pro tier)
+- **Purpose**: Auto-blocking of known bad actors (paid tiers: Early Bird/Starter/Business)
 - **Primary Key**: `ip_hash` (SHA256, cannot reverse to IP address)
 - **Scoring Formula**:
   ```
@@ -459,10 +459,10 @@ The playground now includes runtime environment detection as a fallback:
 ### Integration with Validation Pipeline
 
 **Step 1**: Validate prompt (existing pipeline)
-**Step 2**: Check IP reputation (if Pro tier + opted in):
+**Step 2**: Check IP reputation (if paid tier + opted in):
 ```javascript
 const ipCheck = await checkIPReputation(clientIP, {
-  subscription_tier: 'pro',
+  subscription_tier: 'early_bird', // or 'starter', 'business'
   auto_block_enabled: true
 });
 
@@ -497,7 +497,7 @@ await updateIPReputationScores(ipHash, {
 3. **Always make collection async** - User must never wait for INSERT
 4. **Always verify allowlist first** - Prevents blocking CI/CD during attacks
 5. **Always use constant-time comparison** - Test suite header check (timing attack protection)
-6. **Always check opt-in status** - Pro users can disable intelligence sharing
+6. **Always check opt-in status** - Paid tier users (Early Bird/Starter/Business) can disable intelligence sharing
 
 ---
 
@@ -898,12 +898,12 @@ BUSINESS = $99/month, 250,000 validations
 ```
 ian.ho@rebootmedia.net - internal tier (admin/testing)
 test-free@safeprompt.dev - free tier (testing)
-test-pro@safeprompt.dev - pro tier (testing)
+test-starter@safeprompt.dev - starter tier (testing)
 ```
 
 ### Known Production Users
 ```
-yuenho.8@gmail.com - growth tier (first paying customer)
+yuenho.8@gmail.com - early_bird tier (first paying customer)
 arsh.s@rebootmedia.net - free tier (team member)
 linpap@gmail.com - free tier (friend/tester)
 ```

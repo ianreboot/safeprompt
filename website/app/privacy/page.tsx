@@ -19,7 +19,7 @@ export default function PrivacyPage() {
               <div className="bg-warning/10 border border-warning/20 rounded-lg p-4">
                 <p className="text-sm text-foreground">
                   <strong>TL;DR:</strong> We process your prompts to detect threats. Blocked prompts are stored for 24 hours then automatically anonymized.
-                  We use network intelligence to protect all customers (Pro tier can opt-out). We never sell your data.
+                  We use network intelligence to protect all customers (paid tiers can opt-out). We never sell your data.
                   For privacy concerns, use our <a href="/contact" className="text-primary hover:underline">contact form</a>.
                 </p>
               </div>
@@ -92,12 +92,12 @@ export default function PrivacyPage() {
                     <li><strong>Permanent storage:</strong> Only cryptographic hashes (cannot identify users)</li>
                     <li><strong>Purpose:</strong> Network defense intelligence to protect all customers</li>
                     <li><strong>Free Tier:</strong> Contributes attack data automatically (required for service)</li>
-                    <li><strong>Pro Tier:</strong> Can opt-out via dashboard preferences</li>
+                    <li><strong>Paid Tiers (Early Bird/Starter/Business):</strong> Can opt-out via dashboard preferences</li>
                   </ul>
                 </div>
 
                 <p className="text-muted-foreground mt-4 text-sm">
-                  <strong>Legal Basis:</strong> Legitimate interest (network security) for Free tier, Consent for Pro tier.
+                  <strong>Legal Basis:</strong> Legitimate interest (network security) for Free tier, Consent for paid tiers.
                   See our <a href="/docs" className="text-primary hover:underline">full documentation</a> for technical details.
                 </p>
               </div>
@@ -121,9 +121,9 @@ export default function PrivacyPage() {
                   <li><strong>Right to Access:</strong> View all data we have about you via dashboard or API</li>
                   <li><strong>Right to Deletion:</strong> Delete all identifiable data (&lt;24h old) immediately via API</li>
                   <li><strong>Right to Export:</strong> Download all your data in JSON format</li>
-                  <li><strong>Right to Opt-Out (Pro Tier Only):</strong> Disable threat intelligence collection</li>
+                  <li><strong>Right to Opt-Out (Paid Tiers Only):</strong> Disable threat intelligence collection</li>
                   <li><strong>Right to Rectification:</strong> Update your account information</li>
-                  <li><strong>Right to Object:</strong> Object to processing (Pro tier can opt-out)</li>
+                  <li><strong>Right to Object:</strong> Object to processing (paid tiers can opt-out)</li>
                 </ul>
 
                 <div className="bg-card/50 border border-border rounded-lg p-4 mt-4">

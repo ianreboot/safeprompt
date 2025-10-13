@@ -1012,7 +1012,7 @@ def check_prompt(user_input, client_ip):
   }
 }
 
-// IP blocked response (Pro tier with auto-block enabled):
+// IP blocked response (paid tiers with auto-block enabled):
 {
   "error": "ip_blocked",
   "message": "Request blocked due to IP reputation",
@@ -1048,7 +1048,7 @@ def check_prompt(user_input, client_ip):
                   <strong className="text-gray-300">reasoning</strong>: String - Why this verdict (for logging/debugging)
                 </div>
                 <div>
-                  <strong className="text-gray-300">ipReputation</strong>: Object - IP reputation data (Pro tier with X-User-IP header)
+                  <strong className="text-gray-300">ipReputation</strong>: Object - IP reputation data (paid tiers with X-User-IP header)
                   <div className="ml-4 mt-1 space-y-1">
                     <div><span className="text-gray-400">checked</span>: Boolean - Whether IP was checked</div>
                     <div><span className="text-gray-400">reputationScore</span>: Float 0-1 - Higher = better reputation</div>

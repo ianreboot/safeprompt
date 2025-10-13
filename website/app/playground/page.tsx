@@ -1240,12 +1240,6 @@ export default function PlaygroundPage() {
             >
               Start Free Trial
             </Link>
-            <Link
-              href="/#docs"
-              className="px-8 py-4 bg-zinc-800 rounded-lg font-bold hover:bg-zinc-700 transition"
-            >
-              Read Documentation
-            </Link>
           </div>
         </div>
       </div>

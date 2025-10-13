@@ -109,20 +109,20 @@ export default function AdminDashboard() {
     const totalUsers = profilesData?.length || 0
 
     // Active subscribers = users with paid tier AND active status
-    const paidTiers = ['early_bird', 'starter', 'business', 'pro', 'enterprise']
+    // Only the 3 actual paid tiers (early_bird, starter, business)
+    const paidTiers = ['early_bird', 'starter', 'business']
     const activeSubscribers = profilesData?.filter(p =>
       p.subscription_status === 'active' &&
       paidTiers.includes(p.subscription_tier)
     ) || []
 
     // Calculate revenue based on actual subscription tiers
+    // Note: Actual pricing is $5 (Early Bird), $29 (Starter), $99 (Business)
     const revenue = activeSubscribers.reduce((total, user) => {
       switch(user.subscription_tier) {
         case 'early_bird': return total + 5
         case 'starter': return total + 29
         case 'business': return total + 99
-        case 'pro': return total + 199
-        case 'enterprise': return total + 499
         default: return total
       }
     }, 0)

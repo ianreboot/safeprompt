@@ -4,7 +4,7 @@
  *
  * Collects validation data for competitive moat building:
  * - Free tier: Always contributes (blocked requests only)
- * - Pro tier: Opt-in contribution (all requests)
+ * - Paid tiers (Early Bird/Starter/Business): Opt-in contribution (all requests)
  * - Legal: 24-hour anonymization (GDPR/CCPA compliant)
  */
 

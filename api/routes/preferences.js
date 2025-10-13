@@ -2,7 +2,7 @@
  * User Preferences API
  * Quarter 1 Phase 1A Task 1A.10
  *
- * Allows Pro tier users to manage intelligence sharing preferences:
+ * Allows paid tier users to manage intelligence sharing preferences:
  * - intelligence_sharing: Opt in/out of data collection
  * - auto_block_enabled: Enable/disable IP reputation auto-blocking
  */
@@ -46,7 +46,7 @@ export async function getPreferences(req, res) {
 
     // Default preferences
     const defaults = {
-      intelligence_sharing: profile.tier === 'free' ? true : true,  // Free always true, Pro default true
+      intelligence_sharing: profile.tier === 'free' ? true : true,  // Free always true, paid tiers default true
       auto_block_enabled: false  // Default off (must opt-in)
     };
 
@@ -80,7 +80,7 @@ export async function getPreferences(req, res) {
 /**
  * PATCH /api/v1/account/preferences
  *
- * Update user preferences (Pro tier only)
+ * Update user preferences (paid tiers only)
  */
 export async function updatePreferences(req, res) {
   try {

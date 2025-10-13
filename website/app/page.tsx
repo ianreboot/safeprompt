@@ -419,7 +419,7 @@ export default function Home() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>✓ 24-hour anonymization (GDPR/CCPA compliant)</li>
                 <li>✓ Hash-based pattern storage (no PII)</li>
-                <li>✓ Free tier contributes, Pro tier can opt-out</li>
+                <li>✓ Free tier contributes, paid tiers (Early Bird/Starter/Business) can opt-out</li>
               </ul>
             </div>
 
@@ -427,12 +427,12 @@ export default function Home() {
               <div className="text-4xl mb-4">🎯</div>
               <h3 className="text-xl font-semibold mb-2">IP Reputation System</h3>
               <p className="text-muted-foreground mb-4">
-                Track malicious IP addresses across the network. Pro tier can auto-block
+                Track malicious IP addresses across the network. Paid tiers (Early Bird/Starter/Business) can auto-block
                 repeat attackers before they even try.
               </p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>✓ Real-time reputation scoring</li>
-                <li>✓ Auto-block at 70% attack rate (Pro tier)</li>
+                <li>✓ Auto-block at 70% attack rate (paid tiers)</li>
                 <li>✓ Privacy-first: Only hashed IPs stored</li>
               </ul>
             </div>
@@ -479,13 +479,13 @@ export default function Home() {
                     <span className="text-primary text-xl">→</span>
                     <div>
                       <div className="font-semibold">User Control</div>
-                      <div className="text-muted-foreground">Pro tier can opt-out without losing protection</div>
+                      <div className="text-muted-foreground">Paid tiers can opt-out without losing protection</div>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="bg-card rounded-lg p-6 border border-border">
-                <h4 className="font-semibold mb-3 text-center">Free vs Pro Tier</h4>
+                <h4 className="font-semibold mb-3 text-center">Free vs Paid Tiers</h4>
                 <div className="space-y-3 text-sm">
                   <div>
                     <div className="font-semibold mb-1">Free Tier:</div>
@@ -497,7 +497,7 @@ export default function Home() {
                     </ul>
                   </div>
                   <div className="border-t border-border pt-3">
-                    <div className="font-semibold mb-1">Pro Tier ($5-29/mo):</div>
+                    <div className="font-semibold mb-1">Paid Tiers (Early Bird/Starter/Business):</div>
                     <ul className="space-y-1 text-muted-foreground pl-4">
                       <li>• Can opt-out of intelligence sharing</li>
                       <li>• IP reputation auto-blocking (opt-in)</li>
@@ -693,7 +693,7 @@ export default function Home() {
                     </div>
 
                     <div className="bg-card/50 rounded-lg p-3">
-                      <h4 className="font-semibold text-sm mb-2">Pro Tier (Opt-Out Available):</h4>
+                      <h4 className="font-semibold text-sm mb-2">Paid Tiers (Opt-Out Available):</h4>
                       <p className="text-sm text-muted-foreground mb-2">
                         Disable intelligence sharing in Dashboard → Settings → Privacy:
                       </p>
@@ -708,7 +708,7 @@ export default function Home() {
                     </div>
 
                     <div className="bg-card/50 rounded-lg p-3">
-                      <h4 className="font-semibold text-sm mb-2">IP Blocking (Pro Tier Only):</h4>
+                      <h4 className="font-semibold text-sm mb-2">IP Blocking (Paid Tiers Only):</h4>
                       <p className="text-sm text-muted-foreground">
                         Enable automatic blocking of malicious IPs in Dashboard → Settings → Security
                       </p>

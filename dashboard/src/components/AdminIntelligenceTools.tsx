@@ -225,7 +225,7 @@ export default function AdminIntelligenceTools() {
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Opt-out Rate:</span>
-                <span className="font-semibold">Pro tier only</span>
+                <span className="font-semibold">Paid tiers only</span>
               </div>
             </div>
           </div>

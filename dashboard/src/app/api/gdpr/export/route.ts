@@ -51,7 +51,7 @@ export async function POST(request: Request) {
         your_rights: {
           access: 'You can export your data using this API',
           deletion: 'You can delete your personal data using the /api/gdpr/delete endpoint',
-          opt_out: 'You can disable intelligence sharing in Privacy Settings (Pro tier only)'
+          opt_out: 'You can disable intelligence sharing in Privacy Settings (paid tiers only)'
         }
       },
       statistics: {

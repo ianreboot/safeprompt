@@ -29,7 +29,7 @@ const result = await response.json();
 if (!result.safe) {
   throw new Error('Prompt blocked: potential injection detected');
 }
-// Optional: Check IP reputation (Pro tier)
+// Optional: Check IP reputation (paid tiers: Early Bird/Starter/Business)
 if (result.ipReputationScore < 0.5) {
   console.warn('Request from low-reputation IP');
 }
@@ -64,7 +64,7 @@ Automated attack pattern discovery and deployment:
 ### 🛡️ Phase 1A Network Defense (October 8, 2025)
 Collective intelligence across all customers:
 - **Threat Intelligence**: Collects blocked prompts with 24-hour PII retention (GDPR/CCPA compliant)
-- **IP Reputation**: Hash-based auto-blocking of malicious IPs (Pro tier, <10ms lookup)
+- **IP Reputation**: Hash-based auto-blocking of malicious IPs (paid tiers, <10ms lookup)
 - **Multi-Turn Detection**: 95% accuracy on sophisticated attack sequences (reconnaissance, privilege escalation, social engineering)
 - **67 Tests Passing**: Complete test coverage for compliance, performance, and security
 - **Privacy Controls**: Opt-out available, GDPR export/deletion APIs
@@ -87,7 +87,7 @@ See the [Custom Lists documentation](#custom-lists) for details.
 - **⚡ Lightning Fast**: <100ms pattern detection (67% of requests), 2-3s AI validation when needed
 - **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
 - **✨ Custom Lists**: Define business-specific whitelist/blacklist phrases
-- **🧠 Network Intelligence**: IP reputation system learns from attacks across all customers (Pro tier)
+- **🧠 Network Intelligence**: IP reputation system learns from attacks across all customers (paid tiers)
 - **🤖 Pattern Discovery**: Automated ML-powered attack pattern detection from real threats (Phase 6)
 - **🎯 Campaign Detection**: Identifies coordinated attacks using temporal clustering (Phase 6)
 - **🍯 Honeypot Learning**: Auto-deploys patterns from fake endpoints (Phase 6)
@@ -124,7 +124,7 @@ if (validation.safe) {
   - Community support
   - **No IP blocking** (contributes only)
 
-- **Pro** (Early Bird $5/month, Regular $29/month):
+- **Early Bird** ($5/month, limited to first 50 users):
   - 10,000 validations/month
   - All Free tier features PLUS:
   - **IP reputation blocking**: Auto-block malicious IPs (opt-in)
@@ -132,8 +132,17 @@ if (validation.safe) {
   - **Intelligence opt-out**: Disable data contribution if needed
   - Priority support
   - 99.9% uptime SLA
+  - **Price locked forever** at $5/month
 
-Both tiers use the SAME core technology - full regex + AI validation with 98.9% accuracy on 94 professional tests. Pro tier adds network defense features powered by collective intelligence.
+- **Starter** ($29/month):
+  - Same features as Early Bird, regular pricing
+  - 10,000 validations/month
+
+- **Business** ($99/month):
+  - 250,000 validations/month
+  - All Starter features at scale
+
+All tiers use the SAME core technology - full regex + AI validation with 98.9% accuracy on 94 professional tests. Paid tiers add network defense features powered by collective intelligence.
 
 ## Why SafePrompt?
 
@@ -168,11 +177,11 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 ### Advanced Protection (Phase 1A - October 2025)
 
 **Threat Intelligence Collection:**
-- Automatically collects blocked prompts from all customers (opt-out available for Pro tier)
+- Automatically collects blocked prompts from all customers (opt-out available for paid tiers)
 - 24-hour anonymization: Full prompt text deleted after 24 hours (GDPR/CCPA compliant)
 - Permanent attack pattern storage: Cryptographic hashes persist for network defense
 
-**IP Reputation System (Pro tier):**
+**IP Reputation System (paid tiers: Early Bird/Starter/Business):**
 - Tracks attack patterns by IP address using cryptographic hashing
 - Auto-blocking: IPs with >70% block rate automatically rejected (requires opt-in)
 - Real-time scoring: Every validation updates IP reputation scores
@@ -190,7 +199,7 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 
 **Privacy & Compliance:**
 - Free tier: Contributes attack data (no IP blocking capability)
-- Pro tier: Opt-in for intelligence sharing + IP blocking features
+- Paid tiers (Early Bird/Starter/Business): Opt-in for intelligence sharing + IP blocking features
 - GDPR right to deletion: Delete all identifiable data via API
 - GDPR right to access: Export all data associated with your account
 
@@ -334,9 +343,9 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 **October 8, 2025 - Phase 1A Network Defense DEPLOYED** 🛡️
 - ✅ **Threat Intelligence System**: 24-hour PII retention, GDPR/CCPA compliant data collection
-- ✅ **IP Reputation System**: Hash-based auto-blocking with <10ms lookup (Pro tier)
+- ✅ **IP Reputation System**: Hash-based auto-blocking with <10ms lookup (paid tiers)
 - ✅ **Multi-Turn Attack Detection**: Session-based validation for context priming and RAG poisoning
-- ✅ **Privacy Compliance**: GDPR export/deletion APIs, opt-out controls for Pro tier
+- ✅ **Privacy Compliance**: GDPR export/deletion APIs, opt-out controls for paid tiers
 - ✅ **Complete Test Coverage**: 67 tests passing (compliance, performance, security, integration)
 - ✅ **Dashboard UI**: Privacy settings, IP management, threat intelligence analytics (11 components)
 - ✅ **Website Updates**: Network defense content, pricing updates, FAQ additions
@@ -385,9 +394,9 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ### Current Beta Pricing (October 2025)
 - **Free Tier**: 1,000 validations/month (contributes attack data, no IP blocking)
-- **Pro/Starter**: $29/month for 10,000 validations (IP blocking, multi-turn protection)
-- **Early Bird Special**: $5/month for 10,000 validations (first 50 users only - discounted Pro tier)
-- **Business**: $99/month for 250,000 validations (all Pro features at scale)
+- **Early Bird**: $5/month for 10,000 validations (first 50 users only - price locked forever)
+- **Starter**: $29/month for 10,000 validations (IP blocking, multi-turn protection, intelligence opt-out)
+- **Business**: $99/month for 250,000 validations (all Starter features at scale)
 
 ## Technical Implementation
 

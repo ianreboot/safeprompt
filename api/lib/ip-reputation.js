@@ -4,7 +4,7 @@
  *
  * Network defense through collective intelligence:
  * - Hash-based reputation tracking (cannot reverse to identify users)
- * - Auto-block known bad actors (Pro tier opt-in only)
+ * - Auto-block known bad actors (paid tiers opt-in only)
  * - Allowlist bypass for testing/CI/CD infrastructure
  * - Test suite marker detection (X-SafePrompt-Test-Suite header)
  */
@@ -206,14 +206,14 @@ export async function checkIPReputation(ipAddress, options = {}) {
     return result;
   }
 
-  // CHECK 1: Only Pro tier gets IP reputation benefits
+  // CHECK 1: Only paid tiers get IP reputation benefits
   if (subscription_tier === 'free') {
     result.checked = false;
     console.log('[IPReputation] Skipped - Free tier does not get IP reputation benefits');
     return result;
   }
 
-  // CHECK 2: User must have opted in to intelligence sharing (Pro tier)
+  // CHECK 2: User must have opted in to intelligence sharing (paid tiers)
   // This is enforced by the caller (session-validator.js)
   // If we reach here, user has opted in
 
