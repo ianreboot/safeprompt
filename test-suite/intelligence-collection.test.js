@@ -4,7 +4,7 @@
  *
  * Tests for tier-based intelligence collection logic:
  * - Free tier: Always collects blocked requests
- * - Pro tier: Collects all requests if opted in
+ * - Paid tiers (Early Bird/Starter/Business): Collects all requests if opted in
  * - Internal tier: Never collects
  */
 
@@ -126,10 +126,10 @@ describe('Intelligence Collection - Tier-based Logic', () => {
     });
   });
 
-  describe.skip('Pro Tier - Opted In (requires Supabase client injection for INSERT)', () => {
+  describe.skip('Paid Tier - Opted In (requires Supabase client injection for INSERT)', () => {
     it('should collect ALL requests (safe and blocked)', async () => {
       const profile = {
-        tier: 'pro',
+        tier: 'starter',
         preferences: { intelligence_sharing: true }
       };
 
@@ -173,7 +173,7 @@ describe('Intelligence Collection - Tier-based Logic', () => {
 
     it('should collect blocked requests', async () => {
       const profile = {
-        tier: 'pro',
+        tier: 'starter',
         preferences: { intelligence_sharing: true }
       };
 
@@ -216,10 +216,10 @@ describe('Intelligence Collection - Tier-based Logic', () => {
     });
   });
 
-  describe('Pro Tier - Opted Out', () => {
+  describe('Paid Tier - Opted Out', () => {
     it('should NOT collect any requests when opted out', async () => {
       const profile = {
-        tier: 'pro',
+        tier: 'starter',
         preferences: { intelligence_sharing: false }  // OPTED OUT
       };
 

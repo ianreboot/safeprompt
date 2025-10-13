@@ -193,7 +193,7 @@ describe.skip('IP Reputation - Tier-Based Access (requires Supabase mock)', () =
     expect(result.reputation_score).toBe(0.0);
   });
 
-  it('should check reputation for Pro tier (opted in)', async () => {
+  it('should check reputation for paid tier (opted in)', async () => {
     // Mock allowlist (not allowlisted)
     mockSupabase.from.mockReturnValueOnce({
       select: vi.fn(() => ({

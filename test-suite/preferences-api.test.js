@@ -6,7 +6,7 @@
  * - GET /api/v1/account/preferences - Get current preferences
  * - PATCH /api/v1/account/preferences - Update preferences
  *
- * Pro tier only: intelligence_sharing, auto_block_enabled
+ * Paid tiers only: intelligence_sharing, auto_block_enabled
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -73,10 +73,10 @@ describe('Preferences API - Get Preferences', () => {
   });
 
   describe.skip('Tier-Based Access (requires Supabase mock setup)', () => {
-    it('should allow Pro tier users to view preferences', async () => {
+    it('should allow paid tier users to view preferences', async () => {
       mockSupabase.single.mockResolvedValueOnce({
         data: {
-          tier: 'pro',
+          tier: 'starter',
           preferences: {
             intelligence_sharing: true,
             auto_block_enabled: true
@@ -89,7 +89,7 @@ describe('Preferences API - Get Preferences', () => {
 
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          tier: 'pro',
+          tier: 'starter',
           preferences: {
             intelligence_sharing: true,
             auto_block_enabled: true
@@ -258,7 +258,7 @@ describe('Preferences API - Update Preferences', () => {
       expect(res.status).toHaveBeenCalledWith(401);
     });
 
-    it('should only allow Pro tier users', async () => {
+    it('should only allow paid tier users', async () => {
       // Mock profile check
       mockSupabase.single.mockResolvedValue({
         data: {

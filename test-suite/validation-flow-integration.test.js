@@ -60,7 +60,7 @@ describe.skip('Full Validation Flow - Integration Tests (requires Supabase clien
   });
 
   describe('Step 1: IP Reputation Check', () => {
-    it('should auto-block known bad actors (Pro tier)', async () => {
+    it('should auto-block known bad actors (paid tier)', async () => {
       // Mock IP reputation check - IP flagged for auto-block
       checkIPReputation.mockResolvedValue({
         should_block: true,
@@ -315,7 +315,7 @@ describe.skip('Full Validation Flow - Integration Tests (requires Supabase clien
       );
     });
 
-    it('should collect ALL requests for Pro tier (opted in)', async () => {
+    it('should collect ALL requests for paid tier (opted in)', async () => {
       // Mock IP check - clean
       checkIPReputation.mockResolvedValue({
         checked: true,
