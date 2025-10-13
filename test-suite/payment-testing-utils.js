@@ -167,11 +167,13 @@ export const testUtils = {
   },
 
   async callValidationAPI(apiKey, prompt) {
-    const response = await fetch('https://dev-api.safeprompt.dev/validate', {
+    const response = await fetch('https://dev-api.safeprompt.dev/api/v1/validate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey
+        'x-api-key': apiKey,
+        'x-user-ip': '203.0.113.42',  // Test IP address (RFC 5737)
+        'x-safeprompt-test-suite': 'vitest'  // Bypass IP reputation for tests
       },
       body: JSON.stringify({ prompt })
     })
