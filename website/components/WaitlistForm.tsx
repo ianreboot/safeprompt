@@ -7,6 +7,7 @@ export default function WaitlistForm() {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
   const [choice, setChoice] = useState<'waitlist' | 'earlybird' | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -16,35 +17,19 @@ export default function WaitlistForm() {
     setIsSubmitting(true)
 
     if (choice === 'earlybird') {
-      // For now, add to waitlist with early bird flag since Stripe is in test mode
-      // TODO: Once Stripe is live, redirect to real checkout session
+      // Redirect to dashboard signup with paid plan intent (instant access via Stripe)
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/website`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            action: 'waitlist',
-            data: {
-              email,
-              source: 'website',
-              earlyBirdInterest: true // Flag for tracking early bird interest
-            }
-          })
+        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'
+        const params = new URLSearchParams({
+          plan: 'paid',
+          email,
+          intent: 'signup'
         })
-
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to join waitlist')
-        }
-
-        setSubmitted(true)
+        window.location.href = `${dashboardUrl}/onboard?${params.toString()}`
       } catch (error) {
-        console.error('Early bird signup error:', error)
-        alert('Early bird signup temporarily unavailable. You\'ve been added to the waitlist and we\'ll notify you when payment is ready.')
-        setSubmitted(true)
+        console.error('Early bird redirect error:', error)
+        setError('Failed to redirect to payment. Please try again.')
+        setIsSubmitting(false)
       }
     } else {
       // Add to waitlist via API
@@ -86,10 +71,10 @@ export default function WaitlistForm() {
         <div className="text-4xl mb-4">🎉</div>
         <h3 className="text-xl font-semibold mb-2">You're on the list!</h3>
         <p className="text-muted-foreground">
-          We'll email you at <span className="text-foreground font-medium">{email}</span> when SafePrompt is ready for beta access.
+          We'll email you at <span className="text-foreground font-medium">{email}</span> when your free tier account is approved.
         </p>
         <p className="text-sm text-muted-foreground mt-3">
-          Note: Payment processing is currently being set up. Early bird pricing will be available soon.
+          Once approved, you can upgrade to a paid plan directly in your dashboard.
         </p>
       </motion.div>
     )
