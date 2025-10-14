@@ -115,9 +115,9 @@ export const testUtils = {
   getTierLimits(tier) {
     const limits = {
       free: 1000,
-      early_bird: 5000,
+      early_bird: 10000,
       starter: 10000,
-      business: 100000,
+      business: 250000,
       internal: 999999
     }
     return limits[tier] || limits.free
