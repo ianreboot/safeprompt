@@ -341,6 +341,13 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 ### Recent Updates (October 2025)
 
+**October 14, 2025 - Signup Flow Validation & Business Model Alignment** ✅
+- ✅ **Paid Signup Flow**: Early Bird option now correctly redirects to Stripe checkout for instant access
+- ✅ **Free Signup Flow**: Waitlist approval workflow validated and working correctly
+- ✅ **Business Model Confirmed**: Paid users get instant access via Stripe, free users require manual approval
+- ✅ **Both Entry Points Working**: Homepage WaitlistForm and /signup page both functional
+- ✅ **Documentation Updated**: CLAUDE.md and README.md reflect actual implementation
+
 **October 14, 2025 - Post-Audit Remediation COMPLETE** ✅
 - ✅ **Multi-Environment Audit**: 8 agents (4 DEV + 4 PROD) audited all pages
 - ✅ **4 Critical Issues Fixed**: DEV database config, attack pattern count, tier limits, documentation accuracy
@@ -401,14 +408,30 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - ✅ **Admin Panel Live**: User management, waitlist approval, activity logs, subscription management
 - ✅ **Schema Documentation**: `/database/setup.sql` updated to match production schema 100%
 
-### Beta Access
-- Sign up at https://safeprompt.dev
-- Choose between free waitlist or $5/month instant access
-- For testing payments, use Stripe test card: `4242 4242 4242 4242`
-- After payment, check your email for instructions
+### Beta Access & Signup
+
+**Two Ways to Get Started:**
+
+**Option 1: Instant Access (Paid - $5/month Early Bird)**
+1. Visit https://safeprompt.dev or https://safeprompt.dev/signup
+2. Select "Early Bird Access" option
+3. Complete Stripe checkout (production payments accepted)
+4. **Instant dashboard access** with your API key
+5. First 50 users lock in $5/month pricing forever
+
+**Option 2: Free Tier (Waitlist)**
+1. Visit https://safeprompt.dev or https://safeprompt.dev/signup
+2. Select "Join Waitlist" option
+3. Wait for admin approval (typically 1-2 business days)
+4. Receive email with login link
+5. Access dashboard with 1,000 free validations/month
+6. Can upgrade to paid plan anytime in dashboard
+
+**After Signup:**
 - Access your dashboard at https://dashboard.safeprompt.dev
-- Login with your email and password to view your API key
-- View usage metrics, manage billing, and access documentation
+- Login with your email and password
+- View your API key, usage metrics, and documentation
+- Manage billing and subscription settings
 
 ### Current Beta Pricing (October 2025)
 - **Free Tier**: 1,000 validations/month (contributes attack data, no IP blocking)

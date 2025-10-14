@@ -1,10 +1,12 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-14 (Post-Audit Remediation Complete)
-**Status**: Production Ready with Advanced Intelligence Architecture + Custom Lists + Network Defense
+**Last Updated**: 2025-10-14 (Signup Flow Validation + Business Model Alignment)
+**Status**: Production Ready - All Signup Flows Validated, Payment Integration Complete
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
 
 **🎉 Recent Milestones**:
+- **Signup Flow Validation** (2025-10-14): Verified and fixed both paid and free signup flows work correctly, Early Bird option now properly redirects to Stripe checkout for instant access
+- **Business Model Aligned** (2025-10-14): Confirmed paid users get instant Stripe access, free users go through waitlist approval, both upgrade paths functional in dashboard
 - **Post-Audit Remediation** (2025-10-14): Multi-environment audit complete, 4 critical issues fixed and deployed to DEV+PROD (database config, attack pattern count, tier limits, documentation accuracy)
 - **Playground Multi-Turn UI Fix** (2025-10-12): Fixed simulation accuracy - innocent turns now correctly show no breach, documented frontend+backend deployment workflow
 - **Multi-Turn Detection Fix** (2025-10-10): 95.0% accuracy achieved (19/20 tests passing), reconnaissance_attack threshold fixed (>=2 → >=1)
@@ -34,6 +36,73 @@ For complete architecture details, see:
 - `/home/projects/safeprompt/docs/PHASE_6_INTELLIGENCE_ARCHITECTURE.md` (Pattern Discovery & Campaign Detection)
 - `/home/projects/safeprompt/docs/SECURITY_HARDENING_QUARTER1.md` (Complete Quarter 1 security hardening tasks)
 - `/home/projects/safeprompt/docs/TESTING_REGIMENT.md` (Complete testing guide including Phase 6 payment tests)
+
+---
+
+## 💳 SIGNUP FLOWS & BUSINESS MODEL
+
+**Current Implementation (2025-10-14)**: Dual-path signup (paid instant access, free waitlist approval)
+
+### User Journey Paths
+
+**Path 1: Paid Plan (Early Bird $5/mo or Starter $29/mo)**
+1. User visits homepage or `/signup`
+2. Selects "Early Bird Access" or paid plan option
+3. **Redirects to**: `dashboard.safeprompt.dev/onboard?plan=paid&email=...`
+4. Dashboard creates Stripe checkout session
+5. User completes payment → **Instant dashboard access** with API key
+6. Subscription status: `active`, tier: `early_bird` or `starter`
+
+**Path 2: Free Tier (Waitlist)**
+1. User visits homepage or `/signup`
+2. Selects "Join Waitlist" option
+3. Email added to `waitlist` table with `approved_at: null`
+4. **Manual approval required**: Admin approves via `/admin` dashboard
+5. User receives email notification with login link
+6. User logs in → Dashboard access with free tier (1000 requests/month)
+7. Can upgrade to paid plan directly in dashboard settings
+
+### Key Files
+
+**Website Signup Components:**
+- `/home/projects/safeprompt/website/app/signup/page.tsx` - Main signup page with plan comparison
+- `/home/projects/safeprompt/website/components/WaitlistForm.tsx` - Homepage embedded form (Early Bird + Waitlist options)
+
+**Dashboard Onboarding:**
+- `/home/projects/safeprompt/dashboard/src/app/onboard/page.tsx` - Handles user creation + Stripe checkout
+- `/home/projects/safeprompt/api/api/stripe-checkout.js` - Creates Stripe checkout sessions
+
+**Admin Approval:**
+- `/home/projects/safeprompt/dashboard/src/app/admin/page.tsx` - Waitlist approval interface
+
+### Business Logic
+
+**Early Bird Pricing:**
+- First 50 paid users: $5/month (price locked forever)
+- After 50 users: $29/month (Starter plan)
+- Tracked via: User count with `subscription_tier IN ('early_bird', 'starter', 'business')` AND `subscription_status = 'active'`
+
+**Free Tier:**
+- No payment required
+- Manual approval workflow (prevents abuse, manages server capacity during beta)
+- 1,000 validations/month
+- Can upgrade to paid plan anytime in dashboard
+
+### Critical Implementation Notes
+
+1. **WaitlistForm Early Bird behavior** (Fixed 2025-10-14):
+   - ✅ Now redirects to dashboard onboarding with `plan=paid` parameter
+   - ✅ User completes Stripe checkout, gets instant access
+   - ❌ Previously: Added to waitlist with `earlyBirdInterest: true` (broken)
+
+2. **Environment Variables**:
+   - `NEXT_PUBLIC_DASHBOARD_URL`: Used for cross-domain redirects
+   - Dashboard must be accessible for signup flow to work
+
+3. **Stripe Integration**:
+   - Production mode active ✅
+   - Webhook handling: `/api/webhooks.js` (checkout.session.completed)
+   - Test card: `4242 4242 4242 4242` (for testing only)
 
 ---
 
