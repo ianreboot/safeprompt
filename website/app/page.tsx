@@ -250,7 +250,7 @@ export default function Home() {
               <div className="grid md:grid-cols-3 gap-6 text-sm mb-6">
                 <div className="text-center">
                   <div className="text-3xl mb-2">🔴</div>
-                  <div className="font-semibold text-foreground mb-1">15 Attack Patterns</div>
+                  <div className="font-semibold text-foreground mb-1">27 Attack Patterns</div>
                   <div className="text-xs text-muted-foreground">Real exploits from the wild</div>
                 </div>
                 <div className="text-center">
