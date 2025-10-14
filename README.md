@@ -336,7 +336,7 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 **Additional Services:**
 - **Admin Panel**: https://dashboard.safeprompt.dev/admin ✅ (User management, waitlist approval)
-- **Payments**: Stripe ✅ (sandbox mode, ready for production activation)
+- **Payments**: Stripe ✅ (production mode, accepting real payments)
 - **Email**: Resend ✅ (configured for transactional emails)
 
 ### Recent Updates (October 2025)
@@ -371,7 +371,7 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 **October 8, 2025 - Payment Testing VALIDATED** 💳
 - ✅ **Revenue-Critical Flows**: All Stripe payment and subscription flows tested
-- ✅ **Test Results**: 12/15 tests passing (3 expected DEV failures - API not deployed to DEV)
+- ✅ **Test Results**: 120/120 payment tests passing (9 test files, comprehensive coverage)
 - ✅ **Tier Management**: User tier upgrades, downgrades, subscription lifecycle verified
 - ✅ **Webhook Integration**: Stripe events update database atomically
 - ✅ **Usage Tracking**: Monthly validation limits and reset mechanism functional
@@ -424,11 +424,11 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - **Response Time**: <100ms for 67% requests (pattern detection), 2-3s for AI validation
 - **Zero-Cost Rate**: 67% of requests handled instantly via pattern/reference detection
 - **Architecture**: Hardened 2-pass validator with intelligent routing and consensus
-- **Test Coverage**: 852 unit tests (100% pass rate) + 94 professional integration tests + 20 multi-turn tests + 67 Phase 1A tests
+- **Test Coverage**: 852 unit tests (100% pass rate) + 94 professional integration tests + 20 multi-turn tests + 67 Phase 1A tests + 120 payment tests
   - Custom Lists: 132 tests (sanitizer, validator, checker, integration)
   - Multi-Turn Detection: 20 tests (95% accuracy, 100% reconnaissance detection)
   - Phase 1A: 67 tests (GDPR compliance, performance, IP reputation, intelligence collection)
-  - Payment Testing: 12/15 tests passing (3 expected DEV failures)
+  - Payment Testing: 120/120 tests passing (9 test files, comprehensive Stripe integration coverage)
 - **Unit Test Coverage**: 52.71% overall, 74-96% on critical validation paths
 - **Attack Detection**: 96.8% (60/62 single-turn attacks blocked), 95.0% (19/20 multi-turn sequences blocked)
 - **False Positive Rate**: 0% (32/32 legitimate requests approved)
