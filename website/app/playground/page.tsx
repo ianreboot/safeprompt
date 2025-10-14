@@ -85,7 +85,7 @@ const PLAYGROUND_TESTS = [
   },
 
   // ========================================
-  // TIER 2: TECHNIQUE-BASED ATTACKS (5)
+  // TIER 2: TECHNIQUE-BASED ATTACKS (6)
   // Intermediate - Requires encoding/context knowledge
   // ========================================
 
@@ -217,7 +217,7 @@ const PLAYGROUND_TESTS = [
   },
 
   // ========================================
-  // TIER 4: SOPHISTICATED ATTACKS (7)
+  // TIER 4: SOPHISTICATED ATTACKS (6)
   // Expert - Requires patience and expertise
   // ========================================
 
