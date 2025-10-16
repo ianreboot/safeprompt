@@ -84,13 +84,19 @@ class SessionManager {
   static async getOrCreateSession(req, userId = null, clientData = {}, sessionToken = null) {
     // PRIORITY 1: If explicit session_token provided, look it up first
     if (sessionToken) {
-      const { data: explicitSession, error: explicitError } = await getSupabase()
+      const query = getSupabase()
         .from('validation_sessions')
         .select('*')
         .eq('session_id', sessionToken)
         .eq('is_active', true)
-        .gt('expires_at', new Date().toISOString())
-        .single();
+        .gt('expires_at', new Date().toISOString());
+
+      // 🔒 SECURITY: Prevent session hijacking - verify session belongs to current user
+      if (userId) {
+        query.eq('user_id', userId);
+      }
+
+      const { data: explicitSession, error: explicitError } = await query.single();
 
       if (!explicitError && explicitSession) {
         // Update last_activity

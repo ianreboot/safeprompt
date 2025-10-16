@@ -152,13 +152,16 @@ export default async function handler(req, res) {
     let sanitizedCustomRules = null;
     if (customRules) {
       const sanitizeResult = sanitizeCustomRules(customRules, profile.subscription_tier);
-      if (!sanitizeResult.valid) {
+      // Check if there are any validation errors
+      const hasErrors = sanitizeResult.errors.whitelist.length > 0 ||
+                       sanitizeResult.errors.blacklist.length > 0;
+      if (hasErrors) {
         return res.status(400).json({
           error: 'Invalid custom rules',
           details: sanitizeResult.errors
         });
       }
-      sanitizedCustomRules = sanitizeResult.sanitized;
+      sanitizedCustomRules = sanitizeResult;
     }
 
     // Handle batch processing
