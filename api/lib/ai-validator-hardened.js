@@ -199,6 +199,23 @@ const COMMAND_INJECTION_PATTERNS = [
   /\|\|\s*(ls|cat|rm|wget|curl|nc|bash|sh)\s/i,    // Command chaining with ||
 ];
 
+// JSON injection patterns (privilege escalation via structured data)
+const JSON_INJECTION_PATTERNS = [
+  // Privilege escalation fields in JSON format
+  /"role"\s*:\s*"(admin|root|system|superuser|administrator)"/i,
+  /'role'\s*:\s*'(admin|root|system|superuser|administrator)'/i,
+  /"is_admin"\s*:\s*(true|1)/i,
+  /'is_admin'\s*:\s*(true|1)/i,
+  /"is_root"\s*:\s*(true|1)/i,
+  /'is_root'\s*:\s*(true|1)/i,
+  /"privileges?"\s*:\s*\[.*?(admin|root|write|delete|execute|sudo).*?\]/i,
+  /'privileges?'\s*:\s*\[.*?(admin|root|write|delete|execute|sudo).*?\]/i,
+  /"permissions?"\s*:\s*\[.*?(admin|root|write|delete|execute|sudo).*?\]/i,
+  /'permissions?'\s*:\s*\[.*?(admin|root|write|delete|execute|sudo).*?\]/i,
+  /"access_level"\s*:\s*"(admin|root|superuser|unrestricted)"/i,
+  /'access_level'\s*:\s*'(admin|root|superuser|unrestricted)'/i,
+];
+
 // Semantic extraction patterns (indirect information retrieval attacks)
 const SEMANTIC_EXTRACTION_PATTERNS = [
   // Riddles, rhymes, puzzles (existing)
@@ -293,6 +310,18 @@ function checkSQLInjection(text) {
  */
 function checkCommandInjection(text) {
   for (const pattern of COMMAND_INJECTION_PATTERNS) {
+    if (pattern.test(text)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Check for JSON injection patterns (privilege escalation via structured data)
+ */
+function checkJSONInjection(text) {
+  for (const pattern of JSON_INJECTION_PATTERNS) {
     if (pattern.test(text)) {
       return true;
     }
@@ -818,6 +847,7 @@ export async function validateHardened(prompt, options = {}) {
     templateDetected,
     sqlDetected,
     cmdDetected,
+    jsonDetected,
     semanticDetected,
     execDetected,
     isEducationalContext,
@@ -827,6 +857,7 @@ export async function validateHardened(prompt, options = {}) {
     Promise.resolve(checkTemplateInjection(prompt)),
     Promise.resolve(checkSQLInjection(prompt)),
     Promise.resolve(checkCommandInjection(prompt)),
+    Promise.resolve(checkJSONInjection(prompt)),
     Promise.resolve(checkSemanticExtraction(prompt)),
     Promise.resolve(checkExecutionCommands(prompt)),
     Promise.resolve(checkEducationalContext(prompt)),
@@ -923,6 +954,25 @@ export async function validateHardened(prompt, options = {}) {
       externalReferences: false,
       processingTime: Date.now() - startTime,
       stage: 'command_pattern',
+      cost: 0,
+      validationState: ValidationState.DEFINITELY_UNSAFE,
+      requiresAI: false,
+      patternContext: 'none'
+    };
+  }
+
+  // Stage -0.22: JSON Injection Detection
+  if (jsonDetected && !patternContext.detected && !isEducationalContext) {
+    // JSON injection pattern detected → DEFINITELY_UNSAFE (instant block)
+    // Detects privilege escalation via structured data (e.g., {"role": "admin", "permissions": ["write", "delete"]})
+    return {
+      safe: false,
+      confidence: 0.93,
+      threats: ['json_injection', 'privilege_escalation'],
+      reasoning: 'JSON injection pattern detected (privilege escalation via structured data - role, permissions, access_level fields)',
+      externalReferences: false,
+      processingTime: Date.now() - startTime,
+      stage: 'json_pattern',
       cost: 0,
       validationState: ValidationState.DEFINITELY_UNSAFE,
       requiresAI: false,

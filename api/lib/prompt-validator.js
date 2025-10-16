@@ -130,6 +130,14 @@ const PROMPT_INJECTION_PATTERNS = [
   /\[\s*system\s*\].*?:/i,
   /role:\s*(system|admin|root)\s*[\n;]/i,
 
+  // JSON injection - Privilege escalation via structured data
+  /[{"']\s*role\s*[}"']\s*:\s*[{"']\s*(admin|root|system|superuser|administrator)\s*[}"']/i,
+  /[{"']\s*is_admin\s*[}"']\s*:\s*(true|1)/i,
+  /[{"']\s*is_root\s*[}"']\s*:\s*(true|1)/i,
+  /[{"']\s*privileges?\s*[}"']\s*:\s*\[.*?(admin|root|write|delete|execute|sudo).*?\]/i,
+  /[{"']\s*permissions?\s*[}"']\s*:\s*\[.*?(admin|root|write|delete|execute|sudo).*?\]/i,
+  /[{"']\s*access_level\s*[}"']\s*:\s*[{"']?\s*(admin|root|superuser|unrestricted)/i,
+
   // Jailbreak attempts
   /activate\s+DAN\s+mode/i,
   /enable\s+jailbreak/i,
