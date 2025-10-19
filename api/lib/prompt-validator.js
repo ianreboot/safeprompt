@@ -196,6 +196,28 @@ const XSS_PATTERNS = [
 ];
 
 /**
+ * Critical injection patterns (SQL + Command)
+ * HIGH-CONFIDENCE patterns with low false positive risk
+ * Added 2025-10-19 based on pattern audit - only 5 most critical patterns
+ */
+const CRITICAL_INJECTION_PATTERNS = [
+  // SQL injection - DDL (Data Definition Language)
+  /;\s*DROP\s+TABLE\s+/i,                       // "; DROP TABLE users" - requires TABLE keyword
+
+  // SQL injection - DML mass deletion
+  /;\s*DELETE\s+FROM\s+\w+\s+WHERE\s+1\s*=\s*1/i, // "; DELETE FROM posts WHERE 1=1"
+
+  // SQL injection - database enumeration
+  /UNION\s+SELECT.*FROM\s+information_schema/i,  // "UNION SELECT * FROM information_schema.tables"
+
+  // Command injection - filesystem destruction
+  /&&\s*rm\s+-rf\s*\//i,                         // "&& rm -rf /" - specifically filesystem wipe
+
+  // Command injection - password file access
+  /\|\|\s*cat\s+\/etc\/passwd/i                  // "|| cat /etc/passwd"
+];
+
+/**
  * Polyglot payload patterns
  * Includes HTML+JavaScript and Markdown+HTML hybrids
  */
@@ -335,6 +357,17 @@ export function validatePromptSync(prompt) {
       }
     }
 
+    // Check for critical injection patterns (SQL + Command)
+    // Added 2025-10-19: Only 5 high-confidence patterns with low false positive risk
+    if (!isEducationalContext) {
+      for (const pattern of CRITICAL_INJECTION_PATTERNS) {
+        if (pattern.test(normalizedPrompt)) {
+          threats.push('critical_injection');
+          break;
+        }
+      }
+    }
+
     // Additional HTML tag check
     const hasHtmlTags = /<[^>]+>/.test(normalizedPrompt);
     if (hasHtmlTags && !threats.includes('xss_attempt')) {
@@ -413,6 +446,7 @@ export function calculateConfidence(validationResult) {
       'control_characters': 0.95,
       'prompt_injection': 0.90,
       'xss_attempt': 0.85,
+      'critical_injection': 0.92,          // NEW (2025-10-19): SQL/Command injection
       'polyglot_payload': 0.95,
       'html_injection': 0.70,
       'encoded_attack': 0.80,
