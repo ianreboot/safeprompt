@@ -1,10 +1,12 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-16 (Security Audit Complete - 2 Critical Fixes Deployed)
+**Last Updated**: 2025-10-19 (Pattern Security Enhancement + Password Reset Fixes Deployed)
 **Status**: Production Ready - DEV/PROD Fully Consistent, All Systems Operational, Security Hardened
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
 
 **🎉 Recent Milestones**:
+- **Pattern Security Enhancement** (2025-10-19): Added 5 critical injection patterns (SQL + Command) to Stage 1 detection, confirmed existing logging infrastructure is ML-ready (no additional logging needed), deployed to DEV+PROD
+- **Password Reset Fixes** (2025-10-19): Fixed 3 critical issues (Supabase rate limit 2→10/hour, race condition loading state, user-friendly error messages), deployed to DEV+PROD
 - **Security Audit Complete** (2025-10-16): 13 vulnerabilities assessed, 2 critical fixes deployed (custom rules validation bug, session hijacking), 11 accepted as design trade-offs, full audit documented
 - **PROD Deployment Complete** (2025-10-15): WaitlistForm fix deployed to production, DEV and PROD now fully consistent, ready for public launch
 - **Signup Flow Validation** (2025-10-14): Verified and fixed both paid and free signup flows work correctly, Early Bird option now properly redirects to Stripe checkout for instant access
@@ -795,6 +797,18 @@ Database (Supabase)
 - **CANNOT be overridden** by custom lists (security first)
 - Instant block if pattern matched WITHOUT business context
 - Routes to AI if pattern matched WITH business context (whitelist signal)
+
+**Critical Injection Patterns (Added 2025-10-19)**:
+Five high-confidence patterns added to detect SQL and command injection attacks:
+1. `DROP TABLE` statements (SQL DDL)
+2. `DELETE FROM ... WHERE 1=1` (SQL mass deletion)
+3. `UNION SELECT ... FROM information_schema` (SQL database enumeration)
+4. `rm -rf /` commands (Filesystem destruction)
+5. `cat /etc/passwd` commands (Password file access)
+
+**Implementation**: `/home/projects/safeprompt/api/lib/prompt-validator.js:198-218`
+**Testing**: 9/9 tests passed (attacks blocked, educational queries allowed)
+**ML Training**: Existing `threat_intelligence_samples` table already collects all data needed for ML-based detection (prompt_text, validation_result, attack_vectors, session_metadata). No additional logging infrastructure required.
 
 ### Stage 2: Pass 1 AI Validation (2-3s, Gemini 2.0 Flash)
 - Fast model for clear-cut cases
