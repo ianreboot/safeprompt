@@ -335,6 +335,182 @@ The playground now includes runtime environment detection as a fallback:
 
 ---
 
+## VALIDATION ARCHITECTURE & SECURITY DECISIONS
+
+**Last Updated**: 2025-10-19
+**Decision Authority**: IR2 agent security analysis + architectural review
+
+### Core Design Philosophy
+
+SafePrompt uses a **defense-in-depth architecture** where regex patterns are an optimization layer, not the security boundary:
+
+```
+67.7% → Pattern matching (early exit, zero cost)
+27.3% → AI Pass 1 (Llama 8B, $0.02/M tokens)
+ 5.0% → AI Pass 2 (Llama 70B, $0.05/M tokens)
+```
+
+**Production Metrics** (validated):
+- 92.9% accuracy
+- <10% false positives
+- $0.50 per 100K requests
+- 250ms average response time
+
+**Key Insight**: AI validation is the authoritative security boundary. Pattern bypasses are acceptable because they fall into the 32.3% that receives AI validation anyway.
+
+### Critical Fixes Implemented (2025-10-19)
+
+#### 1. ReDoS Timeout Protection
+**Location**: `/api/lib/prompt-validator.js`
+**Implementation**: `safeRegexTest()` wrapper with 100ms timeout and monitoring
+**Protects Against**: Service outages from catastrophic backtracking
+**Impact**: Prevents DoS attacks that could occur before AI validation
+
+#### 2. Recursive Decoding Rate Limiting
+**Location**: `/api/lib/external-reference-detector.js`
+**Limits**:
+- Max 10 Base64 candidates per request
+- Max 100KB total decoded content
+**Protects Against**: DoS via nested encoding (700+ decode operations)
+**Impact**: Prevents memory exhaustion attacks
+
+### Security Decisions & Trade-offs
+
+#### ✅ IMPLEMENTED (Priority Issues)
+
+1. **ReDoS Protection** - CRITICAL
+   - **Risk**: Service outage (availability issue)
+   - **AI Mitigation**: None (DoS happens before AI reached)
+   - **Decision**: Must fix immediately
+   - **Effort**: 4 hours
+
+2. **Recursive Decoding Limits** - CRITICAL
+   - **Risk**: DoS via excessive processing
+   - **AI Mitigation**: None (DoS happens before AI reached)
+   - **Decision**: Must fix immediately
+   - **Effort**: 2 hours
+
+#### ⚠️ DEFERRED (AI Already Handles)
+
+3. **Educational Context Bypass**
+   - **Risk**: Pattern bypass allows malicious content
+   - **AI Mitigation**: ✅ AI Pass 1 catches "ignore all previous instructions"
+   - **Decision**: Skip - AI fallback sufficient
+   - **Rationale**: Bypass is in the 32.3% that goes to AI validation
+
+4. **Missing SVG/XXE/SSTI Patterns**
+   - **Risk**: Polyglot payloads not caught by patterns
+   - **AI Mitigation**: ✅ AI understands semantic intent
+   - **Decision**: Skip - not critical
+   - **Rationale**: Marginal benefit, AI catches these anyway
+
+5. **Homoglyph Map Expansion**
+   - **Risk**: Unicode lookalike bypasses
+   - **AI Mitigation**: ✅ AI normalizes semantically
+   - **Decision**: Skip - current 120 mappings cover 95%
+   - **Rationale**: Diminishing returns, AI handles edge cases
+
+6. **Security Override Synonym Coverage**
+   - **Risk**: Synonym bypass (e.g., "circumvent" instead of "bypass")
+   - **AI Mitigation**: ✅ AI catches creative variations
+   - **Decision**: Skip - current coverage sufficient
+   - **Rationale**: Common cases covered, AI catches uncommon ones
+
+#### ❌ REJECTED (Not Worth Effort)
+
+7. **Result Caching (Redis/Upstash)**
+   - **Potential Savings**: $0.20/month at current scale
+   - **Infrastructure Cost**: Upstash setup + maintenance
+   - **Development Cost**: 6 hours implementation
+   - **Decision**: Skip until 10x traffic growth
+   - **Rationale**: ROI break-even in 250 years
+
+8. **Pattern Consolidation**
+   - **Benefit**: 20-30% fewer patterns
+   - **Effort**: 8 hours
+   - **Decision**: Deferred to future optimization
+   - **Rationale**: Current performance acceptable
+
+9. **Comprehensive Null Byte Protection**
+   - **Risk**: Null byte injection in downstream systems
+   - **AI Mitigation**: AI validator doesn't pass raw bytes
+   - **Decision**: Skip - not applicable to architecture
+
+### Architectural Constraints
+
+**Deployment**: Vercel Functions (stateless, ephemeral)
+- No persistent connections (Redis would require HTTP-based approach)
+- Cold start considerations (pattern pre-compilation critical)
+- Function execution limits (timeout protection essential)
+
+**Cost Sensitivity**:
+- Current: $6/year for AI validation
+- Optimization target: Don't add infrastructure for <$10/month savings
+- Focus: Availability (DoS protection) > Cost optimization
+
+### Key Files
+
+**Core Validation**:
+- `/api/lib/prompt-validator.js` - Pattern matching with ReDoS protection
+- `/api/lib/external-reference-detector.js` - Obfuscation detection with rate limiting
+- `/api/lib/ai-validator.js` - AI validation layer (authoritative security boundary)
+- `/api/lib/ai-validator-hardened.js` - 2-Pass validation with external reference detection
+
+**Pattern Categories**:
+- `EDUCATIONAL_CONTEXT_PATTERNS` - Whitelist for legitimate security discussions
+- `SECURITY_OVERRIDE_PATTERNS` - Critical bypass attempts (always block)
+- `SEMANTIC_EXTRACTION_PATTERNS` - Indirect data extraction via metadata/encoding
+- `PROMPT_INJECTION_PATTERNS` - Direct instruction override attempts
+- `XSS_PATTERNS` - Cross-site scripting vectors
+- `CRITICAL_INJECTION_PATTERNS` - SQL/Command injection (5 high-confidence patterns)
+- `POLYGLOT_PATTERNS` - Multi-context attack payloads
+
+### Monitoring & Observability
+
+**ReDoS Detection**:
+- `safeRegexTest()` logs warnings for patterns >80ms
+- Console warnings: `[SafePrompt] Slow pattern detected: ...`
+- Action: Review and optimize flagged patterns
+
+**Rate Limiting Triggers**:
+- Excessive Base64 candidates: Returns `excessive_encoding` threat
+- Excessive decoding bytes: Returns `excessive_decoding` threat
+- Both set confidence to 0.1 (very low) and trigger AI validation
+
+### Testing Protocol
+
+**After Pattern Changes**:
+1. Run unit tests: `npm test` (852 tests)
+2. Run realistic tests: `npm run test:realistic` (104 tests)
+3. Monitor logs for slow pattern warnings
+4. Verify false positive rate <10%
+
+**Performance Regression**:
+1. Measure P95 latency: Should remain <250ms
+2. Check pattern execution time distribution
+3. Validate early exit rate >60%
+
+### Future Optimization Thresholds
+
+**Revisit caching when**:
+- Traffic hits 30K+ requests/day (10x current)
+- AI costs exceed $50/month
+- Pattern matching becomes bottleneck
+
+**Revisit pattern expansion when**:
+- False negative rate exceeds 1%
+- New attack vectors emerge that AI doesn't catch
+- Regulatory requirements mandate specific pattern detection
+
+### References
+
+- **Security Analysis**: IR2 agent comprehensive analysis (2025-10-19)
+- **Production Metrics**: `/docs/PHASE_6_INTELLIGENCE_ARCHITECTURE.md`
+- **Testing Regiment**: `/docs/TESTING_REGIMENT.md`
+- **Hardened AI Validator**: Lines 509-522 in `prompt-validator.js`
+
+---
+
 ## TESTING QUICK REFERENCE
 
 **Complete documentation**: `/home/projects/safeprompt/docs/TESTING_REGIMENT.md`

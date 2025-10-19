@@ -237,7 +237,26 @@ export class ExternalReferenceDetector {
     // Check for base64 encoding (with recursive decoding for nested Base64)
     // Lowered threshold from 30 to 16 chars to catch shorter encoded URLs
     // (e.g., "http://evil.com" encodes to 20 chars)
+    // Rate limiting: Prevent DoS via excessive Base64 candidates
+    const MAX_BASE64_CANDIDATES = 10;
+    const MAX_DECODE_BYTES = 100000; // 100KB total decoded content
+
     const base64Candidates = normalized.match(/[a-zA-Z0-9+\/]{16,}={0,2}/g) || [];
+
+    // Check for excessive encoding attempts (DoS protection)
+    if (base64Candidates.length > MAX_BASE64_CANDIDATES) {
+      results.hasExternalReferences = true;
+      results.types.push('excessive_encoding');
+      results.confidence = 0.1; // Very low confidence due to suspicious volume
+      results.obfuscationDetected = true;
+      results.reasoning.push(`Excessive Base64 candidates detected (${base64Candidates.length}) - likely DoS or evasion attempt`);
+      results.reasoning.push('External content cannot be validated by SafePrompt');
+      results.reasoning.push('Manual review recommended before processing');
+      return results;
+    }
+
+    let totalDecoded = 0;
+
     for (const candidate of base64Candidates) {
       try {
         // Try recursive decoding up to 7 levels (defense against deep encoding)
@@ -246,6 +265,17 @@ export class ExternalReferenceDetector {
 
         for (let level = 1; level <= 7; level++) {
           const attemptDecode = Buffer.from(decoded, 'base64').toString('utf-8');
+
+          // Track total bytes decoded (DoS protection)
+          totalDecoded += attemptDecode.length;
+          if (totalDecoded > MAX_DECODE_BYTES) {
+            results.hasExternalReferences = true;
+            results.types.push('excessive_decoding');
+            results.confidence = 0.1;
+            results.obfuscationDetected = true;
+            results.reasoning.push(`Excessive decoding detected (${totalDecoded} bytes) - likely DoS attempt`);
+            return results;
+          }
 
           // Check if this level looks like a URL/IP
           if (this.looksLikeURL(attemptDecode) || this.looksLikeIP(attemptDecode)) {

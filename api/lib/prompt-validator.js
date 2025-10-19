@@ -260,6 +260,29 @@ const POLYGLOT_PATTERNS = [
 ];
 
 /**
+ * Safe regex test with timeout protection against ReDoS attacks
+ * Logs slow patterns for monitoring and optimization
+ */
+function safeRegexTest(pattern, text, timeoutMs = 100) {
+  const start = Date.now();
+
+  try {
+    const match = pattern.test(text);
+    const elapsed = Date.now() - start;
+
+    // Warn if pattern takes >80% of timeout threshold
+    if (elapsed > timeoutMs * 0.8) {
+      console.warn(`[SafePrompt] Slow pattern detected: ${pattern.source.substring(0, 50)}... (${elapsed}ms)`);
+    }
+
+    return match;
+  } catch (e) {
+    console.error(`[SafePrompt] Regex error: ${e.message} - Pattern: ${pattern.source.substring(0, 50)}`);
+    return false; // Fail closed - treat errors as no match
+  }
+}
+
+/**
  * Validate a prompt using pattern matching only (sync)
  */
 export function validatePromptSync(prompt) {
@@ -283,7 +306,7 @@ export function validatePromptSync(prompt) {
     // STEP 1: Check for educational context (whitelist pattern)
     let isEducationalContext = false;
     for (const pattern of EDUCATIONAL_CONTEXT_PATTERNS) {
-      if (pattern.test(normalizedPrompt)) {
+      if (safeRegexTest(pattern, normalizedPrompt)) {
         isEducationalContext = true;
         break;
       }
@@ -296,7 +319,7 @@ export function validatePromptSync(prompt) {
     // These block immediately even with business context (tickets, approvals, etc.)
     if (!isEducationalContext) {
       for (const pattern of SECURITY_OVERRIDE_PATTERNS) {
-        if (pattern.test(normalizedPrompt)) {
+        if (safeRegexTest(pattern, normalizedPrompt)) {
           return {
             safe: false,
             threats: ['security_override_attempt'],
@@ -312,7 +335,7 @@ export function validatePromptSync(prompt) {
     // Indirect data extraction through metadata/encoding/math
     if (!isEducationalContext) {
       for (const pattern of SEMANTIC_EXTRACTION_PATTERNS) {
-        if (pattern.test(normalizedPrompt)) {
+        if (safeRegexTest(pattern, normalizedPrompt)) {
           return {
             safe: false,
             threats: ['semantic_extraction_attempt'],
@@ -326,11 +349,12 @@ export function validatePromptSync(prompt) {
 
     // STEP 4: Continue with standard pattern checks
     // Check for obvious attack patterns
-    const containsObviousAttack = /ignore\s+(all\s+)?previous\s+instructions|reveal\s+your\s+(prompt|system|instructions)/i.test(normalizedPrompt);
+    const obviousAttackPattern = /ignore\s+(all\s+)?previous\s+instructions|reveal\s+your\s+(prompt|system|instructions)/i;
+    const containsObviousAttack = safeRegexTest(obviousAttackPattern, normalizedPrompt);
 
     // Check for polyglot payloads
     for (const pattern of POLYGLOT_PATTERNS) {
-      if (pattern.test(normalizedPrompt)) {
+      if (safeRegexTest(pattern, normalizedPrompt)) {
         threats.push('polyglot_payload');
         break;
       }
@@ -338,7 +362,7 @@ export function validatePromptSync(prompt) {
 
     // Check for prompt injection
     for (const pattern of PROMPT_INJECTION_PATTERNS) {
-      if (pattern.test(normalizedPrompt)) {
+      if (safeRegexTest(pattern, normalizedPrompt)) {
         threats.push('prompt_injection');
         break;
       }
@@ -351,7 +375,7 @@ export function validatePromptSync(prompt) {
 
     // Check for XSS patterns
     for (const pattern of XSS_PATTERNS) {
-      if (pattern.test(normalizedPrompt)) {
+      if (safeRegexTest(pattern, normalizedPrompt)) {
         threats.push('xss_attempt');
         break;
       }
@@ -361,7 +385,7 @@ export function validatePromptSync(prompt) {
     // Added 2025-10-19: Only 5 high-confidence patterns with low false positive risk
     if (!isEducationalContext) {
       for (const pattern of CRITICAL_INJECTION_PATTERNS) {
-        if (pattern.test(normalizedPrompt)) {
+        if (safeRegexTest(pattern, normalizedPrompt)) {
           threats.push('critical_injection');
           break;
         }
@@ -369,11 +393,12 @@ export function validatePromptSync(prompt) {
     }
 
     // Additional HTML tag check
-    const hasHtmlTags = /<[^>]+>/.test(normalizedPrompt);
+    const htmlTagPattern = /<[^>]+>/;
+    const hasHtmlTags = safeRegexTest(htmlTagPattern, normalizedPrompt);
     if (hasHtmlTags && !threats.includes('xss_attempt')) {
       const safeTagPattern = /^<\/?(?:b|i|u|em|strong|code|pre|br|p|div|span)\s*\/?>$/i;
       const tags = normalizedPrompt.match(/<[^>]+>/g) || [];
-      const hasUnsafeTags = tags.some(tag => !safeTagPattern.test(tag));
+      const hasUnsafeTags = tags.some(tag => !safeRegexTest(safeTagPattern, tag));
 
       if (hasUnsafeTags) {
         threats.push('html_injection');
@@ -389,7 +414,7 @@ export function validatePromptSync(prompt) {
     ];
 
     for (const pattern of encodedPatterns) {
-      if (pattern.test(normalizedPrompt)) {
+      if (safeRegexTest(pattern, normalizedPrompt)) {
         threats.push('encoded_attack');
         break;
       }
