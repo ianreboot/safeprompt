@@ -33,12 +33,12 @@ const mockIpManagement = {
 };
 
 // Set up mocks before imports
-vi.mock('../../lib/supabase.js', async () => ({
+vi.mock('../lib/supabase.js', async () => ({
   supabase: mockSupabase,
   default: mockSupabase
 }));
 
-vi.mock('../../lib/ip-management.js', async () => mockIpManagement);
+vi.mock('../lib/ip-management.js', async () => mockIpManagement);
 
 describe('Admin Endpoints - Authorization', () => {
   beforeEach(() => {

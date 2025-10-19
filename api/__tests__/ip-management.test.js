@@ -246,7 +246,7 @@ describe('IP Management - Priority Logic', () => {
 
       expect(result.allowed).toBe(true);
       expect(result.source).toBe('whitelist');
-      expect(result.reason).toContain('whitelisted');
+      expect(result.reason).toBe('Trusted partner'); // Returns the actual reason from whitelist
     });
 
     it('should block blacklisted IP if not whitelisted', async () => {
