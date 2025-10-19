@@ -13,6 +13,7 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [validToken, setValidToken] = useState(false)
+  const [checkingToken, setCheckingToken] = useState(true)
 
   function validatePassword(password: string): string | null {
     if (password.length < 12) {
@@ -38,6 +39,7 @@ export default function ResetPassword() {
       } else {
         setError('Invalid or expired reset link. Please request a new one.')
       }
+      setCheckingToken(false)
     })
   }, [])
 
@@ -95,7 +97,12 @@ export default function ResetPassword() {
             </p>
           </div>
 
-          {!validToken ? (
+          {checkingToken ? (
+            <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 text-center">
+              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-gray-400">Verifying reset link...</p>
+            </div>
+          ) : !validToken ? (
             <div className="bg-red-900/50 border border-red-800 rounded-lg p-6 text-center">
               <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
               <p className="text-red-400 mb-2">Invalid reset link</p>

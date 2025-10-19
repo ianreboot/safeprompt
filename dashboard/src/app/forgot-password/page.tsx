@@ -22,11 +22,29 @@ export default function ForgotPassword() {
         redirectTo: `${window.location.origin}/reset-password`,
       })
 
-      if (error) throw error
+      if (error) {
+        // Provide user-friendly error messages
+        if (error.message.includes('rate limit') || error.message.includes('Email rate limit exceeded')) {
+          throw new Error(
+            'Too many password reset requests. Please wait a few minutes and try again. ' +
+            'If you need immediate assistance, contact support@safeprompt.dev'
+          )
+        }
+
+        // Handle invalid email
+        if (error.message.includes('Invalid') || error.message.includes('not found')) {
+          throw new Error(
+            'We couldn\'t find an account with that email address. Please check the email and try again.'
+          )
+        }
+
+        // Generic error
+        throw error
+      }
 
       setSent(true)
     } catch (error: any) {
-      setError(error.message || 'An error occurred')
+      setError(error.message || 'An error occurred. Please try again later.')
     } finally {
       setLoading(false)
     }

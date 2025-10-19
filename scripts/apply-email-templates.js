@@ -162,7 +162,9 @@ function applyConfig(projectRef, environment) {
       smtp_user: 'resend',
       smtp_pass: RESEND_API_KEY,
       smtp_admin_email: 'noreply@safeprompt.dev',
-      smtp_sender_name: 'SafePrompt'
+      smtp_sender_name: 'SafePrompt',
+      // Rate limiting (increased from default 2/hour to 10/hour)
+      rate_limit_email_sent: 10
     });
 
     const options = {
