@@ -600,6 +600,7 @@ export async function validateUnified(prompt, options = {}) {
         processingTime: Date.now() - startTime,
         stage: 'pass1',
         cost: stats.totalCost,
+        needsReview: true,
         stats
       };
     }
@@ -678,6 +679,7 @@ export async function validateUnified(prompt, options = {}) {
           processingTime: Date.now() - startTime,
           stage: 'pass2',
           cost: stats.totalCost,
+          needsReview: true,
           stats
         };
       }

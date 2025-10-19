@@ -84,7 +84,11 @@ describe('Unified AI Validator - Stage 1: Pattern Detection', () => {
   });
 
   it('should proceed to AI when patterns + context detected (requiresAI=true)', async () => {
-    const now = Date.now();
+    const baseTime = 1700000000000;
+
+    // Use fake timers for complete Date control
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
 
     // Mock pattern detector returning suspicious (needs AI)
     detectPatterns.mockReturnValue({
@@ -117,7 +121,7 @@ describe('Unified AI Validator - Stage 1: Pattern Detection', () => {
               confidence: 0.95,
               context: 'Educational discussion about XSS',
               legitimate_signals: ['explain', 'educational'],
-              validation_token: now
+              validation_token: baseTime
             })
           }
         }],
@@ -132,6 +136,8 @@ describe('Unified AI Validator - Stage 1: Pattern Detection', () => {
     expect(result.stage).toBe('pass1');
     expect(result.cost).toBeGreaterThanOrEqual(0); // AI was called (may be 0 for free model)
     expect(fetch).toHaveBeenCalledTimes(1); // Only Pass 1 called
+
+    vi.useRealTimers();
   });
 });
 
@@ -368,18 +374,27 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => {
   });
 
   it('should return Pass 2 final decision', async () => {
-    const now = Date.now();
+    const baseTime = 1700000000000;
 
-    // Pass 1 uncertain
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [{ message: { content: JSON.stringify({
-          risk: 'medium', confidence: 0.7, context: 'Ambiguous',
-          legitimate_signals: [], validation_token: now
-        })}}],
-        usage: { total_tokens: 100 }
-      })
+    // Use fake timers for complete Date control
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
+
+    // Pass 1 uncertain - advance timer after this call
+    fetch.mockImplementationOnce(async () => {
+      const response = {
+        ok: true,
+        json: async () => ({
+          choices: [{ message: { content: JSON.stringify({
+            risk: 'medium', confidence: 0.7, context: 'Ambiguous',
+            legitimate_signals: [], validation_token: baseTime
+          })}}],
+          usage: { total_tokens: 100 }
+        })
+      };
+      // Advance time after Pass 1 response (simulates time passing)
+      vi.advanceTimersByTime(1);
+      return response;
     });
 
     // Pass 2 decisive
@@ -391,7 +406,7 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => {
           confidence: 0.92,
           threats: [],
           reasoning: 'Legitimate after deep analysis',
-          validation_token: now + 1
+          validation_token: baseTime + 1
         })}}],
         usage: { total_tokens: 150 }
       })
@@ -404,6 +419,8 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => {
     expect(result.threats).toEqual([]);
     expect(result.stage).toBe('pass2');
     expect(result.reasoning).toContain('Legitimate after deep analysis');
+
+    vi.useRealTimers();
   });
 });
 
@@ -501,7 +518,11 @@ describe('Unified AI Validator - Error Handling', () => {
   });
 
   it('should fallback to Pass 1 on Pass 2 error', async () => {
-    const now = Date.now();
+    const baseTime = 1700000000000;
+
+    // Use fake timers for complete Date control
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
 
     // Pass 1 succeeds (uncertain)
     fetch.mockResolvedValueOnce({
@@ -509,7 +530,7 @@ describe('Unified AI Validator - Error Handling', () => {
       json: async () => ({
         choices: [{ message: { content: JSON.stringify({
           risk: 'medium', confidence: 0.7, context: 'Uncertain',
-          legitimate_signals: [], validation_token: now
+          legitimate_signals: [], validation_token: baseTime
         })}}],
         usage: { total_tokens: 100 }
       })
@@ -520,10 +541,16 @@ describe('Unified AI Validator - Error Handling', () => {
 
     const result = await validateUnified('Test');
 
-    // Note: Due to validation token mismatch, this may return protocol_integrity_violation
-    // instead of reaching the Pass 2 error handling code
-    expect(result.safe).toBe(false); // Changed: protocol violation fails closed
-    expect(['protocol_integrity_violation', 'pass2_error']).toContain(result.threats[0]);
+    // finalSafe = pass1Data.risk !== 'high'
+    // 'medium' !== 'high' → true (allows through with reduced confidence)
+    expect(result.safe).toBe(true);
+    expect(result.confidence).toBeLessThan(0.7); // Degraded confidence
+    expect(result.threats).toContain('pass2_error');
+    expect(result.reasoning).toContain('Pass 2 error');
+    expect(result.stage).toBe('pass1_fallback');
+    expect(result.needsReview).toBe(true);
+
+    vi.useRealTimers();
   });
 
   it('should fail closed on protocol integrity violation (Pass 1)', async () => {
