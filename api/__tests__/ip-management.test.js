@@ -3,26 +3,28 @@
  * Tests Phase 1C whitelist/blacklist priority checking
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
 
 // Mock supabase client
 const mockSupabase = {
-  from: jest.fn(() => mockSupabase),
-  select: jest.fn(() => mockSupabase),
-  insert: jest.fn(() => mockSupabase),
-  update: jest.fn(() => mockSupabase),
-  delete: jest.fn(() => mockSupabase),
-  upsert: jest.fn(() => mockSupabase),
-  eq: jest.fn(() => mockSupabase),
-  or: jest.fn(() => mockSupabase),
-  single: jest.fn(),
-  order: jest.fn(() => mockSupabase),
-  limit: jest.fn(() => mockSupabase),
-  range: jest.fn(() => mockSupabase)
+  from: vi.fn(() => mockSupabase),
+  select: vi.fn(() => mockSupabase),
+  insert: vi.fn(() => mockSupabase),
+  update: vi.fn(() => mockSupabase),
+  delete: vi.fn(() => mockSupabase),
+  upsert: vi.fn(() => mockSupabase),
+  eq: vi.fn(() => mockSupabase),
+  or: vi.fn(() => mockSupabase),
+  single: vi.fn(),
+  order: vi.fn(() => mockSupabase),
+  limit: vi.fn(() => mockSupabase),
+  range: vi.fn(() => mockSupabase)
 };
 
-jest.unstable_mockModule('../lib/supabase.js', () => ({
-  supabase: mockSupabase
+// Set up mock before imports
+vi.mock('../lib/supabase.js', async () => ({
+  supabase: mockSupabase,
+  default: mockSupabase
 }));
 
 const {
@@ -35,7 +37,7 @@ const {
 
 describe('IP Management - Priority Logic', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('checkIpWhitelist', () => {
@@ -380,7 +382,7 @@ describe('IP Management - Priority Logic', () => {
 
 describe('IP Management - Edge Cases', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should handle expired whitelist entries correctly', async () => {

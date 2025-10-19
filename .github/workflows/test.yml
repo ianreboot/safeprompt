@@ -34,10 +34,14 @@ jobs:
       - name: Run unit tests
         working-directory: ./api
         run: npm test
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Run tests with coverage
         working-directory: ./api
         run: npm run test:coverage
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

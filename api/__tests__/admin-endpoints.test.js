@@ -3,44 +3,46 @@
  * Tests Phase 1C admin IP management endpoints
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
 
 // Mock supabase and ip-management modules
 const mockSupabase = {
-  from: jest.fn(() => mockSupabase),
-  select: jest.fn(() => mockSupabase),
-  insert: jest.fn(() => mockSupabase),
-  delete: jest.fn(() => mockSupabase),
-  eq: jest.fn(() => mockSupabase),
-  single: jest.fn(),
-  order: jest.fn(() => mockSupabase),
-  range: jest.fn(() => mockSupabase)
+  from: vi.fn(() => mockSupabase),
+  select: vi.fn(() => mockSupabase),
+  insert: vi.fn(() => mockSupabase),
+  delete: vi.fn(() => mockSupabase),
+  eq: vi.fn(() => mockSupabase),
+  single: vi.fn(),
+  order: vi.fn(() => mockSupabase),
+  range: vi.fn(() => mockSupabase)
 };
 
 const mockIpManagement = {
-  isUserAdmin: jest.fn(),
-  getIpReputationList: jest.fn(),
-  checkIpWhitelist: jest.fn(),
-  checkIpBlacklist: jest.fn(),
-  checkIpReputation: jest.fn(),
-  manuallyBlockIp: jest.fn(),
-  unblockIp: jest.fn(),
-  addToWhitelist: jest.fn(),
-  removeFromWhitelist: jest.fn(),
-  addToBlacklist: jest.fn(),
-  removeFromBlacklist: jest.fn(),
-  getAuditLog: jest.fn()
+  isUserAdmin: vi.fn(),
+  getIpReputationList: vi.fn(),
+  checkIpWhitelist: vi.fn(),
+  checkIpBlacklist: vi.fn(),
+  checkIpReputation: vi.fn(),
+  manuallyBlockIp: vi.fn(),
+  unblockIp: vi.fn(),
+  addToWhitelist: vi.fn(),
+  removeFromWhitelist: vi.fn(),
+  addToBlacklist: vi.fn(),
+  removeFromBlacklist: vi.fn(),
+  getAuditLog: vi.fn()
 };
 
-jest.unstable_mockModule('../../lib/supabase.js', () => ({
-  supabase: mockSupabase
+// Set up mocks before imports
+vi.mock('../../lib/supabase.js', async () => ({
+  supabase: mockSupabase,
+  default: mockSupabase
 }));
 
-jest.unstable_mockModule('../../lib/ip-management.js', () => mockIpManagement);
+vi.mock('../../lib/ip-management.js', async () => mockIpManagement);
 
 describe('Admin Endpoints - Authorization', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should reject requests without API key', async () => {
@@ -52,8 +54,8 @@ describe('Admin Endpoints - Authorization', () => {
       query: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -76,8 +78,8 @@ describe('Admin Endpoints - Authorization', () => {
       query: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -102,8 +104,8 @@ describe('Admin Endpoints - Authorization', () => {
       query: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -133,8 +135,8 @@ describe('Admin Endpoints - Authorization', () => {
       query: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -145,7 +147,7 @@ describe('Admin Endpoints - Authorization', () => {
 
 describe('GET /api/admin/ip-reputation', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Setup admin auth
     mockSupabase.single.mockResolvedValue({
       data: { user_id: 'admin-123', revoked: false },
@@ -171,8 +173,8 @@ describe('GET /api/admin/ip-reputation', () => {
       query: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -201,8 +203,8 @@ describe('GET /api/admin/ip-reputation', () => {
       query: { limit: '25', offset: '50' }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -230,8 +232,8 @@ describe('GET /api/admin/ip-reputation', () => {
       query: { limit: '500' }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -262,8 +264,8 @@ describe('GET /api/admin/ip-reputation', () => {
       }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -286,8 +288,8 @@ describe('GET /api/admin/ip-reputation', () => {
       query: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -299,7 +301,7 @@ describe('GET /api/admin/ip-reputation', () => {
 
 describe('POST /api/admin/ip-reputation/[ip]/block', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSupabase.single.mockResolvedValue({
       data: { user_id: 'admin-123', revoked: false },
       error: null
@@ -322,8 +324,8 @@ describe('POST /api/admin/ip-reputation/[ip]/block', () => {
       body: { reason: 'Suspicious activity detected' }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -346,8 +348,8 @@ describe('POST /api/admin/ip-reputation/[ip]/block', () => {
       body: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -368,8 +370,8 @@ describe('POST /api/admin/ip-reputation/[ip]/block', () => {
       body: { reason: '   ' }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -387,8 +389,8 @@ describe('POST /api/admin/ip-reputation/[ip]/block', () => {
       body: { reason: 'Test reason' }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -402,7 +404,7 @@ describe('POST /api/admin/ip-reputation/[ip]/block', () => {
 
 describe('POST /api/admin/ip-reputation/[ip]/unblock', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSupabase.single.mockResolvedValue({
       data: { user_id: 'admin-123', revoked: false },
       error: null
@@ -425,8 +427,8 @@ describe('POST /api/admin/ip-reputation/[ip]/unblock', () => {
       body: { reason: 'False positive confirmed' }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -449,8 +451,8 @@ describe('POST /api/admin/ip-reputation/[ip]/unblock', () => {
       body: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -461,7 +463,7 @@ describe('POST /api/admin/ip-reputation/[ip]/unblock', () => {
 
 describe('Whitelist Management Endpoints', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSupabase.single.mockResolvedValue({
       data: { user_id: 'admin-123', revoked: false },
       error: null
@@ -487,8 +489,8 @@ describe('Whitelist Management Endpoints', () => {
       }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -517,8 +519,8 @@ describe('Whitelist Management Endpoints', () => {
       body: { reason: 'No longer needed' }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -534,7 +536,7 @@ describe('Whitelist Management Endpoints', () => {
 
 describe('Blacklist Management Endpoints', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSupabase.single.mockResolvedValue({
       data: { user_id: 'admin-123', revoked: false },
       error: null
@@ -561,8 +563,8 @@ describe('Blacklist Management Endpoints', () => {
       }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -591,8 +593,8 @@ describe('Blacklist Management Endpoints', () => {
       }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -618,8 +620,8 @@ describe('Blacklist Management Endpoints', () => {
       body: { reason: 'False positive' }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -635,7 +637,7 @@ describe('Blacklist Management Endpoints', () => {
 
 describe('GET /api/admin/audit-log', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSupabase.single.mockResolvedValue({
       data: { user_id: 'admin-123', revoked: false },
       error: null
@@ -665,8 +667,8 @@ describe('GET /api/admin/audit-log', () => {
       query: {}
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
@@ -699,8 +701,8 @@ describe('GET /api/admin/audit-log', () => {
       }
     };
     const res = {
-      status: jest.fn(() => res),
-      json: jest.fn()
+      status: vi.fn(() => res),
+      json: vi.fn()
     };
 
     await handler(req, res);
