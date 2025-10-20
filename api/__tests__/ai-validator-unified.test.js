@@ -24,7 +24,7 @@ beforeAll(() => {
   process.env.OPENROUTER_API_KEY = 'test-api-key-for-testing';
 });
 
-describe.skip('Unified AI Validator - Stage 1: Pattern Detection', () => {  // SKIP: Flaky mock tests
+describe('Unified AI Validator - Stage 1: Pattern Detection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -141,7 +141,7 @@ describe.skip('Unified AI Validator - Stage 1: Pattern Detection', () => {  // S
   });
 });
 
-describe.skip('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {  // SKIP: Flaky mock tests
+describe('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -197,7 +197,34 @@ describe.skip('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => { 
     expect(body.messages[1].role).toBe('user');
   });
 
-  // Removed flaky test: Mock-based test with timing issues
+  it('should return immediately on high confidence safe (Pass 1)', async () => {
+    const now = Date.now();
+
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        choices: [{
+          message: {
+            content: JSON.stringify({
+              risk: 'low',
+              confidence: 0.95,
+              context: 'Clearly safe educational content',
+              legitimate_signals: ['explain', 'educational'],
+              validation_token: now
+            })
+          }
+        }],
+        usage: { total_tokens: 100 }
+      })
+    });
+
+    const result = await validateUnified('Test prompt');
+
+    expect(result.safe).toBe(true);
+    expect(result.confidence).toBeGreaterThanOrEqual(0.9);
+    expect(result.stage).toBe('pass1');
+    expect(fetch).toHaveBeenCalledTimes(1); // Only Pass 1, no Pass 2
+  });
 
   it('should return immediately on high confidence unsafe (Pass 1)', async () => {
     const now = Date.now();
@@ -276,7 +303,7 @@ describe.skip('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => { 
   });
 });
 
-describe.skip('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => {  // SKIP: Flaky mock tests
+describe('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -291,12 +318,113 @@ describe.skip('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => { 
     });
   });
 
-  // Removed flaky test: Pass 2 context sharing - mock-based with timing issues
+  it('should call Pass 2 with Pass 1 context', async () => {
+    const now = Date.now();
 
-  // Removed flaky test: Pass 2 final decision - fake timers causing validation_token mismatches
+    // Mock Pass 1 uncertain
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        choices: [{
+          message: {
+            content: JSON.stringify({
+              risk: 'medium',
+              confidence: 0.65,
+              context: 'Business context with SQL keywords',
+              legitimate_signals: ['meeting', 'order'],
+              validation_token: now
+            })
+          }
+        }],
+        usage: { total_tokens: 100 }
+      })
+    });
+
+    // Mock Pass 2
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        choices: [{
+          message: {
+            content: JSON.stringify({
+              safe: false,
+              confidence: 0.88,
+              threats: ['sql_injection'],
+              reasoning: 'SQL injection attempt disguised as business query',
+              validation_token: now + 1
+            })
+          }
+        }],
+        usage: { total_tokens: 180 }
+      })
+    });
+
+    await validateUnified('Test prompt');
+
+    expect(fetch).toHaveBeenCalledTimes(2);
+
+    // Check Pass 2 call
+    const [url2, options2] = fetch.mock.calls[1];
+    expect(url2).toBe('https://openrouter.ai/api/v1/chat/completions');
+
+    const body2 = JSON.parse(options2.body);
+    expect(body2.model).toContain('gemini'); // Pass 2 uses Gemini 2.5 Flash
+    expect(body2.messages[0].content).toContain('CONTEXT FROM INITIAL ANALYSIS');
+    expect(body2.messages[0].content).toContain('Risk Level: medium');
+  });
+
+  it('should return Pass 2 final decision', async () => {
+    const baseTime = 1700000000000;
+
+    // Use fake timers for complete Date control
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
+
+    // Pass 1 uncertain - advance timer after this call
+    fetch.mockImplementationOnce(async () => {
+      const response = {
+        ok: true,
+        json: async () => ({
+          choices: [{ message: { content: JSON.stringify({
+            risk: 'medium', confidence: 0.7, context: 'Ambiguous',
+            legitimate_signals: [], validation_token: baseTime
+          })}}],
+          usage: { total_tokens: 100 }
+        })
+      };
+      // Advance time after Pass 1 response (simulates time passing)
+      vi.advanceTimersByTime(1);
+      return response;
+    });
+
+    // Pass 2 decisive
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        choices: [{ message: { content: JSON.stringify({
+          safe: true,
+          confidence: 0.92,
+          threats: [],
+          reasoning: 'Legitimate after deep analysis',
+          validation_token: baseTime + 1
+        })}}],
+        usage: { total_tokens: 150 }
+      })
+    });
+
+    const result = await validateUnified('Test prompt');
+
+    expect(result.safe).toBe(true);
+    expect(result.confidence).toBe(0.92);
+    expect(result.threats).toEqual([]);
+    expect(result.stage).toBe('pass2');
+    expect(result.reasoning).toContain('Legitimate after deep analysis');
+
+    vi.useRealTimers();
+  });
 });
 
-describe.skip('Unified AI Validator - Stage 3: Final Decision', () => {  // SKIP: Flaky mock tests
+describe('Unified AI Validator - Stage 3: Final Decision', () => {
   it('should include processing time in result', async () => {
     detectPatterns.mockReturnValue({
       safe: false,
@@ -363,7 +491,7 @@ describe.skip('Unified AI Validator - Stage 3: Final Decision', () => {  // SKIP
   });
 });
 
-describe.skip('Unified AI Validator - Error Handling', () => {  // SKIP: Flaky mock tests
+describe('Unified AI Validator - Error Handling', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -505,7 +633,7 @@ describe.skip('Unified AI Validator - Error Handling', () => {  // SKIP: Flaky m
   });
 });
 
-describe.skip('Unified AI Validator - Integration', () => {  // SKIP: Flaky mock tests
+describe('Unified AI Validator - Integration', () => {
   it('should maintain external reference metadata from pattern stage', async () => {
     detectPatterns.mockReturnValue({
       safe: true,

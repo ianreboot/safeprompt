@@ -15,7 +15,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { validateHardened } from '../lib/ai-validator-hardened.js';
 
-describe.skip('AI Validator - Pass 2 Escalation Logic', () => {  // SKIP: Real LLM API calls cause timeouts
+describe('AI Validator - Pass 2 Escalation Logic', () => {
   describe('Confidence Thresholds and Escalation Triggers', () => {
     it('should NOT escalate to Pass 2 when pattern match has high confidence', async () => {
       // XSS pattern should be caught at stage -1 with 0.95 confidence
