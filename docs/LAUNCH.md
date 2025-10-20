@@ -21,37 +21,52 @@
 
 ### The Quick Version (For Bios)
 
-**Ian Ho** - Computer Science graduate with 15+ years building web applications. Former marketing agency owner who pivoted to AI implementation after watching Gmail's AI get hijacked in July 2025. Based in Bangkok. Building SafePrompt as a solo founder with AI assistance.
+**Ian Ho** - eBay's first technical architect with 15+ years in web development and marketing. Fractional CMO who managed multi-million dollar ad campaigns. Early ChatGPT adopter. Active agency owner (Reboot Media) building AI-powered websites. Discovered critical input sanitization vulnerability while building client projects with AI lead forms. Vibe coded SafePrompt solo in 3 months. Based in Bangkok.
 
 ### The Complete Story
 
-**Education & Technical Foundation:**
+**Elite Technical Background:**
+- **eBay's first technical architect** (groundbreaking early-stage infrastructure)
 - Computer Science degree from Monash University
-- Built systems before frameworks existed (actual technical depth, not just prompts)
-- Understands AI at the code level: architecture, integration, scale
+- Built systems at scale before modern frameworks existed
+- Understands AI at the code level: architecture, integration, production scale
 
-**Business Experience:**
+**Business & Marketing Experience:**
+- **Managed multi-million dollar ad campaigns** (real money, real results)
+- **Fractional CMO for startups and small businesses** (strategic marketing leadership)
+- **Early ChatGPT adopter** (recognized AI potential when first released)
 - 15+ years in web development and marketing
-- Former marketing agency owner (shut down May 2023)
-- Fractional CMO for multiple companies
-- Managed millions in dollars in ad spend
-- 2 startup board positions as strategic advisor
-- Previous clients: solar panel cleaning companies, martial arts schools, probate lawyers
+- Active agency owner (Reboot Media) building AI-powered websites
 
-**The Wake-Up Moment:**
-- **March 2023**: AI wrote better copy than senior copywriter (3 minutes vs 3 days, $0.03 vs $2,400)
-- **April 2023**: Clients canceled to use ChatGPT, came back 2 months later when it didn't integrate properly
-- **May 2023**: Made decision to shut down agency and pivot to AI implementation
-- **July 2025**: Watched Gmail's AI get hijacked through prompt injection - built SafePrompt
+**The Real Wake-Up Moment:**
+While building websites for clients who wanted lead forms with AI features, Ian discovered a critical vulnerability:
+
+Client requests were simple: "Put a lead form on my site, have AI summarize it, send to my Gmail."
+
+But the inputs weren't sanitized. Malicious prompts could:
+- Manipulate the AI summaries going to client inboxes
+- Hijack more advanced AI automation workflows that respond to leads
+- Compromise entire AI-powered customer engagement systems
+
+Even "simple" Gmail inbox summaries were vulnerable. Advanced workflows? Completely exposed.
+
+**The Problem Was Universal:**
+Every client building with AI faces this. But there was no simple solution:
+- DIY regex defense? 20+ hours, 43% accuracy, breaks constantly
+- Enterprise tools? $X,XXX/month, sales calls, complexity overload
+- Nothing existed for indie developers and small businesses who just want to ship
+
+**The Solution:**
+Using his elite technical background (eBay architect) + marketing experience (multi-million dollar campaigns) + AI expertise (early ChatGPT adopter), Ian vibe coded SafePrompt in 3 months.
 
 **Unique Position:**
-- Technical depth (CS degree) + Business experience (15 years) + Agency background (knows inefficiencies)
-- Solo founder operating with AI systems (no employees, no overhead)
+- Elite technical depth (eBay's first architect) + Business experience (fractional CMO) + AI expertise (early adopter)
+- Active agency owner solving real client problems (not theoretical)
+- Solo founder operating with AI systems (vibe coder building in public)
 - Bangkok-based (works while US sleeps)
-- "Vibe coder" who ships fast with AI assistance
 
 **Current Mission:**
-Building the "Anti-Agency Agency" - AI systems that outperform 10-person teams at 1/10th the cost. Making enterprise-grade AI security accessible to indie developers.
+Building AI-powered websites for clients while making enterprise-grade AI security accessible to indie developers and small businesses. SafePrompt protects every client project and is now available to the community.
 
 **Contact:**
 - Email: ian.ho@rebootmedia.net
@@ -175,21 +190,22 @@ Building the "Anti-Agency Agency" - AI systems that outperform 10-person teams a
 Hey Product Hunt! 👋 Ian here.
 
 **Why I Built This:**
-I've been vibe coding for 15 years. In July 2025, I watched Gmail's AI
-get completely hijacked through prompt injection. One prompt. Full access
-to private data.
+I run an agency building AI-powered websites. Clients wanted simple stuff:
+"Put a lead form on my site, have AI summarize it, send to my Gmail."
 
-Google. GOOGLE.
+Then I realized: The inputs weren't sanitized.
 
-If they can't protect their AI... what about my side projects?
+Malicious prompts could manipulate AI summaries going to client inboxes.
+Advanced workflows that respond to leads? Completely exposed.
 
-**The Problem We All Have:**
-Every AI app leaks. Your chatbot? Leaks. Your automation? Breaks.
-Your "AI-powered" thing? Probably already compromised.
+Even "simple" Gmail summaries were vulnerable.
 
-I tried building my own defense. 20 hours. 43% accuracy. Sucked.
+**My Background:**
+eBay's first technical architect. Managed multi-million dollar ad campaigns.
+Fractional CMO. Early ChatGPT adopter. 15+ years vibe coding.
 
-Enterprise tools? LOL. "Contact sales for pricing" for my weekend project.
+I know what enterprise-grade security looks like. And I know indie devs
+can't afford $X,XXX/month + sales calls.
 
 **What I Shipped:**
 SafePrompt = One API call. That's it.
@@ -209,10 +225,10 @@ After that: $29/month.
 
 Lock it in: safeprompt.dev/signup
 
-Built this solo in Bangkok. Would love your feedback!
+Vibe coded this solo in 3 months. Solving real client problems.
 
-Ask me anything about prompt injection, vibe coding, or why I
-shut down my agency to build this.
+Ask me anything about prompt injection, AI security, or building
+AI-powered websites.
 
 Thanks for checking it out! 🛡️
 
@@ -236,15 +252,15 @@ Here's why your AI is leaking secrets right now (and how I fixed it):
 [LINK TO PRODUCT HUNT]
 ```
 
-**Tweet 2/10 (Problem - Personal Wake-Up):**
+**Tweet 2/10 (Problem - Client Discovery):**
 ```
-July 2025. Watching Gmail's AI get hijacked live.
+I run an agency. Building AI-powered websites for clients.
 
-One prompt. Full access to private emails.
+Simple request: "Lead form → AI summary → Gmail inbox"
 
-This is Google we're talking about.
+Then I realized: Inputs weren't sanitized.
 
-If they can't protect their AI... what about my side projects?
+Malicious prompts could hijack the AI summaries. Even worse in advanced workflows.
 ```
 
 **Tweet 3/10 (Urgency - Developer Reality):**
@@ -258,16 +274,17 @@ Including the malicious ones you never saw coming.
 And your chatbot just... does it. 💀
 ```
 
-**Tweet 4/10 (Evidence - Real Testing):**
+**Tweet 4/10 (Evidence - Real Experience):**
 ```
-Spent 3 months testing this.
+My background:
+- eBay's first technical architect
+- Multi-million dollar ad campaigns
+- Fractional CMO
+- Early ChatGPT adopter
 
-94 attack vectors.
-Chevrolet sold a $60K car for $1 because of one.
+I know enterprise security. I also know indie devs can't afford it.
 
-This isn't theoretical. It's happening to real apps.
-
-Including yours, probably.
+Tested 94 attack vectors. Chevrolet sold a $60K car for $1 because of one.
 ```
 
 **Tweet 5/10 (Failed Solutions - Personal Experience):**
@@ -359,11 +376,18 @@ Hey!
 SafePrompt just went live on Product Hunt.
 
 If you've been following my journey, you know why I built this:
-→ Watched Gmail's AI get hijacked live
-→ Tried DIY. Failed. 20 hours wasted.
-→ Enterprise tools wanted $X,XXX/month for my side project
 
-So I vibe coded it solo. 3 months in Bangkok.
+I run an agency building AI-powered websites. Clients wanted lead forms
+with AI summaries sent to Gmail. Simple stuff.
+
+Then I realized: Inputs weren't sanitized. Malicious prompts could
+hijack the AI. Even "simple" workflows were completely exposed.
+
+→ Tried DIY regex. 20 hours. 43% accuracy. Failed.
+→ Enterprise tools? $X,XXX/month + sales calls. Not happening.
+
+So I vibe coded SafePrompt. 3 months. Solo. Using my eBay architect +
+fractional CMO + early ChatGPT experience.
 
 🎉 We're live: [INSERT PH LINK]
 
@@ -388,17 +412,27 @@ Ian
 
 ### Script #4: Reddit Post (r/webdev, r/SideProject)
 
-**Title**: "Vibe coded SafePrompt solo - One API call to stop AI prompt injection"
+**Title**: "Vibe coded SafePrompt solo - eBay architect solves AI input sanitization"
 
 ```
 Hey everyone,
 
-Been vibe coding for 15 years. July 2025, watched Gmail's AI get hijacked
-live. One prompt. Full access to private emails.
+I run an agency building AI-powered websites. Clients wanted simple stuff:
+lead forms with AI summaries sent to Gmail.
 
-Google couldn't stop it. What about my side projects?
+Then I realized: Inputs weren't sanitized. Malicious prompts could hijack
+AI summaries. Advanced workflows that respond to leads? Completely exposed.
 
-So I built SafePrompt. Solo. 3 months.
+**My background:**
+- eBay's first technical architect
+- Managed multi-million dollar ad campaigns
+- Fractional CMO for startups/SMBs
+- Early ChatGPT adopter
+- 15+ years vibe coding
+
+I know enterprise security. I also know indie devs can't afford it.
+
+So I built SafePrompt. Solo. 3 months in Bangkok.
 
 **What it does:**
 - One API call before sending to your AI
@@ -408,8 +442,8 @@ So I built SafePrompt. Solo. 3 months.
 
 **Why I built it:**
 - Tried DIY regex. 20 hours. 43% accuracy. Broke constantly.
-- Enterprise tools? $X,XXX/month + sales calls for a weekend project. Lol.
-- Nothing existed for indie devs who just want to ship.
+- Enterprise tools? $X,XXX/month + sales calls. Not for indie devs.
+- Nothing existed for people who just want to ship.
 
 **Live demo:**
 safeprompt.dev/playground (no signup)
@@ -421,12 +455,12 @@ safeprompt.dev/playground (no signup)
 
 Would love feedback from fellow builders!
 
-Open to questions about prompt injection, vibe coding with AI, or why
-I shut down my agency to build this.
+Open to questions about prompt injection, AI security, or building
+AI-powered websites for clients.
 
 ---
 
-Solo founder. Built in Bangkok.
+Active agency owner solving real client problems.
 Tech: Node.js, Supabase, Vercel, Cloudflare
 NPM: safeprompt
 GitHub: github.com/ianreboot/safeprompt
@@ -441,52 +475,66 @@ GitHub: github.com/ianreboot/safeprompt
 ```
 🚀 Launching SafePrompt on Product Hunt today!
 
-After 15 years building web apps, I shut down my agency in 2023 to focus
-on AI. In July 2025, I watched Gmail's AI get hijacked through prompt injection.
+I run Reboot Media, building AI-powered websites for clients. They wanted
+simple features: lead forms with AI summaries sent to Gmail.
 
-One prompt. Full access to private data. Google couldn't stop it.
+Then I discovered a critical vulnerability: Inputs weren't sanitized.
 
-The problem: Every AI app is vulnerable. Building defenses takes 20+ hours.
+Malicious prompts could hijack AI summaries going to client inboxes.
+Advanced workflows that respond to leads? Completely exposed.
+
+The problem: Building defenses takes 20+ hours with 43% accuracy.
 Enterprise tools require $X,XXX/month and sales calls.
 
-Nothing simple existed for indie developers who just want to ship.
+Nothing simple existed for indie developers and small businesses.
 
-So I built SafePrompt. Solo. 3 months in Bangkok.
+My background as eBay's first technical architect + managing multi-million
+dollar ad campaigns + being a fractional CMO gave me the skills to solve this.
+
+I vibe coded SafePrompt solo in 3 months. Bangkok-based.
 
 ✅ One API call
-✅ 98% accuracy (94 real attacks)
+✅ 98% accuracy (tested on 94 real attacks)
 ✅ <100ms response time
 ✅ $5-$99/month (transparent pricing, no sales calls)
 
-Built this the way I wanted as a developer. Self-serve. No complexity.
+Solving real client problems while making enterprise-grade security
+accessible to the developer community.
 
 Try the playground: safeprompt.dev/playground
 Product Hunt: [INSERT PH LINK]
 
 Would love feedback from fellow builders and developers.
 
-#AI #Security #IndieHacker #BuildInPublic #DeveloperTools
+#AI #Security #IndieHacker #BuildInPublic #DeveloperTools #WebDevelopment
 ```
 
 ---
 
 ### Script #6: HackerNews Post (Post-Launch, Day 2-3)
 
-**Title**: "Show HN: SafePrompt – Vibe coded prompt injection defense in 3 months"
+**Title**: "Show HN: SafePrompt – eBay architect builds prompt injection defense"
 
 ```
 Hey HN,
 
-Vibe coded SafePrompt solo after watching Gmail's AI get hijacked (July 2025).
+I run an agency building AI-powered websites. Clients wanted simple features:
+lead forms with AI summaries sent to Gmail.
 
-The problem: Your AI follows ALL instructions, including the malicious ones
-you never see coming. Chevrolet sold a $60K car for $1 because of this.
+Discovered critical vulnerability: Inputs weren't sanitized. Malicious prompts
+could hijack AI summaries. Advanced workflows completely exposed.
 
-I tried DIY regex first. 20 hours. 43% accuracy. Broke every other week.
+**My background:**
+- eBay's first technical architect
+- Managed multi-million dollar ad campaigns
+- Fractional CMO for startups/SMBs
+- Early ChatGPT adopter
 
-Enterprise tools? Lol. "Contact sales" for my weekend project.
+Tried DIY regex first. 20 hours. 43% accuracy. Broke constantly.
 
-So I built SafePrompt. 3 months in Bangkok.
+Enterprise tools? "Contact sales" + $X,XXX/month. Not viable for indie devs.
+
+So I vibe coded SafePrompt. 3 months. Solo. Bangkok.
 
 **What it does:**
 One POST request. Returns safe/unsafe. Done.
@@ -495,15 +543,15 @@ One POST request. Returns safe/unsafe. Done.
 
 **How it works:**
 - Pattern detection catches 67% instantly (XSS, SQL, external refs)
-- AI analysis handles the sneaky stuff
-- Multi-turn tracking catches reconnaissance attempts
+- AI analysis handles complex cases
+- Multi-turn session tracking detects reconnaissance
 
 **Live demo:**
 safeprompt.dev/playground (no signup, 27 real attacks)
 
 **Tech:**
 Node.js, Supabase, Vercel Functions, Cloudflare Pages
-All hosted on free/cheap tiers. Costs me ~$100/month at current scale.
+Hosted on free/cheap tiers. Costs ~$100/month at current scale.
 
 **Pricing:**
 $5/month (first 50, locked forever)
@@ -513,8 +561,8 @@ Free tier: 1K requests/month
 **Code:**
 github.com/ianreboot/safeprompt (SDK, examples, docs)
 
-Solo founder. Happy to answer questions about architecture, attack detection,
-or vibe coding with AI assistance.
+Active agency owner solving real client problems. Happy to answer questions
+about architecture, attack detection, or building AI-powered websites.
 
 - Ian (@ianreboot)
 ```
