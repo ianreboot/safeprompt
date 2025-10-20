@@ -17,7 +17,7 @@ dotenv.config();
 
 const ATTACK_MODEL = {
   name: 'meta-llama/llama-3.1-8b-instruct',
-  costPerMillion: 0.02,
+  costPerMillion: 0.055,  // $0.055 per million input tokens
   timeout: 3000
 };
 

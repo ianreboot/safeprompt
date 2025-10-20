@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const ORCHESTRATOR_MODEL = {
-  name: 'meta-llama/llama-3.1-8b-instruct',  // 8B model for reliable routing accuracy
+  name: 'meta-llama/llama-3.1-8b-instruct',  // 8B model - back to known working config
   costPerMillion: 0.055,  // $0.055 per million input tokens
   timeout: 3000 // 3 second timeout
 };
