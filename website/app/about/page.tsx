@@ -108,18 +108,18 @@ export default function AboutPage() {
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
                 <li><strong>Simple:</strong> One API call to add protection</li>
-                <li><strong>Fast:</strong> <100ms pattern detection (67% of requests)</li>
-                <li><strong>Accurate:</strong> 98% accuracy on 94 real attack tests</li>
-                <li><strong>Affordable:</strong> $5-$99/month (transparent pricing, no sales calls)</li>
+                <li><strong>Fast:</strong> &lt;100ms pattern detection (67% of requests)</li>
+                <li><strong>Accurate:</strong> 92.9% accuracy (vs 43% DIY regex)</li>
+                <li><strong>Affordable:</strong> $5/mo tier for indie devs ($0.50 per 100K prompts)</li>
               </ul>
               <p className="text-muted-foreground mb-4">
-                "I'm not building another enterprise security platform," Ian explains. "I'm building the protection
-                that indie developers and small businesses actually need. Because I'm one of them - actively running
-                an agency, building AI features for clients, solving these problems every day."
+                "I'm not trying to build another enterprise security platform," Ian explains. "I'm building the
+                protection that every developer can actually use - from solo indie hackers to Fortune 500 companies.
+                Because prompt injection doesn't discriminate."
               </p>
               <p className="text-muted-foreground">
-                SafePrompt now protects every Reboot Media client project and is available to the developer community.
-                Active agency owner. Solo founder. Built in public.
+                SafePrompt was vibe coded from real experience: active agency owner discovering a real vulnerability
+                while building for real clients. No theory. Just shipping secure AI features.
               </p>
             </div>
 
