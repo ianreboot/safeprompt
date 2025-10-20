@@ -50,11 +50,18 @@ Format all competitor comparisons as user questions:
 
 ### Resources Available
 
-- **Launch Scripts**: `/home/projects/safeprompt/docs/internal/PRODUCT_HUNT_LAUNCH_SCRIPTS_2025.md`
-  - PH First Comment (maker authenticity)
-  - Twitter launch thread (10 tweets)
-  - 60-second video script
+- **📋 LAUNCH PLAYBOOK**: `/home/projects/safeprompt/docs/LAUNCH.md` **← COMPREHENSIVE LAUNCH GUIDE**
+  - Founder background (Ian Ho's complete story)
+  - 3-week timeline (community building → launch → follow-up)
+  - All scripts (Twitter, PH, email, Reddit, LinkedIn, HackerNews)
+  - Copy-paste ready format
+  - Launch day execution plan
   - Response templates for common questions
+  - Pre-launch checklist
+  - Emergency protocols
+
+- **Launch Scripts (Original)**: `/home/projects/safeprompt/docs/internal/PRODUCT_HUNT_LAUNCH_SCRIPTS_2025.md`
+  - Consolidated into LAUNCH.md above (use LAUNCH.md for all launch tasks)
 
 - **NPM Package**: https://www.npmjs.com/~safeprompt.dev
   - Package: `@safeprompt/client`
