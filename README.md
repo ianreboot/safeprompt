@@ -551,3 +551,18 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 
 **Full test suite:** `/home/projects/safeprompt/test-suite/realistic-test-suite.js`
 
+---
+
+## Internal Documentation
+
+**Target Audience & Messaging**: See [docs/TARGET_AUDIENCE.md](docs/TARGET_AUDIENCE.md) for:
+- Complete target audience research and personas (5 awareness stages)
+- Messaging framework and voice/tone guidelines
+- Competitive positioning and social proof strategy
+- Content strategy and Product Hunt launch plan
+
+**Technical Documentation**: See [docs/](docs/) directory for:
+- Architecture and deployment guides
+- API documentation and testing standards
+- Security hardening and privacy compliance
+- Phase implementation summaries and audit reports

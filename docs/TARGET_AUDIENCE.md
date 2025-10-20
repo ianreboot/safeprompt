@@ -1,7 +1,76 @@
-# SafePrompt Target Demographic Research - 2025
+# SafePrompt Target Audience & Messaging - 2025
 **Research Date**: October 2025
+**Last Updated**: October 20, 2025
 **Research Method**: Web search analysis, competitive intelligence, market data synthesis
 **Framework**: Based on `/home/projects/docs/methodology-website-audit.md`
+
+**Purpose**: This is the single source of truth for understanding SafePrompt's target audience, messaging strategy, and positioning. All marketing materials, documentation, and communication should align with this framework.
+
+---
+
+## Quick Reference: Target Audiences
+
+1. **Vibe Coders** (indie hackers, side projects, solo founders)
+2. **Seasoned Developers** (10+ years experience, small teams)
+3. **Product Hunt Users** (makers, early adopters, builder community)
+
+**Critical Positioning**: Developer-first, not enterprise. Transparent pricing, no sales calls, indie-friendly.
+
+---
+
+## Messaging Framework
+
+### Hero Headline
+**Primary**: "Your AI is leaking secrets. One API call stops it."
+
+**Why this works**:
+- Concrete + scary (not abstract "hijacking")
+- Product Hunt-optimized (visual outcome users can picture)
+- Creates awareness for unaware 40% of market
+- Universal coverage (chatbots, automations, workflows, forms, agents)
+
+### Trust Signals Order
+**Speed → Cost → Accuracy** (in this exact order for vibe coders)
+
+1. **<100ms** pattern detection (67% of requests)
+2. **$0.50 per 100K** vs $150 DIY
+3. **98% overall accuracy**
+
+**Why this order**: Vibe coders prioritize speed first, then cost, then quality validation.
+
+### Voice & Tone Guidelines
+
+**✅ DO USE (Vibe Coder Voice)**:
+- "Ship fast, sleep sound"
+- "One API call. That's it."
+- "Stupid fast" (performance)
+- "Dirt cheap" (pricing)
+- "Just works"
+- "No SDK, no BS"
+- "Drop-in replacement"
+- "API-first"
+- "Self-serve"
+
+**❌ DON'T USE (Enterprise Voice)**:
+- "Enterprise solution"
+- "Contact us for pricing"
+- "Schedule a demo"
+- "Proof of concept"
+- "Implementation timeline"
+- "Onboarding process"
+- "Dedicated account manager"
+- "Synergize", "leverage", "paradigm"
+
+### Key Messaging Themes
+
+**Primary Message**: "Security that doesn't slow you down"
+
+**Supporting Themes**:
+1. **Speed**: One API call, 60-second integration
+2. **Transparency**: Public pricing, no sales calls
+3. **Trust**: 98% accuracy on professional tests
+4. **Flexibility**: Free tier, pay as you grow
+5. **Indie-friendly**: Built by developers, for developers
 
 ---
 

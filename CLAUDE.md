@@ -10,28 +10,16 @@
 
 **Target Audiences**: Vibe Coders, Seasoned Developers, Product Hunt Users
 
-### Core Messaging Framework
+### Messaging & Positioning
 
-**Hero Headline**: "Your AI is Leaking Secrets. One API Call Stops It."
-- **Why**: Concrete + scary (not abstract "hijacking")
-- **PH-optimized**: Visual outcome users can picture
+**IMPORTANT**: For complete target audience research, messaging framework, personas, and voice/tone guidelines, see:
+→ `/home/projects/safeprompt/docs/TARGET_AUDIENCE.md`
 
-**Trust Signals Order** (Speed → Cost → Accuracy):
-1. <100ms Pattern Detection (67% of requests)
-2. $0.50 per 100K vs $150 DIY
-3. 98% Overall Accuracy
-
-**Why This Order**: Vibe coders prioritize speed first, then cost, then quality validation
-
-### Voice & Tone Guidelines
-
-**✅ DO USE (Vibe Coder Voice)**:
-- "Ship fast, sleep sound"
-- "One API call. That's it."
-- "Stupid fast"
-- "Dirt cheap"
-- "Just works"
-- "No SDK, no BS"
+**Quick Reference** (from TARGET_AUDIENCE.md):
+- **Hero**: "Your AI is leaking secrets. One API call stops it."
+- **Trust Signals Order**: Speed → Cost → Accuracy
+- **Voice**: Casual, direct, technical ("Ship fast, sleep sound")
+- **Positioning**: Developer-first, not enterprise. Transparent pricing, no sales calls.
 
 **✅ DO USE (Credibility)**:
 - "98% accuracy on 94 real attacks"
