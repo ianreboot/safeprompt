@@ -692,34 +692,30 @@ export default function Home() {
 
                   <div className="space-y-3">
                     <div className="bg-card/50 rounded-lg p-3">
-                      <h4 className="font-semibold text-sm mb-2">Free Tier (Automatic):</h4>
+                      <h4 className="font-semibold text-sm mb-2">Free Tier:</h4>
                       <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                        <li>• Blocked prompts contribute to network intelligence</li>
-                        <li>• Data anonymized after 24 hours (only hashes kept)</li>
-                        <li>• You benefit from collective defense</li>
+                        <li>• Contributes blocked attacks to network (required)</li>
+                        <li>• Data deleted after 24 hours (only pattern hashes kept)</li>
+                        <li>• Benefits from network intelligence</li>
+                        <li>• Cannot block IPs automatically</li>
                       </ul>
                     </div>
 
                     <div className="bg-card/50 rounded-lg p-3">
-                      <h4 className="font-semibold text-sm mb-2">Paid Tiers (Opt-Out Available):</h4>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Disable intelligence sharing in Dashboard → Settings → Privacy:
-                      </p>
-                      <pre className="bg-background p-3 rounded text-xs overflow-x-auto">
-                        <code>{`// Opt-out via dashboard settings
-// Settings → Privacy → Intelligence Sharing
-// Toggle: "Contribute to Network Intelligence" OFF
-
-// Still get protection from network intelligence
-// Just don't contribute your blocked prompts`}</code>
-                      </pre>
-                    </div>
-
-                    <div className="bg-card/50 rounded-lg p-3">
-                      <h4 className="font-semibold text-sm mb-2">IP Blocking (Paid Tiers Only):</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Enable automatic blocking of malicious IPs in Dashboard → Settings → Security
-                      </p>
+                      <h4 className="font-semibold text-sm mb-2">Paid Tiers ($5-$99/mo):</h4>
+                      <ul className="text-sm text-muted-foreground space-y-2 ml-4">
+                        <li>
+                          <span className="font-semibold">Privacy Control:</span>
+                          <br />
+                          Opt-out of intelligence sharing in Settings → Privacy.
+                          You still get protection from the network, just don't contribute your data.
+                        </li>
+                        <li>
+                          <span className="font-semibold">IP Auto-Blocking:</span>
+                          <br />
+                          Enable in Settings → Security to automatically block IPs with 70%+ attack rate.
+                        </li>
+                      </ul>
                     </div>
                   </div>
 
