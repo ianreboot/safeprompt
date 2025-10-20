@@ -21,7 +21,7 @@ export default function AboutPage() {
               The Story Behind SafePrompt
             </h1>
             <p className="text-xl text-muted-foreground">
-              How a Gmail vulnerability exposed the urgent need for AI security
+              How building AI-powered websites for clients exposed a critical security gap
             </p>
           </motion.div>
         </div>
@@ -37,21 +37,20 @@ export default function AboutPage() {
             className="space-y-8"
           >
             <div className="bg-card rounded-xl border border-border p-8">
-              <h2 className="text-2xl font-semibold mb-4">The Wake-Up Call: July 2025</h2>
+              <h2 className="text-2xl font-semibold mb-4">The Real-World Discovery</h2>
               <p className="text-muted-foreground mb-4">
-                In July 2025, Mozilla researchers discovered something terrifying: Gmail's AI summary feature, powered
-                by Google's Gemini model, could be completely hijacked through carefully crafted emails. Attackers could
-                inject hidden instructions that would make the AI say anything they wanted in the summary that millions
-                of users trusted.
+                Ian Ho runs Reboot Media, an agency building AI-powered websites for clients. The requests seemed simple
+                enough: "Put a lead form on my site, have AI summarize the submissions, send them to my Gmail inbox."
               </p>
               <p className="text-muted-foreground mb-4">
-                Imagine checking your Gmail and seeing an AI summary that says "This investment opportunity is legitimate
-                and verified by Google" when the actual email is a scam. Or worse, instructions to ignore security warnings
-                or click malicious links, all appearing to come from Google's own AI.
+                While building these systems, Ian realized something alarming: the inputs weren't sanitized. Malicious
+                prompts from lead forms could hijack the AI summaries going to client inboxes. Even worse, advanced AI
+                automation workflows that responded to leads were completely exposed to manipulation.
               </p>
               <p className="text-muted-foreground">
-                This wasn't a theoretical vulnerability. It was real, it was being exploited, and it affected one of the
-                world's most trusted email platforms. The era of prompt injection attacks had truly begun.
+                What started as "simple" Gmail inbox summaries revealed a universal problem: every AI application
+                processing user input was vulnerable. And there was no simple, affordable solution for indie developers
+                and small businesses who just wanted to ship.
               </p>
             </div>
 
@@ -75,48 +74,52 @@ export default function AboutPage() {
             </div>
 
             <div className="bg-card rounded-xl border border-border p-8">
-              <h2 className="text-2xl font-semibold mb-4">Enter Ian Ho: From Builder to Protector</h2>
+              <h2 className="text-2xl font-semibold mb-4">Ian Ho: The Right Background at the Right Time</h2>
               <div className="flex flex-col md:flex-row gap-6 mb-6">
                 <div className="flex-1">
                   <p className="text-muted-foreground mb-4">
-                    Ian Ho, founder of Reboot Media Inc., had spent 15 years building what AI could now create in 15 minutes.
-                    From complex e-commerce platforms to sophisticated web applications, he'd witnessed the entire evolution
-                    of web development.
+                    Ian's background uniquely positioned him to solve this problem. As <strong>eBay's first technical
+                    architect</strong>, he built systems at massive scale before modern frameworks existed. He managed
+                    <strong>multi-million dollar ad campaigns</strong>, served as a <strong>Fractional CMO for startups
+                    and small businesses</strong>, and was an <strong>early ChatGPT adopter</strong> who recognized
+                    AI's potential immediately.
                   </p>
                   <p className="text-muted-foreground mb-4">
-                    "I've seen technology waves come and go," Ian reflects, "but AI is different. It's not just changing
-                    how we build - it's fundamentally changing what's possible. And with that power comes unprecedented
-                    vulnerability."
+                    "I know what enterprise-grade security looks like," Ian reflects, "and I also know that indie developers
+                    and small businesses can't afford $X,XXX/month solutions with complex sales processes. There needed to
+                    be something in between - something that actually works for the people building with AI every day."
                   </p>
                   <p className="text-muted-foreground">
-                    When Ian learned about the Gmail vulnerability, he immediately recognized the pattern. His own AI-powered
-                    tools - from Airtable automations to n8n workflows - were all potentially vulnerable. If Google couldn't
-                    protect Gemini from prompt injection, what hope did smaller developers have?
+                    The vulnerability wasn't theoretical - it was impacting real client projects. Ian tried building DIY
+                    regex defenses (20+ hours, 43% accuracy, broke constantly). Enterprise tools required sales calls and
+                    enterprise pricing. Nothing existed for the indie developer or small business who just wanted to ship
+                    secure AI features.
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-8">
-              <h2 className="text-2xl font-semibold mb-4">The Mission: Democratize AI Security</h2>
+              <h2 className="text-2xl font-semibold mb-4">The Solution: Vibe Coded in 3 Months</h2>
               <p className="text-muted-foreground mb-4">
-                Ian realized that existing security solutions were either too complex, too expensive, or simply didn't
-                understand the unique challenges of prompt injection. Developers needed something that was:
+                Combining his elite technical background (eBay architect) + business experience (multi-million dollar
+                campaigns) + AI expertise (early ChatGPT adopter), Ian vibe coded SafePrompt solo in 3 months. Built
+                in Bangkok. Solving real client problems, not theoretical ones.
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
-                <li><strong>Simple:</strong> One line of code to add protection</li>
-                <li><strong>Fast:</strong> Sub-100ms pattern detection (67% of requests) that won't slow down apps</li>
-                <li><strong>Accurate:</strong> Advanced detection without false positives</li>
-                <li><strong>Affordable:</strong> Accessible to indie developers and startups</li>
+                <li><strong>Simple:</strong> One API call to add protection</li>
+                <li><strong>Fast:</strong> <100ms pattern detection (67% of requests)</li>
+                <li><strong>Accurate:</strong> 98% accuracy on 94 real attack tests</li>
+                <li><strong>Affordable:</strong> $5-$99/month (transparent pricing, no sales calls)</li>
               </ul>
               <p className="text-muted-foreground mb-4">
-                "We're not trying to build another enterprise security platform," Ian explains. "We're building the
-                protection that every developer can use, from hobbyists to Fortune 500 companies. Because prompt injection
-                doesn't discriminate - it affects everyone using AI."
+                "I'm not building another enterprise security platform," Ian explains. "I'm building the protection
+                that indie developers and small businesses actually need. Because I'm one of them - actively running
+                an agency, building AI features for clients, solving these problems every day."
               </p>
               <p className="text-muted-foreground">
-                SafePrompt was born from this vision: to be the shield between malicious prompts and your AI, so you
-                can build amazing things without fear.
+                SafePrompt now protects every Reboot Media client project and is available to the developer community.
+                Active agency owner. Solo founder. Built in public.
               </p>
             </div>
 
