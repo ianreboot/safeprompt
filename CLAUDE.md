@@ -1,8 +1,82 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-19 (Pattern Security Enhancement + Password Reset Fixes Deployed)
-**Status**: Production Ready - DEV/PROD Fully Consistent, All Systems Operational, Security Hardened
+**Last Updated**: 2025-10-20 (Demographics-Optimized Messaging Deployed)
+**Status**: Production Ready - DEV/PROD Fully Consistent, Product Hunt Launch Ready
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
+
+---
+
+## 🎯 MESSAGING & POSITIONING (NEW - 2025-10-20)
+
+**Target Audiences**: Vibe Coders, Seasoned Developers, Product Hunt Users
+
+### Core Messaging Framework
+
+**Hero Headline**: "Your AI is Leaking Secrets. One API Call Stops It."
+- **Why**: Concrete + scary (not abstract "hijacking")
+- **PH-optimized**: Visual outcome users can picture
+
+**Trust Signals Order** (Speed → Cost → Accuracy):
+1. <100ms Pattern Detection (67% of requests)
+2. $0.50 per 100K vs $150 DIY
+3. 98% Overall Accuracy
+
+**Why This Order**: Vibe coders prioritize speed first, then cost, then quality validation
+
+### Voice & Tone Guidelines
+
+**✅ DO USE (Vibe Coder Voice)**:
+- "Ship fast, sleep sound"
+- "One API call. That's it."
+- "Stupid fast"
+- "Dirt cheap"
+- "Just works"
+- "No SDK, no BS"
+
+**✅ DO USE (Credibility)**:
+- "98% accuracy on 94 real attacks"
+- "$0.50 per 100K vs $150 DIY"
+- "Chevrolet sold a $60K car for $1"
+
+**❌ DON'T USE (Corporate)**:
+- ~~"Enterprise-grade solution"~~
+- ~~"Cutting-edge technology"~~
+- ~~"Best-in-class"~~
+- ~~"Contact us for pricing"~~
+
+### Competition Positioning: "Why Not Just...?"
+
+Format all competitor comparisons as user questions:
+
+**"I'll build my own regex"**
+- Takes 20+ hours. 43% accuracy. Constant updates.
+- SafePrompt: $0.50 per 100K. 98% accuracy. Zero maintenance.
+
+**"I'll use Claude's built-in filter"**
+- 88% block rate = 12% slip through.
+- SafePrompt: 98% accuracy. Catches multi-turn attacks.
+
+**"I'll use an enterprise tool"**
+- $X,XXX/month. Sales calls. Complex integration.
+- SafePrompt: $5-$99/mo. Self-serve. One API call.
+
+### Resources Available
+
+- **Launch Scripts**: `/home/projects/safeprompt/docs/internal/PRODUCT_HUNT_LAUNCH_SCRIPTS_2025.md`
+  - PH First Comment (maker authenticity)
+  - Twitter launch thread (10 tweets)
+  - 60-second video script
+  - Response templates for common questions
+
+- **NPM Package**: https://www.npmjs.com/~safeprompt.dev
+  - Package: `@safeprompt/client`
+  - Use this in all code examples
+
+- **Public GitHub**: https://github.com/ianreboot/safeprompt
+  - Repository: `safeprompt-public` project
+  - Public examples and documentation
+
+---
 
 **🎉 Recent Milestones**:
 - **Pattern Security Enhancement** (2025-10-19): Added 5 critical injection patterns (SQL + Command) to Stage 1 detection, confirmed existing logging infrastructure is ML-ready (no additional logging needed), deployed to DEV+PROD

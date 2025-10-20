@@ -25,9 +25,9 @@ export default function Home() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Stop Users from Hijacking Your AI
+              Your AI is Leaking Secrets
               <br />
-              <span className="gradient-text">One API Call</span>
+              <span className="gradient-text">One API Call Stops It</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
               Protect AI automations, workflows, and features from prompt injection and manipulation attacks. Built for developers who ship fast.
@@ -46,7 +46,7 @@ export default function Home() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <a href="/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
-                Get Started - Free or ${PRICING_SUMMARY.betaPrice}/mo
+                Try Free • No Credit Card
               </a>
               <a href="#pricing" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
                 Compare Plans
@@ -61,16 +61,16 @@ export default function Home() {
         <div className="container mx-auto max-w-5xl">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">98%</div>
-              <div className="text-sm text-muted-foreground">Overall Accuracy</div>
-            </div>
-            <div className="flex flex-col items-center">
               <div className="text-2xl font-bold text-primary mb-1">&lt;100ms</div>
               <div className="text-sm text-muted-foreground">Pattern Detection (67%)</div>
             </div>
             <div className="flex flex-col items-center">
-              <div className="text-2xl font-bold text-primary mb-1">95%</div>
-              <div className="text-sm text-muted-foreground">Attack Block Rate</div>
+              <div className="text-2xl font-bold text-primary mb-1">$0.50</div>
+              <div className="text-sm text-muted-foreground">per 100K vs $150 DIY</div>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="text-2xl font-bold text-primary mb-1">98%</div>
+              <div className="text-sm text-muted-foreground">Overall Accuracy</div>
             </div>
           </div>
         </div>
@@ -290,34 +290,42 @@ export default function Home() {
 
           <div className="space-y-6">
             <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-xl font-semibold mb-3">🚀 Solo Developers & Side Projects</h3>
-              <p className="text-muted-foreground">
-                Building an AI feature for yourself or a client? Whether it's a weekend project or freelance gig,
-                protect it with one line of code.
+              <h3 className="text-xl font-semibold mb-3">🚀 Indie Hackers & Weekend Warriors</h3>
+              <p className="text-muted-foreground mb-2">
+                Building an AI feature for your side project? Protect it with one line of code.
+              </p>
+              <p className="text-muted-foreground font-semibold text-sm">
+                Ship fast, sleep sound.
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-xl font-semibold mb-3">🏢 Startups & Small Teams</h3>
-              <p className="text-muted-foreground">
-                Move fast without breaking things. Get enterprise-level security without the complexity or cost.
-                Scale from MVP to millions of users.
+              <h3 className="text-xl font-semibold mb-3">💼 Freelancers Building for Clients</h3>
+              <p className="text-muted-foreground mb-2">
+                "I added security" sounds way better than "I hope they don't try to hack it."
+              </p>
+              <p className="text-muted-foreground font-semibold text-sm">
+                One API call = professional deliverable.
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-xl font-semibold mb-3">🤖 AI Applications & Chatbots</h3>
-              <p className="text-muted-foreground">
-                Customer service, internal tools, or public assistants - all need protection from prompt manipulation
-                and data extraction attempts.
+              <h3 className="text-xl font-semibold mb-3">🏢 Startups Shipping AI Features</h3>
+              <p className="text-muted-foreground mb-2">
+                Move fast without breaking things. Get enterprise security without the complexity or 6-month sales cycle.
+              </p>
+              <p className="text-muted-foreground font-semibold text-sm">
+                From MVP to millions of users.
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-6">
-              <h3 className="text-xl font-semibold mb-3">🔧 Agencies & Consultants</h3>
-              <p className="text-muted-foreground">
-                Deliver secure AI features to clients without security expertise. Works with any tech stack
-                that can make HTTP calls.
+              <h3 className="text-xl font-semibold mb-3">🛠️ Dev Teams Adding AI</h3>
+              <p className="text-muted-foreground mb-2">
+                Everyone on the team can ship AI features securely. No security expertise required.
+              </p>
+              <p className="text-muted-foreground font-semibold text-sm">
+                One API call. That's it.
               </p>
             </div>
           </div>

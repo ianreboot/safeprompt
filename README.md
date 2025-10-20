@@ -1,16 +1,32 @@
 # SafePrompt
 
-> Simple API for AI security. One endpoint, instant protection.
+**Your AI is leaking secrets. One API call stops it.**
 
 [![API Status](https://img.shields.io/badge/API-operational-green)](https://api.safeprompt.dev/status)
+[![Response Time](https://img.shields.io/badge/response-<100ms-blue)](https://safeprompt.dev)
+[![Accuracy](https://img.shields.io/badge/accuracy-98%25-success)](https://safeprompt.dev)
+[![NPM Package](https://img.shields.io/npm/v/@safeprompt/client)](https://www.npmjs.com/~safeprompt.dev)
 [![Beta](https://img.shields.io/badge/status-beta-yellow)](https://safeprompt.dev)
+
+> Protect AI apps from prompt injection. Built for developers who ship fast—from weekend projects to production systems.
 
 ## What is SafePrompt?
 
-SafePrompt protects your AI applications from prompt injection attacks. Built for developers who need security without complexity - whether you're working on a side project, building for a client, or scaling a business. No SDKs to install, no complex rules to write - just POST to our API and you're protected.
+SafePrompt protects your AI applications from prompt injection attacks. One API call. No SDKs required (but available). No complex rules to write. Just instant protection.
 
 ```javascript
-// Use HTTP API directly (SDK coming soon)
+// Option 1: NPM Package (recommended)
+npm install @safeprompt/client
+
+import { SafePrompt } from '@safeprompt/client';
+const safeprompt = new SafePrompt('sp_live_YOUR_KEY');
+
+const result = await safeprompt.validate(userInput);
+if (!result.safe) {
+  throw new Error('Prompt blocked: potential injection detected');
+}
+
+// Option 2: Direct HTTP API (any language)
 const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
   method: 'POST',
   headers: {
@@ -28,10 +44,6 @@ const response = await fetch('https://api.safeprompt.dev/api/v1/validate', {
 const result = await response.json();
 if (!result.safe) {
   throw new Error('Prompt blocked: potential injection detected');
-}
-// Optional: Check IP reputation (paid tiers: Early Bird/Starter/Business)
-if (result.ipReputationScore < 0.5) {
-  console.warn('Request from low-reputation IP');
 }
 ```
 
@@ -92,37 +104,48 @@ See the [Custom Lists documentation](#custom-lists) for details.
 
 ## Features
 
-- **🚀 One-Line Integration**: Literally just POST to /validate
-- **⚡ Lightning Fast**: <100ms pattern detection (67% of requests), 2-3s AI validation when needed
-- **🛡️ Real Protection**: External reference detection + regex + 2-pass AI validation
-- **✨ Custom Lists**: Define business-specific whitelist/blacklist phrases
-- **🧠 Network Intelligence**: IP reputation system learns from attacks across all customers (paid tiers)
-- **🤖 Pattern Discovery**: Automated ML-powered attack pattern detection from real threats (Phase 6)
-- **🎯 Campaign Detection**: Identifies coordinated attacks using temporal clustering (Phase 6)
-- **🍯 Honeypot Learning**: Auto-deploys patterns from fake endpoints (Phase 6)
-- **🔗 Multi-Turn Protection**: Session-based validation detects context priming and RAG poisoning
-- **📊 Batch Processing**: Validate multiple prompts in one call
-- **💰 Cost Optimized**: 67% requests require $0 AI cost (instant pattern/reference matching)
-- **📈 Usage Dashboard**: See threats blocked, track usage, manage custom lists, review pattern proposals
+- **🚀 One API Call** - Literally just POST to /validate. No SDKs required (but available on NPM).
+- **⚡ Stupid Fast** - 67% of requests = <100ms. No lag for your users.
+- **💰 Dirt Cheap** - $0.50 per 100K vs $150 DIY. 99.7% cost savings.
+- **🛡️ Actually Works** - 98% accuracy on 94 real attacks. Not just regex.
+- **📊 See What's Blocked** - Dashboard shows threats, not just error logs.
+- **🔗 No Lock-In** - Works with any stack. Switch anytime.
+- **✨ Custom Lists** - Define business-specific whitelist/blacklist phrases.
+- **🧠 Network Intelligence** - IP reputation system learns from attacks across all customers (paid tiers).
+- **🤖 Pattern Discovery** - Automated ML-powered attack pattern detection from real threats.
+- **🔗 Multi-Turn Protection** - Session-based validation detects context priming and RAG poisoning.
+- **📊 Batch Processing** - Validate multiple prompts in one call.
 
 ## Quick Start
 
-**Note**: NPM package coming soon. For now, use the HTTP API directly.
+```bash
+# 1. Install NPM package (30 seconds)
+npm install @safeprompt/client
 
-1. **Sign up** at [safeprompt.dev](https://safeprompt.dev)
-2. **Access your dashboard** at [dashboard.safeprompt.dev](https://dashboard.safeprompt.dev) to get your API key
-3. **Add validation** to your AI calls using the HTTP API:
+# 2. Get your API key
+# Sign up at https://safeprompt.dev/signup
+```
 
 ```javascript
+// 3. Protect your AI (that's it)
+import { SafePrompt } from '@safeprompt/client';
+const safeprompt = new SafePrompt('sp_live_YOUR_KEY');
+
 // Before (vulnerable)
 const response = await openai.complete(userInput);
 
 // After (protected)
-const validation = await safeprompt.check(userInput);
+const validation = await safeprompt.validate(userInput);
 if (validation.safe) {
   const response = await openai.complete(userInput);
 }
 ```
+
+**No SDK needed.** Works with any language that can POST to an API.
+
+→ [Get your free API key](https://safeprompt.dev/signup)
+→ [NPM Package](https://www.npmjs.com/~safeprompt.dev)
+→ [GitHub Examples](https://github.com/ianreboot/safeprompt)
 
 
 ## Pricing
@@ -162,10 +185,25 @@ Every AI application is vulnerable to prompt injection. Attackers can:
 - Bypass safety measures
 - Damage your reputation
 
-### Existing Solutions Suck
-- **Lakera**: No transparent pricing, enterprise sales process
-- **DIY Regex**: Incomplete, constant maintenance
-- **Cloud Providers**: Vendor lock-in, complex integration
+**Real example**: Chevrolet sold a $60,000 car for $1 because of prompt injection.
+
+### Why Not Just... ?
+
+**"I'll build my own regex"**
+- Takes 20+ hours. 43% accuracy. Constant updates.
+- SafePrompt: $0.50 per 100K. 98% accuracy. Zero maintenance.
+
+**"I'll use Claude's built-in filter"**
+- 88% block rate = 12% slip through.
+- SafePrompt: 98% accuracy. Catches multi-turn attacks.
+
+**"I'll use an enterprise tool"**
+- $X,XXX/month. Sales calls. Complex integration.
+- SafePrompt: $5-$99/mo. Self-serve. One API call.
+
+**"I'll just hope nobody attacks me"**
+- Chevrolet sold a $60K car for $1.
+- SafePrompt: Sleep better.
 
 ### Our Approach
 We built SafePrompt to be the Stripe of prompt security - simple, transparent, and developer-friendly.
