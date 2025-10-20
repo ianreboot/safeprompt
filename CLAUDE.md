@@ -660,8 +660,8 @@ SafePrompt uses a **defense-in-depth architecture** where regex patterns are an 
 ### Business Model
 
 **Network Defense Through Collective Intelligence**:
-- **Free Tier**: Contributes blocked requests → Benefits from pattern discovery (no IP blocking)
-- **Paid Tiers (Early Bird/Starter/Business)**: Default opted-in → Gets IP reputation tracking + manual blocking capability
+- **Free Tier**: Contributes blocked requests → Benefits from pattern discovery
+- **Paid Tiers (Early Bird/Starter/Business)**: Default opted-in → Gets IP logging for threat correlation
 - **Opt-out**: Paid users can disable intelligence sharing BUT lose network benefits
 - **Key principle**: Only contributors benefit from collective intelligence
 - **Competitive Moat**: Data network effects (more users = better protection)
@@ -673,11 +673,10 @@ SafePrompt uses a **defense-in-depth architecture** where regex patterns are an 
 - Collects: Blocked requests ONLY (safe: false)
 - Benefits: Pattern discovery, improved detection (contributes to network defense)
 - Opt-out: Not available (part of free tier terms)
-- IP Blocking: No access
 
 // Paid Tiers (Early Bird, Starter, Business)
 - Collects: ALL requests IF opted in (default: true)
-- Benefits: Pattern discovery + IP reputation tracking + manual blocking capability
+- Benefits: Pattern discovery + IP logging for threat correlation
 - Opt-out: Account settings > Privacy > Intelligence Sharing (loses network benefits if opted-out)
 - Default: Enabled (user can disable)
 
@@ -700,7 +699,7 @@ SafePrompt uses a **defense-in-depth architecture** where regex patterns are an 
 - **Legal Basis**: GDPR Article 17(3)(d) - Scientific research
 
 **Table 2: `ip_reputation`**
-- **Purpose**: Track reputation of IPs for manual blocking (paid tiers: Early Bird/Starter/Business)
+- **Purpose**: Log IP threat patterns for correlation and analysis (paid tiers: Early Bird/Starter/Business)
 - **Primary Key**: `ip_hash` (SHA256, cannot reverse to IP address)
 - **Scoring Formula**:
   ```
@@ -788,16 +787,14 @@ SafePrompt uses a **defense-in-depth architecture** where regex patterns are an 
 ### Integration with Validation Pipeline
 
 **Step 1**: Validate prompt (existing pipeline)
-**Step 2**: Check IP reputation (if paid tier + opted in):
+**Step 2**: Log IP for threat correlation (if paid tier + opted in):
 ```javascript
-const ipCheck = await checkIPReputation(clientIP, {
-  subscription_tier: 'early_bird', // or 'starter', 'business'
-  auto_block_enabled: true
+const ipLog = await logIPForThreatCorrelation(clientIP, {
+  subscription_tier: 'early_bird' // or 'starter', 'business'
 });
 
-if (ipCheck.should_block) {
-  return { safe: false, reason: 'ip_reputation_block', reputation_score: 0.15 };
-}
+// IP data logged for threat intelligence correlation
+// (Manual intervention required for blocking decisions)
 ```
 
 **Step 3**: Collect intelligence (async, after response sent):
@@ -810,10 +807,10 @@ collectThreatIntelligence(prompt, validationResult, {
 });
 ```
 
-**Step 4**: Update IP reputation (async):
+**Step 4**: Update IP threat correlation data (async):
 ```javascript
 // UPSERT pattern for concurrent safety
-await updateIPReputationScores(ipHash, {
+await updateIPThreatData(ipHash, {
   blocked: !validationResult.safe,
   severity: validationResult.threats?.length || 0
 });

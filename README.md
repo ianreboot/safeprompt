@@ -154,12 +154,11 @@ if (validation.safe) {
   - Full AI protection with 98.9% accuracy
   - Contributes attack data to network intelligence
   - Community support
-  - **No IP blocking** (contributes only)
 
 - **Early Bird** ($5/month, limited to first 50 users):
   - 10,000 validations/month
   - All Free tier features PLUS:
-  - **IP reputation tracking**: Monitor and manually block malicious IPs via dashboard
+  - **IP logging for threat intelligence**: Correlate attack patterns by IP address
   - **Multi-turn attack detection**: Session-based validation
   - **Intelligence opt-out**: Disable data contribution (loses network benefits)
   - Priority support
@@ -230,11 +229,10 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 - 24-hour PII retention: Prompt text + IP addresses deleted after 24 hours (GDPR/CCPA compliant)
 - Permanent attack pattern storage: Cryptographic hashes persist for network defense
 
-**IP Reputation Tracking (paid tiers: Early Bird/Starter/Business):**
-- Hash-based tracking: Monitors attack patterns by IP address using cryptographic hashing
-- Manual blocking: Admins can block IPs with poor reputation via dashboard
-- Real-time scoring: Every validation updates IP reputation scores
-- Allowlist support: Whitelist your CI/CD and internal testing infrastructure
+**IP Logging for Threat Intelligence (paid tiers: Early Bird/Starter/Business):**
+- Hash-based tracking: Correlates attack patterns by IP address for threat intelligence
+- Real-time pattern analysis: Every validation contributes to IP-based threat correlation
+- Helps identify: Coordinated attacks, distributed attack patterns, persistent threat actors
 
 **Multi-Turn Attack Detection (95% accuracy):**
 - Session-based validation tracks conversation history across multiple requests
@@ -248,7 +246,7 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 
 **Privacy & Compliance:**
 - **Free tier**: Contributes blocked attacks → Benefits from network intelligence (required)
-- **Paid tiers**: Default opted-in (contributes all requests → gets network intelligence + IP reputation tracking), can opt-out via Settings → Privacy (loses network benefits, keeps own data only)
+- **Paid tiers**: Default opted-in (contributes all requests → gets network intelligence + IP-based threat correlation), can opt-out via Settings → Privacy (loses network benefits, keeps own data only)
 - **Key principle**: Only contributors benefit from collective intelligence
 - GDPR right to deletion: Delete all identifiable data via API
 - GDPR right to access: Export all data associated with your account
@@ -481,9 +479,9 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - Manage billing and subscription settings
 
 ### Current Beta Pricing (October 2025)
-- **Free Tier**: 1,000 validations/month (contributes attack data, no IP blocking)
+- **Free Tier**: 1,000 validations/month (contributes attack data)
 - **Early Bird**: $5/month for 10,000 validations (first 50 users only - price locked forever)
-- **Starter**: $29/month for 10,000 validations (IP blocking, multi-turn protection, intelligence opt-out)
+- **Starter**: $29/month for 10,000 validations (IP threat correlation, multi-turn protection, intelligence opt-out)
 - **Business**: $99/month for 250,000 validations (all Starter features at scale)
 
 ## Technical Implementation
