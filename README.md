@@ -84,8 +84,8 @@ Automated attack pattern discovery and deployment:
 
 ### 🛡️ Phase 1A Network Defense (October 8, 2025)
 Collective intelligence across all customers:
-- **Threat Intelligence**: Collects blocked prompts with 24-hour PII retention (GDPR/CCPA compliant)
-- **IP Reputation**: Hash-based auto-blocking of malicious IPs (paid tiers, <10ms lookup)
+- **Threat Intelligence**: Free tier contributes and benefits, paid tiers can opt-out (lose benefits)
+- **IP Reputation**: Hash-based tracking of malicious IPs (paid tiers, <10ms lookup, manual blocking)
 - **Multi-Turn Detection**: 95% accuracy on sophisticated attack sequences (reconnaissance, privilege escalation, social engineering)
 - **67 Tests Passing**: Complete test coverage for compliance, performance, and security
 - **Privacy Controls**: Opt-out available, GDPR export/deletion APIs
@@ -110,8 +110,8 @@ See the [Custom Lists documentation](#custom-lists) for details.
 - **🛡️ Actually Works** - 98% accuracy on 94 real attacks. Not just regex.
 - **📊 See What's Blocked** - Dashboard shows threats, not just error logs.
 - **🔗 No Lock-In** - Works with any stack. Switch anytime.
-- **✨ Custom Lists** - Define business-specific whitelist/blacklist phrases.
-- **🧠 Network Intelligence** - IP reputation system learns from attacks across all customers (paid tiers).
+- **✨ Custom Lists** - 80+ default phrases (all tiers), customize for your business (paid tiers).
+- **🧠 Network Intelligence** - Free tier contributes and benefits, paid tiers can opt-out (lose benefits).
 - **🤖 Pattern Discovery** - Automated ML-powered attack pattern detection from real threats.
 - **🔗 Multi-Turn Protection** - Session-based validation detects context priming and RAG poisoning.
 - **📊 Batch Processing** - Validate multiple prompts in one call.
@@ -159,9 +159,9 @@ if (validation.safe) {
 - **Early Bird** ($5/month, limited to first 50 users):
   - 10,000 validations/month
   - All Free tier features PLUS:
-  - **IP reputation blocking**: Auto-block malicious IPs (opt-in)
+  - **IP reputation tracking**: Monitor and manually block malicious IPs via dashboard
   - **Multi-turn attack detection**: Session-based validation
-  - **Intelligence opt-out**: Disable data contribution if needed
+  - **Intelligence opt-out**: Disable data contribution (loses network benefits)
   - Priority support
   - 99.9% uptime SLA
   - **Price locked forever** at $5/month
@@ -224,13 +224,15 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 ### Advanced Protection (Phase 1A - October 2025)
 
 **Threat Intelligence Collection:**
-- Automatically collects blocked prompts from all customers (opt-out available for paid tiers)
-- 24-hour anonymization: Full prompt text deleted after 24 hours (GDPR/CCPA compliant)
+- **Free tier**: Contributes blocked attacks, benefits from network-wide pattern discovery (cannot opt-out)
+- **Paid tiers**: Contributes all requests (if opted-in, default: true), can opt-out BUT loses network benefits if opted-out
+- **Key principle**: Only contributors benefit from collective intelligence
+- 24-hour PII retention: Prompt text + IP addresses deleted after 24 hours (GDPR/CCPA compliant)
 - Permanent attack pattern storage: Cryptographic hashes persist for network defense
 
-**IP Reputation System (paid tiers: Early Bird/Starter/Business):**
-- Tracks attack patterns by IP address using cryptographic hashing
-- Auto-blocking: IPs with >70% block rate automatically rejected (requires opt-in)
+**IP Reputation Tracking (paid tiers: Early Bird/Starter/Business):**
+- Hash-based tracking: Monitors attack patterns by IP address using cryptographic hashing
+- Manual blocking: Admins can block IPs with poor reputation via dashboard
 - Real-time scoring: Every validation updates IP reputation scores
 - Allowlist support: Whitelist your CI/CD and internal testing infrastructure
 
@@ -245,8 +247,9 @@ We built SafePrompt to be the Stripe of prompt security - simple, transparent, a
 - 2-hour session TTL with automatic cleanup
 
 **Privacy & Compliance:**
-- Free tier: Contributes attack data (no IP blocking capability)
-- Paid tiers (Early Bird/Starter/Business): Opt-in for intelligence sharing + IP blocking features
+- **Free tier**: Contributes blocked attacks → Benefits from network intelligence (required)
+- **Paid tiers**: Default opted-in (contributes all requests → gets network intelligence + IP reputation tracking), can opt-out via Settings → Privacy (loses network benefits, keeps own data only)
+- **Key principle**: Only contributors benefit from collective intelligence
 - GDPR right to deletion: Delete all identifiable data via API
 - GDPR right to access: Export all data associated with your account
 
@@ -411,8 +414,8 @@ Built with ❤️ for developers who just want their AI apps to be secure.
 - ✅ **Monitoring & Rollback**: Complete documentation for health checks and recovery procedures
 
 **October 8, 2025 - Phase 1A Network Defense DEPLOYED** 🛡️
-- ✅ **Threat Intelligence System**: 24-hour PII retention, GDPR/CCPA compliant data collection
-- ✅ **IP Reputation System**: Hash-based auto-blocking with <10ms lookup (paid tiers)
+- ✅ **Threat Intelligence System**: Free tier contributes and benefits, paid tiers can opt-out (lose benefits)
+- ✅ **IP Reputation System**: Hash-based tracking with <10ms lookup (paid tiers, manual blocking)
 - ✅ **Multi-Turn Attack Detection**: Session-based validation for context priming and RAG poisoning
 - ✅ **Privacy Compliance**: GDPR export/deletion APIs, opt-out controls for paid tiers
 - ✅ **Complete Test Coverage**: 67 tests passing (compliance, performance, security, integration)

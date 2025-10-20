@@ -96,7 +96,7 @@ Format all competitor comparisons as user questions:
 
 **🚨 Intelligence Architecture** (ALL DEPLOYED TO PRODUCTION):
 - **Threat Intelligence** (Phase 1A): 24-hour anonymization, GDPR/CCPA compliant data collection, tier-based contribution
-- **IP Reputation** (Phase 1A): Hash-based auto-blocking, <10ms lookup, paid tiers network defense (Early Bird/Starter/Business)
+- **IP Reputation** (Phase 1A): Hash-based tracking, <10ms lookup, manual blocking via dashboard (paid tiers: Early Bird/Starter/Business)
 - **Pattern Discovery** (Phase 6): ML-powered automated pattern detection (3 AM UTC daily cron)
 - **Campaign Detection** (Phase 6): Temporal clustering and similarity analysis (3:30 AM UTC daily cron)
 - **Honeypot Learning** (Phase 6): Safe auto-deployment of validated patterns (4 AM UTC daily cron)
@@ -660,8 +660,10 @@ SafePrompt uses a **defense-in-depth architecture** where regex patterns are an 
 ### Business Model
 
 **Network Defense Through Collective Intelligence**:
-- **Free Tier**: Always contributes blocked requests → No IP blocking benefits
-- **Paid Tiers (Early Bird/Starter/Business)**: Opts in (default ON) → Gets IP reputation auto-blocking
+- **Free Tier**: Contributes blocked requests → Benefits from pattern discovery (no IP blocking)
+- **Paid Tiers (Early Bird/Starter/Business)**: Default opted-in → Gets IP reputation tracking + manual blocking capability
+- **Opt-out**: Paid users can disable intelligence sharing BUT lose network benefits
+- **Key principle**: Only contributors benefit from collective intelligence
 - **Competitive Moat**: Data network effects (more users = better protection)
 
 ### Tier-Based Collection Rules
@@ -669,13 +671,14 @@ SafePrompt uses a **defense-in-depth architecture** where regex patterns are an 
 ```javascript
 // Free Tier
 - Collects: Blocked requests ONLY (safe: false)
-- Benefits: None (contributes to network defense)
+- Benefits: Pattern discovery, improved detection (contributes to network defense)
 - Opt-out: Not available (part of free tier terms)
+- IP Blocking: No access
 
 // Paid Tiers (Early Bird, Starter, Business)
 - Collects: ALL requests IF opted in (default: true)
-- Benefits: IP reputation auto-blocking
-- Opt-out: Account settings > Privacy > Intelligence Sharing
+- Benefits: Pattern discovery + IP reputation tracking + manual blocking capability
+- Opt-out: Account settings > Privacy > Intelligence Sharing (loses network benefits if opted-out)
 - Default: Enabled (user can disable)
 
 // Internal Tier
@@ -697,14 +700,15 @@ SafePrompt uses a **defense-in-depth architecture** where regex patterns are an 
 - **Legal Basis**: GDPR Article 17(3)(d) - Scientific research
 
 **Table 2: `ip_reputation`**
-- **Purpose**: Auto-blocking of known bad actors (paid tiers: Early Bird/Starter/Business)
+- **Purpose**: Track reputation of IPs for manual blocking (paid tiers: Early Bird/Starter/Business)
 - **Primary Key**: `ip_hash` (SHA256, cannot reverse to IP address)
 - **Scoring Formula**:
   ```
   reputation_score = (block_rate * 0.7) + (severity_avg * 0.3)
-  auto_block = (block_rate > 0.8) AND (sample_count >= 5)
+  block_recommendation = (block_rate > 0.8) AND (sample_count >= 5)
   ```
 - **Lookup Performance**: <10ms (hash index on `ip_hash`)
+- **Blocking**: Manual via admin dashboard (not automatic)
 
 **Table 3: `ip_allowlist`**
 - **Purpose**: CI/CD protection, testing infrastructure bypass
@@ -755,7 +759,7 @@ SafePrompt uses a **defense-in-depth architecture** where regex patterns are an 
 **Performance Requirements**:
 - Hash generation: <1ms
 - IP reputation lookup: <5ms (with hash index)
-- Auto-block decision: <10ms total
+- Reputation score calculation: <10ms total
 - Intelligence collection: 0ms (async, fire-and-forget)
 
 **Bypass Mechanisms** (priority order):
