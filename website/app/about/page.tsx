@@ -57,7 +57,7 @@ export default function AboutPage() {
             <div className="bg-card rounded-xl border border-border p-8">
               <h2 className="text-2xl font-semibold mb-4">The Problem Goes Deeper</h2>
               <p className="text-muted-foreground mb-4">
-                As we investigated further, we realized Gmail was just the tip of the iceberg. Every AI-powered application
+                After discovering this in client projects, Ian realized it wasn't isolated. Every AI-powered application
                 was vulnerable:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">

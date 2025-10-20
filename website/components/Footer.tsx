@@ -11,7 +11,7 @@ export default function Footer() {
               Protecting AI applications from prompt injection.
             </p>
             <p className="text-muted-foreground text-xs italic">
-              Built by developers who've seen AI apps get exploited. We made the security tool we wish existed.
+              Vibe coded solo after seeing AI apps get exploited. Built the security tool I wish existed.
             </p>
           </div>
 

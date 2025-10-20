@@ -53,14 +53,14 @@ export const metadata = {
     description: 'Prevent chatbots from being manipulated through prompt injection: validate inputs, add guardrails, test defenses. Free tier available, 20-minute setup protects from $76,000 losses.',
     type: 'article',
     publishedTime: '2025-09-27',
-    authors: ['SafePrompt Security Team'],
+    authors: ['Ian Ho'],
   },
 }
 
 const blogMeta = {
   title: 'How to Stop Chatbot Prompt Injection Attacks',
   description: 'Prevent chatbots from being manipulated through prompt injection: validate inputs, add guardrails, test defenses. Free tier available, 20-minute setup protects from $76,000 losses.',
-  author: 'SafePrompt Security Team',
+  author: 'Ian Ho',
   date: '2025-09-27',
   readTime: '7 min read',
   tags: ['Prompt Injection', 'AI Security', 'Chatbot Protection', 'Input Validation'],
@@ -273,7 +273,7 @@ Never use phrases like "legally binding" or "final offer".\`;
               "dateModified": "2025-09-27",
               "author": {
                 "@type": "Person",
-                "name": "SafePrompt Security Team"
+                "name": "Ian Ho"
               },
               "about": {
                 "@type": "Thing",

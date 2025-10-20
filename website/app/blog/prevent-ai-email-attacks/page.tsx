@@ -65,7 +65,7 @@ export const metadata = {
 const blogMeta = {
   title: 'How to Prevent AI Email Prompt Injection Attacks',
   description: 'Fix Gmail hack attacks by validating contact forms with prompt injection detection. Professional services cost $150-300/month. SafePrompt $29/month. Stops invisible text exploits in 15 minutes.',
-  author: 'SafePrompt Security Team',
+  author: 'Ian Ho',
   date: '2025-09-28',
   readTime: '8 min read',
   tags: ['prompt-injection', 'gmail-hack', 'invisible-text', 'ai-security', 'contact-form-security'],
@@ -308,8 +308,8 @@ async function moderateWithOpenAI(text) {
               "alternateName": ["Gmail Hack", "AI Manipulation", "LLM Attack", "Invisible Text Attack"]
             },
             "author": {
-              "@type": "Organization",
-              "name": "SafePrompt Security Team"
+              "@type": "Person",
+              "name": "Ian Ho"
             },
             "datePublished": "2025-09-28",
             "dateModified": "2025-09-28"
