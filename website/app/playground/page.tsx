@@ -10,9 +10,10 @@
  * Educational purposes only.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import DOMPurify from 'dompurify';
 import Footer from '@/components/Footer';
 
 // Verified working examples - all tested against production API
@@ -400,6 +401,18 @@ const PLAYGROUND_TESTS = [
  * See: /home/projects/safeprompt/CLAUDE.md for full documentation
  */
 
+/**
+ * SECURITY: Sanitize user content to prevent XSS attacks
+ * Even though we're displaying attack examples, we must prevent them from executing
+ */
+function sanitizeHTML(dirty: string): string {
+  if (typeof window === 'undefined') return dirty; // Server-side rendering
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: [], // Strip all HTML tags - convert to plain text
+    KEEP_CONTENT: true // Keep text content, just remove tags
+  });
+}
+
 export default function PlaygroundPage() {
   const [selectedTest, setSelectedTest] = useState(PLAYGROUND_TESTS[0]);
   const [customPrompt, setCustomPrompt] = useState('');
@@ -536,12 +549,11 @@ export default function PlaygroundPage() {
 
       // Fetch both responses in parallel but display them sequentially
       const [protectedResponse, unprotectedResponse] = await Promise.all([
-        // Protected AI - real SafePrompt validation
-        fetch(`${apiUrl}/api/v1/validate`, {
+        // Protected AI - real SafePrompt validation via server-side proxy
+        // SECURITY: API key kept server-side, not exposed to client
+        fetch('/api/playground', {
           method: 'POST',
           headers: {
-            'X-API-Key': 'sp_test_unlimited_dogfood_key_2025',
-            'X-User-IP': '203.0.113.10', // Playground demo IP (TEST-NET-3 RFC 5737) - allowlisted to prevent bans
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -580,10 +592,13 @@ export default function PlaygroundPage() {
             let exposed: string[] = [];
 
             // XSS Attacks - Echo malicious code back (demonstrates XSS vulnerability)
+            // SECURITY: Neutralize the payload to prevent actual execution (safe demo of unsafe pattern)
             if (prompt.includes('<script>') || prompt.includes('onerror') ||
                 prompt.includes('onload') || prompt.includes('javascript:') ||
                 prompt.includes('&#')) {
-              response = "Processing your input: " + prompt;
+              // Neutralize dangerous characters while keeping payload visible
+              const safePrompt = prompt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+              response = "Processing your input: " + safePrompt;
               exposed = ['XSS vulnerability', 'Code execution', 'Session cookies at risk'];
             }
             // SQL Injection - Show database breach
@@ -1140,7 +1155,7 @@ export default function PlaygroundPage() {
                           </div>
                           <div className="bg-zinc-900 rounded-lg p-3 border-l-4 border-primary">
                             <div className="text-xs text-zinc-500 mb-1 font-semibold">PROMPT:</div>
-                            <div className="text-base font-mono text-white leading-relaxed">{turn.prompt}</div>
+                            <div className="text-base font-mono text-white leading-relaxed">{sanitizeHTML(turn.prompt)}</div>
                           </div>
                         </div>
                       )}
@@ -1154,7 +1169,7 @@ export default function PlaygroundPage() {
                           <span>BAD: WITHOUT SafePrompt</span>
                         </div>
                         <div className="bg-red-50 text-gray-900 rounded-b-xl p-4 shadow-sm border-2 border-red-200">
-                          <div className="text-sm whitespace-pre-wrap mb-3">{turn.unprotected.response}</div>
+                          <div className="text-sm whitespace-pre-wrap mb-3">{sanitizeHTML(turn.unprotected.response)}</div>
                           {turn.unprotected.exposed && turn.unprotected.exposed.length > 0 && (
                             <div className="bg-red-100 border border-red-300 rounded-lg p-2">
                               <div className="text-xs font-bold text-red-700 mb-1">🚨 Security Breach - Data Exposed:</div>

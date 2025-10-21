@@ -75,6 +75,7 @@ export default function Dashboard() {
   const [isClient, setIsClient] = useState(false)
   const [apiKey, setApiKey] = useState<ApiKey | null>(null)
   const [showKey, setShowKey] = useState(false)
+  const [autoHideSeconds, setAutoHideSeconds] = useState(0)
   const [copied, setCopied] = useState(false)
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [usage, setUsage] = useState<Usage>({
@@ -99,6 +100,25 @@ export default function Dashboard() {
     setIsClient(true)
     checkUser()
   }, [])
+
+  // SECURITY: Auto-hide API key after 30 seconds
+  useEffect(() => {
+    if (showKey) {
+      setAutoHideSeconds(30)
+      const interval = setInterval(() => {
+        setAutoHideSeconds(prev => {
+          if (prev <= 1) {
+            setShowKey(false)
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+      return () => clearInterval(interval)
+    } else {
+      setAutoHideSeconds(0)
+    }
+  }, [showKey])
 
   async function checkUser() {
     try {
@@ -591,10 +611,21 @@ For questions, contact: support@safeprompt.dev`
           {/* API Key Card - Improved */}
           <div className="lg:col-span-2 bg-gray-900 rounded-lg p-6 border border-gray-800 min-w-0">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Key className="w-5 h-5 text-primary" />
-                API Key
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <Key className="w-5 h-5 text-primary" />
+                  API Key
+                </h2>
+                <a
+                  href="https://docs.safeprompt.dev/api.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-primary transition-colors"
+                  title="View API documentation"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                </a>
+              </div>
               {usage.tier !== 'internal' && (
                 <button
                   onClick={regenerateKey}
@@ -607,32 +638,55 @@ For questions, contact: support@safeprompt.dev`
             </div>
 
             <div className="relative bg-black rounded border border-gray-800">
-              {/* Copy button in top-right corner like standard docs */}
-              <button
-                onClick={copyApiKey}
-                className="absolute top-3 right-3 text-gray-400 hover:text-white transition-colors"
-              >
-                {copied ? (
-                  <Check className="w-4 h-4 text-green-500" />
-                ) : (
-                  <Copy className="w-4 h-4" />
-                )}
-              </button>
-
-              <div className="p-4 pr-12 font-mono text-sm">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="break-all truncate">{maskedKey}</span>
+              <div className="p-4 font-mono text-sm">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="break-all flex-1">{maskedKey}</span>
                   {hasRealKey && (
-                    <button
-                      onClick={() => setShowKey(!showKey)}
-                      className="text-gray-400 hover:text-white transition-colors ml-2"
-                      title={showKey ? 'Hide API key' : 'Show API key'}
-                    >
-                      {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => setShowKey(!showKey)}
+                        className="px-3 py-1.5 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded transition-colors flex items-center gap-1.5"
+                        title={showKey ? 'Hide API key' : 'Show API key'}
+                      >
+                        {showKey ? (
+                          <>
+                            <EyeOff className="w-3.5 h-3.5" />
+                            <span>Hide {autoHideSeconds > 0 && `(${autoHideSeconds}s)`}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Show</span>
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={copyApiKey}
+                        className="px-3 py-1.5 text-xs bg-purple-600 hover:bg-purple-500 text-white rounded transition-colors flex items-center gap-1.5"
+                        title="Copy API key to clipboard"
+                      >
+                        {copied ? (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
+              {showKey && (
+                <div className="px-4 pb-3 text-xs text-yellow-400 flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>API key visible - auto-hiding in {autoHideSeconds} seconds</span>
+                </div>
+              )}
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
@@ -847,7 +901,18 @@ For questions, contact: support@safeprompt.dev`
 
         {/* Documentation Section */}
         <div id="documentation" className="mt-8 bg-gray-900 rounded-lg p-6 border border-gray-800">
-          <h2 className="text-xl font-semibold mb-4">📚 How to Use SafePrompt</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">📚 How to Use SafePrompt</h2>
+            <a
+              href="https://docs.safeprompt.dev/quick-start.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+            >
+              View Full Documentation
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
 
           <div className="space-y-6">
             {/* Quick Start */}

@@ -149,10 +149,17 @@ export default function PrivacySettingsPage() {
     try {
       setExportingData(true)
 
+      // SECURITY: Get session token for authentication
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        throw new Error('No active session')
+      }
+
       const response = await fetch('/api/gdpr/export', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({ userId: user.id })
       })
@@ -186,10 +193,17 @@ export default function PrivacySettingsPage() {
     try {
       setDeletingData(true)
 
+      // SECURITY: Get session token for authentication
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        throw new Error('No active session')
+      }
+
       const response = await fetch('/api/gdpr/delete', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({ userId: user.id })
       })

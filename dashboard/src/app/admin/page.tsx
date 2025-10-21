@@ -421,12 +421,27 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {/* API Key */}
+                {/* API Key - SECURITY: Masked, never show full key */}
                 <div>
                   <p className="text-gray-400 text-sm mb-2">API Key</p>
-                  <div className="bg-black border border-gray-800 rounded p-3">
-                    <code className="text-xs font-mono break-all">{selectedUser.api_key || 'N/A'}</code>
+                  <div className="bg-black border border-gray-800 rounded p-3 flex items-center justify-between gap-4">
+                    <code className="text-xs font-mono break-all">
+                      {selectedUser.api_key
+                        ? `${selectedUser.api_key.substring(0, 8)}${'•'.repeat(24)}${selectedUser.api_key.slice(-4)}`
+                        : 'N/A'}
+                    </code>
+                    {selectedUser.api_key && (
+                      <button
+                        onClick={() => alert('Key regeneration for users coming soon. Users can regenerate their own keys in their dashboard.')}
+                        className="px-3 py-1.5 text-xs bg-purple-600 hover:bg-purple-500 text-white rounded transition-colors whitespace-nowrap"
+                      >
+                        Regenerate
+                      </button>
+                    )}
                   </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    🔒 Security: Full API keys are never displayed to admins. Users can view and manage their own keys in the dashboard.
+                  </p>
                 </div>
 
                 {/* Credit/Refund Section */}

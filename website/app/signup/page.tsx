@@ -12,7 +12,7 @@ export default function UnifiedSignup() {
   const router = useRouter()
   const [selectedPlan, setSelectedPlan] = useState<'paid' | 'free'>('paid') // Default to paid!
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  // SECURITY: Password removed - backend generates secure password to prevent sessionStorage exposure
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [betaSpotsLeft] = useState(URGENCY.betaSpotsRemaining)
@@ -23,11 +23,12 @@ export default function UnifiedSignup() {
     setError('')
 
     try {
-      // Store intent in sessionStorage for dashboard
+      // SECURITY: Store only plan and email - password is generated securely on backend
+      // Never store passwords in sessionStorage (XSS vulnerability)
       sessionStorage.setItem('signup_intent', JSON.stringify({
         plan: selectedPlan,
         email,
-        password,  // CRITICAL: Pass the actual password user typed
+        // password removed - backend generates secure password
         timestamp: Date.now()
       }))
 
@@ -234,19 +235,10 @@ export default function UnifiedSignup() {
                     </p>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      minLength={8}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-3 py-2 bg-black border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
-                      placeholder="Min 8 characters"
-                    />
+                  {/* SECURITY: Password field removed - secure password auto-generated on backend */}
+                  <div className="p-3 bg-blue-900/20 border border-blue-800 rounded-lg text-sm text-blue-300">
+                    <Lock className="w-4 h-4 inline-block mr-2" />
+                    A secure password will be automatically generated and sent to your email
                   </div>
 
                   {error && (
