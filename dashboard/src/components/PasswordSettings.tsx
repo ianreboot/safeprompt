@@ -25,6 +25,10 @@ export default function PasswordSettings() {
     if (!/[0-9]/.test(password)) {
       return 'Password must contain at least one number'
     }
+    // SECURITY: Require special characters for stronger passwords
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      return 'Password must contain at least one special character (!@#$%^&*()_+-=[]{};\':"|,.<>/?)'
+    }
     return null
   }
 

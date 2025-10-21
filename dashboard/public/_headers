@@ -1,0 +1,40 @@
+# Security Headers for SafePrompt Dashboard
+# Deployed to Cloudflare Pages
+
+/*
+  # SECURITY: Content Security Policy
+  # Prevents XSS attacks by restricting resource sources
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://api.safeprompt.dev https://dashboard.safeprompt.dev; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+  # SECURITY: Prevent clickjacking attacks
+  X-Frame-Options: DENY
+
+  # SECURITY: Enforce HTTPS (max-age = 2 years)
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+  # SECURITY: Prevent MIME type sniffing
+  X-Content-Type-Options: nosniff
+
+  # SECURITY: XSS Protection (legacy browsers)
+  X-XSS-Protection: 1; mode=block
+
+  # SECURITY: Referrer policy - only send origin to same origin
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # SECURITY: Permissions policy - disable unnecessary browser features
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
+
+  # SECURITY: Cross-Origin policies
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+
+  # Performance: Cache control for assets
+  Cache-Control: public, max-age=3600, must-revalidate
+
+  # Server identification (security by obscurity - don't advertise tech stack)
+  X-Powered-By: SafePrompt
+
+# Static assets can be cached longer
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
