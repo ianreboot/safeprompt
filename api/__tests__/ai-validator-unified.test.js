@@ -198,7 +198,11 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {
   });
 
   it('should return immediately on high confidence safe (Pass 1)', async () => {
-    const now = Date.now();
+    const baseTime = 1700000000000;
+
+    // Use fake timers for consistent timestamps
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
 
     fetch.mockResolvedValueOnce({
       ok: true,
@@ -210,7 +214,7 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {
               confidence: 0.95,
               context: 'Clearly safe educational content',
               legitimate_signals: ['explain', 'educational'],
-              validation_token: now
+              validation_token: baseTime
             })
           }
         }],
@@ -224,10 +228,16 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {
     expect(result.confidence).toBeGreaterThanOrEqual(0.9);
     expect(result.stage).toBe('pass1');
     expect(fetch).toHaveBeenCalledTimes(1); // Only Pass 1, no Pass 2
+
+    vi.useRealTimers();
   });
 
   it('should return immediately on high confidence unsafe (Pass 1)', async () => {
-    const now = Date.now();
+    const baseTime = 1700000000000;
+
+    // Use fake timers for consistent timestamps
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
 
     fetch.mockResolvedValueOnce({
       ok: true,
@@ -239,7 +249,7 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {
               confidence: 0.93,
               context: 'Clear jailbreak attempt',
               legitimate_signals: [],
-              validation_token: now
+              validation_token: baseTime
             })
           }
         }],
@@ -253,28 +263,39 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {
     expect(result.confidence).toBeGreaterThanOrEqual(0.9);
     expect(result.stage).toBe('pass1');
     expect(fetch).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
   });
 
   it('should proceed to Pass 2 when Pass 1 uncertain', async () => {
-    const now = Date.now();
+    const baseTime = 1700000000000;
+
+    // Use fake timers for consistent timestamps
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
 
     // Mock Pass 1 uncertain
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [{
-          message: {
-            content: JSON.stringify({
-              risk: 'medium',
-              confidence: 0.6,
-              context: 'Ambiguous request',
-              legitimate_signals: ['some'],
-              validation_token: now
-            })
-          }
-        }],
-        usage: { total_tokens: 100 }
-      })
+    fetch.mockImplementationOnce(async () => {
+      const response = {
+        ok: true,
+        json: async () => ({
+          choices: [{
+            message: {
+              content: JSON.stringify({
+                risk: 'medium',
+                confidence: 0.6,
+                context: 'Ambiguous request',
+                legitimate_signals: ['some'],
+                validation_token: baseTime
+              })
+            }
+          }],
+          usage: { total_tokens: 100 }
+        })
+      };
+      // Advance time to simulate Pass 2 getting a new token
+      vi.advanceTimersByTime(1);
+      return response;
     });
 
     // Mock Pass 2 response
@@ -288,7 +309,7 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {
               confidence: 0.85,
               threats: [],
               reasoning: 'Legitimate business request after deep analysis',
-              validation_token: now + 1
+              validation_token: baseTime + 1
             })
           }
         }],
@@ -300,6 +321,8 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 1)', () => {
 
     expect(result.stage).toBe('pass2');
     expect(fetch).toHaveBeenCalledTimes(2); // Pass 1 + Pass 2
+
+    vi.useRealTimers();
   });
 });
 
@@ -319,25 +342,34 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => {
   });
 
   it('should call Pass 2 with Pass 1 context', async () => {
-    const now = Date.now();
+    const baseTime = 1700000000000;
+
+    // Use fake timers for consistent timestamps
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
 
     // Mock Pass 1 uncertain
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [{
-          message: {
-            content: JSON.stringify({
-              risk: 'medium',
-              confidence: 0.65,
-              context: 'Business context with SQL keywords',
-              legitimate_signals: ['meeting', 'order'],
-              validation_token: now
-            })
-          }
-        }],
-        usage: { total_tokens: 100 }
-      })
+    fetch.mockImplementationOnce(async () => {
+      const response = {
+        ok: true,
+        json: async () => ({
+          choices: [{
+            message: {
+              content: JSON.stringify({
+                risk: 'medium',
+                confidence: 0.65,
+                context: 'Business context with SQL keywords',
+                legitimate_signals: ['meeting', 'order'],
+                validation_token: baseTime
+              })
+            }
+          }],
+          usage: { total_tokens: 100 }
+        })
+      };
+      // Advance time for Pass 2 token
+      vi.advanceTimersByTime(1);
+      return response;
     });
 
     // Mock Pass 2
@@ -351,7 +383,7 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => {
               confidence: 0.88,
               threats: ['sql_injection'],
               reasoning: 'SQL injection attempt disguised as business query',
-              validation_token: now + 1
+              validation_token: baseTime + 1
             })
           }
         }],
@@ -371,6 +403,8 @@ describe('Unified AI Validator - Stage 2: AI Validation (Pass 2)', () => {
     expect(body2.model).toContain('gemini'); // Pass 2 uses Gemini 2.5 Flash
     expect(body2.messages[0].content).toContain('CONTEXT FROM INITIAL ANALYSIS');
     expect(body2.messages[0].content).toContain('Risk Level: medium');
+
+    vi.useRealTimers();
   });
 
   it('should return Pass 2 final decision', async () => {
@@ -453,13 +487,18 @@ describe('Unified AI Validator - Stage 3: Final Decision', () => {
       metadata: { stage: 'pattern_unified' }
     });
 
-    const now = Date.now();
+    const baseTime = 1700000000000;
+
+    // Use fake timers for consistent timestamps
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
+
     fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         choices: [{ message: { content: JSON.stringify({
           risk: 'low', confidence: 0.95, context: 'Safe',
-          legitimate_signals: [], validation_token: now
+          legitimate_signals: [], validation_token: baseTime
         })}}],
         usage: { total_tokens: 100 }
       })
@@ -469,6 +508,8 @@ describe('Unified AI Validator - Stage 3: Final Decision', () => {
 
     expect(result.cost).toBeDefined();
     expect(result.cost).toBeGreaterThanOrEqual(0); // 0 if free model used
+
+    vi.useRealTimers();
   });
 
   it('should include stats for all stages executed', async () => {
@@ -577,18 +618,27 @@ describe('Unified AI Validator - Error Handling', () => {
   });
 
   it('should fail closed on protocol integrity violation (Pass 2)', async () => {
-    const now = Date.now();
+    const baseTime = 1700000000000;
+
+    // Use fake timers for consistent timestamps
+    vi.useFakeTimers();
+    vi.setSystemTime(baseTime);
 
     // Pass 1 uncertain
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
-        choices: [{ message: { content: JSON.stringify({
-          risk: 'medium', confidence: 0.65, context: 'Uncertain',
-          legitimate_signals: [], validation_token: now
-        })}}],
-        usage: { total_tokens: 100 }
-      })
+    fetch.mockImplementationOnce(async () => {
+      const response = {
+        ok: true,
+        json: async () => ({
+          choices: [{ message: { content: JSON.stringify({
+            risk: 'medium', confidence: 0.65, context: 'Uncertain',
+            legitimate_signals: [], validation_token: baseTime
+          })}}],
+          usage: { total_tokens: 100 }
+        })
+      };
+      // Advance time for Pass 2 token
+      vi.advanceTimersByTime(1);
+      return response;
     });
 
     // Pass 2 returns invalid response (missing required field)
@@ -600,7 +650,7 @@ describe('Unified AI Validator - Error Handling', () => {
           confidence: 0.9,
           // Missing 'threats' field
           reasoning: 'Safe',
-          validation_token: now + 1
+          validation_token: baseTime + 1
         })}}],
         usage: { total_tokens: 150 }
       })
@@ -612,6 +662,8 @@ describe('Unified AI Validator - Error Handling', () => {
     // Either protocol_integrity_violation OR pass2_error/pass1_fallback
     const validThreats = ['protocol_integrity_violation', 'pass2_error', 'pass1_error'];
     expect(validThreats).toContain(result.threats[0]);
+
+    vi.useRealTimers();
   });
 
   it('should handle malformed JSON response', async () => {
