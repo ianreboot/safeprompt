@@ -6,7 +6,8 @@ import { Shield, AlertTriangle, TrendingUp, Globe, RefreshCw, Download, Search, 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-// Admin access controlled via middleware and role field
+// Simple admin auth - in production, use proper role-based access
+const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
 
 interface ThreatSample {
   id: string
@@ -89,9 +90,15 @@ export default function ThreatIntelligenceDashboard() {
     setFilteredSamples(filtered)
   }, [searchQuery, filterSeverity, filterTier, samples])
 
-  async function checkAdminAccess() {
+    async function checkAdminAccess() {
     try {
+      // Get session to ensure auth.uid() is set for RLS
       const { data: { session } } = await supabase.auth.getSession()
+
+      if (!session?.user) {
+        window.location.href = '/login'
+        return
+      }
 
       // Check role (middleware already protected this route, but double-check)
       const { data: profile } = await supabase
@@ -100,13 +107,13 @@ export default function ThreatIntelligenceDashboard() {
         .eq('id', session.user.id)
         .single()
 
-
-      if (!session?.user || profile?.role !== 'admin') {
-        window.location.href = '/login'
+      if (profile?.role !== 'admin') {
+        window.location.href = '/'
         return
       }
 
       setUser(session.user)
+
     } catch (error) {
       console.error('Admin access check failed:', error)
       window.location.href = '/login'

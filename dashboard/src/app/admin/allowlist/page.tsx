@@ -6,6 +6,7 @@ import { Shield, Plus, Trash2, RefreshCw, CheckCircle, AlertCircle } from 'lucid
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
+const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
 
 interface AllowlistEntry {
   id: string
@@ -51,9 +52,15 @@ export default function IPAllowlistManagement() {
     }
   }, [user])
 
-  async function checkAdminAccess() {
+    async function checkAdminAccess() {
     try {
+      // Get session to ensure auth.uid() is set for RLS
       const { data: { session } } = await supabase.auth.getSession()
+
+      if (!session?.user) {
+        window.location.href = '/login'
+        return
+      }
 
       // Check role (middleware already protected this route, but double-check)
       const { data: profile } = await supabase
@@ -62,13 +69,15 @@ export default function IPAllowlistManagement() {
         .eq('id', session.user.id)
         .single()
 
-      if (!session?.user || profile?.role !== 'admin') {
-        window.location.href = '/login'
+      if (profile?.role !== 'admin') {
+        window.location.href = '/'
         return
       }
+
       setUser(session.user)
+
     } catch (error) {
-      console.error('Admin access check failed:', error)
+      console.error('Error:', error)
       window.location.href = '/login'
     } finally {
       setLoading(false)

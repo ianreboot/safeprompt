@@ -6,6 +6,7 @@ import { Shield, AlertCircle, RefreshCw, Search, TrendingDown } from 'lucide-rea
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
+const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
 
 interface IPReputation {
   id: string
@@ -64,9 +65,15 @@ export default function IPReputationManagement() {
     setFilteredIps(filtered)
   }, [searchQuery, sortBy, ips])
 
-  async function checkAdminAccess() {
+    async function checkAdminAccess() {
     try {
+      // Get session to ensure auth.uid() is set for RLS
       const { data: { session } } = await supabase.auth.getSession()
+
+      if (!session?.user) {
+        window.location.href = '/login'
+        return
+      }
 
       // Check role (middleware already protected this route, but double-check)
       const { data: profile } = await supabase
@@ -75,13 +82,15 @@ export default function IPReputationManagement() {
         .eq('id', session.user.id)
         .single()
 
-      if (!session?.user || profile?.role !== 'admin') {
-        window.location.href = '/login'
+      if (profile?.role !== 'admin') {
+        window.location.href = '/'
         return
       }
+
       setUser(session.user)
+
     } catch (error) {
-      console.error('Admin access check failed:', error)
+      console.error('Error:', error)
       window.location.href = '/login'
     } finally {
       setLoading(false)
