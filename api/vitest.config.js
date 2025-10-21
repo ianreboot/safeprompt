@@ -7,7 +7,7 @@ export default defineConfig({
     environment: 'node',
 
     // Test files
-    include: ['**/__tests__/**/*.test.js', '**/*.test.js'],
+    include: ['**/__tests__/**/*.test.js', '**/*.test.js', '**/*.integration.test.js'],
     exclude: ['node_modules', 'dist', '.vercel'],
 
     // Global setup

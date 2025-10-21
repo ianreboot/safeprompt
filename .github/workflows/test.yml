@@ -31,17 +31,13 @@ jobs:
         working-directory: ./api
         run: npm ci
 
-      - name: Run unit tests
+      - name: Run unit tests (fast, no external API calls)
         working-directory: ./api
-        run: npm test
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: npm run test:unit
 
-      - name: Run tests with coverage
+      - name: Run tests with coverage (unit tests only)
         working-directory: ./api
-        run: npm run test:coverage
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: npm run test:coverage -- --exclude '**/*.integration.test.js'
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -53,6 +49,34 @@ jobs:
           fail_ci_if_error: false
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  integration-tests:
+    name: Run Integration Tests (LLM API calls)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Only run on main branch pushes (not on every PR)
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./api
+        run: npm ci
+
+      - name: Run integration tests
+        working-directory: ./api
+        run: npm run test:integration
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
   realistic-tests:
     name: Run Realistic Test Suite
