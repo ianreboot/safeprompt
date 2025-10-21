@@ -159,7 +159,8 @@ export default function PrivacySettingsPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${session.access_token}`,
+          'X-Requested-With': 'XMLHttpRequest' // CSRF protection
         },
         body: JSON.stringify({ userId: user.id })
       })
@@ -203,7 +204,8 @@ export default function PrivacySettingsPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${session.access_token}`,
+          'X-Requested-With': 'XMLHttpRequest' // CSRF protection
         },
         body: JSON.stringify({ userId: user.id })
       })

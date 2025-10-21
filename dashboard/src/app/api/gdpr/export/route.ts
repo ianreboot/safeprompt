@@ -15,6 +15,13 @@ const supabaseAuth = createClient(
 
 export async function POST(request: Request) {
   try {
+    // SECURITY: CSRF protection via custom header verification
+    // Cross-origin requests cannot set custom headers due to browser's same-origin policy
+    const csrfHeader = request.headers.get('x-requested-with')
+    if (csrfHeader !== 'XMLHttpRequest') {
+      return NextResponse.json({ error: 'Forbidden: Invalid request origin' }, { status: 403 })
+    }
+
     // SECURITY: Verify authenticated user from session
     const authHeader = request.headers.get('authorization')
     if (!authHeader) {

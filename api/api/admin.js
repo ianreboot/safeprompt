@@ -584,10 +584,60 @@ export default async function handler(req, res) {
     return handleApproveWaitlist(req, res);
   }
 
+  // SECURITY: Require authentication for all admin actions (except public health)
+  const requiresAuth = action && action !== 'health';
+
+  if (requiresAuth) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Bearer token required for admin actions'
+      });
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+      if (authError || !user) {
+        return res.status(401).json({
+          error: 'Unauthorized',
+          message: 'Invalid or expired token'
+        });
+      }
+
+      // For sensitive actions (status, cache, monitoring-stats, list-alerts, resolve-alert),
+      // verify admin role
+      const sensitiveActions = ['status', 'cache', 'monitoring-stats', 'list-alerts', 'resolve-alert'];
+      if (sensitiveActions.includes(action)) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.role !== 'admin') {
+          return res.status(403).json({
+            error: 'Forbidden',
+            message: 'Admin privileges required'
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Admin authentication error:', error);
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Authentication failed'
+      });
+    }
+  }
+
   try {
     switch (action) {
       case 'health':
-        // Health check
+        // Health check - public endpoint
         return res.status(200).json({
           status: 'healthy',
           service: 'SafePrompt API',

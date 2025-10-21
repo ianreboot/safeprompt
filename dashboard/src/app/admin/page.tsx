@@ -112,39 +112,40 @@ export default function AdminDashboard() {
 
     if (waitlistData) setWaitlist(waitlistData)
 
-    // Fetch total API calls
-    const { count: totalCalls } = await supabase
-      .from('api_logs')
-      .select('*', { count: 'exact', head: true })
+    // SECURITY: Fetch stats from server-side API to prevent manipulation
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        const statsResponse = await fetch('/api/admin/stats', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'X-Requested-With': 'XMLHttpRequest' // CSRF protection
+          }
+        })
 
-    // Calculate stats - only count PAID subscribers
-    const totalUsers = profilesData?.length || 0
-
-    // Active subscribers = users with paid tier AND active status
-    // Only the 3 actual paid tiers (early_bird, starter, business)
-    const paidTiers = ['early_bird', 'starter', 'business']
-    const activeSubscribers = profilesData?.filter(p =>
-      p.subscription_status === 'active' &&
-      paidTiers.includes(p.subscription_tier)
-    ) || []
-
-    // Calculate revenue based on actual subscription tiers
-    // Note: Actual pricing is $5 (Early Bird), $29 (Starter), $99 (Business)
-    const revenue = activeSubscribers.reduce((total, user) => {
-      switch(user.subscription_tier) {
-        case 'early_bird': return total + 5
-        case 'starter': return total + 29
-        case 'business': return total + 99
-        default: return total
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json()
+          setStats(statsData)
+        } else {
+          console.error('Failed to fetch admin stats')
+          // Fallback to empty stats
+          setStats({
+            totalUsers: 0,
+            activeUsers: 0,
+            revenue: 0,
+            totalApiCalls: 0
+          })
+        }
       }
-    }, 0)
-
-    setStats({
-      totalUsers,
-      activeUsers: activeSubscribers.length,
-      revenue,
-      totalApiCalls: totalCalls || 0
-    })
+    } catch (error) {
+      console.error('Error fetching admin stats:', error)
+      setStats({
+        totalUsers: 0,
+        activeUsers: 0,
+        revenue: 0,
+        totalApiCalls: 0
+      })
+    }
   }
 
   async function viewUserDetails(userId: string) {
@@ -256,15 +257,31 @@ export default function AdminDashboard() {
   }
 
   async function suspendUser(userId: string) {
-    if (!confirm('Are you sure you want to suspend this user?')) return
+    if (!confirm('Are you sure you want to suspend this user? This will immediately log them out from all devices.')) return
 
     const targetUser = users.find(u => u.id === userId)
 
     try {
-      await supabase
-        .from('profiles')
-        .update({ is_active: false })
-        .eq('id', userId)
+      // SECURITY: Call server-side API to suspend user and invalidate sessions
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        throw new Error('No active session')
+      }
+
+      const response = await fetch('/api/admin/suspend-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+          'X-Requested-With': 'XMLHttpRequest' // CSRF protection
+        },
+        body: JSON.stringify({ userId })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Suspension failed')
+      }
 
       // SECURITY: Audit log - successful suspension
       await logAdminAction({
@@ -277,6 +294,7 @@ export default function AdminDashboard() {
       })
 
       await fetchData()
+      alert('User suspended successfully. All active sessions have been invalidated.')
     } catch (error: any) {
       // SECURITY: Audit log - failed suspension
       await logAdminAction({
@@ -289,7 +307,7 @@ export default function AdminDashboard() {
         error_message: error.message
       })
       console.error('Failed to suspend user:', error)
-      alert('Failed to suspend user. Please try again.')
+      alert('Failed to suspend user: ' + error.message)
     }
   }
 
