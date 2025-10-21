@@ -1099,6 +1099,28 @@ Five high-confidence patterns added to detect SQL and command injection attacks:
 3. Same deployment commands but use prod project names
 4. Verify: Test API + monitor logs for 5-10 minutes
 
+### Documentation Site Deployment (NEW - October 2025)
+
+**Project**: `safeprompt-docs` → https://docs.safeprompt.dev
+
+**Deploy Command:**
+```bash
+cd /home/projects/safeprompt-docs
+source /home/projects/.env && export CLOUDFLARE_API_TOKEN
+wrangler pages deploy . --project-name safeprompt-docs --branch main
+```
+
+**Update Workflow:**
+1. Edit source: `/home/projects/safeprompt/docs/PUBLIC_API.md`
+2. Regenerate HTML: Convert markdown to `/home/projects/safeprompt-docs/api.html`
+3. Deploy: Run command above
+4. Verify: https://docs.safeprompt.dev loads correctly
+
+**Important:**
+- NEVER deploy `/home/projects/safeprompt/docs/API.md` (contains secrets)
+- ALWAYS use `PUBLIC_API.md` as source for public documentation
+- DNS managed via Cloudflare API (zone: 294a40cddf0a0ad4deec2747c6aa34f8)
+
 ### Common Deployment Errors
 - **Vercel auth error**: Token must be passed WITHOUT quotes: `--token $VERCEL_TOKEN` (not `--token="$VERCEL_TOKEN"`)
 - **Cloudflare old version**: Add `--branch main` flag
@@ -1380,6 +1402,8 @@ BUSINESS = $99/month, 250,000 validations
 ## KEY FILE LOCATIONS
 
 ### Documentation
+
+**Internal Documentation:**
 ```
 /home/projects/safeprompt/CLAUDE.md                    # This file (core ops)
 /home/projects/safeprompt/docs/PATTERNS.md             # Error lookup table
@@ -1387,7 +1411,35 @@ BUSINESS = $99/month, 250,000 validations
 /home/projects/safeprompt/docs/DEPLOYMENT-DETAILED.md  # Complete deployment guide
 /home/projects/safeprompt/docs/TESTING_REGIMENT.md     # Complete testing guide
 /home/projects/safeprompt/docs/PHASE_1A_INTELLIGENCE_ARCHITECTURE.md  # Phase 1A system
+/home/projects/safeprompt/docs/API.md                  # INTERNAL API docs (contains secrets - DO NOT PUBLISH)
+/home/projects/safeprompt/docs/SANITIZATION_REPORT.md  # Security audit trail for public docs
 ```
+
+**Public Documentation Site** (NEW - October 2025):
+```
+Location:    /home/projects/safeprompt-docs/
+Live URL:    https://docs.safeprompt.dev
+Fallback:    https://safeprompt-docs.pages.dev
+Cloudflare:  safeprompt-docs Pages project (zone: 294a40cddf0a0ad4deec2747c6aa34f8)
+
+Files:
+├── index.html          # Landing page with feature overview
+├── quick-start.html    # 5-minute integration guide (6 languages)
+├── api.html           # Complete API reference (sanitized)
+└── styles.css         # Responsive design
+
+Content Source: /home/projects/safeprompt/docs/PUBLIC_API.md
+```
+
+**Documentation Security:**
+- ✅ `PUBLIC_API.md` - Safe for public (sanitized, security-reviewed)
+- ⛔ `API.md` - INTERNAL ONLY (contains admin endpoints, bypass mechanisms, internal tiers)
+
+**When updating public docs:**
+1. Edit `/home/projects/safeprompt/docs/PUBLIC_API.md` (source of truth)
+2. Regenerate `/home/projects/safeprompt-docs/api.html` from PUBLIC_API.md
+3. Deploy: `cd /home/projects/safeprompt-docs && wrangler pages deploy . --project-name safeprompt-docs`
+4. Verify: https://docs.safeprompt.dev
 
 ### Platform Reference Docs (READ BEFORE USING)
 ```
