@@ -6,7 +6,6 @@ import { Shield, Plus, Trash2, RefreshCw, CheckCircle, AlertCircle } from 'lucid
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
 
 interface AllowlistEntry {
   id: string
@@ -55,7 +54,15 @@ export default function IPAllowlistManagement() {
   async function checkAdminAccess() {
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user || !ADMIN_EMAILS.includes(session.user.email!)) {
+
+      // Check role (middleware already protected this route, but double-check)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
+
+      if (!session?.user || profile?.role !== 'admin') {
         window.location.href = '/login'
         return
       }
