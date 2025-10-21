@@ -19,13 +19,23 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/blog" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  Blog
-                </Link>
+                <a href="https://docs.safeprompt.dev" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Documentation
+                </a>
               </li>
               <li>
-                <Link href="/#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  API Documentation
+                <a href="https://docs.safeprompt.dev/api.html" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  API Reference
+                </a>
+              </li>
+              <li>
+                <a href="https://docs.safeprompt.dev/quick-start.html" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Quick Start
+                </a>
+              </li>
+              <li>
+                <Link href="/blog" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Blog
                 </Link>
               </li>
               <li>
@@ -50,8 +60,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  Documentation
+                <Link href="/playground" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Playground
                 </Link>
               </li>
               <li>

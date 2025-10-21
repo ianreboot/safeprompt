@@ -1,9 +1,10 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/blog/page": "app/blog/page.js",
   "/about/page": "app/about/page.js",
-  "/faq/page": "app/faq/page.js",
+  "/api/playground/route": "app/api/playground/route.js",
+  "/blog/page": "app/blog/page.js",
   "/contact/page": "app/contact/page.js",
+  "/faq/page": "app/faq/page.js",
   "/page": "app/page.js",
   "/privacy/page": "app/privacy/page.js",
   "/signup/page": "app/signup/page.js",

@@ -34,8 +34,17 @@ export default function Header({ user, usage }: HeaderProps) {
             <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">BETA</span>
           </Link>
 
-          {/* Right side - Usage, User info, Sign out */}
+          {/* Right side - Navigation, Usage, User info, Sign out */}
           <div className="flex items-center gap-3 md:gap-6">
+            {/* Docs link */}
+            <a
+              href="https://docs.safeprompt.dev"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Docs
+            </a>
             {/* Usage indicator */}
             {usage && (
               <div className="hidden sm:block text-sm text-muted-foreground">

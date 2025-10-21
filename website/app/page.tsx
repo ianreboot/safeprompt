@@ -48,8 +48,8 @@ export default function Home() {
               <a href="/signup" className="bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary/90 transition">
                 Try Free • No Credit Card
               </a>
-              <a href="#pricing" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
-                Compare Plans
+              <a href="https://docs.safeprompt.dev/quick-start.html" className="border border-border text-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-card transition">
+                View Documentation
               </a>
             </div>
           </motion.div>
@@ -542,9 +542,14 @@ export default function Home() {
   "processingTime": 247
 }`}</code>
             </pre>
-            <p className="text-sm text-muted-foreground mt-4">
-              See dashboard for batch API, caching options, and advanced integration examples
-            </p>
+            <div className="mt-6 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                See full API reference for batch validation, caching options, and advanced features
+              </p>
+              <a href="https://docs.safeprompt.dev/api.html" className="text-primary hover:underline font-semibold whitespace-nowrap ml-4">
+                View API Docs →
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -628,108 +633,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Documentation */}
-      <section id="docs" className="py-20 px-6">
-        <div className="container mx-auto max-w-4xl">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Quick Start Guide
+      {/* Documentation Section - Simplified with Link to Docs */}
+      <section id="docs" className="py-20 px-6 bg-gradient-to-b from-primary/5 to-background">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl font-bold mb-6">
+            Complete Documentation Available
           </h2>
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Get started in minutes with our comprehensive guides, API reference, and code examples for all major languages and frameworks.
+          </p>
 
-          <div className="space-y-8">
-            {/* Step 1 */}
-            <div className="bg-card rounded-xl border border-border p-6">
-              <div className="flex items-start space-x-4">
-                <span className="text-2xl font-bold text-primary">1</span>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-2">Get Your API Key</h3>
-                  <p className="text-muted-foreground mb-4">Sign up and access your API key from the dashboard.</p>
-                  <a href={process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'} className="text-primary hover:underline">
-                    Access Dashboard →
-                  </a>
-                </div>
-              </div>
-            </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <a href="https://docs.safeprompt.dev/quick-start.html" className="bg-card rounded-xl border border-border p-6 hover:border-primary/50 transition group">
+              <div className="text-4xl mb-3">🚀</div>
+              <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition">Quick Start</h3>
+              <p className="text-sm text-muted-foreground">Get your first integration running in under 5 minutes</p>
+            </a>
 
-            {/* Step 2 */}
-            <div className="bg-card rounded-xl border border-border p-6">
-              <div className="flex items-start space-x-4">
-                <span className="text-2xl font-bold text-primary">2</span>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-4">Make Your First Request</h3>
-                  <CodeSelector />
-                </div>
-              </div>
-            </div>
+            <a href="https://docs.safeprompt.dev/api.html" className="bg-card rounded-xl border border-border p-6 hover:border-primary/50 transition group">
+              <div className="text-4xl mb-3">📚</div>
+              <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition">API Reference</h3>
+              <p className="text-sm text-muted-foreground">Complete API documentation with request/response examples</p>
+            </a>
 
-            {/* Step 3 */}
-            <div className="bg-card rounded-xl border border-border p-6">
-              <div className="flex items-start space-x-4">
-                <span className="text-2xl font-bold text-primary">3</span>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-2">Handle the Response</h3>
-                  <pre className="bg-background p-4 rounded-lg overflow-x-auto">
-                    <code className="text-sm">{`{
-  "safe": true,
-  "confidence": 0.95,
-  "threats": [],
-  "processingTime": 247
-}`}</code>
-                  </pre>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 4 - Phase 1A Intelligence */}
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl border border-primary/30 p-6">
-              <div className="flex items-start space-x-4">
-                <span className="text-2xl font-bold text-primary">4</span>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-3">🧠 Network Intelligence (Optional)</h3>
-                  <p className="text-muted-foreground mb-4">
-                    SafePrompt learns from attacks across all customers. When one user gets attacked, everyone benefits.
-                  </p>
-
-                  <div className="space-y-3">
-                    <div className="bg-card/50 rounded-lg p-3">
-                      <h4 className="font-semibold text-sm mb-2">Free Tier:</h4>
-                      <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-                        <li>• Contributes blocked attacks to network (required)</li>
-                        <li>• Data deleted after 24 hours (only pattern hashes kept)</li>
-                        <li>• Benefits from network intelligence</li>
-                        <li>• Cannot block IPs automatically</li>
-                      </ul>
-                    </div>
-
-                    <div className="bg-card/50 rounded-lg p-3">
-                      <h4 className="font-semibold text-sm mb-2">Paid Tiers ($5-$99/mo):</h4>
-                      <ul className="text-sm text-muted-foreground space-y-2 ml-4">
-                        <li>
-                          <span className="font-semibold">Privacy Control:</span>
-                          <br />
-                          Opt-out of intelligence sharing in Settings → Privacy.
-                          You still get protection from the network, just don't contribute your data.
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground mt-4">
-                    Learn more: <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> |
-                    <a href="/terms" className="text-primary hover:underline ml-1">Terms of Service</a>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="text-muted-foreground mb-4">
-              Need help? Check out our full API reference or contact support.
-            </p>
-            <a href="/contact" className="text-primary hover:underline">
-              Contact Support →
+            <a href="https://docs.safeprompt.dev/index.html#code-examples" className="bg-card rounded-xl border border-border p-6 hover:border-primary/50 transition group">
+              <div className="text-4xl mb-3">💻</div>
+              <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition">Code Examples</h3>
+              <p className="text-sm text-muted-foreground">Node.js, Python, cURL, and more integrations</p>
             </a>
           </div>
+
+          <a href="https://docs.safeprompt.dev" className="inline-block bg-primary text-primary-foreground px-10 py-4 rounded-lg text-lg font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20">
+            View Full Documentation →
+          </a>
+
+          <p className="text-sm text-muted-foreground mt-6">
+            Need help? <a href="/contact" className="text-primary hover:underline">Contact Support</a>
+          </p>
         </div>
       </section>
 

@@ -1,0 +1,101 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'dashboard/**'
+      - 'website/**'
+      - 'docs-site/**'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  deploy-dashboard:
+    name: Deploy Dashboard
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./dashboard
+        run: npm ci
+
+      - name: Build dashboard (production)
+        working-directory: ./dashboard
+        run: NODE_ENV=production npm run build
+
+      - name: Deploy to Cloudflare Pages (dev)
+        working-directory: ./dashboard
+        run: npx wrangler pages deploy out --project-name safeprompt-dashboard-dev --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+  deploy-website:
+    name: Deploy Website
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: website/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./website
+        run: npm ci
+
+      - name: Build website (production)
+        working-directory: ./website
+        run: NODE_ENV=production npm run build
+
+      - name: Deploy to Cloudflare Pages (dev)
+        working-directory: ./website
+        run: npx wrangler pages deploy out --project-name safeprompt-dev --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+  deploy-docs:
+    name: Deploy Docs Site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: docs-site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./docs-site
+        run: npm ci
+
+      - name: Build docs site (production)
+        working-directory: ./docs-site
+        run: NODE_ENV=production npm run build
+
+      - name: Deploy to Cloudflare Pages
+        working-directory: ./docs-site
+        run: npx wrangler pages deploy out --project-name safeprompt-docs --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
