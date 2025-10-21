@@ -35,13 +35,59 @@ export default function Login() {
     }
 
     try {
-      // Sign in existing user
+      // SECURITY: Check if account is locked before attempting login
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('locked_until, failed_login_attempts')
+        .eq('email', sanitizedEmail)
+        .single()
+
+      if (profileData?.locked_until) {
+        const lockoutTime = new Date(profileData.locked_until)
+        if (lockoutTime > new Date()) {
+          const minutesRemaining = Math.ceil((lockoutTime.getTime() - Date.now()) / 60000)
+          setMessage(`Account temporarily locked due to multiple failed login attempts. Please try again in ${minutesRemaining} minute${minutesRemaining !== 1 ? 's' : ''}.`)
+          setLoading(false)
+          return
+        }
+      }
+
+      // Attempt sign in
       const { data, error } = await supabase.auth.signInWithPassword({
         email: sanitizedEmail,
         password,
       })
 
-      if (error) throw error
+      if (error) {
+        // SECURITY: Record failed login attempt
+        const { data: lockoutStatus } = await supabase
+          .rpc('record_failed_login', { user_email: sanitizedEmail })
+
+        // SECURITY: Log failed login attempt
+        logSecurityEvent(SecurityEventType.LOGIN_FAILURE, {
+          email: sanitizedEmail,
+          reason: 'invalid_credentials',
+          failedAttempts: lockoutStatus?.locked ? 'max_exceeded' : lockoutStatus?.attempts_remaining,
+        })
+
+        // Show lockout message if account was just locked
+        if (lockoutStatus?.locked) {
+          const lockTime = new Date(lockoutStatus.locked_until)
+          const minutesLocked = Math.ceil((lockTime.getTime() - Date.now()) / 60000)
+          setMessage(`Too many failed login attempts. Account locked for ${minutesLocked} minutes.`)
+        } else if (lockoutStatus?.attempts_remaining !== undefined) {
+          setMessage(`Invalid email or password. ${lockoutStatus.attempts_remaining} attempt${lockoutStatus.attempts_remaining !== 1 ? 's' : ''} remaining before lockout.`)
+        } else {
+          // Generic message if no lockout data (prevents user enumeration)
+          setMessage('Invalid email or password')
+        }
+
+        setLoading(false)
+        return
+      }
+
+      // SECURITY: Reset failed login attempts on successful login
+      await supabase.rpc('reset_failed_login_attempts', { user_id: data.user.id })
 
       // SECURITY: Log successful login
       logSecurityEvent(SecurityEventType.LOGIN_SUCCESS, {
@@ -55,12 +101,12 @@ export default function Login() {
       // SECURITY: Log failed login attempt
       logSecurityEvent(SecurityEventType.LOGIN_FAILURE, {
         email: sanitizedEmail,
-        reason: 'invalid_credentials',
+        reason: 'error',
+        error: error.message,
       })
 
       // SECURITY: Generic error message to prevent user enumeration
       setMessage('Invalid email or password')
-    } finally {
       setLoading(false)
     }
   }
