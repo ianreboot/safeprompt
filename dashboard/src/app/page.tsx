@@ -13,6 +13,7 @@ import {
   FileText, HelpCircle, TrendingUp, Clock, Check, ExternalLink,
   AlertCircle, ChevronRight, Shield, Zap, Users, Download, ListFilter
 } from 'lucide-react'
+import { logSecurityEvent, SecurityEventType } from '@/lib/security-logger'
 
 interface ApiKey {
   key: string
@@ -344,6 +345,13 @@ export default function Dashboard() {
 
       if (!error) {
         await fetchApiKey(user.id)
+
+        // SECURITY: Log API key regeneration
+        logSecurityEvent(SecurityEventType.API_KEY_REGENERATED, {
+          email: user.email,
+          userId: user.id,
+        })
+
         setShowPasswordModal(false)
         setVerificationPassword('')
         alert('New API key generated!')
@@ -429,6 +437,12 @@ export default function Dashboard() {
   }
 
   async function signOut() {
+    // SECURITY: Log logout event
+    logSecurityEvent(SecurityEventType.LOGOUT, {
+      email: user?.email,
+      userId: user?.id,
+    })
+
     await supabase.auth.signOut()
     window.location.href = '/login'
   }

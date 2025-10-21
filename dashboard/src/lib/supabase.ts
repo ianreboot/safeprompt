@@ -10,5 +10,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-  }
+    // SECURITY: Session configuration
+    detectSessionInUrl: true,
+    flowType: 'pkce', // Use PKCE flow for enhanced security
+    // Session will auto-refresh before expiry (Supabase default: 1 hour)
+    // Refresh token valid for: 30 days (Supabase default)
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'safeprompt-dashboard',
+    },
+  },
 })

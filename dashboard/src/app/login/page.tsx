@@ -6,6 +6,7 @@ import LoginHeader from '@/components/LoginHeader'
 import Footer from '@/components/Footer'
 import { Shield, Mail, Lock, ArrowRight } from 'lucide-react'
 import { sanitizeEmail, isValidEmail, INPUT_LIMITS } from '@/lib/input-sanitizer'
+import { logSecurityEvent, SecurityEventType } from '@/lib/security-logger'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -42,9 +43,21 @@ export default function Login() {
 
       if (error) throw error
 
+      // SECURITY: Log successful login
+      logSecurityEvent(SecurityEventType.LOGIN_SUCCESS, {
+        email: sanitizedEmail,
+        userId: data.user?.id,
+      })
+
       // Redirect to dashboard
       window.location.href = '/'
     } catch (error: any) {
+      // SECURITY: Log failed login attempt
+      logSecurityEvent(SecurityEventType.LOGIN_FAILURE, {
+        email: sanitizedEmail,
+        reason: 'invalid_credentials',
+      })
+
       // SECURITY: Generic error message to prevent user enumeration
       setMessage('Invalid email or password')
     } finally {

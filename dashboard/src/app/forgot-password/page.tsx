@@ -6,6 +6,7 @@ import LoginHeader from '@/components/LoginHeader'
 import Footer from '@/components/Footer'
 import { Mail, ArrowLeft, Check } from 'lucide-react'
 import { sanitizeEmail, isValidEmail, INPUT_LIMITS } from '@/lib/input-sanitizer'
+import { logSecurityEvent, SecurityEventType } from '@/lib/security-logger'
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
@@ -42,6 +43,11 @@ export default function ForgotPassword() {
         }
         // For any other error, still show success message (prevents user enumeration)
       }
+
+      // SECURITY: Log password reset request
+      logSecurityEvent(SecurityEventType.PASSWORD_RESET_REQUEST, {
+        email: sanitizedEmail,
+      })
 
       setSent(true)
     } catch (error: any) {

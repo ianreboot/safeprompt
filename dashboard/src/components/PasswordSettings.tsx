@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Lock, Check, AlertCircle } from 'lucide-react'
+import { logSecurityEvent, SecurityEventType } from '@/lib/security-logger'
 
 export default function PasswordSettings() {
   const [currentPassword, setCurrentPassword] = useState('')
@@ -77,6 +78,12 @@ export default function PasswordSettings() {
       })
 
       if (updateError) throw updateError
+
+      // SECURITY: Log successful password change
+      logSecurityEvent(SecurityEventType.PASSWORD_CHANGED, {
+        email: user.email,
+        userId: user.id,
+      })
 
       setSuccess(true)
       setCurrentPassword('')
