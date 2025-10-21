@@ -1109,6 +1109,133 @@ Five high-confidence patterns added to detect SQL and command injection attacks:
 
 ---
 
+## CI/CD & GITHUB ACTIONS
+
+### Overview
+SafePrompt uses GitHub Actions for automated testing on every push to `main` branch. The workflow runs:
+- **Unit tests** (always): 775 tests, no external API calls, <15s runtime
+- **Integration tests** (main only): 140 tests, requires `OPENROUTER_API_KEY`, ~4-5s runtime
+
+**Location**: `.github/workflows/test.yml`
+
+### Common CI/CD Failure: Invalid OPENROUTER_API_KEY
+
+**Symptom**: Email notifications with "Test Suite" failures, errors like:
+```
+[SafePrompt] Pass 2 error: All models failed for pass2
+Last error: meta-llama/llama-3.1-70b-instruct: OPENROUTER_API_KEY environment variable not set
+OR
+Orchestrator error: Orchestrator API error: 401
+```
+
+**Root Cause**: The `OPENROUTER_API_KEY` stored in GitHub Secrets has expired or is invalid.
+
+**Diagnosis Steps**:
+```bash
+# 1. Verify secret exists in GitHub
+source /home/projects/.env && export GH_TOKEN=$GITHUB_PAT
+gh secret list --repo ianreboot/safeprompt-internal --app actions
+# Should show: OPENROUTER_API_KEY with recent update date
+
+# 2. Test the local .env key validity
+source /home/projects/.env
+curl -s -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "google/gemini-2.5-flash-preview-09-2025", "messages": [{"role": "user", "content": "test"}]}' \
+  https://openrouter.ai/api/v1/chat/completions | python3 -m json.tool
+# Should return valid JSON response, NOT {"error": {"code": 401}}
+
+# 3. Run integration tests locally
+cd /home/projects/safeprompt/api
+npm run test:integration
+# Should pass all 140 tests
+```
+
+**Fix Steps**:
+```bash
+# 1. Get a valid OPENROUTER_API_KEY (from https://openrouter.ai/keys)
+# Update /home/projects/.env with new key
+
+# 2. Test it locally first
+source /home/projects/.env
+cd /home/projects/safeprompt/api && npm run test:integration
+# Verify all tests pass
+
+# 3. Update GitHub Secret
+source /home/projects/.env && export GH_TOKEN=$GITHUB_PAT
+echo "$OPENROUTER_API_KEY" | gh secret set OPENROUTER_API_KEY --repo ianreboot/safeprompt-internal --app actions
+
+# 4. Verify secret updated
+gh secret list --repo ianreboot/safeprompt-internal --app actions
+# Check OPENROUTER_API_KEY has new timestamp
+
+# 5. Trigger workflow to verify
+git commit --allow-empty -m "Test CI/CD after key rotation"
+git push
+```
+
+### GitHub Secrets Reference
+
+**All secrets configured** (last verified 2025-10-21):
+- `OPENROUTER_API_KEY`: API access for LLM calls in integration tests
+- `CODECOV_TOKEN`: Code coverage reporting
+- `SAFEPROMPT_DEV_SUPABASE_URL`: DEV database connection
+- `SAFEPROMPT_DEV_SUPABASE_ANON_KEY`: DEV database auth
+
+**To manage secrets programmatically**:
+```bash
+# List all secrets
+gh secret list --repo ianreboot/safeprompt-internal --app actions
+
+# Set a secret
+echo "SECRET_VALUE" | gh secret set SECRET_NAME --repo ianreboot/safeprompt-internal --app actions
+
+# Delete a secret
+gh secret delete SECRET_NAME --repo ianreboot/safeprompt-internal --app actions
+
+# Bulk update from .env file
+gh secret set --env-file .env --repo ianreboot/safeprompt-internal --app actions
+```
+
+**IMPORTANT**: The `--app actions` flag is REQUIRED for GitHub Actions secrets. Without it, secrets are created as user secrets and won't be accessible to workflows.
+
+### Workflow Structure
+
+**Unit Tests** (always run):
+- Triggered: Every push to `main` or `dev`, every PR
+- Runtime: ~12s
+- API calls: None (mocked)
+- Purpose: Fast feedback on code changes
+
+**Integration Tests** (selective):
+- Triggered: Only pushes to `main` (not PRs)
+- Runtime: ~4-5s
+- API calls: Real OpenRouter LLM calls
+- Purpose: Verify end-to-end functionality
+- Cost: ~$0.02 per run (using 8B models)
+
+**Why integration tests don't run on PRs**: Prevents burning API credits on draft/WIP code. Integration tests run after merge to main.
+
+### Preventing Future API Key Issues
+
+**Best Practice: Quarterly Key Rotation**
+1. Generate new key at https://openrouter.ai/keys
+2. Test locally: `npm run test:integration`
+3. Update GitHub Secret: `gh secret set OPENROUTER_API_KEY ...`
+4. Update local .env: Add new key
+5. Verify: Trigger workflow with empty commit
+
+**Monitoring**: Watch for email notifications from GitHub Actions. Integration test failures = API key issue 95% of the time.
+
+**Alternative: Make Integration Tests Non-Blocking** (if frequent key expiration):
+```yaml
+# In .github/workflows/test.yml
+integration-tests:
+  continue-on-error: true  # Don't fail build on integration test failure
+```
+
+---
+
 ## 🚨 CRITICAL WARNINGS
 
 ### Git Repository Separation
