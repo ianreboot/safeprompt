@@ -21,14 +21,14 @@
 
 ### The Quick Version (For Bios)
 
-**Ian Ho** - Runs Reboot Media, building AI-powered websites. Previously worked at eBay as technical architect. Discovered client lead forms with AI had zero input sanitization - malicious prompts could hijack the AI and access entire mailboxes. Built SafePrompt to fix it. Bangkok.
+**Ian Ho** - eBay's first technical architect. Managed multi-million dollar ad campaigns. Runs Reboot Media now, building AI-powered websites. Discovered client lead forms with AI had zero input sanitization - malicious prompts could hijack the AI and access entire mailboxes. Built SafePrompt to fix it. Bangkok.
 
 ### The Real Story
 
 **Background:**
-- Run Reboot Media (agency building AI-powered sites)
-- Worked at eBay early days, technical architect role
-- Did fractional CMO work, managed ad campaigns
+- eBay's first technical architect
+- Managed multi-million dollar ad campaigns (fractional CMO work)
+- Run Reboot Media now (agency building AI-powered sites)
 - Started using ChatGPT November 2022
 
 **What Happened:**
@@ -58,10 +58,8 @@ SafePrompt. One API call.
 
 98% accuracy on 94 tests. <100ms response. $5/month.
 
-**Why I Could Build This:**
-- Seen security at scale (eBay)
-- Understand pricing (ran campaigns, fractional CMO work)
-- Solving my own problem (agency uses it for every client)
+**Why I Built This:**
+I've seen what works at scale (eBay). I know what indie devs can actually afford (ran multi-million dollar campaigns, understand pricing psychology). And I'm solving my own problem - every client project at Reboot Media uses SafePrompt now.
 
 Not theoretical. In production.
 
@@ -569,7 +567,7 @@ After that: $29/month
 No sales calls. Just works.
 
 **Background:**
-Worked at eBay (technical architect role). Run Reboot Media now. Started using ChatGPT November 2022.
+eBay's first technical architect. Managed multi-million dollar ad campaigns. Run Reboot Media now.
 
 Ask me anything. I'll be here all day.
 
@@ -784,7 +782,7 @@ Tech stack: Vercel Functions, Supabase, Cloudflare Pages
 NPM: @safeprompt/client
 GitHub: github.com/ianreboot/safeprompt
 
-Background: Worked at eBay (technical architect), ran ad campaigns, agency owner
+Background: eBay's first technical architect. Managed multi-million dollar ad campaigns. Agency owner.
 ```
 
 ---
@@ -819,7 +817,7 @@ Solo. 3 months.
 $5/month for first 50 users (locked forever)
 
 **Background:**
-Worked at eBay (technical architect). Ran ad campaigns. Now running Reboot Media.
+eBay's first technical architect. Managed multi-million dollar ad campaigns. Running Reboot Media now.
 
 Try it: safeprompt.dev/playground (27 real attacks, no signup)
 
@@ -885,7 +883,7 @@ Costs ~$50/month at current scale
 github.com/ianreboot/safeprompt (examples, NPM package)
 
 **Background:**
-Worked at eBay (technical architect). Ran campaigns. Agency owner.
+eBay's first technical architect. Managed multi-million dollar ad campaigns. Agency owner.
 
 Happy to answer questions about architecture, attack detection, or indie hacking.
 ```
