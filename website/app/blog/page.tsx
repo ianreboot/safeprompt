@@ -55,7 +55,7 @@ export default function BlogPage() {
                         <span>{post.author}</span>
                       </div>
                       <span>•</span>
-                      <time>{new Date(post.date).toLocaleDateString()}</time>
+                      <time>{post.date}</time>
                       <span>•</span>
                       <div className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
