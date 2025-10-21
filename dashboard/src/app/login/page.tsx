@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import LoginHeader from '@/components/LoginHeader'
 import Footer from '@/components/Footer'
 import { Shield, Mail, Lock, ArrowRight } from 'lucide-react'
+import { sanitizeEmail, isValidEmail, INPUT_LIMITS } from '@/lib/input-sanitizer'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -17,10 +18,25 @@ export default function Login() {
     setLoading(true)
     setMessage('')
 
+    // SECURITY: Sanitize and validate inputs
+    const sanitizedEmail = sanitizeEmail(email)
+
+    if (!isValidEmail(sanitizedEmail)) {
+      setMessage('Please enter a valid email address')
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 6 || password.length > INPUT_LIMITS.PASSWORD) {
+      setMessage('Invalid password format')
+      setLoading(false)
+      return
+    }
+
     try {
       // Sign in existing user
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: sanitizedEmail,
         password,
       })
 
@@ -29,7 +45,8 @@ export default function Login() {
       // Redirect to dashboard
       window.location.href = '/'
     } catch (error: any) {
-      setMessage(error.message || 'An error occurred')
+      // SECURITY: Generic error message to prevent user enumeration
+      setMessage('Invalid email or password')
     } finally {
       setLoading(false)
     }
@@ -65,6 +82,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                maxLength={INPUT_LIMITS.EMAIL}
                 className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
                 placeholder="you@company.com"
               />
@@ -83,9 +101,10 @@ export default function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                maxLength={INPUT_LIMITS.PASSWORD}
                 className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
                 placeholder="••••••••"
-                minLength={6}
               />
             </div>
           </div>

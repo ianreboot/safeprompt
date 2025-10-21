@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import LoginHeader from '@/components/LoginHeader'
 import Footer from '@/components/Footer'
 import { Mail, ArrowLeft, Check } from 'lucide-react'
+import { sanitizeEmail, isValidEmail, INPUT_LIMITS } from '@/lib/input-sanitizer'
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
@@ -17,29 +18,29 @@ export default function ForgotPassword() {
     setLoading(true)
     setError('')
 
+    // SECURITY: Sanitize and validate email
+    const sanitizedEmail = sanitizeEmail(email)
+
+    if (!isValidEmail(sanitizedEmail)) {
+      setError('Please enter a valid email address')
+      setLoading(false)
+      return
+    }
+
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(sanitizedEmail, {
         redirectTo: `${window.location.origin}/reset-password`,
       })
 
+      // SECURITY: Always show success to prevent user enumeration
+      // Don't reveal whether the email exists in the system
       if (error) {
-        // Provide user-friendly error messages
         if (error.message.includes('rate limit') || error.message.includes('Email rate limit exceeded')) {
           throw new Error(
-            'Too many password reset requests. Please wait a few minutes and try again. ' +
-            'If you need immediate assistance, contact support@safeprompt.dev'
+            'Too many password reset requests. Please wait a few minutes and try again.'
           )
         }
-
-        // Handle invalid email
-        if (error.message.includes('Invalid') || error.message.includes('not found')) {
-          throw new Error(
-            'We couldn\'t find an account with that email address. Please check the email and try again.'
-          )
-        }
-
-        // Generic error
-        throw error
+        // For any other error, still show success message (prevents user enumeration)
       }
 
       setSent(true)
@@ -103,6 +104,7 @@ export default function ForgotPassword() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    maxLength={INPUT_LIMITS.EMAIL}
                     className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
                     placeholder="you@company.com"
                   />
