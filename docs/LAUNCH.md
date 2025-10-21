@@ -21,7 +21,7 @@
 
 ### The Quick Version (For Bios)
 
-**Ian Ho** - eBay's first technical architect. Managed multi-million dollar ad campaigns. Runs Reboot Media now, building AI-powered websites. Discovered client lead forms with AI had zero input sanitization - malicious prompts could hijack the AI and access entire mailboxes. Built SafePrompt to fix it. Bangkok.
+**Ian Ho** - eBay's first technical architect. Managed multi-million dollar ad campaigns. Runs Reboot Media now, building AI-powered websites. Discovered client lead forms with AI had zero input sanitization - malicious prompts could hijack the AI and access entire mailboxes. Built SafePrompt to fix it.
 
 ### The Real Story
 
@@ -86,7 +86,7 @@ Make AI security simple for indie devs and small businesses. No sales calls. No 
 #### Week 1: Foundation & Social Presence
 
 **Day 1: Account Setup**
-- [ ] Update Twitter bio: "Building AI-powered websites @RebootMedia. Working on SafePrompt - making AI security simple for indie devs. Bangkok."
+- [ ] Update Twitter bio: "Building AI-powered websites @RebootMedia. Working on SafePrompt - making AI security simple for indie devs."
 - [ ] Create Product Hunt account (needs 30+ days activity before launch)
 - [ ] Update LinkedIn: Add "Founder, SafePrompt" to current role
 - [ ] Join: r/webdev, r/SideProject, r/SaaS, HackerNews (create account if needed)
@@ -857,7 +857,7 @@ Nothing simple for people who want to ship.
 **What I built:**
 SafePrompt. One POST request. Returns safe/unsafe.
 
-3 months. Solo. Bangkok.
+3 months. Solo.
 
 **Results:**
 • 98% accuracy (94 professional attack tests)

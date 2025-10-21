@@ -102,7 +102,7 @@ export default function AboutPage() {
             <div className="bg-card rounded-xl border border-border p-8">
               <h2 className="text-2xl font-semibold mb-4">The Solution: Built in 3 Months</h2>
               <p className="text-muted-foreground mb-4">
-                Ian built SafePrompt solo in 3 months. Bangkok. Using experience from eBay (technical architecture),
+                Ian built SafePrompt solo in 3 months. Using experience from eBay (technical architecture),
                 multi-million dollar campaigns (pricing psychology), and early AI adoption (ChatGPT since November 2022).
                 Solving real client problems, not theoretical ones.
               </p>
