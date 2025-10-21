@@ -6,8 +6,7 @@ import { Shield, Plus, Trash2, Search, Calendar, User, CheckCircle, XCircle, Edi
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-// Simple admin auth - in production, use proper role-based access
-const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
+// Admin access controlled via middleware and role field
 
 interface WhitelistEntry {
   ip: string

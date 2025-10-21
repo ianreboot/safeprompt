@@ -6,7 +6,8 @@ import { AlertTriangle, Plus, Trash2, Search, Edit2, Save, X, Shield } from 'luc
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-// Admin access controlled via middleware and role field
+// Simple admin auth - in production, use proper role-based access
+const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
 
 interface BlacklistEntry {
   ip: string

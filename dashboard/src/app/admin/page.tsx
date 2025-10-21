@@ -10,8 +10,7 @@ import IPReputationManager from '@/components/IPReputationManager'
 import AdminIntelligenceTools from '@/components/AdminIntelligenceTools'
 import JobMonitoring from '@/components/JobMonitoring'
 
-// Simple admin auth - in production, use proper role-based access
-const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
+// Admin access controlled via middleware and role field
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null)
@@ -45,8 +44,20 @@ export default function AdminDashboard() {
       // Get session to ensure auth.uid() is set for RLS
       const { data: { session } } = await supabase.auth.getSession()
 
-      if (!session?.user || !ADMIN_EMAILS.includes(session.user.email!)) {
+      if (!session?.user) {
         window.location.href = '/login'
+        return
+      }
+
+      // Check role (middleware already protected this route, but double-check)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
+
+      if (profile?.role !== 'admin') {
+        window.location.href = '/'
         return
       }
 

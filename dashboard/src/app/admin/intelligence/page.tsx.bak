@@ -6,7 +6,8 @@ import { Shield, AlertTriangle, TrendingUp, Globe, RefreshCw, Download, Search, 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-// Admin access controlled via middleware and role field
+// Simple admin auth - in production, use proper role-based access
+const ADMIN_EMAILS = ['ian.ho@rebootmedia.net']
 
 interface ThreatSample {
   id: string

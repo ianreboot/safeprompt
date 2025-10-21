@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
+import EnvironmentBanner from '@/components/EnvironmentBanner'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -43,6 +44,7 @@ export default function RootLayout({
           `}
         </Script>
 
+        <EnvironmentBanner />
         {children}
       </body>
     </html>
