@@ -71,7 +71,6 @@ export default function TermsPage() {
                   </p>
                   <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 ml-4">
                     <li><strong>Opt-Out:</strong> Disable threat intelligence collection via dashboard settings</li>
-                    <li><strong>IP Blocking (Opt-In):</strong> Enable automatic blocking of malicious IPs</li>
                     <li><strong>Same Accuracy:</strong> Validation accuracy is identical regardless of opt-out status</li>
                     <li><strong>Network Protection:</strong> Still benefit from network intelligence even when opted out</li>
                   </ul>

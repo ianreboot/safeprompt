@@ -32,7 +32,7 @@ function ContactForm() {
     setErrorMessage('')
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.safeprompt.dev'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL!
       const response = await fetch(`${apiUrl}/api/website`, {
         method: 'POST',
         headers: {

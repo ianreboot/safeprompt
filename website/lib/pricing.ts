@@ -73,11 +73,6 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
         icon: 'check'
       },
       {
-        text: 'IP Auto-Blocking: Block known bad actors',
-        included: true,
-        icon: 'check'
-      },
-      {
         text: 'Intelligence Opt-out: Disable data collection',
         included: true,
         icon: 'check'
@@ -122,11 +117,6 @@ export const PRICING: Record<'free' | 'paid', PricingPlan> = {
         text: 'Network Defense: Contributes attack data',
         included: true,
         icon: 'check'
-      },
-      {
-        text: 'IP Auto-Blocking: Block known bad actors',
-        included: false,
-        icon: 'x'
       },
       {
         text: 'Intelligence Opt-out: Disable data collection',

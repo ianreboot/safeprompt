@@ -24,7 +24,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
+                <Link href="/#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
                   API Documentation
                 </Link>
               </li>
@@ -45,17 +45,17 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Product</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="#pricing" className="text-muted-foreground hover:text-foreground transition text-sm">
+                <Link href="/#pricing" className="text-muted-foreground hover:text-foreground transition text-sm">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
+                <Link href="/#docs" className="text-muted-foreground hover:text-foreground transition text-sm">
                   Documentation
                 </Link>
               </li>
               <li>
-                <a href={process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.safeprompt.dev'} className="text-muted-foreground hover:text-foreground transition text-sm">
+                <a href={process.env.NEXT_PUBLIC_DASHBOARD_URL!} className="text-muted-foreground hover:text-foreground transition text-sm">
                   Dashboard
                 </a>
               </li>

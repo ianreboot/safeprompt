@@ -116,7 +116,7 @@ export default function FAQPage() {
                     <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
                       <li><strong>Zero-day protection:</strong> Get protected from brand new attacks you've never seen</li>
                       <li><strong>Faster detection:</strong> Patterns detected across network applied instantly</li>
-                      <li><strong>IP reputation:</strong> Malicious IPs blocked automatically based on global activity</li>
+                      <li><strong>IP reputation tracking:</strong> Identify malicious IPs based on global activity patterns</li>
                       <li><strong>Multi-turn attacks:</strong> Context-based attacks detected across customer base</li>
                     </ul>
                     <p className="text-muted-foreground mt-3">
@@ -128,7 +128,7 @@ export default function FAQPage() {
                     <h3 className="text-lg font-semibold mb-3">Can I opt out of intelligence sharing?</h3>
                     <p className="text-muted-foreground mb-3">
                       Paid tier users can disable intelligence sharing in Privacy Settings. Free tier users contribute blocked
-                      requests as part of the service (this helps protect all users). Disabling on paid tiers keeps IP blocking active.
+                      requests as part of the service (this helps protect all users).
                     </p>
                     <div className="space-y-3">
                       <div className="bg-card/50 rounded-lg p-3">
@@ -145,7 +145,7 @@ export default function FAQPage() {
                         </p>
                         <ul className="text-sm text-muted-foreground space-y-1 ml-4">
                           <li>• Validation accuracy remains identical (same detection models)</li>
-                          <li>• IP blocking remains active (you still benefit from protection)</li>
+                          <li>• You still benefit from network intelligence for improved protection</li>
                           <li>• You just don't contribute your data to the network</li>
                         </ul>
                       </div>
@@ -153,30 +153,26 @@ export default function FAQPage() {
                   </div>
 
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold mb-3">How does IP auto-blocking work?</h3>
+                    <h3 className="text-lg font-semibold mb-3">How does IP reputation tracking work?</h3>
                     <p className="text-muted-foreground mb-3">
-                      When an IP address has &gt;80% block rate across ≥5 requests, we automatically block future requests
-                      from that IP (paid tiers only). We use cryptographic hashes, so the actual IP cannot be reversed.
-                      You can allowlist specific IPs in your dashboard.
+                      SafePrompt tracks IP reputation across the network to identify patterns of malicious behavior.
+                      We use cryptographic hashes, so the actual IP cannot be reversed, ensuring privacy.
                     </p>
                     <div className="space-y-3">
                       <div className="bg-card/50 rounded-lg p-3">
-                        <h4 className="font-semibold text-sm mb-2">Free Tier:</h4>
+                        <h4 className="font-semibold text-sm mb-2">All Tiers:</h4>
                         <p className="text-sm text-muted-foreground">
-                          ❌ No automatic IP blocking<br />
-                          ✅ Still benefit from network intelligence (detection improves)<br />
-                          ✅ Can manually block IPs via dashboard
+                          ✅ Benefit from network intelligence (detection improves)<br />
+                          ✅ Privacy-first: Only hashed IPs stored<br />
+                          ✅ Attack pattern correlation across customer base
                         </p>
                       </div>
                       <div className="bg-card/50 rounded-lg p-3">
                         <h4 className="font-semibold text-sm mb-2">Paid Tiers (Early Bird/Starter/Business):</h4>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          ✅ Automatic IP blocking available (opt-in)<br />
-                          ✅ Enable in Dashboard → Settings → Security<br />
-                          ✅ Privacy-first: Only hashed IPs stored
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          IP reputation score is based on attack patterns across all customers. High-confidence malicious IPs are blocked automatically.
+                        <p className="text-sm text-muted-foreground">
+                          ✅ Advanced threat correlation<br />
+                          ✅ Multi-turn session tracking<br />
+                          ✅ IP reputation insights in dashboard
                         </p>
                       </div>
                     </div>
@@ -200,9 +196,8 @@ export default function FAQPage() {
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
                     <h3 className="text-lg font-semibold mb-3">What's the benefit of network defense for Free users?</h3>
                     <p className="text-muted-foreground mb-3">
-                      Free users help build the threat intelligence database by contributing blocked requests. While you don't
-                      get IP blocking, you benefit from improved pattern detection as the system learns from attacks.
-                      Upgrading to a paid tier adds IP auto-blocking.
+                      Free users help build the threat intelligence database by contributing blocked requests. You benefit
+                      from improved pattern detection as the system learns from attacks across the network.
                     </p>
                     <div className="space-y-3">
                       <div className="bg-card/50 rounded-lg p-3">
@@ -212,7 +207,6 @@ export default function FAQPage() {
                           <li>✅ Benefit from network-wide pattern detection</li>
                           <li>✅ Protection from novel attacks discovered across network</li>
                           <li>✅ Automatic GDPR export/delete capabilities</li>
-                          <li>❌ No automatic IP blocking capability</li>
                         </ul>
                       </div>
                       <div className="bg-card/50 rounded-lg p-3">
@@ -254,7 +248,7 @@ export default function FAQPage() {
                     <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
                       <li>10,000 validations/month</li>
                       <li>Priority support</li>
-                      <li>Automatic IP blocking (opt-in)</li>
+                      <li>Advanced threat correlation</li>
                       <li>Intelligence sharing opt-out</li>
                       <li>Lock in $5/mo forever (first 50 users only)</li>
                     </ul>

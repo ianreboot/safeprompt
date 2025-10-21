@@ -435,12 +435,12 @@ export default function Home() {
               <div className="text-4xl mb-4">🎯</div>
               <h3 className="text-xl font-semibold mb-2">IP Reputation System</h3>
               <p className="text-muted-foreground mb-4">
-                Track malicious IP addresses across the network. Paid tiers (Early Bird/Starter/Business) can auto-block
-                repeat attackers before they even try.
+                Track malicious IP addresses across the network. Paid tiers (Early Bird/Starter/Business) get
+                advanced threat correlation to identify patterns and repeated attacks.
               </p>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>✓ Real-time reputation scoring</li>
-                <li>✓ Auto-block at 70% attack rate (paid tiers)</li>
+                <li>✓ Attack pattern correlation</li>
                 <li>✓ Privacy-first: Only hashed IPs stored</li>
               </ul>
             </div>
@@ -501,14 +501,13 @@ export default function Home() {
                       <li>• Contributes attack data (required)</li>
                       <li>• Benefits from network intelligence</li>
                       <li>• Same validation accuracy</li>
-                      <li>• No IP blocking capability</li>
                     </ul>
                   </div>
                   <div className="border-t border-border pt-3">
                     <div className="font-semibold mb-1">Paid Tiers (Early Bird/Starter/Business):</div>
                     <ul className="space-y-1 text-muted-foreground pl-4">
                       <li>• Can opt-out of intelligence sharing</li>
-                      <li>• IP reputation auto-blocking (opt-in)</li>
+                      <li>• IP reputation tracking for threat correlation</li>
                       <li>• Multi-turn session tracking</li>
                       <li>• Same validation accuracy</li>
                     </ul>
@@ -709,11 +708,6 @@ export default function Home() {
                           <br />
                           Opt-out of intelligence sharing in Settings → Privacy.
                           You still get protection from the network, just don't contribute your data.
-                        </li>
-                        <li>
-                          <span className="font-semibold">IP Auto-Blocking:</span>
-                          <br />
-                          Enable in Settings → Security to automatically block IPs with 70%+ attack rate.
                         </li>
                       </ul>
                     </div>
