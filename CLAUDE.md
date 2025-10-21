@@ -1,6 +1,6 @@
 # SafePrompt - AI Assistant Instructions
 
-**Last Updated**: 2025-10-20 (Demographics-Optimized Messaging Deployed)
+**Last Updated**: 2025-10-21 (CI/CD Test Timestamp Issues Resolved)
 **Status**: Production Ready - DEV/PROD Fully Consistent, Product Hunt Launch Ready
 **Deployment**: Cloudflare Pages (website + dashboard), Vercel Functions (API)
 
@@ -1173,6 +1173,82 @@ gh secret list --repo ianreboot/safeprompt-internal --app actions
 git commit --allow-empty -m "Test CI/CD after key rotation"
 git push
 ```
+
+### Common CI/CD Failure: Unit Test Timestamp Issues (RESOLVED 2025-10-21)
+
+**Symptom**: Unit tests failing with protocol validation errors like:
+```
+expected 'pass1' to be 'pass2'
+expected safe=false but got safe=true
+expected confidence < 0.7 but got 0.95
+```
+
+**Root Cause**: Tests using `Date.now()` to generate expected validation tokens, but code internally calls `Date.now()` milliseconds later, causing token mismatches that trigger protocol validation failures.
+
+**NOT the Problem**: OPENROUTER_API_KEY expiration (common misdiagnosis)
+
+**The Fix**: Use `vi.useFakeTimers()` and `vi.setSystemTime()` in tests that validate AI responses with timestamp tokens.
+
+**Example Pattern** (ai-validator-unified.test.js):
+```javascript
+it('should proceed to Pass 2 when Pass 1 uncertain', async () => {
+  const baseTime = 1700000000000;
+
+  // ✅ CRITICAL: Use fake timers for consistent timestamps
+  vi.useFakeTimers();
+  vi.setSystemTime(baseTime);
+
+  // Mock Pass 1 response with matching token
+  fetch.mockImplementationOnce(async () => {
+    const response = {
+      ok: true,
+      json: async () => ({
+        choices: [{
+          message: {
+            content: JSON.stringify({
+              risk: 'medium',
+              confidence: 0.6,
+              context: 'Ambiguous request',
+              validation_token: baseTime  // ✅ Matches vi.setSystemTime
+            })
+          }
+        }],
+        usage: { total_tokens: 100 }
+      })
+    };
+    // Advance time for Pass 2 to get new token
+    vi.advanceTimersByTime(1);
+    return response;
+  });
+
+  // Mock Pass 2 response
+  fetch.mockResolvedValueOnce({
+    // ... validation_token: baseTime + 1  // ✅ Matches time advancement
+  });
+
+  const result = await validateUnified('Test prompt');
+
+  expect(result.stage).toBe('pass2');  // ✅ Now passes
+
+  vi.useRealTimers();  // ✅ Clean up
+});
+```
+
+**Why This Happens**:
+1. Test calls `const now = Date.now()` → timestamp `T`
+2. Test mocks API response with `validation_token: now` → expects token `T`
+3. Code internally calls `const pass1Token = Date.now()` → timestamp `T+5ms`
+4. Code generates token `T+5ms`, test expects `T` → **MISMATCH**
+5. Protocol validator sees `T+5 !== T` → "Validation token mismatch - possible prompt injection"
+6. Fail-closed logic triggers → Test fails
+
+**Detection**: If unit tests pass locally but fail in CI, or fail intermittently, check for timestamp validation logic.
+
+**Resolution**: Fixed 6 tests in ai-validator-unified.test.js (commit 9ed78949, 2025-10-21)
+
+**Lesson**: Any test validating timestamp-based tokens MUST control time with fake timers, or token mismatches will cause random failures.
+
+---
 
 ### GitHub Secrets Reference
 
