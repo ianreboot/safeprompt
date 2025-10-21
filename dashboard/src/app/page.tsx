@@ -90,6 +90,10 @@ export default function Dashboard() {
   const [cacheStats, setCacheStats] = useState<CacheStats | null>(null)
   const [currentPlan, setCurrentPlan] = useState<PricingPlan>(pricingPlans[0])
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  // SECURITY: Password verification for sensitive operations
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [verificationPassword, setVerificationPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
 
   const hasRealKey = apiKey?.key
   const maskedKey = hasRealKey
@@ -300,11 +304,34 @@ export default function Dashboard() {
     setTimeout(() => setCopiedCode(null), 2000)
   }
 
-  async function regenerateKey() {
-    if (!confirm('This will invalidate your current API key. Continue?')) return
+  // SECURITY: Show password modal before allowing key regeneration
+  function regenerateKey() {
+    if (!confirm('This will invalidate your current API key. You will need to verify your password. Continue?')) return
+    setShowPasswordModal(true)
+    setVerificationPassword('')
+    setPasswordError('')
+  }
+
+  // SECURITY: Verify password before regenerating API key
+  async function verifyPasswordAndRegenerateKey() {
+    if (!verificationPassword) {
+      setPasswordError('Password is required')
+      return
+    }
 
     try {
-      // Generate new key directly via Supabase
+      // Verify password by attempting to sign in
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: verificationPassword
+      })
+
+      if (authError) {
+        setPasswordError('Incorrect password')
+        return
+      }
+
+      // Password verified - proceed with key regeneration
       const newApiKey = `sp_live_${Math.random().toString(36).substring(2, 34)}`
 
       const { error } = await supabase
@@ -317,13 +344,16 @@ export default function Dashboard() {
 
       if (!error) {
         await fetchApiKey(user.id)
+        setShowPasswordModal(false)
+        setVerificationPassword('')
         alert('New API key generated!')
       } else {
         console.error('Error regenerating key:', error)
-        alert('Failed to regenerate API key.')
+        setPasswordError('Failed to regenerate API key. Please try again.')
       }
     } catch (error) {
       console.error('Error regenerating key:', error)
+      setPasswordError('An error occurred. Please try again.')
     }
   }
 
@@ -1325,6 +1355,69 @@ const result2 = await response2.json();
                     </button>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECURITY: Password Verification Modal for API Key Regeneration */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900 border border-gray-800 rounded-lg max-w-md w-full p-6">
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                <Shield className="w-5 h-5 text-primary" />
+                Verify Your Password
+              </h3>
+              <p className="text-sm text-gray-400">
+                For security, please enter your password to regenerate your API key.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  value={verificationPassword}
+                  onChange={(e) => {
+                    setVerificationPassword(e.target.value)
+                    setPasswordError('')
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      verifyPasswordAndRegenerateKey()
+                    }
+                  }}
+                  className="w-full px-3 py-2 bg-black border border-gray-800 rounded-lg focus:outline-none focus:border-primary transition-colors"
+                  placeholder="Enter your password"
+                  autoFocus
+                />
+                {passwordError && (
+                  <p className="text-red-400 text-sm mt-2">{passwordError}</p>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={verifyPasswordAndRegenerateKey}
+                  className="flex-1 bg-primary text-black font-semibold py-2 rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={() => {
+                    setShowPasswordModal(false)
+                    setVerificationPassword('')
+                    setPasswordError('')
+                  }}
+                  className="flex-1 bg-gray-700 text-white font-semibold py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>

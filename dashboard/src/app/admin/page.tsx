@@ -9,6 +9,7 @@ import IntelligenceSamplesTable from '@/components/IntelligenceSamplesTable'
 import IPReputationManager from '@/components/IPReputationManager'
 import AdminIntelligenceTools from '@/components/AdminIntelligenceTools'
 import JobMonitoring from '@/components/JobMonitoring'
+import { logAdminAction, ADMIN_ACTIONS } from '@/lib/audit-log'
 
 // Admin access controlled via middleware and role field
 
@@ -147,8 +148,18 @@ export default function AdminDashboard() {
   }
 
   async function viewUserDetails(userId: string) {
-    const user = users.find(u => u.id === userId)
-    setSelectedUser(user)
+    const targetUser = users.find(u => u.id === userId)
+    setSelectedUser(targetUser)
+
+    // SECURITY: Audit log - admin viewing user details
+    await logAdminAction({
+      admin_id: user.id,
+      admin_email: user.email,
+      action: ADMIN_ACTIONS.VIEW_USER_DETAILS,
+      target_user_id: userId,
+      target_email: targetUser?.email,
+      success: true
+    })
 
     // Fetch user's API logs
     const { data: logs } = await supabase
@@ -170,39 +181,116 @@ export default function AdminDashboard() {
   async function saveCreditNotes() {
     if (!selectedUser || !creditNotes.trim()) return
 
-    // In production, this would integrate with Stripe API to issue refunds/credits
-    alert(`Credit/refund notes saved for ${selectedUser.email}:\n\n${creditNotes}\n\nIn production, this would trigger Stripe refund/credit.`)
+    try {
+      // In production, this would integrate with Stripe API to issue refunds/credits
+      alert(`Credit/refund notes saved for ${selectedUser.email}:\n\n${creditNotes}\n\nIn production, this would trigger Stripe refund/credit.`)
 
-    // TODO: Add actual Stripe integration
-    // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
-    // await stripe.refunds.create({ charge: '...', amount: ... })
+      // TODO: Add actual Stripe integration
+      // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+      // await stripe.refunds.create({ charge: '...', amount: ... })
 
-    setCreditNotes('')
-    closeUserModal()
+      // SECURITY: Audit log - credit/refund issued
+      await logAdminAction({
+        admin_id: user.id,
+        admin_email: user.email,
+        action: ADMIN_ACTIONS.CREDIT_APPLIED,
+        target_user_id: selectedUser.id,
+        target_email: selectedUser.email,
+        details: { notes: creditNotes },
+        success: true
+      })
+
+      setCreditNotes('')
+      closeUserModal()
+    } catch (error: any) {
+      // SECURITY: Audit log - failed credit/refund
+      await logAdminAction({
+        admin_id: user.id,
+        admin_email: user.email,
+        action: ADMIN_ACTIONS.CREDIT_APPLIED,
+        target_user_id: selectedUser.id,
+        target_email: selectedUser.email,
+        details: { notes: creditNotes },
+        success: false,
+        error_message: error.message
+      })
+      console.error('Failed to process credit/refund:', error)
+      alert('Failed to process credit/refund. Please try again.')
+    }
   }
 
   async function approveWaitlist(email: string) {
-    // In production, this would send an approval email with signup link
-    alert(`Approved ${email} - In production, this would send an email`)
+    try {
+      // In production, this would send an approval email with signup link
+      alert(`Approved ${email} - In production, this would send an email`)
 
-    // Mark as approved in database
-    await supabase
-      .from('waitlist')
-      .update({ approved_at: new Date().toISOString() })
-      .eq('email', email)
+      // Mark as approved in database
+      await supabase
+        .from('waitlist')
+        .update({ approved_at: new Date().toISOString() })
+        .eq('email', email)
 
-    await fetchData()
+      // SECURITY: Audit log - successful waitlist approval
+      await logAdminAction({
+        admin_id: user.id,
+        admin_email: user.email,
+        action: ADMIN_ACTIONS.APPROVE_WAITLIST,
+        target_email: email,
+        success: true
+      })
+
+      await fetchData()
+    } catch (error: any) {
+      // SECURITY: Audit log - failed waitlist approval
+      await logAdminAction({
+        admin_id: user.id,
+        admin_email: user.email,
+        action: ADMIN_ACTIONS.APPROVE_WAITLIST,
+        target_email: email,
+        success: false,
+        error_message: error.message
+      })
+      console.error('Failed to approve waitlist:', error)
+      alert('Failed to approve waitlist entry. Please try again.')
+    }
   }
 
   async function suspendUser(userId: string) {
     if (!confirm('Are you sure you want to suspend this user?')) return
 
-    await supabase
-      .from('profiles')
-      .update({ is_active: false })
-      .eq('id', userId)
+    const targetUser = users.find(u => u.id === userId)
 
-    await fetchData()
+    try {
+      await supabase
+        .from('profiles')
+        .update({ is_active: false })
+        .eq('id', userId)
+
+      // SECURITY: Audit log - successful suspension
+      await logAdminAction({
+        admin_id: user.id,
+        admin_email: user.email,
+        action: ADMIN_ACTIONS.SUSPEND_USER,
+        target_user_id: userId,
+        target_email: targetUser?.email,
+        success: true
+      })
+
+      await fetchData()
+    } catch (error: any) {
+      // SECURITY: Audit log - failed suspension
+      await logAdminAction({
+        admin_id: user.id,
+        admin_email: user.email,
+        action: ADMIN_ACTIONS.SUSPEND_USER,
+        target_user_id: userId,
+        target_email: targetUser?.email,
+        success: false,
+        error_message: error.message
+      })
+      console.error('Failed to suspend user:', error)
+      alert('Failed to suspend user. Please try again.')
+    }
   }
 
   if (loading) {
