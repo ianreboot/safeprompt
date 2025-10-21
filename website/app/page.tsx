@@ -524,7 +524,7 @@ export default function Home() {
       <section className="py-20 px-6">
         <div className="container mx-auto max-w-5xl">
           <h2 className="text-3xl font-bold text-center mb-12">
-            Integration in Seconds
+            One API Call
           </h2>
 
           <div className="bg-card rounded-xl border border-border p-6">

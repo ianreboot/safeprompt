@@ -85,7 +85,7 @@ export default function AboutPage() {
                     AI's potential immediately.
                   </p>
                   <p className="text-muted-foreground mb-4">
-                    "I know what enterprise-grade security looks like," Ian reflects, "and I also know that indie developers
+                    "I've seen what works at scale," Ian reflects, "and I also know that indie developers
                     and small businesses can't afford $X,XXX/month solutions with complex sales processes. There needed to
                     be something in between - something that actually works for the people building with AI every day."
                   </p>
@@ -100,11 +100,11 @@ export default function AboutPage() {
             </div>
 
             <div className="bg-card rounded-xl border border-border p-8">
-              <h2 className="text-2xl font-semibold mb-4">The Solution: Vibe Coded in 3 Months</h2>
+              <h2 className="text-2xl font-semibold mb-4">The Solution: Built in 3 Months</h2>
               <p className="text-muted-foreground mb-4">
-                Combining his elite technical background (eBay architect) + business experience (multi-million dollar
-                campaigns) + AI expertise (early ChatGPT adopter), Ian vibe coded SafePrompt solo in 3 months. Built
-                in Bangkok. Solving real client problems, not theoretical ones.
+                Ian built SafePrompt solo in 3 months. Bangkok. Using experience from eBay (technical architecture),
+                multi-million dollar campaigns (pricing psychology), and early AI adoption (ChatGPT since November 2022).
+                Solving real client problems, not theoretical ones.
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
                 <li><strong>Simple:</strong> One API call to add protection</li>
@@ -118,7 +118,7 @@ export default function AboutPage() {
                 Because prompt injection doesn't discriminate."
               </p>
               <p className="text-muted-foreground">
-                SafePrompt was vibe coded from real experience: active agency owner discovering a real vulnerability
+                SafePrompt came from real experience: active agency owner discovering a real vulnerability
                 while building for real clients. No theory. Just shipping secure AI features.
               </p>
             </div>
@@ -126,34 +126,33 @@ export default function AboutPage() {
             <div className="bg-primary/10 border border-primary/20 rounded-xl p-8">
               <h2 className="text-2xl font-semibold mb-4">Why This Matters Now</h2>
               <p className="text-foreground mb-4">
-                We're at a critical juncture in AI adoption. As of September 2025:
+                AI is everywhere. Every app is adding AI features. But most developers have no way to protect against prompt injection.
               </p>
-              <ul className="list-disc list-inside text-foreground space-y-2 ml-4 mb-4">
-                <li>Over 80% of new applications include AI features</li>
-                <li>Prompt injection attacks have increased 3400% year-over-year</li>
-                <li>The average cost of an AI security breach is $4.2M</li>
-                <li>Only 12% of developers implement prompt security</li>
-              </ul>
+              <p className="text-foreground mb-4">
+                Real attacks are happening: Chevrolet sold a car for $1. Air Canada was sued for what their AI promised. Gmail's AI got hijacked.
+              </p>
               <p className="text-foreground font-semibold">
-                The window to secure the AI revolution is closing. We're here to make sure every developer can protect
-                their AI applications before it's too late.
+                These attacks work. And there's still no simple solution for indie developers and small businesses.
+                That's what SafePrompt fixes.
               </p>
             </div>
 
             <div className="bg-card rounded-xl border border-border p-8">
-              <h2 className="text-2xl font-semibold mb-4">Join Our Mission</h2>
+              <h2 className="text-2xl font-semibold mb-4">Currently in Beta</h2>
               <p className="text-muted-foreground mb-4">
-                SafePrompt isn't just a product - it's a movement to make AI safer for everyone. We believe that:
+                SafePrompt is in beta. Working with early adopters to refine detection algorithms and expand threat intelligence.
+              </p>
+              <p className="text-muted-foreground mb-4">
+                What we believe:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
-                <li>Security shouldn't be a luxury reserved for big companies</li>
-                <li>Developers should focus on building, not worrying about attacks</li>
-                <li>AI's potential should be realized without compromising safety</li>
+                <li>Security shouldn't require enterprise budgets</li>
+                <li>Developers should build, not worry about attacks</li>
                 <li>The best security is invisible - it just works</li>
               </ul>
               <p className="text-muted-foreground mb-4">
-                We're currently in beta, working with early adopters to refine our detection algorithms and expand our
-                threat intelligence. Every developer who joins us helps make AI safer for everyone.
+                Every developer using SafePrompt helps improve the network defense. When one customer gets attacked,
+                all customers benefit from the intelligence.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-6">
                 <a href="/#get-started" className="bg-primary text-primary-foreground px-6 py-3 rounded-lg text-center font-semibold hover:bg-primary/90 transition">
