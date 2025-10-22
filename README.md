@@ -6,6 +6,7 @@ Protect AI automations, workflows, and features from prompt injection and manipu
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://badge.fury.io/js/safeprompt.svg)](https://www.npmjs.com/package/safeprompt)
+[![CodeQL](https://github.com/ianreboot/safeprompt/workflows/CodeQL%20Security%20Scan/badge.svg)](https://github.com/ianreboot/safeprompt/actions/workflows/codeql.yml)
 [![GitHub stars](https://img.shields.io/github/stars/ianreboot/safeprompt?style=social)](https://github.com/ianreboot/safeprompt)
 
 ---
