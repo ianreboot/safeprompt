@@ -35,23 +35,18 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://docs.safeprompt.dev/api.html" className="text-muted-foreground hover:text-foreground transition text-sm">
+                <a href="https://docs.safeprompt.dev/api-reference" className="text-muted-foreground hover:text-foreground transition text-sm">
                   API Reference
                 </a>
               </li>
               <li>
-                <a href="https://docs.safeprompt.dev/quick-start.html" className="text-muted-foreground hover:text-foreground transition text-sm">
+                <a href="https://docs.safeprompt.dev/quick-start" className="text-muted-foreground hover:text-foreground transition text-sm">
                   Quick Start
                 </a>
               </li>
               <li>
                 <Link href="/blog" className="text-muted-foreground hover:text-foreground transition text-sm">
                   Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-foreground transition text-sm">
-                  Contact
                 </Link>
               </li>
               <li>
@@ -84,7 +79,20 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
+            <h4 className="font-semibold mb-4">Company</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/about" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-muted-foreground hover:text-foreground transition text-sm">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+            <h4 className="font-semibold mb-4 mt-6">Legal</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/terms" className="text-muted-foreground hover:text-foreground transition text-sm">
