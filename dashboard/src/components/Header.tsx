@@ -24,7 +24,7 @@ export default function Header({ user, usage }: HeaderProps) {
       <div className="container mx-auto max-w-6xl px-6 py-4">
         <div className="flex justify-between items-center">
           {/* Left side - Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 hover:opacity-90 transition-opacity">
             <LogoText size="md" />
             <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">BETA</span>
           </Link>

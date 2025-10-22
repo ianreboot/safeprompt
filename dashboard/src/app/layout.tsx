@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import EnvironmentBanner from '@/components/EnvironmentBanner'
-import GoogleAnalytics from '@/components/GoogleAnalytics'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} overflow-x-hidden`}>
-        <GoogleAnalytics />
+        <GoogleAnalytics gaId="G-9P2ZF4JYJN" />
         <EnvironmentBanner />
         {children}
       </body>

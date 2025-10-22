@@ -10,8 +10,6 @@
  * - /dashboard/src/components/LogoText.tsx
  */
 
-import Link from 'next/link'
-
 interface LogoTextProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
@@ -52,8 +50,10 @@ export default function LogoText({ size = 'md', className = '' }: LogoTextProps)
   const currentSize = sizes[size]
   const actualIconSize = currentSize.iconSize * config.iconScale
 
+  // AI: Removed Link wrapper to prevent nested <a> tags when used inside parent Link
+  // Parent component (Header.tsx) now controls the link behavior
   return (
-    <Link href="/" className={`inline-flex items-baseline ${className} hover:opacity-90 transition-opacity`} style={{ gap: `${config.horizontalGap}px` }}>
+    <div className={`inline-flex items-baseline ${className}`} style={{ gap: `${config.horizontalGap}px` }}>
       <img
         src="/safeprompt-icon.webp"
         alt="SafePrompt Shield"
@@ -68,6 +68,6 @@ export default function LogoText({ size = 'md', className = '' }: LogoTextProps)
         <span style={{ color: '#60a5fa' }}>afe</span>
         <span style={{ marginLeft: '0.15em' }} className="text-white">Prompt</span>
       </span>
-    </Link>
+    </div>
   )
 }
