@@ -25,7 +25,7 @@
     "test:e2e": "node ../test-suite/playground-test-suite.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.4",
+    "@supabase/supabase-js": "^2.76.1",
     "@vercel/sdk": "^1.12.1",
     "dotenv": "^16.6.1",
     "node-fetch": "^3.3.2",
