@@ -1,6 +1,16 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link'
 
 export default function Footer() {
+  // AI: Prevent hydration mismatch - year must match on server and initial client render
+  const [year, setYear] = useState(2025);
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer className="py-12 px-6 border-t border-border">
       <div className="container mx-auto max-w-6xl">
@@ -90,7 +100,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Reboot Media, Inc. All rights reserved.
+          © {year} Reboot Media, Inc. All rights reserved.
         </div>
       </div>
     </footer>
