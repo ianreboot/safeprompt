@@ -22,7 +22,7 @@
     "react-dom": "^18",
     "recharts": "^2.10.4",
     "resend": "^6.1.0",
-    "stripe": "^18.5.0"
+    "stripe": "^19.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",
