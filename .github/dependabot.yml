@@ -1,0 +1,35 @@
+version: 2
+updates:
+  # Enable version updates for npm (SDK dependencies)
+  - package-ecosystem: "npm"
+    directory: "/packages/safeprompt-js"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "ianreboot"
+    labels:
+      - "dependencies"
+      - "security"
+    # Group minor and patch updates together
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+      production-dependencies:
+        dependency-type: "production"
+    # Only update to stable versions
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Enable GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "github-actions"
