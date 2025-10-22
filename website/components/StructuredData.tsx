@@ -67,6 +67,9 @@ export default function StructuredData({ type = 'organization', data }: Structur
         }
 
       case 'article':
+        // AI: Use static fallback date to prevent hydration mismatch
+        // new Date() differs between server and client render
+        const fallbackDate = '2025-01-01T00:00:00.000Z';
         return {
           "@context": "https://schema.org",
           "@type": "BlogPosting",
@@ -76,8 +79,8 @@ export default function StructuredData({ type = 'organization', data }: Structur
             "@type": "Organization",
             "name": "SafePrompt Team"
           },
-          "datePublished": data?.date || new Date().toISOString(),
-          "dateModified": data?.modified || data?.date || new Date().toISOString(),
+          "datePublished": data?.date || fallbackDate,
+          "dateModified": data?.modified || data?.date || fallbackDate,
           "image": `${websiteUrl}/og-image.png`,
           "mainEntityOfPage": {
             "@type": "WebPage",
