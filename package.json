@@ -4,5 +4,8 @@
     "dotenv": "^17.2.2",
     "pg": "^8.16.3",
     "puppeteer": "^24.22.3"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
   }
 }
