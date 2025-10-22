@@ -21,7 +21,7 @@
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^2.10.4",
-    "resend": "^6.1.0",
+    "resend": "^6.2.2",
     "stripe": "^18.5.0"
   },
   "devDependencies": {
