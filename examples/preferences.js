@@ -286,7 +286,7 @@ async function testPreferences() {
 
   // Test validation with blocking enabled
   const testResult = await client.check('test prompt', {
-    userIp: '203.0.113.1'
+    userIP: '203.0.113.1'
   });
 
   console.log('Validation result:', {

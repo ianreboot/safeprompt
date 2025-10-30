@@ -183,8 +183,8 @@ try {
 ## Next Steps
 
 - [View Examples](../examples/) - See full integration examples
-- [API Reference](./api-reference.md) - Complete API documentation
-- [Best Practices](./best-practices.md) - Security and optimization tips
+- [API Reference](./http-api.md) - Complete API documentation
+- [Best Practices](./BEST_PRACTICES.md) - Security and optimization tips
 - [Dashboard](https://dashboard.safeprompt.dev) - Monitor usage and threats
 
 ## Need Help?

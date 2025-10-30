@@ -25,7 +25,7 @@ async function validatePrompt(prompt, options = {}) {
     body: JSON.stringify({
       prompt,
       mode: options.mode || 'optimized',
-      session_token: options.sessionToken,
+      sessionToken: options.sessionToken,
       customRules: options.customRules
     })
   });

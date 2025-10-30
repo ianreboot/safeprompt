@@ -24,7 +24,7 @@ async function basicIpReputation(userPrompt, clientIp) {
   console.log('\n=== Example 1: IP Reputation Checking ===\n');
 
   const result = await client.check(userPrompt, {
-    userIp: clientIp // Pass end user's IP address
+    userIP: clientIp // Pass end user's IP address
   });
 
   console.log('Validation result:', {
@@ -50,7 +50,7 @@ async function handleIpBlocked(userPrompt, clientIp) {
   console.log('\n=== Example 2: Handling IP Blocked Responses ===\n');
 
   try {
-    const result = await client.check(userPrompt, { userIp: clientIp });
+    const result = await client.check(userPrompt, { userIP: clientIp });
 
     if (result.ipReputation?.blocked) {
       // IP was blocked due to poor reputation
@@ -89,7 +89,7 @@ function ipReputationMiddleware() {
     const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     try {
-      const result = await client.check(prompt, { userIp: clientIp });
+      const result = await client.check(prompt, { userIP: clientIp });
 
       // Check if IP was blocked
       if (result.ipReputation?.blocked) {
@@ -142,7 +142,7 @@ function nextjsWithIpReputation() {
       req.connection.remoteAddress;
 
     // Validate with IP reputation
-    const result = await client.check(message, { userIp: clientIp });
+    const result = await client.check(message, { userIP: clientIp });
 
     // Handle IP blocking
     if (result.ipReputation?.blocked) {
@@ -204,7 +204,7 @@ function reputationThresholds(ipReputation) {
 async function logIpReputation(prompt, clientIp) {
   console.log('\n=== Example 6: Logging for Analytics ===\n');
 
-  const result = await client.check(prompt, { userIp: clientIp });
+  const result = await client.check(prompt, { userIP: clientIp });
 
   // Log to your analytics system
   const logEntry = {
@@ -228,7 +228,7 @@ async function logIpReputation(prompt, clientIp) {
 async function tierDifferences(prompt, clientIp) {
   console.log('\n=== Example 7: Free vs Paid Tier ===\n');
 
-  const result = await client.check(prompt, { userIp: clientIp });
+  const result = await client.check(prompt, { userIP: clientIp });
 
   if (!result.ipReputation?.checked) {
     console.log('Free tier: IP reputation not checked');

@@ -24,7 +24,7 @@ async function validateTurn(prompt, sessionToken, userIP = '203.0.113.10') {
     },
     body: JSON.stringify({
       prompt,
-      session_token: sessionToken,
+      sessionToken: sessionToken,
       mode: 'optimized'
     })
   });
