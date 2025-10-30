@@ -1,0 +1,40 @@
+{
+  "name": "safeprompt",
+  "version": "1.0.0",
+  "description": "API-first prompt injection protection for AI applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Tests coming soon\" && exit 0",
+    "lint": "echo \"Linting coming soon\" && exit 0",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "prompt-injection",
+    "ai-security",
+    "llm",
+    "openai",
+    "security",
+    "ai",
+    "chatbot",
+    "prompt",
+    "validation"
+  ],
+  "author": "SafePrompt <support@safeprompt.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ianreboot/safeprompt"
+  },
+  "homepage": "https://safeprompt.dev",
+  "bugs": {
+    "url": "https://github.com/ianreboot/safeprompt/issues"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
