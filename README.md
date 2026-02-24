@@ -226,7 +226,7 @@ Built by [Ian Ho](https://safeprompt.dev/about) (former eBay technical architect
 
 SafePrompt gives indie developers enterprise-grade protection at startup prices.
 
-**Company**: Reboot Media, Inc. (Las Vegas, NV)
+**Company**: Reboot Media, Inc. (Irvine, CA)
 
 ---
 
