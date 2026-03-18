@@ -68,7 +68,7 @@ export default class SafePrompt {
           'Content-Type': 'application/json',
           'X-API-Key': this.apiKey,
           'X-User-IP': options?.userIP || '127.0.0.1',
-          'User-Agent': 'safeprompt-js/1.0.0'
+          'User-Agent': 'safeprompt-js/1.1.0'
         },
         body: JSON.stringify({
           prompt,
@@ -117,7 +117,7 @@ export default class SafePrompt {
           'Content-Type': 'application/json',
           'X-API-Key': this.apiKey,
           'X-User-IP': options?.userIP || '127.0.0.1',
-          'User-Agent': 'safeprompt-js/1.0.0'
+          'User-Agent': 'safeprompt-js/1.1.0'
         },
         body: JSON.stringify({ prompts })
       });
@@ -155,7 +155,7 @@ export default class SafePrompt {
         method: 'GET',
         headers: {
           'X-API-Key': this.apiKey,
-          'User-Agent': 'safeprompt-js/1.0.0'
+          'User-Agent': 'safeprompt-js/1.1.0'
         }
       });
 

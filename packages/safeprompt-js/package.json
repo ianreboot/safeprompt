@@ -1,14 +1,15 @@
 {
   "name": "safeprompt",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "API-first prompt injection protection for AI applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Tests coming soon\" && exit 0",
+    "test": "vitest run",
     "lint": "echo \"Linting coming soon\" && exit 0",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && npm run test",
+    "test:watch": "vitest"
   },
   "keywords": [
     "prompt-injection",
@@ -32,9 +33,13 @@
     "url": "https://github.com/ianreboot/safeprompt/issues"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.0"
   },
   "files": [
     "dist"
-  ]
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
