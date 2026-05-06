@@ -1,16 +1,26 @@
-# SafePrompt
+<p align="center">
+  <img src="assets/safeprompt-icon.webp" width="96" alt="SafePrompt" />
+</p>
 
-**Prompt injection detection API — one line of code stops attacks.**
+<h1 align="center">SafePrompt</h1>
 
-Protect AI apps, chatbots, and automations from prompt injection, jailbreaks, and data exfiltration. Built for developers who ship fast.
+<p align="center"><strong>Prompt injection detection API — one line of code stops attacks.</strong></p>
 
-[![CI](https://github.com/ianreboot/safeprompt/actions/workflows/ci.yml/badge.svg)](https://github.com/ianreboot/safeprompt/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/ianreboot/safeprompt/actions/workflows/codeql.yml/badge.svg)](https://github.com/ianreboot/safeprompt/actions/workflows/codeql.yml)
-[![npm version](https://img.shields.io/npm/v/safeprompt.svg)](https://www.npmjs.com/package/safeprompt)
-[![npm downloads](https://img.shields.io/npm/dm/safeprompt.svg)](https://www.npmjs.com/package/safeprompt)
-[![PyPI version](https://img.shields.io/pypi/v/safeprompt.svg)](https://pypi.org/project/safeprompt/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Release](https://img.shields.io/github/v/release/ianreboot/safeprompt?display_name=tag)](https://github.com/ianreboot/safeprompt/releases)
+<p align="center">Protect AI apps, chatbots, and automations from prompt injection, jailbreaks, and data exfiltration. Built for developers who ship fast.</p>
+
+<p align="center">
+  <a href="https://github.com/ianreboot/safeprompt/actions/workflows/ci.yml"><img src="https://github.com/ianreboot/safeprompt/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ianreboot/safeprompt/actions/workflows/codeql.yml"><img src="https://github.com/ianreboot/safeprompt/actions/workflows/codeql.yml/badge.svg" alt="CodeQL"></a>
+  <a href="https://www.npmjs.com/package/safeprompt"><img src="https://img.shields.io/npm/v/safeprompt.svg" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/safeprompt"><img src="https://img.shields.io/npm/dm/safeprompt.svg" alt="npm downloads"></a>
+  <a href="https://www.npmjs.com/package/@safeprompt.dev/langchain"><img src="https://img.shields.io/npm/v/%40safeprompt.dev%2Flangchain.svg?label=%40safeprompt.dev%2Flangchain" alt="LangChain version"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://github.com/ianreboot/safeprompt/releases"><img src="https://img.shields.io/github/v/release/ianreboot/safeprompt?display_name=tag" alt="GitHub Release"></a>
+</p>
+
+<p align="center">
+  <a href="https://safeprompt.dev"><img src="assets/og-image.png" alt="SafePrompt — prompt injection detection API" width="720"></a>
+</p>
 
 [Quick Start](#quick-start) · [Why SafePrompt](#why-safeprompt) · [Benchmarks](#benchmarks) · [How It Works](#how-it-works) · [Detection](#what-safeprompt-detects) · [LangChain](#langchain-integration) · [Tests](#tests) · [Uninstall](#uninstall)
 
@@ -19,9 +29,12 @@ Protect AI apps, chatbots, and automations from prompt injection, jailbreaks, an
 ## Quick Start
 
 ```bash
-npm install safeprompt          # JS / TS
-pip install safeprompt           # Python
+npm install safeprompt                              # JS / TS
+npm install @safeprompt.dev/langchain               # LangChain integration
+pip install git+https://github.com/ianreboot/safeprompt#subdirectory=packages/safeprompt-python
 ```
+
+> The Python SDK is currently distributed straight from this repo. PyPI publication is tracked in [#34](https://github.com/ianreboot/safeprompt/issues) — pin to a tag for reproducible installs.
 
 ```javascript
 import SafePrompt from "safeprompt";
@@ -124,7 +137,7 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 | Package | Source | Registry |
 |---|---|---|
 | `safeprompt` (JS / TS) | [`packages/safeprompt-js`](packages/safeprompt-js) | [npm](https://www.npmjs.com/package/safeprompt) |
-| `safeprompt` (Python) | [`packages/safeprompt-python`](packages/safeprompt-python) | [PyPI](https://pypi.org/project/safeprompt/) |
+| `safeprompt` (Python) | [`packages/safeprompt-python`](packages/safeprompt-python) | install from git (PyPI publication pending) |
 | `@safeprompt.dev/langchain` | [`packages/safeprompt-langchain`](packages/safeprompt-langchain) | [npm](https://www.npmjs.com/package/@safeprompt.dev/langchain) |
 
 ### LangChain Integration
@@ -236,7 +249,7 @@ cd packages/safeprompt-js
 npm install
 npm test
 
-# Python
+# Python (install from local checkout — PyPI publication pending)
 cd packages/safeprompt-python
 pip install -e . && pip install pytest httpx
 python -m pytest -v
@@ -311,7 +324,7 @@ Free browser extension that detects prompt injection in real-time while using Ch
 ```bash
 npm uninstall safeprompt
 npm uninstall @safeprompt.dev/langchain
-pip uninstall safeprompt
+pip uninstall safeprompt   # if installed from this repo
 ```
 
 If you also want to delete your account and all retained data, email `support@safeprompt.dev` from the address on the account — full account + 24h-cache wipe is processed within 72h per the GDPR/CCPA SLA.
