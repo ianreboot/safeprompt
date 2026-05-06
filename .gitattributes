@@ -1,0 +1,15 @@
+# Keep examples and docs out of language stats — they skew toward whatever
+# language they happen to demo and are not the SDK code.
+examples/** linguist-documentation
+docs/** linguist-documentation
+
+# Built artifacts should never count toward language stats
+**/dist/** linguist-generated
+**/build/** linguist-generated
+
+# Python virtualenvs (never commit, but ignored if any slip in)
+**/.venv/** linguist-vendored
+**/venv/** linguist-vendored
+
+# Lockfiles
+package-lock.json linguist-generated

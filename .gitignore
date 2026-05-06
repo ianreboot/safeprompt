@@ -16,3 +16,10 @@ coverage/
 # Internal operational docs (not for public)
 CLAUDE.md
 WORK_STATE.md
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
