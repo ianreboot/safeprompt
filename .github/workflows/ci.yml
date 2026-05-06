@@ -7,18 +7,14 @@ on:
     branches: [ main ]
 
 jobs:
-  js:
-    name: JS SDK (Node ${{ matrix.node }})
+  build:
+    name: build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [18, 20, 22]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20
           cache: npm
           cache-dependency-path: packages/safeprompt-js/package-lock.json
       - name: Install
