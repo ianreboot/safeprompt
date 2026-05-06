@@ -14,6 +14,7 @@
   <a href="https://www.npmjs.com/package/safeprompt"><img src="https://img.shields.io/npm/v/safeprompt.svg" alt="npm version"></a>
   <a href="https://www.npmjs.com/package/safeprompt"><img src="https://img.shields.io/npm/dm/safeprompt.svg" alt="npm downloads"></a>
   <a href="https://www.npmjs.com/package/@safeprompt.dev/langchain"><img src="https://img.shields.io/npm/v/%40safeprompt.dev%2Flangchain.svg?label=%40safeprompt.dev%2Flangchain" alt="LangChain version"></a>
+  <a href="https://pypi.org/project/safeprompt/"><img src="https://img.shields.io/pypi/v/safeprompt.svg?label=pypi" alt="PyPI version"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://github.com/ianreboot/safeprompt/releases"><img src="https://img.shields.io/github/v/release/ianreboot/safeprompt?display_name=tag" alt="GitHub Release"></a>
 </p>
@@ -27,7 +28,7 @@
 ```bash
 npm install safeprompt                              # JS / TS
 npm install @safeprompt.dev/langchain               # LangChain integration
-pip install git+https://github.com/ianreboot/safeprompt#subdirectory=packages/safeprompt-python
+pip install safeprompt                              # Python
 ```
 
 > The Python SDK is currently distributed straight from this repo. PyPI publication is tracked in [#34](https://github.com/ianreboot/safeprompt/issues) — pin to a tag for reproducible installs.

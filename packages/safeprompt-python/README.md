@@ -2,18 +2,13 @@
 
 Protect your AI application from prompt injection attacks with one function call.
 
+[![PyPI version](https://img.shields.io/pypi/v/safeprompt.svg)](https://pypi.org/project/safeprompt/)
+[![Python versions](https://img.shields.io/pypi/pyversions/safeprompt.svg)](https://pypi.org/project/safeprompt/)
+
 ## Install
 
-PyPI publication is pending — for now, install from this repository:
-
 ```bash
-pip install git+https://github.com/ianreboot/safeprompt#subdirectory=packages/safeprompt-python
-```
-
-Pin to a specific tag for reproducible installs:
-
-```bash
-pip install git+https://github.com/ianreboot/safeprompt@v1.3.0#subdirectory=packages/safeprompt-python
+pip install safeprompt
 ```
 
 ## Quick Start
