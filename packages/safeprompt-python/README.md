@@ -2,8 +2,18 @@
 
 Protect your AI application from prompt injection attacks with one function call.
 
+## Install
+
+PyPI publication is pending — for now, install from this repository:
+
 ```bash
-pip install safeprompt
+pip install git+https://github.com/ianreboot/safeprompt#subdirectory=packages/safeprompt-python
+```
+
+Pin to a specific tag for reproducible installs:
+
+```bash
+pip install git+https://github.com/ianreboot/safeprompt@v1.3.0#subdirectory=packages/safeprompt-python
 ```
 
 ## Quick Start
@@ -15,7 +25,7 @@ sp = SafePrompt(api_key="YOUR_API_KEY")
 
 result = sp.check(user_input, user_ip=request.remote_addr)
 if not result["safe"]:
-    raise ValueError(f"Blocked: {result[\"threats\"][0]}")
+    raise ValueError(f"Blocked: {result['threats'][0]}")
 ```
 
 ## Async Support
@@ -26,7 +36,7 @@ from safeprompt import AsyncSafePrompt
 async with AsyncSafePrompt(api_key="YOUR_API_KEY") as sp:
     result = await sp.check(user_input)
     if not result["safe"]:
-        raise ValueError(f"Blocked: {result[\"threats\"][0]}")
+        raise ValueError(f"Blocked: {result['threats'][0]}")
 ```
 
 ## Response Format
