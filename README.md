@@ -269,7 +269,7 @@ SAFEPROMPT_API_KEY=sp_live_... node benchmarks/run.js
 | | SafePrompt | Lakera Guard | DIY Regex | OpenAI Moderation |
 |---|-----------|-------------|-----------|-------------------|
 | **Target** | Indie devs, startups | Enterprise | Anyone | Anyone |
-| **Pricing** | $5-$99/mo (transparent) | Contact sales | Free | Free |
+| **Pricing** | $0 / $29 / $99 per month | Contact sales | Free | Free |
 | **Setup** | 5 minutes | Weeks | Days-weeks | Minutes |
 | **Prompt Injection** | Yes | Yes | Limited | No |
 | **Network Intelligence** | Yes | Proprietary | No | No |
