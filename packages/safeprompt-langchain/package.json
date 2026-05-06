@@ -1,0 +1,57 @@
+{
+  "name": "@safeprompt.dev/langchain",
+  "version": "0.1.0",
+  "description": "LangChain integration for SafePrompt — prompt-injection detection as a callback handler. Validates every prompt flowing through a chain before it reaches the LLM.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "node --test dist/__tests__/callback.test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "langchain",
+    "safeprompt",
+    "prompt-injection",
+    "llm-security",
+    "jailbreak",
+    "ai-security",
+    "callback-handler",
+    "owasp-llm",
+    "rag-security",
+    "agent-security"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "homepage": "https://safeprompt.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ianreboot/safeprompt",
+    "directory": "packages/langchain"
+  },
+  "bugs": {
+    "url": "https://github.com/ianreboot/safeprompt/issues"
+  },
+  "peerDependencies": {
+    "@langchain/core": "^0.3.0"
+  },
+  "devDependencies": {
+    "@langchain/core": "^0.3.0",
+    "@types/node": "^20.19.37",
+    "typescript": "^5.9.3"
+  }
+}
