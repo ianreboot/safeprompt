@@ -1,7 +1,7 @@
 {
   "name": "@safeprompt.dev/langchain",
   "version": "0.1.0",
-  "description": "LangChain integration for SafePrompt — prompt-injection detection as a callback handler. Validates every prompt flowing through a chain before it reaches the LLM.",
+  "description": "LangChain integration for SafePrompt \u2014 prompt-injection detection as a callback handler. Validates every prompt flowing through a chain before it reaches the LLM.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -41,7 +41,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ianreboot/safeprompt",
-    "directory": "packages/langchain"
+    "directory": "packages/safeprompt-langchain"
   },
   "bugs": {
     "url": "https://github.com/ianreboot/safeprompt/issues"
