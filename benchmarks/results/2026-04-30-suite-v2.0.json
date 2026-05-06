@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "timestamp": "2026-04-30T13:01:00Z",
+    "mode": "optimized",
+    "suite_version": "2.0",
+    "cases": 150,
+    "errors": 0,
+    "tp": 74,
+    "fn": 0,
+    "tn": 76,
+    "fp": 0,
+    "tpr": 1.0,
+    "fpr": 0.0,
+    "mean_latency_ms": 180,
+    "duration_ms": 28000,
+    "deploy": "d2134597",
+    "note": "Reference run captured by the in-production detection-eval cron after the 2026-04-30 scope-contraction deploy. Per-prompt rows are not included in this snapshot — re-run benchmarks/run.js against your own API key to regenerate."
+  }
+}
