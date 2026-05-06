@@ -18,10 +18,6 @@
   <a href="https://github.com/ianreboot/safeprompt/releases"><img src="https://img.shields.io/github/v/release/ianreboot/safeprompt?display_name=tag" alt="GitHub Release"></a>
 </p>
 
-<p align="center">
-  <a href="https://safeprompt.dev"><img src="assets/og-image.png" alt="SafePrompt — prompt injection detection API" width="720"></a>
-</p>
-
 [Quick Start](#quick-start) · [Why SafePrompt](#why-safeprompt) · [Benchmarks](#benchmarks) · [How It Works](#how-it-works) · [Detection](#what-safeprompt-detects) · [LangChain](#langchain-integration) · [Tests](#tests) · [Uninstall](#uninstall)
 
 ---
