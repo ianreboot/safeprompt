@@ -7,25 +7,48 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  js:
+    name: JS SDK (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 20, 22]
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: packages/safeprompt-js/package-lock.json
+      - name: Install
+        working-directory: packages/safeprompt-js
+        run: npm ci || npm install
+      - name: Build
+        working-directory: packages/safeprompt-js
+        run: npm run build
+      - name: Test
+        working-directory: packages/safeprompt-js
+        run: npm test
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-
-    - name: Install dependencies
-      run: cd packages/safeprompt-js && npm ci
-
-    - name: Build
-      run: cd packages/safeprompt-js && npm run build
-
-    - name: Lint
-      run: cd packages/safeprompt-js && npm run lint || echo "Lint not configured yet"
-
-    - name: Test
-      run: cd packages/safeprompt-js && npm test || echo "Tests not configured yet"
+  python:
+    name: Python SDK (${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        working-directory: packages/safeprompt-python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-mock httpx
+      - name: Test
+        working-directory: packages/safeprompt-python
+        run: python -m pytest -v
