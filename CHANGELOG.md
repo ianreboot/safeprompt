@@ -56,9 +56,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GDPR and CCPA compliance
 
 ### Security
-- 98.9% single-turn attack detection accuracy
+- Above 95% single-turn attack detection accuracy
 - 95% multi-turn attack detection accuracy
-- <100ms response time for pattern detection (67% of requests)
+- Pattern detection responds in under 100ms; most requests complete in under 200ms
 - Zero false positive rate in production testing
 
 [Unreleased]: https://github.com/ianreboot/safeprompt/compare/v1.2.0...HEAD

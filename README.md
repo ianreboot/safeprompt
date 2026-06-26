@@ -113,7 +113,7 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 - IP reputation scoring across the network
 - 24-hour anonymization, GDPR/CCPA compliant
 
-**Result**: 100% attack catch rate / 0% false positives on the v2.0 benchmark above. Most requests complete in under 200ms.
+**Result**: 100% attack catch rate / 0% false positives on the frozen v2.0 benchmark (150 cases) above — and above 95% detection on broad real-world traffic. Most requests complete in under 200ms.
 
 ---
 
