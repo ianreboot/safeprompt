@@ -64,9 +64,9 @@ Real incidents that SafePrompt prevents:
 
 | Incident | What Happened | Cost |
 |----------|--------------|------|
-| **Chevrolet (Dec 2023)** | Chatbot agreed to sell a $76K Tahoe for $1 | $76K + viral PR disaster |
+| **Chevrolet (Dec 2023)** | Chatbot agreed to sell a new Tahoe for $1 | Viral PR disaster |
 | **Air Canada (Feb 2024)** | Chatbot made legally binding promises | $812 settlement + legal fees |
-| **DPD (Jan 2024)** | Support bot wrote hate poems about the company | 800K+ viral views |
+| **DPD (Jan 2024)** | Support bot wrote hate poems about the company | Viral embarrassment |
 
 These attacks use plain language — regex can't stop them. SafePrompt can.
 

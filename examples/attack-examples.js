@@ -179,7 +179,7 @@ async function testMultiTurnReconnaissance() {
   console.log('Turn 2 - Safe:', turn2.safe);
   console.log('Turn 2 - Threats:', turn2.threats);
   console.log('Session Analysis:', turn2.sessionAnalysis);
-  console.log('Impact: Social Engineering (2024): 67% of attacks start with reconnaissance');
+  console.log('Impact: Social engineering attacks routinely start with reconnaissance');
   // Expected: turn1.safe=true, turn2.safe=false (reconnaissance pattern detected)
 }
 

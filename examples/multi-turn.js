@@ -71,7 +71,7 @@ async function exampleReconnaissanceAttack() {
   });
 
   console.log('\n✓ SafePrompt detected reconnaissance pattern');
-  console.log('Impact: Social Engineering (2024) - 67% of attacks start with reconnaissance\n');
+  console.log('Impact: Social engineering attacks routinely start with reconnaissance\n');
 }
 
 /**
