@@ -104,9 +104,8 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 - 27+ attack patterns: XSS, SQL injection, jailbreaks, role manipulation
 - Catches known attacks with zero latency
 
-**Layer 2: AI Validation** — When needed (50-100ms)
-- Deep semantic analysis for novel attacks
-- 2-pass validation for ambiguous inputs
+**Layer 2: AI Validation** — When needed
+- Deep semantic analysis for novel attacks that patterns miss
 
 **Layer 3: Network Intelligence**
 - Attacks blocked for one customer improve protection for everyone
@@ -124,7 +123,7 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 - **External Reference Detection** — Blocks "fetch this URL" and data exfiltration attacks
 - **Custom Whitelists/Blacklists** — Tune detection for your specific use case (paid tiers)
 - **Network Intelligence** — Collective defense: every blocked attack improves protection for all
-- **Sub-200ms Response** — Pattern detection is instant; AI validation adds 50-100ms when needed
+- **Sub-200ms Response** — Pattern detection is instant; most requests complete in under 200ms
 - **Privacy First** — 24-hour anonymization, GDPR/CCPA compliant, hash-only retention
 
 ---
@@ -330,7 +329,7 @@ If you also want to delete your account and all retained data, email `support@sa
 
 ## About
 
-Built by [Ian Ho](https://safeprompt.dev/about) (former eBay technical architect) after discovering prompt injection vulnerabilities while building AI systems for clients. After spending 20+ hours on DIY regex-based protection and achieving only 43% accuracy, the realization: security shouldn't require enterprise budgets.
+Built by [Ian Ho](https://safeprompt.dev/about) (former eBay technical architect) after discovering prompt injection vulnerabilities while building AI systems for clients. After spending 20+ hours on DIY regex-based protection and watching simple rewrites of known attacks walk right past it, the realization: security shouldn't require enterprise budgets.
 
 SafePrompt gives indie developers enterprise-grade protection at startup prices.
 

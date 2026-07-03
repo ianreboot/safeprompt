@@ -1,6 +1,6 @@
 {
   "name": "safeprompt",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "API-first prompt injection protection for AI applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

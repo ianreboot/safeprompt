@@ -207,8 +207,7 @@ The validation response structure remains the same:
   "safe": true,
   "confidence": 0.95,
   "threats": [],
-  "processingTimeMs": 89,
-  "passesUsed": 1,
+  "processingTime": 89,
   "reasoning": "No security threats detected"
 }
 ```

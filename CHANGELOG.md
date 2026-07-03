@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `@safeprompt.dev/langchain` source, conventional-commit enforcement, badges,
   uninstall/test sections in README, honest scope callout.
 
+## [1.2.1] - 2026-07-03
+
+### Fixed
+- SDK response types and all docs/examples now match the live API response exactly:
+  renamed `processingTimeMs` to `processingTime`, removed a documented field the API
+  never returned, and updated example threat labels to the canonical public set.
+
 ## [1.2.0] - 2026-03-18
 
 ### Added
@@ -41,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial public release of SafePrompt SDK
 - JavaScript/TypeScript SDK with full type support
-- 2-pass validation system (pattern + AI analysis)
+- Layered validation system (pattern + AI analysis)
 - Multi-turn attack detection with 95% accuracy
 - External reference detection (URLs, IPs, file paths)
 - Custom whitelist/blacklist support for paid tiers
@@ -61,7 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pattern detection responds in under 100ms; most requests complete in under 200ms
 - Zero false positive rate in production testing
 
-[Unreleased]: https://github.com/ianreboot/safeprompt/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/ianreboot/safeprompt/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/ianreboot/safeprompt/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/ianreboot/safeprompt/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ianreboot/safeprompt/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ianreboot/safeprompt/releases/tag/v1.0.0

@@ -49,7 +49,7 @@ Send a chat message to the AI.
   "validation": {
     "safe": true,
     "confidence": 0.99,
-    "processingTimeMs": 45
+    "processingTime": 45
   }
 }
 ```
@@ -58,7 +58,7 @@ Send a chat message to the AI.
 ```json
 {
   "error": "Message contains potential threats",
-  "threats": ["prompt_injection", "system_prompt_extraction"],
+  "threats": ["jailbreak_instruction_override", "extraction_system_prompt"],
   "validation": {
     "safe": false,
     "confidence": 0.95

@@ -105,8 +105,7 @@ When custom rules affect the decision, the response includes attribution:
   "safe": true,
   "confidence": 0.95,
   "threats": [],
-  "processingTimeMs": 89,
-  "passesUsed": 1,
+  "processingTime": 89,
   "reasoning": "Allowed by user whitelist: matched 'shipping address'. Original decision was UNSAFE.",
   "customRuleMatched": {
     "type": "whitelist",
