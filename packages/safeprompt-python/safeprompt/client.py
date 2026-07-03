@@ -32,7 +32,7 @@ class SafePrompt:
             headers={
                 "X-API-Key": self._api_key,
                 "Content-Type": "application/json",
-                "User-Agent": self.USER_AGENT,
+                "User-Agent": self.USER_AGENT
             },
             timeout=30.0,
         )
@@ -73,7 +73,7 @@ class SafePrompt:
 
         Returns:
             Validation result with keys: safe, threats, confidence,
-            processingTimeMs, passesUsed
+            processingTime
 
         Raises:
             SafePromptError: If the API returns an error.
@@ -175,7 +175,7 @@ class AsyncSafePrompt:
             headers={
                 "X-API-Key": self._api_key,
                 "Content-Type": "application/json",
-                "User-Agent": self.USER_AGENT,
+                "User-Agent": self.USER_AGENT
             },
             timeout=30.0,
         )

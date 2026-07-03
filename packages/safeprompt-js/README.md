@@ -48,8 +48,7 @@ Validate a single prompt.
   safe: boolean;
   threats: string[];
   confidence: number;
-  processingTimeMs: number;
-  passesUsed: number;
+  processingTime: number;
 }
 ```
 

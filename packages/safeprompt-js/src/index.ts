@@ -17,8 +17,7 @@ export interface ValidationResult {
   safe: boolean;
   threats: string[];
   confidence: number;
-  processingTimeMs: number;
-  passesUsed: number;
+  processingTime: number;
 }
 
 export interface ValidationError {

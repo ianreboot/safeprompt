@@ -54,8 +54,7 @@ When multi-turn detection triggers, the response includes additional context:
   "safe": false,
   "threats": ["multi_turn_attack"],
   "confidence": 0.95,
-  "processingTimeMs": 123,
-  "passesUsed": 2,
+  "processingTime": 123,
   "reasoning": "Session risk threshold exceeded based on conversation pattern"
 }
 ```

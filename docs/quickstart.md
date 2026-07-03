@@ -73,8 +73,7 @@ console.log(reply);
   safe: boolean;              // Is the prompt safe?
   threats: string[];          // Array of detected threats
   confidence: number;         // Confidence score (0-1)
-  processingTimeMs: number;   // Processing time
-  passesUsed: number;         // Number of validation passes used
+  processingTime: number;   // Processing time
 }
 ```
 
@@ -85,8 +84,7 @@ console.log(reply);
   "safe": true,
   "threats": [],
   "confidence": 0.99,
-  "processingTimeMs": 12,
-  "passesUsed": 1
+  "processingTime": 12
 }
 ```
 
@@ -95,10 +93,9 @@ console.log(reply);
 ```json
 {
   "safe": false,
-  "threats": ["prompt_injection", "system_prompt_extraction"],
+  "threats": ["jailbreak_instruction_override", "extraction_system_prompt"],
   "confidence": 0.95,
-  "processingTimeMs": 234,
-  "passesUsed": 2
+  "processingTime": 234
 }
 ```
 

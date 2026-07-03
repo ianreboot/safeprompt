@@ -41,8 +41,7 @@ async with AsyncSafePrompt(api_key="YOUR_API_KEY") as sp:
     "safe": True,
     "threats": [],
     "confidence": 0.99,
-    "processingTimeMs": 45,
-    "passesUsed": 1
+    "processingTime": 45
 }
 ```
 
