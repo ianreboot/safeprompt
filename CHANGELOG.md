@@ -16,8 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - SDK response types and all docs/examples now match the live API response exactly:
-  renamed `processingTimeMs` to `processingTime`, removed a documented field the API
-  never returned, and updated example threat labels to the canonical public set.
+  the processing-time field is documented under its real name (`processingTime`), a
+  documented field the API never returned is gone, and example threat labels use the
+  canonical public set.
 
 ## [1.2.0] - 2026-03-18
 
