@@ -3,7 +3,7 @@
  *
  * Multi-turn attacks span multiple conversation turns, gradually building
  * trust or gathering information before exploitation. SafePrompt's session
- * tracking detects these sophisticated patterns with 95% accuracy.
+ * tracking detects these sophisticated patterns.
  *
  * Requires: Starter or Business tier
  */
@@ -305,7 +305,7 @@ async function runAllExamples() {
   console.log('SafePrompt Multi-Turn Attack Detection Examples');
   console.log('================================================\n');
   console.log('Multi-turn protection requires Starter or Business tier');
-  console.log('95% accuracy on sophisticated multi-turn attack sequences\n');
+  console.log('Detects sophisticated multi-turn attack sequences\n');
 
   await exampleReconnaissanceAttack();
   await examplePrivilegeEscalation();

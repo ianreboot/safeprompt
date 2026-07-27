@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial public release of SafePrompt SDK
 - JavaScript/TypeScript SDK with full type support
 - Layered validation system (pattern + AI analysis)
-- Multi-turn attack detection with 95% accuracy
+- Multi-turn attack detection
 - External reference detection (URLs, IPs, file paths)
 - Custom whitelist/blacklist support for paid tiers
 - Session-based attack tracking
@@ -61,13 +61,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migration guide for future versions
 - Real-time dashboard for monitoring threats
 - Privacy-first design with 24-hour PII deletion
-- GDPR and CCPA compliance
+- Data handling: prompt text and client IPs of blocked requests deleted within 24 hours; export and deletion on request
 
 ### Security
-- Above 95% single-turn attack detection accuracy
-- 95% multi-turn attack detection accuracy
-- Pattern detection responds in under 100ms; most requests complete in under 200ms
-- Zero false positive rate in production testing
+- 100% attack catch rate and 0% false positives on the public 150-prompt benchmark (76 safe, 74 attack; suite v2.0)
+- Single-turn and multi-turn attack detection
+- Pattern layers answer most requests; inputs escalated to AI semantic analysis take a few seconds (180ms mean on that benchmark run)
 
 [Unreleased]: https://github.com/ianreboot/safeprompt/compare/v1.2.1...HEAD
 [1.2.1]: https://github.com/ianreboot/safeprompt/compare/v1.2.0...v1.2.1

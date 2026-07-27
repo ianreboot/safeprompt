@@ -9,7 +9,7 @@ This guide helps existing SafePrompt users adopt the latest features including m
 ## 🎯 What's New
 
 ### For All Users
-- **Session Tokens**: Multi-turn attack protection (context priming, false history, 95% accuracy)
+- **Session Tokens**: Multi-turn attack protection (context priming, false history)
 - **X-User-IP Header**: Required for threat intelligence correlation
 - **Enhanced Detection**: Improved pattern matching and external reference detection
 
@@ -126,7 +126,7 @@ const result = await client.check(userMessage, {
 });
 ```
 
-### After (Multi-turn protection - 95% accuracy)
+### After (Multi-turn protection)
 ```javascript
 // Generate session token (use existing chat session ID or create new)
 const sessionToken = req.session.id; // or crypto.randomUUID()
@@ -237,7 +237,7 @@ The validation response structure remains the same:
 
 - **Phase 1A** (October 2025): Multi-turn protection, session tokens, threat intelligence
 - **Custom Lists** (October 2025): Business-specific whitelist/blacklist customization
-- **External Reference Detection** (September 2025): 95% accuracy detecting URL/IP/file attacks
+- **External Reference Detection** (September 2025): detects URL, IP and file-path references in prompts
 
 ---
 

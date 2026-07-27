@@ -110,9 +110,9 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 **Layer 3: Network Intelligence**
 - Attacks blocked for one customer improve protection for everyone
 - IP reputation scoring across the network
-- 24-hour anonymization, GDPR/CCPA compliant
+- prompt text and client IPs of blocked requests deleted within 24 hours; cryptographic pattern hashes retained
 
-**Result**: 100% attack catch rate / 0% false positives on the frozen v2.0 benchmark (150 cases) above — and above 95% detection on broad real-world traffic. Most requests complete in under 200ms.
+**Result**: 100% attack catch rate / 0% false positives on the frozen v2.0 benchmark (150 cases) above. That is the measured scope; we have no production-traffic accuracy measurement and do not claim one. Mean latency across that run was 180ms.
 
 ---
 
@@ -123,8 +123,8 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 - **External Reference Detection** — Blocks "fetch this URL" and data exfiltration attacks
 - **Custom Whitelists/Blacklists** — Tune detection for your specific use case (paid tiers)
 - **Network Intelligence** — Collective defense: every blocked attack improves protection for all
-- **Sub-200ms Response** — Pattern detection is instant; most requests complete in under 200ms
-- **Privacy First** — 24-hour anonymization, GDPR/CCPA compliant, hash-only retention
+- **Fast** — Pattern layers answer most requests; inputs escalated to AI semantic analysis take a few seconds. 180ms mean across our public 150-prompt benchmark run (April 2026).
+- **Privacy First** — prompt text and client IPs of blocked requests deleted within 24 hours; cryptographic pattern hashes retained
 
 ---
 
@@ -331,7 +331,7 @@ If you also want to delete your account and all retained data, email `support@sa
 
 Built by [Ian Ho](https://safeprompt.dev/about) (former eBay technical architect) after discovering prompt injection vulnerabilities while building AI systems for clients. After spending 20+ hours on DIY regex-based protection and watching simple rewrites of known attacks walk right past it, the realization: security shouldn't require enterprise budgets.
 
-SafePrompt gives indie developers enterprise-grade protection at startup prices.
+SafePrompt gives indie developers and small teams a security layer they would otherwise have to build themselves, at indie prices.
 
 **Company**: Reboot Media, Inc. (Irvine, CA)
 

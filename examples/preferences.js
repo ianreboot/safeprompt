@@ -249,7 +249,7 @@ function bestPractices() {
       setting: 'Intelligence Sharing',
       recommendation: 'Keep enabled (Starter/Business tiers can opt out)',
       reason: 'Improves network-wide protection',
-      note: 'All data anonymized after 24 hours (GDPR/CCPA compliant)'
+      note: 'Prompt text and client IPs of blocked requests are deleted after 24 hours; pattern hashes retained'
     },
     {
       setting: 'Block Threshold',
