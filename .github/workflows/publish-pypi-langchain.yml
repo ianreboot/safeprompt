@@ -1,0 +1,49 @@
+name: Publish LangChain integration to PyPI
+
+# Mirrors publish-pypi.yml (the core SDK) but for the LangChain callback handler.
+# Uses PyPI Trusted Publishing (OIDC), so there is no stored token to leak or rotate.
+#
+# ONE-TIME SETUP BEFORE THE FIRST RUN: register a Trusted Publisher on PyPI for the project
+# name `safeprompt-langchain` (owner ianreboot, repo safeprompt, workflow
+# publish-pypi-langchain.yml, environment pypi). A brand-new project has no existing release
+# to inherit trust from, so the publisher must be configured first or the upload is rejected.
+
+on:
+  push:
+    tags:
+      - "langchain-v*"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Build & publish safeprompt-langchain to PyPI
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/safeprompt-langchain/
+    permissions:
+      id-token: write     # required for PyPI Trusted Publishing (OIDC)
+      contents: read
+    defaults:
+      run:
+        working-directory: packages/safeprompt-langchain-python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build tooling
+        run: pip install --upgrade hatch
+
+      - name: Build wheel + sdist
+        run: hatch build
+
+      - name: Publish to PyPI (Trusted Publisher)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: packages/safeprompt-langchain-python/dist
+          verbose: true
