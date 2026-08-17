@@ -81,7 +81,7 @@ Reproducible detection benchmark on the public API ([`benchmarks/`](benchmarks/)
 |---|---|
 | TPR (attack catch rate) | **100.00%** |
 | FPR (false-positive rate) | **0.00%** |
-| Mean latency | ~180ms |
+| Latency | AI-path median about a second, pattern-resolved requests in tens of ms (published as percentiles) |
 | Cases | 150 (76 safe + 74 attack) |
 | Suite version | 2.0 |
 | Reference run | 2026-04-30 |
@@ -112,7 +112,7 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 - IP reputation scoring across the network
 - prompt text and client IPs of blocked requests deleted within 24 hours; cryptographic pattern hashes retained
 
-**Result**: 100% attack catch rate / 0% false positives on the frozen v2.0 benchmark (150 cases) above. That is the measured scope; we have no production-traffic accuracy measurement and do not claim one. Mean latency across that run was 180ms.
+**Result**: the suite runs against the production API every 6 hours; current detection and false-positive rates are published as a range and median on [safeprompt.dev](https://safeprompt.dev) and in [benchmarks/README.md](benchmarks/README.md). We do not measure accuracy on production traffic and do not claim to. (An earlier version of this README reported a single perfect run; continuous measurement since has never reproduced it, and that run was an earlier 100-prompt suite, not the larger current one — see benchmarks/README.md for the full history.)
 
 ---
 
@@ -123,7 +123,7 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 - **External Reference Detection** — Blocks "fetch this URL" and data exfiltration attacks
 - **Custom Whitelists/Blacklists** — Tune detection for your specific use case (paid tiers)
 - **Network Intelligence** — Collective defense: every blocked attack improves protection for all
-- **Fast** — Pattern layers answer most requests; inputs escalated to AI semantic analysis take a few seconds. 180ms mean across our public 150-prompt benchmark run (April 2026).
+- **Fast where it can be** — requests the pattern layers resolve return in tens of milliseconds; most run AI semantic analysis at about a second. Current medians and percentiles are published from continuous measurement.
 - **Privacy First** — prompt text and client IPs of blocked requests deleted within 24 hours; cryptographic pattern hashes retained
 
 ---
