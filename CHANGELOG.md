@@ -64,9 +64,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Data handling: prompt text and client IPs of blocked requests deleted within 24 hours; export and deletion on request
 
 ### Security
-- 100% attack catch rate and 0% false positives on the public 150-prompt benchmark (76 safe, 74 attack; suite v2.0)
+- Benchmark: published continuous 6-hourly evaluation against the production API; current detection and false-positive rates are shown as a range+median on safeprompt.dev (earlier entries cited a single v1.0/100-prompt run that continuous measurement has not reproduced)
 - Single-turn and multi-turn attack detection
-- Pattern layers answer most requests; inputs escalated to AI semantic analysis take a few seconds (180ms mean on that benchmark run)
+
 
 [Unreleased]: https://github.com/ianreboot/safeprompt/compare/v1.2.1...HEAD
 [1.2.1]: https://github.com/ianreboot/safeprompt/compare/v1.2.0...v1.2.1

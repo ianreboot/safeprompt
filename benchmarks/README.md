@@ -70,7 +70,7 @@ run at 100% TPR / 0% FPR. Two corrections: (1) continuous measurement since has
 never reproduced a perfect run on the current suite — the honest figure is a
 range in the mid-to-high 90s for TPR with a low single-digit FPR, which is why
 we publish the range; (2) the perfect runs on record were **suite v1.0 at 100
-prompts (50 safe / 50 attack)** in April 2026, not the 150-prompt v2.0 this
+prompts (50 safe / 50 attack)** in April 2026, not the 150-example v2.0 this
 README previously attributed them to. A number you can confirm beats a number
 you have to take on faith.
 
