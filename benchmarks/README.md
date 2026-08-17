@@ -14,13 +14,13 @@ SafePrompt should block it. The runner:
    per-prompt confusion, mean latency, and writes the raw results to
    `results/<timestamp>.json`
 
-## Suite v2.0
+## Suite v2.2
 
-- 76 safe prompts across 13 categories (everyday, factual, tech,
+- 85 safe prompts across 13 categories (everyday, factual, tech,
   fp-prone-security, fp-prone-llm, fp-prone-imperative, fp-prone-keyword,
   business, creative, content-policy-knowledge, content-policy-uncomfortable,
   user-supplied-artifact, …)
-- 74 attack prompts across 9 categories (instruction-override,
+- 80 attack prompts across 9 categories (instruction-override,
   jailbreak-roleplay, system-prompt-extraction, code-injection,
   obfuscation, deployed-credential-extraction, social-engineering,
   ai-manipulation, hybrid-gen-exfil)
@@ -49,18 +49,36 @@ Optional flags:
 
 ## Reference numbers
 
-Last full run on the production API (suite v2.0, mode=optimized):
+SafePrompt runs this exact suite against the production API **every 6 hours** and
+publishes the results as a range, not a point estimate. Current values are
+rendered on [safeprompt.dev](https://safeprompt.dev) at every deploy, derived
+directly from the measurement store (trailing 30 days, current suite version).
+A single run of this harness should land inside the published range.
 
 <!-- BENCHMARK-TABLE-START -->
-| Metric | Value |
+| Metric | Where to find it |
 |---|---|
-| TPR (attack catch rate) | **100.00%** |
-| FPR (false-positive rate) | **0.00%** |
-| Mean latency | ~180ms |
-| Cases | 150 (76 safe + 74 attack) |
-| Suite version | 2.0 |
-| Run | 2026-04-30 (post `d2134597` deploy) |
+| TPR (attack catch rate) | Published as range + median at [safeprompt.dev](https://safeprompt.dev), updated every deploy |
+| FPR (false-positive rate) | Same, published alongside TPR |
+| Latency | AI-path median and p95 from production `api_logs`, same page |
+| Cases | 165 (85 safe + 80 attack), suite v2.2 |
+| Cadence | Every 6 hours against the production API; every run and every failure retained |
 <!-- BENCHMARK-TABLE-END -->
+
+**History, stated plainly.** An earlier version of this README reported a single
+run at 100% TPR / 0% FPR. Two corrections: (1) continuous measurement since has
+never reproduced a perfect run on the current suite — the honest figure is a
+range in the mid-to-high 90s for TPR with a low single-digit FPR, which is why
+we publish the range; (2) the perfect runs on record were **suite v1.0 at 100
+prompts (50 safe / 50 attack)** in April 2026, not the 150-prompt v2.0 this
+README previously attributed them to. A number you can confirm beats a number
+you have to take on faith.
+
+**Curation disclosure.** `prompts.json` contains a `manual_only_safe` list: two
+known false positives that were moved out of automated scoring (both are
+user-supplied-artifact cases the detector over-blocks). The runner ignores them;
+they are kept in the file so the exclusion is visible rather than silent. If you
+score them as safe cases, expect the FPR to rise accordingly.
 
 > [!IMPORTANT]
 > SafePrompt is **integration-boundary security**, not content moderation.
@@ -70,7 +88,7 @@ Last full run on the production API (suite v2.0, mode=optimized):
 > _"how do firewalls work"_) — those are a content-policy concern and
 > should be paired with your LLM provider's moderation layer.
 >
-> The 100% / 0% numbers above are against this scope. A different rubric
+> The published numbers are against this scope. A different rubric
 > (one that treats harmful-topic questions as attacks) will produce
 > different numbers — your scope must match what you measure.
 
