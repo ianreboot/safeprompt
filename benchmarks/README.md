@@ -47,6 +47,16 @@ Optional flags:
 | `--base-url=URL` | `api.safeprompt.dev` | Point at a self-hosted gateway |
 | `--output=path.json` | `results/<ts>.json` | Custom output path |
 
+## Published runs and failures
+
+`results/` contains every run and every failing case from the continuous production eval, trailing 90 days:
+
+- `runs-90d.jsonl` - one line per 6-hourly run (counts, TPR, FPR, failing cases)
+- `summary-90d.json` - the aggregate range and median the website derives from
+- `failures-90d.md` - every distinct failing case with its occurrence count
+
+Regenerated weekly. This is what makes "every run and every failure is published" literally checkable.
+
 ## Reference numbers
 
 SafePrompt runs this exact suite against the production API **every 6 hours** and

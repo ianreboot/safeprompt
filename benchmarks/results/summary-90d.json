@@ -1,0 +1,18 @@
+{
+  "generated_from": "detection_metrics (production 6-hourly eval)",
+  "window": "trailing 90 days",
+  "runs": 357,
+  "first_run": "2026-05-19 12:16:20.622829+00",
+  "last_run": "2026-08-17 06:15:44.980841+00",
+  "tpr": {
+    "min": 90.0,
+    "max": 97.5,
+    "median": 97.5
+  },
+  "fpr": {
+    "min": 1.18,
+    "max": 7.06,
+    "median": 1.18
+  },
+  "note": "Every run and every failure in this window is in runs-90d.jsonl. The failures field lists each failing case with method/prompt/category. Suite and runner are public; re-run with your own key."
+}
