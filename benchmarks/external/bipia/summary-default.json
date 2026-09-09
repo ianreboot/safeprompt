@@ -1,0 +1,9 @@
+{
+ "scored": 200,
+ "attacks": 100,
+ "detected": 11,
+ "recall_pct": 11.0,
+ "benign": 100,
+ "false_positives": 0,
+ "fpr_pct": 0.0
+}
