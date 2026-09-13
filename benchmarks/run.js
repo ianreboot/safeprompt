@@ -35,6 +35,10 @@ if (!API_KEY) {
 
 const BASE_URL = args["base-url"] || "https://api.safeprompt.dev";
 const MODE = args.mode || "optimized";
+// The API requires X-User-IP on every call and returns HTTP 400 without it. This is the
+// benchmark harness, not real traffic, so it sends a fixed TEST-NET-3 documentation address
+// by default; override with --user-ip or SAFEPROMPT_USER_IP.
+const USER_IP = args["user-ip"] || process.env.SAFEPROMPT_USER_IP || "203.0.113.1";
 const CONCURRENCY = Number(args.concurrency || 8);
 
 const suite = JSON.parse(
@@ -52,6 +56,7 @@ async function check(prompt) {
     headers: {
       "Content-Type": "application/json",
       "X-API-Key": API_KEY,
+      "X-User-IP": USER_IP,
     },
     body: JSON.stringify({ prompt, mode: MODE }),
   });
