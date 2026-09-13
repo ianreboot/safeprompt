@@ -18,10 +18,15 @@ from safeprompt import SafePrompt
 
 sp = SafePrompt(api_key="YOUR_API_KEY")
 
+# user_ip is your END USER's address, not your server's. The API requires it.
 result = sp.check(user_input, user_ip=request.remote_addr)
 if not result["safe"]:
     raise ValueError(f"Blocked: {result['threats'][0]}")
 ```
+
+`check()` takes `prompt`, then keyword arguments `user_ip` and `session_token`. If you omit
+`user_ip` the SDK sends `127.0.0.1`, which makes the call succeed but attributes every attack to
+localhost in threat intelligence; always pass the real address. There is no `mode` argument.
 
 ## Async Support
 
@@ -29,7 +34,7 @@ if not result["safe"]:
 from safeprompt import AsyncSafePrompt
 
 async with AsyncSafePrompt(api_key="YOUR_API_KEY") as sp:
-    result = await sp.check(user_input)
+    result = await sp.check(user_input, user_ip=request.remote_addr)
     if not result["safe"]:
         raise ValueError(f"Blocked: {result['threats'][0]}")
 ```
@@ -51,11 +56,14 @@ async with AsyncSafePrompt(api_key="YOUR_API_KEY") as sp:
 from safeprompt import SafePromptError
 
 try:
-    result = sp.check(user_input)
+    result = sp.check(user_input, user_ip=request.remote_addr)
 except SafePromptError as e:
     print(e.status_code)
     print(str(e))
 ```
+
+Decide before you ship whether an error fails closed (reject the message) or fails open (let it
+through and log). The SDK does neither for you.
 
 ## Links
 

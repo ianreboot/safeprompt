@@ -23,6 +23,8 @@ SAFEPROMPT_API_KEY=your_safeprompt_key
 OPENAI_API_KEY=your_openai_key
 ```
 
+Keep `SAFEPROMPT_API_KEY` server-side. Never prefix it with `NEXT_PUBLIC_`, or the key ships to the browser.
+
 3. Run development server:
 ```bash
 npm run dev
@@ -50,8 +52,9 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export async function POST(req: Request) {
   const { message } = await req.json();
 
-  // Validate with SafePrompt
-  const validation = await safeprompt.check(message);
+  // Validate with SafePrompt. userIP is the END USER's address (required by the API).
+  const userIP = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? '';
+  const validation = await safeprompt.check(message, { userIP });
 
   if (!validation.safe) {
     return Response.json({

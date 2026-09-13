@@ -1,5 +1,7 @@
 # Security Policy
 
+This file states the same terms as [safeprompt.dev/security](https://safeprompt.dev/security) and the site's `/.well-known/security.txt`. If they ever differ, the security page is the current one.
+
 ## Reporting a Vulnerability
 
 We take the security of SafePrompt seriously. If you discover a security vulnerability, please report it responsibly.
@@ -18,20 +20,27 @@ Include in your report:
 
 ### What to Expect
 
-When you report a vulnerability, you can expect:
+- **Acknowledgement**: we aim to acknowledge your report within two business days
+- **Initial assessment**: we aim to give you an initial assessment within ten business days. If we are going to miss that, we will tell you rather than go quiet
+- **Regular updates**: we keep you informed of remediation progress
+- **Credit**: we credit you in the fix announcement if you want it
+- **Coordinated disclosure**: give us 90 days to fix an issue before publishing, or agree a different date with us
 
-- **Acknowledgment within 24 hours** - We'll confirm receipt of your report
-- **Regular updates** - We'll keep you informed of our progress
-- **Credit** - We'll acknowledge your contribution in the fix announcement (if desired)
-- **Coordinated disclosure** - We'll work with you on timing of public disclosure
+### Safe harbour
+
+If you follow the rules below, we will not bring or support legal action against you for your research, and we will say so in writing if anyone asks. Stay within them:
+
+- Test only against your own account and your own data, never another customer's
+- Do not run denial-of-service, spam or social-engineering tests
+- Do not access, copy, keep or publish anyone else's personal data, and stop and tell us the moment you encounter it
+- Do not test our suppliers' systems, because we cannot speak for them
+- Give us 90 days to fix an issue before publishing, or agree a different date with us
+
+We cannot waive claims that belong to our customers, and we cannot bind law enforcement. What we can promise is our own conduct, and this is it.
 
 ### Supported Versions
 
-We currently support the latest version of SafePrompt. Security updates are applied to:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.x.x   | :white_check_mark: |
+Security fixes go to the latest published version of each package: `safeprompt` on npm and PyPI, `@safeprompt.dev/langchain` on npm, and `safeprompt-langchain` on PyPI. Older versions are not patched; update.
 
 ### Security Best Practices
 
@@ -41,19 +50,13 @@ When using SafePrompt:
 - **Use environment variables** for sensitive configuration
 - **Keep the SDK updated** to the latest version
 - **Monitor your usage** via the dashboard for suspicious activity
-- **Enable rate limiting** in production environments
+- **Send the end user's IP** in `X-User-IP`, never your server's, so threat intelligence attributes attacks correctly
 - **Review our [Best Practices](./docs/BEST_PRACTICES.md)** guide
-
-### Disclosure Policy
-
-- We'll investigate all legitimate reports and do our best to fix issues quickly
-- We'll keep you informed throughout the investigation
-- We ask that you don't disclose the vulnerability publicly until we've had a chance to address it
-- We typically aim to resolve critical issues within 7 days
 
 ## Contact
 
 - **Security issues**: security@safeprompt.dev
+- **Privacy requests**: privacy@safeprompt.dev
 - **General support**: support@safeprompt.dev
 - **Website**: https://safeprompt.dev
 
