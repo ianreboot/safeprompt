@@ -45,7 +45,7 @@ export async function validate(
       'Content-Type': 'application/json',
       'X-API-Key': apiKey,
       'X-User-IP': userIP,
-      'User-Agent': '@safeprompt.dev/langchain/0.2.0',
+      'User-Agent': '@safeprompt.dev/langchain/0.2.1',
     },
     body: JSON.stringify({ prompt, sensitivity: detection }),
   });
