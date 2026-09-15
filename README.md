@@ -93,7 +93,7 @@ export SAFEPROMPT_API_KEY=sp_live_...
 node benchmarks/run.js
 ```
 
-The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.json) to the live API and prints per-category confusion + writes raw results to `benchmarks/results/<timestamp>.json`. The API requires an `X-User-IP` header on every call and answers HTTP 400 without it; `run.js` does not send one yet (open issue), so add the header before you run. See [`benchmarks/README.md`](benchmarks/README.md) for methodology.
+The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.json) to the live API and prints per-category confusion + writes raw results to `benchmarks/results/<timestamp>.json`. The API requires an `X-User-IP` header on every call and answers HTTP 400 without it; `run.js` sends one by default (override with `--user-ip` or the `SAFEPROMPT_USER_IP` env var). See [`benchmarks/README.md`](benchmarks/README.md) for methodology.
 
 ---
 
