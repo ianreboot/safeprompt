@@ -29,6 +29,11 @@ Documentation improvements are always welcome:
 - Improve error messages
 - Expand guides and tutorials
 
+Two rules for anything in this repo that a reader or an AI assistant might quote:
+
+- **No hand-typed accuracy, false-positive or latency figures.** The numbers on safeprompt.dev render from the continuous production eval at every deploy. A README states where the current figure is, or quotes a committed run record with its date, mode and case set. A figure without those three is removed in review.
+- **Every raw HTTP sample sends both headers**, `X-API-Key` and `X-User-IP`. The API answers HTTP 400 without the second one, and a sample that fails on paste is the most expensive kind of documentation.
+
 ### 4. Submit Code
 
 Want to contribute code? Here's how:
@@ -47,7 +52,7 @@ npm install
 # Build the SDK
 npm run build
 
-# Run tests (when available)
+# Run tests
 npm test
 ```
 
@@ -90,6 +95,8 @@ Help improve SafePrompt's detection by sharing:
 - Are publicly known techniques
 - Don't expose real user data
 - Don't reveal security vulnerabilities in specific systems
+
+Scope note: SafePrompt detects attacks on the reading AI (instruction override, jailbreaks, system-prompt extraction, exfiltration imperatives, indirect injection). A SQL, XSS or shell payload carried as data, or a harmful-topic question, is out of scope by design and will be labelled `safe` in the benchmark suite; see `benchmarks/README.md`.
 
 ## Pull Request Process
 

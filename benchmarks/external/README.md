@@ -23,9 +23,23 @@ every verdict in `results-*.jsonl` rehashes back to its prompt.
 | **BIPIA** | Microsoft's benchmark for indirect prompt injection: an instruction hidden inside content the model is asked to read. We use the three task types whose contexts ship in the repo (email, table, code). | https://github.com/microsoft/BIPIA | Code MIT. The `benchmark` corpora carry their own licences: WikiTableQuestions and Stack Exchange are CC BY-SA 4.0, the OpenAI Evals invoice data is MIT. Redistribution is possible but would put a ShareAlike obligation on this repo, so prompts are **not redistributed here**. |
 | **HackAPrompt** | 600k submissions from a public prompt-hacking competition. We sample only entries that demonstrably worked against the target model, stratified across all levels. | https://huggingface.co/datasets/hackaprompt/hackaprompt-dataset | MIT, but access-gated on HuggingFace (account plus accepted terms). We do not redistribute past that gate, so prompts are **not redistributed here**. |
 
-AgentDojo is not included.
+## Pending publication
 
-### What is committed instead of the prompts
+Two further runs exist and are not yet committed here. Until they are, safeprompt.dev
+does not publish a competitor comparison to production; that is a standing condition,
+not a preference.
+
+* **AgentDojo**, run 2026-09-12: banking suite, `important_instructions` attacks,
+  GPT-4o-mini agent, SafePrompt strict as the tool-output check, 144 attack runs. The
+  per-run record will land in `agentdojo/` with the same shape as the directories
+  below.
+* **Matched open-weights classifier runs** on the identical TensorTrust and BIPIA
+  cases (ProtectAI's DeBERTa v2 prompt-injection classifier and deepset's DeBERTa
+  injection model, each at its documented default threshold), run 2026-09-11 on CPU.
+  Per-case results will land beside the SafePrompt rows so every bar on the
+  comparison page rehashes to a prompt.
+
+## What is committed instead of the prompts
 
 For the licence reasons in the table above, no `cases.json` ships here. What is
 committed instead is the exact thing a reader needs to check us:
@@ -44,7 +58,8 @@ Default runs completed 7 September 2026, strict runs completed 8 September 2026
 (server clock, Europe/Berlin).
 
 `default` is `sensitivity=balanced`, the setting a new key gets. `strict` is
-`sensitivity=strict`, which trades false positives for recall.
+`sensitivity=strict`, which trades false positives for recall. safeprompt.dev shows
+the strict rows, the setting its quickstart sends.
 
 ### Tensor Trust
 

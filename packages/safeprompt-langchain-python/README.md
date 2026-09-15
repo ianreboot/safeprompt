@@ -61,9 +61,10 @@ thresholds on your SafePrompt account, then flip to `enforcement="block"`.
 
 ### `sample_rate`: cost control for high-volume apps
 
-Each validation is a round-trip to the SafePrompt API (sub-second for most prompts, but
-still a network hop). For apps processing >10K prompts/day where latency matters more than
-per-prompt coverage, set `sample_rate=0.1` to validate 10% of prompts.
+Each validation is a round-trip to the SafePrompt API (about a second at the median for the
+AI path, tens of milliseconds when the pattern layer settles it). For apps processing >10K
+prompts/day where latency matters more than per-prompt coverage, set `sample_rate=0.1` to
+validate 10% of prompts.
 
 ### Indirect-injection protection (agents)
 
@@ -77,7 +78,8 @@ hides malicious instructions).
 1. `on_llm_start` / `on_chat_model_start` fires before every LLM call. Each rendered prompt
    is POSTed to the SafePrompt API.
 2. The API runs a layered defense: pattern matching → external-reference detection → AI
-   validation. Most requests are classified in single-digit milliseconds.
+   validation. Most requests run the AI layer and come back in about a second at the median;
+   a minority resolve on the pattern layer in tens of milliseconds.
 3. If the API returns `safe == False`, the handler either raises `SafePromptBlockedError`
    (in `block` mode) or fires your `on_block` hook (in `log` mode).
 4. `on_tool_end` applies the same check to agent tool outputs, the primary indirect
@@ -108,7 +110,7 @@ print(result.safe, result.threats)  # False ['jailbreak_instruction_override']
 ## Links
 
 - [SafePrompt homepage](https://safeprompt.dev)
-- [API docs](https://safeprompt.dev/docs)
+- [API docs](https://docs.safeprompt.dev)
 - [Dashboard](https://dashboard.safeprompt.dev)
 - [JS package (`@safeprompt.dev/langchain`)](https://www.npmjs.com/package/@safeprompt.dev/langchain)
 

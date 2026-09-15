@@ -87,8 +87,8 @@ app.post('/api/chat', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    // Validate with SafePrompt
-    const validation = await safeprompt.check(message);
+    // Validate with SafePrompt. userIP is the END USER's address (required by the API).
+    const validation = await safeprompt.check(message, { userIP: req.ip });
 
     if (!validation.safe) {
       return res.status(400).json({
@@ -109,6 +109,7 @@ app.post('/api/chat', async (req, res) => {
       validation
     });
   } catch (error) {
+    // This fails closed: a SafePrompt error means the message is not forwarded.
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
