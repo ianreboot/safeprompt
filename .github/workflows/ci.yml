@@ -68,3 +68,27 @@ jobs:
       - name: Test
         working-directory: packages/safeprompt-langchain
         run: npm test
+
+  langchain-python:
+    name: LangChain Python SDK (${{ matrix.python }})
+    runs-on: ubuntu-latest
+    # Published to PyPI as safeprompt-langchain but had no CI, so a regression in it
+    # was only ever caught by hand.
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        working-directory: packages/safeprompt-langchain-python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-mock
+      - name: Test
+        working-directory: packages/safeprompt-langchain-python
+        run: python -m pytest -v

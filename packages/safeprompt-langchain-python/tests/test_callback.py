@@ -1,4 +1,4 @@
-"""Unit tests for SafePromptCallbackHandler (no network, validate() is patched)."""
+"""Unit tests for SafePromptCallbackHandler (no network — validate() is patched)."""
 
 from __future__ import annotations
 

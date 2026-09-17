@@ -7,13 +7,15 @@ from typing import Any, Callable, List, Optional
 
 from langchain_core.callbacks.base import BaseCallbackHandler
 
-from .client import DEFAULT_PROVIDER, SafePromptAPIError, validate
+from .client import DEFAULT_PROVIDER, SafePromptAPIError, normalise_sensitivity, validate
 from .types import SafePromptBlockedError, ValidationResult
 
 BlockHook = Callable[[str, ValidationResult], None]
 ErrorHook = Callable[[str, Exception], None]
 
+# Legacy values this package accepted for `mode`. 'fast' was never a valid API sensitivity.
 _MODES = ("fast", "balanced", "strict")
+_SENSITIVITIES = ("lenient", "balanced", "strict")
 _ENFORCEMENT = ("block", "log")
 _PROVIDER_ERROR = ("fail-closed", "fail-open")
 
@@ -45,7 +47,8 @@ class SafePromptCallbackHandler(BaseCallbackHandler):
         api_key: str,
         user_ip: str,
         provider: str = DEFAULT_PROVIDER,
-        mode: str = "balanced",
+        sensitivity: Optional[str] = None,
+        mode: Optional[str] = None,
         enforcement: str = "block",
         on_provider_error: str = "fail-closed",
         sample_rate: float = 1.0,
@@ -58,8 +61,10 @@ class SafePromptCallbackHandler(BaseCallbackHandler):
             raise ValueError("SafePromptCallbackHandler: api_key is required")
         if not user_ip:
             raise ValueError("SafePromptCallbackHandler: user_ip is required")
-        if mode not in _MODES:
+        if mode is not None and mode not in _MODES:
             raise ValueError(f"mode must be one of {_MODES}")
+        if sensitivity is not None and sensitivity not in _SENSITIVITIES:
+            raise ValueError(f"sensitivity must be one of {_SENSITIVITIES}")
         if enforcement not in _ENFORCEMENT:
             raise ValueError(f"enforcement must be one of {_ENFORCEMENT}")
         if on_provider_error not in _PROVIDER_ERROR:
@@ -68,7 +73,12 @@ class SafePromptCallbackHandler(BaseCallbackHandler):
         self.api_key = api_key
         self.user_ip = user_ip
         self.provider = provider
+        # `mode` is the deprecated alias; it is normalised into `sensitivity` here so the
+        # rest of the handler never has to think about it.
         self.mode = mode
+        self.sensitivity = normalise_sensitivity(
+            sensitivity if sensitivity is not None else mode
+        )
         self.enforcement = enforcement
         self.on_provider_error = on_provider_error
         self.sample_rate = sample_rate
@@ -90,7 +100,7 @@ class SafePromptCallbackHandler(BaseCallbackHandler):
                 api_key=self.api_key,
                 user_ip=self.user_ip,
                 provider=self.provider,
-                mode=self.mode,
+                sensitivity=self.sensitivity,
                 timeout=self.timeout,
             )
         except SafePromptAPIError as exc:
@@ -125,7 +135,7 @@ class SafePromptCallbackHandler(BaseCallbackHandler):
             self._check(text)
 
     def on_tool_end(self, output: Any, **kwargs: Any) -> None:
-        """Fires when an agent tool returns content, the indirect-injection surface."""
+        """Fires when an agent tool returns content — the indirect-injection surface."""
         if not self._should_sample():
             return
         self._check(_coerce_tool_output(output))
