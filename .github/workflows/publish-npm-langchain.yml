@@ -1,0 +1,112 @@
+name: Publish LangChain SDK to npm
+
+# Publishes @safeprompt.dev/langchain. Mirrors publish-pypi-langchain.yml (the Python
+# integration) but for the JS package, and for the same reason: npm Trusted Publishing
+# (OIDC) means there is no stored npm token to leak or rotate, and every release carries
+# a provenance attestation a consumer can verify against this repo.
+#
+# WHY THIS EXISTS. 0.2.0 was published by hand from a maintainer machine. It has no
+# attestation (`npm view @safeprompt.dev/langchain@0.2.0 dist` returns no `attestations`
+# key), so a consumer cannot verify the tarball was built from this source. Worse, the
+# package's `prepublishOnly` runs `tsc` at exactly the moment an npm token is live in the
+# environment, so a compromised devDependency could both inject into the published `dist/`
+# and exfiltrate that token. This workflow removes the token entirely and pins the build to
+# a public, auditable runner.
+#
+# ONE-TIME SETUP BEFORE THE FIRST RUN (cannot be done from this repo):
+#   On npmjs.com, under the @safeprompt.dev/langchain package settings, register a Trusted
+#   Publisher: owner `ianreboot`, repository `safeprompt`, workflow
+#   `publish-npm-langchain.yml`, environment `npm`. Until that exists the publish step is
+#   rejected. The package already has published versions, so trust cannot be inherited from
+#   a first release and must be configured explicitly.
+#
+# UNTIL THEN THIS WORKFLOW IS INERT: it fires only on a `langchain-js-v*` tag or a manual
+# dispatch, and no such tag exists.
+#
+# NOTE ON SOURCE OF TRUTH: provenance binds a package to the repo named in its
+# `repository.url`, which is this public repo, so publishing must happen here. The package
+# source is maintained in safeprompt-internal (`packages/langchain`) and mirrored here. A
+# stale mirror would therefore publish stale code with a valid-looking attestation, so the
+# job verifies the version being published matches the tag before it builds.
+
+on:
+  push:
+    tags:
+      - "langchain-js-v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish, must match package.json (e.g. 0.2.1)"
+        required: true
+        type: string
+
+jobs:
+  publish:
+    name: Build & publish @safeprompt.dev/langchain to npm
+    runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/@safeprompt.dev/langchain
+    permissions:
+      id-token: write     # required for npm Trusted Publishing (OIDC) + provenance
+      contents: read
+    defaults:
+      run:
+        working-directory: packages/safeprompt-langchain
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Upgrade npm
+        # Trusted Publishing and --provenance need a recent npm; the runner's bundled
+        # version is not guaranteed to be new enough.
+        run: npm install -g npm@latest
+
+      - name: Verify the tag matches package.json
+        # Guards the mirror-drift case described in the header: publishing a version other
+        # than the one being tagged would otherwise be silent.
+        run: |
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            WANT="${{ inputs.version }}"
+          else
+            WANT="${GITHUB_REF_NAME#langchain-js-v}"
+          fi
+          echo "package.json=$PKG_VERSION  requested=$WANT"
+          if [ "$PKG_VERSION" != "$WANT" ]; then
+            echo "::error::package.json is $PKG_VERSION but the release asks for $WANT"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        # --ignore-scripts: no dependency install script runs on the publish path.
+        run: npm ci --ignore-scripts
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Verify dist was actually built
+        # --ignore-scripts on publish skips prepublishOnly, so nothing rebuilds dist/ at
+        # publish time. Verified locally: publishing with dist/ absent yields a tarball
+        # with zero dist files, i.e. a package containing no code at all. Fail loudly
+        # rather than shipping that.
+        run: |
+          test -f dist/index.js || { echo "::error::dist/index.js missing - the build step produced no output"; exit 1; }
+          COUNT="$(find dist -name '*.js' | wc -l)"
+          echo "dist .js files: $COUNT"
+          test "$COUNT" -gt 0 || { echo "::error::dist/ contains no compiled JS"; exit 1; }
+
+      - name: Publish with provenance
+        # --ignore-scripts here too: dist/ is already built above, so prepublishOnly must
+        # not re-run tsc during publish.
+        run: npm publish --provenance --access public --ignore-scripts
