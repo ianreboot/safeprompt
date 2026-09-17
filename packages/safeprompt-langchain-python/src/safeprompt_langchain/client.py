@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import json
+from typing import Optional
 import urllib.error
 import urllib.request
 
 from .types import ValidationResult
 
 DEFAULT_PROVIDER = "https://api.safeprompt.dev"
-_USER_AGENT = "safeprompt-langchain/0.1.0"
+_USER_AGENT = "safeprompt-langchain/0.2.0"
 
 
 class SafePromptAPIError(RuntimeError):
@@ -20,13 +21,31 @@ class SafePromptAPIError(RuntimeError):
         self.status = status
 
 
+SENSITIVITIES = ("lenient", "balanced", "strict")
+
+
+def normalise_sensitivity(value):
+    """Map a caller-supplied sensitivity onto a value the API accepts.
+
+    'fast' was never a valid API sensitivity; the API ignored the field, so callers who set
+    it were actually receiving 'balanced' detection. It maps to 'balanced' to preserve exactly
+    the behaviour those callers observed. Detection must never silently decrease on upgrade.
+    """
+    if value in SENSITIVITIES:
+        return value
+    if value == "fast":
+        return "balanced"
+    return "balanced"
+
+
 def validate(
     prompt: str,
     *,
     api_key: str,
     user_ip: str,
     provider: str = DEFAULT_PROVIDER,
-    mode: str = "balanced",
+    sensitivity: Optional[str] = None,
+    mode: Optional[str] = None,
     timeout: float = 30.0,
 ) -> ValidationResult:
     """POST a single prompt to the SafePrompt API and return the parsed result.
@@ -35,7 +54,11 @@ def validate(
     """
     base = provider.rstrip("/")
     url = f"{base}/api/v1/validate"
-    body = json.dumps({"prompt": prompt, "mode": mode}).encode("utf-8")
+    # `sensitivity` selects detection. `mode` is the API's CACHING parameter and is
+    # deliberately not sent: mode="strict" set no detection level at all, so callers asking
+    # for strict silently received balanced.
+    detection = normalise_sensitivity(sensitivity if sensitivity is not None else mode)
+    body = json.dumps({"prompt": prompt, "sensitivity": detection}).encode("utf-8")
     request = urllib.request.Request(
         url,
         data=body,
