@@ -1,4 +1,9 @@
 version: 2
+
+# cooldown applies to VERSION updates only, never security updates, so nothing here
+# can delay a security fix. It exists to stop us adopting a brand-new release within
+# hours of publication, which is the window a compromised release is most dangerous in.
+
 updates:
   # Enable version updates for npm (SDK dependencies)
   - package-ecosystem: "npm"
@@ -22,6 +27,37 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Let a release sit before we take it.
+    cooldown:
+      default-days: 7
+      semver-minor-days: 7
+      semver-patch-days: 3
+
+  # Enable version updates for the LangChain SDK, which publishes to npm as
+  # @safeprompt.dev/langchain. Monthly and capped low: its direct surface is three
+  # devDependencies, so the value here is the transitive lockfile refresh, which is
+  # where every advisory this package has ever had actually landed (langsmith, uuid).
+  - package-ecosystem: "npm"
+    directory: "/packages/safeprompt-langchain"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 2
+    reviewers:
+      - "ianreboot"
+    labels:
+      - "dependencies"
+      - "javascript"
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+    # typescript 5 -> 7 and @types/node 20 -> 22 are majors and stay manual.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    cooldown:
+      default-days: 7
+      semver-minor-days: 7
+      semver-patch-days: 3
 
   # Enable GitHub Actions updates
   - package-ecosystem: "github-actions"
