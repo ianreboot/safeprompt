@@ -5,5 +5,12 @@
  "recall_pct": 91.0,
  "benign": 100,
  "false_positives": 1,
- "fpr_pct": 1.0
+ "fpr_pct": 1.0,
+ "by_group": {
+  "all": {
+   "n": 200,
+   "correct": 190
+  }
+ },
+ "sensitivity": "strict"
 }

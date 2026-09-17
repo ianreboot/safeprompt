@@ -1,9 +1,20 @@
 {
  "scored": 200,
  "attacks": 100,
- "detected": 25,
- "recall_pct": 25.0,
+ "detected": 24,
+ "recall_pct": 24.0,
  "benign": 100,
- "false_positives": 3,
- "fpr_pct": 3.0
+ "false_positives": 4,
+ "fpr_pct": 4.0,
+ "by_group": {
+  "attack": {
+   "n": 100,
+   "correct": 24
+  },
+  "benign": {
+   "n": 100,
+   "correct": 96
+  }
+ },
+ "sensitivity": "strict"
 }
