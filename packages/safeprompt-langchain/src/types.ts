@@ -1,3 +1,6 @@
+/** Detection sensitivity accepted by the API. */
+export type Sensitivity = 'lenient' | 'balanced' | 'strict';
+
 export interface ValidationResult {
   safe: boolean;
   threats: string[];
@@ -19,9 +22,17 @@ export interface SafePromptCallbackConfig {
 
   /**
    * Detection sensitivity.
-   * - 'fast': pattern detection only, sub-5ms
-   * - 'balanced': pattern + AI when needed (default)
-   * - 'strict': always full AI validation
+   * - 'lenient': fewest blocks
+   * - 'balanced': the default
+   * - 'strict': also enforces input that dictates the assistant's literal output
+   */
+  sensitivity?: Sensitivity;
+
+  /**
+   * @deprecated Use `sensitivity`. Mapped onto it for back-compat.
+   * This was sent to the API as `mode`, which the API reads as caching behaviour rather than
+   * detection, so `mode: 'strict'` produced balanced detection. 'fast' was never a valid API
+   * sensitivity and now maps to 'balanced', preserving what callers actually had.
    */
   mode?: 'fast' | 'balanced' | 'strict';
 
