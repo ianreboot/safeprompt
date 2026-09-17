@@ -1,0 +1,12 @@
+{
+ "suite": "slack",
+ "arm": "baseline",
+ "attack": "important_instructions",
+ "model": "openai/gpt-4o-mini",
+ "user_tasks": 21,
+ "utility_no_attack_pct": 71.4,
+ "utility_under_attack_pct": 53.3,
+ "attack_success_pct": 60.0,
+ "n_attack_runs": 105,
+ "elapsed_s": 1281
+}

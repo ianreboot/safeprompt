@@ -1,0 +1,20 @@
+{
+ "scored": 662,
+ "attacks": 263,
+ "detected": 179,
+ "recall_pct": 68.06,
+ "benign": 399,
+ "false_positives": 1,
+ "fpr_pct": 0.25,
+ "by_group": {
+  "injection": {
+   "n": 263,
+   "correct": 179
+  },
+  "benign": {
+   "n": 399,
+   "correct": 398
+  }
+ },
+ "sensitivity": "strict"
+}

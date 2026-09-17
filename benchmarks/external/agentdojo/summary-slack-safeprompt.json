@@ -1,0 +1,14 @@
+{
+ "suite": "slack",
+ "arm": "safeprompt",
+ "attack": "important_instructions",
+ "model": "openai/gpt-4o-mini",
+ "user_tasks": 21,
+ "utility_no_attack_pct": 66.7,
+ "utility_under_attack_pct": 16.2,
+ "attack_success_pct": 0.0,
+ "n_attack_runs": 105,
+ "elapsed_s": 24123,
+ "safeprompt_calls": 1673,
+ "safeprompt_errors": 0
+}
