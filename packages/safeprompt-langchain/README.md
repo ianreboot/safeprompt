@@ -8,7 +8,7 @@ LangChain callback handler that validates every prompt flowing through your chai
 npm install @safeprompt.dev/langchain
 ```
 
-Peer dependency: `@langchain/core ^0.3.0`.
+Peer dependency: `@langchain/core` (LangChain 1.x, `>=1.0.0`).
 
 ## Quick start
 
@@ -48,12 +48,13 @@ try {
 ```ts
 new SafePromptCallbackHandler({
   apiKey: 'sp_live_…',
-  userIP: '203.0.113.1',              // REQUIRED: end-user IP
+  userIP: '203.0.113.1',              // REQUIRED — end-user IP
+
   provider: 'https://api.safeprompt.dev',  // default
-  mode: 'balanced',                        // 'fast' | 'balanced' | 'strict'
+  sensitivity: 'balanced',                 // 'lenient' | 'balanced' | 'strict'
   enforcement: 'block',                    // 'block' | 'log' (log = don't throw, just fire onBlock)
   onProviderError: 'fail-closed',          // 'fail-closed' | 'fail-open'
-  sampleRate: 1.0,                         // 0..1, fraction of prompts to validate
+  sampleRate: 1.0,                         // 0..1 — fraction of prompts to validate
 
   onBlock: (prompt, result) => {
     console.warn('[safeprompt] blocked', result.threats, '→', prompt.slice(0, 80));
@@ -64,22 +65,21 @@ new SafePromptCallbackHandler({
 });
 ```
 
-### `enforcement: 'log'`: tune before enforcing
+### `enforcement: 'log'` — tune before enforcing
 
 Run the adapter in log mode in staging/production for a week. You get `onBlock` events
 without any chain aborts. Review the results in your logs (or SafePrompt dashboard), tune
 custom lists / confidence threshold, then flip `enforcement: 'block'`.
 
-### `sampleRate`: cost control for high-volume apps
+### `sampleRate` — cost control for high-volume apps
 
-Each validation call is a round-trip to the SafePrompt API (about a second at the median
-for the AI path, tens of milliseconds when the pattern layer settles it). For apps processing
->10K prompts/day where latency matters more than per-prompt coverage, set `sampleRate: 0.1`
-to validate 10% of prompts.
+Each validation call is a round-trip to the SafePrompt API (sub-second for most prompts,
+but still a network hop). For apps processing >10K prompts/day where latency matters more
+than per-prompt coverage, set `sampleRate: 0.1` to validate 10% of prompts.
 
 ### Indirect-injection protection (agents)
 
-When you use this handler with a LangChain agent, it also fires on `handleToolEnd`, the
+When you use this handler with a LangChain agent, it also fires on `handleToolEnd` — the
 moment a tool returns content that will be fed back to the LLM. This is the key protection
 against *indirect* prompt injection (content fetched from the web, retrieved from RAG, etc.,
 that hides malicious instructions).
@@ -89,11 +89,10 @@ that hides malicious instructions).
 1. `handleLLMStart` / `handleChatModelStart` fires before every LLM call. Each prompt is
    POSTed to the SafePrompt API.
 2. The API runs a 3-layer defense: pattern matching → external-reference detection → AI
-   validation. Most requests run the AI layer and come back in about a second at the median;
-   a minority resolve on the pattern layer in tens of milliseconds.
+   validation. Most requests are classified in single-digit milliseconds.
 3. If the API returns `safe: false`, the handler either throws `SafePromptBlockedError`
    (in `block` mode) or fires your `onBlock` hook (in `log` mode).
-4. `handleToolEnd` applies the same check to agent tool outputs, the primary indirect
+4. `handleToolEnd` applies the same check to agent tool outputs — the primary indirect
    injection surface.
 
 ## Troubleshooting
@@ -108,8 +107,22 @@ that hides malicious instructions).
 ## Links
 
 - [SafePrompt homepage](https://safeprompt.dev)
-- [API docs](https://docs.safeprompt.dev)
+- [API docs](https://safeprompt.dev/docs)
 - [Dashboard](https://dashboard.safeprompt.dev)
-- [Plain SDK (`safeprompt` on npm)](https://www.npmjs.com/package/safeprompt)
+- [Open NPM client](https://www.npmjs.com/package/@safeprompt/client)
 
 MIT.
+
+---
+
+### Note on `mode` (fixed in 0.2.0)
+
+Before 0.2.0 this package sent the detection level to the API as `mode`. The API reads `mode` as a
+caching setting and `sensitivity` as the detection level, so `mode: 'strict'` was accepted and then
+applied as `balanced`. Anyone who selected `strict` or `fast` was getting `balanced`, silently.
+
+From 0.2.0 the value is sent as `sensitivity` and applies as requested. `mode` still works as a
+deprecated alias. If you set `mode: 'strict'`, expect detection to actually get stricter now, which
+may block prompts that previously passed.
+
+`'fast'` was never a valid API sensitivity. Callers who set it were receiving `balanced`, so it now maps to `balanced` to preserve exactly what they had. Use `'lenient'` explicitly if you want fewer blocks.

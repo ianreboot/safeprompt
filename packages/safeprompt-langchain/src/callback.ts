@@ -1,5 +1,5 @@
 import { BaseCallbackHandler } from '@langchain/core/callbacks/base';
-import { DEFAULT_PROVIDER, validate } from './client.js';
+import { DEFAULT_PROVIDER, normaliseSensitivity, validate } from './client.js';
 import { SafePromptBlockedError, type SafePromptCallbackConfig, type ValidationResult } from './types.js';
 
 /**
@@ -17,7 +17,9 @@ import { SafePromptBlockedError, type SafePromptCallbackConfig, type ValidationR
 export class SafePromptCallbackHandler extends BaseCallbackHandler {
   name = 'safeprompt_callback_handler';
 
-  private readonly config: Required<Omit<SafePromptCallbackConfig, 'onBlock' | 'onError'>> & {
+  // `mode` is omitted: it is the deprecated alias and is normalised into `sensitivity`
+  // at construction, so it never needs to be carried on the resolved config.
+  private readonly config: Required<Omit<SafePromptCallbackConfig, 'onBlock' | 'onError' | 'mode'>> & {
     onBlock?: SafePromptCallbackConfig['onBlock'];
     onError?: SafePromptCallbackConfig['onError'];
   };
@@ -31,7 +33,7 @@ export class SafePromptCallbackHandler extends BaseCallbackHandler {
       apiKey: config.apiKey,
       userIP: config.userIP,
       provider: config.provider ?? DEFAULT_PROVIDER,
-      mode: config.mode ?? 'balanced',
+      sensitivity: normaliseSensitivity(config.sensitivity ?? config.mode),
       enforcement: config.enforcement ?? 'block',
       onProviderError: config.onProviderError ?? 'fail-closed',
       sampleRate: config.sampleRate ?? 1.0,
@@ -53,7 +55,7 @@ export class SafePromptCallbackHandler extends BaseCallbackHandler {
         result: await validate(prompt, {
           provider: this.config.provider,
           apiKey: this.config.apiKey,
-          mode: this.config.mode,
+          sensitivity: this.config.sensitivity,
           userIP: this.config.userIP,
         }),
       })),
@@ -100,7 +102,7 @@ export class SafePromptCallbackHandler extends BaseCallbackHandler {
       result = await validate(output, {
         provider: this.config.provider,
         apiKey: this.config.apiKey,
-        mode: this.config.mode,
+        sensitivity: this.config.sensitivity,
         userIP: this.config.userIP,
       });
     } catch (err) {
