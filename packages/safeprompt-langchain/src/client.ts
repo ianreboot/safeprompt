@@ -55,5 +55,9 @@ export async function validate(
     throw new Error(`SafePrompt API returned HTTP ${res.status}: ${body}`);
   }
 
-  return (await res.json()) as ValidationResult;
+  const data = (await res.json()) as Partial<ValidationResult> | null;
+  // Fail closed: only a real boolean `true` is safe. A non-boolean `safe` ("false", 1,
+  // null, missing) must never pass, so it is normalised to `false` here, where the
+  // response is parsed, and every caller sees a real boolean.
+  return { ...data, safe: data?.safe === true } as ValidationResult;
 }
