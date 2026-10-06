@@ -10,7 +10,7 @@ import urllib.request
 from .types import ValidationResult
 
 DEFAULT_PROVIDER = "https://api.safeprompt.dev"
-_USER_AGENT = "safeprompt-langchain/0.2.0"
+_USER_AGENT = "safeprompt-langchain/0.2.1"
 
 
 class SafePromptAPIError(RuntimeError):
