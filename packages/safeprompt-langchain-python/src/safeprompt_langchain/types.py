@@ -31,7 +31,9 @@ class ValidationResult:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ValidationResult":
         return cls(
-            safe=bool(data.get("safe", False)),
+            # Only a real JSON boolean true is safe. bool() made the string "false" and the integer 1
+            # safe (SKY-1111); a malformed or altered response must fail closed, never open.
+            safe=data.get("safe") is True,
             threats=list(data.get("threats") or []),
             confidence=float(data.get("confidence") or 0.0),
             severity=data.get("severity"),

@@ -116,6 +116,13 @@ MIT.
 
 ---
 
+### Note on non-boolean `safe` values (fixed in 0.2.1)
+
+Before 0.2.1 the adapter read `safe` with Python's `bool()`, so a response carrying the string
+`"false"` or the number `1` was treated as safe. The API returns a JSON boolean, so this needed a
+malformed or altered response to trigger. From 0.2.1 only a real boolean `true` is safe; anything
+else is treated as unsafe.
+
 ### Note on `mode` (fixed in 0.2.0)
 
 Before 0.2.0 this package sent the detection level to the API as `mode`. The API reads `mode` as a
