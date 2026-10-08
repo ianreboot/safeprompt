@@ -9,26 +9,29 @@ tuned toward these corpora, and the numbers are published whatever they say.
 
 ## Every set we ran, in one table
 
-Strict mode (`sensitivity=strict`) for every external row. Detector frozen at commit
-`2a0c6638`, runs completed 12 and 13 September 2026. This table includes the sets that
-safeprompt.dev does not show. The rules that decided what it shows are below the table,
-quoted from the run record.
+Two modes. The strict columns (`sensitivity=strict`) come from the detector frozen at
+commit `2a0c6638`, runs completed 12 and 13 September 2026. The default columns
+(`sensitivity=balanced`, which is what a request gets when it names no sensitivity) are
+a re-run of the identical cases on 8 October 2026 against a NEWER detector, so a gap
+between the two columns mixes the mode change with the detector change. See "Default
+mode re-run" below. This table includes the sets that safeprompt.dev does not show. The
+rules that decided what it shows are below the table, quoted from the run record.
 
-| Set | Attacks caught | Ordinary passed | On safeprompt.dev |
-|---|---|---|---|
-| Tensor Trust, seeded draw (`tensortrust/results-strict.jsonl`) | 91 / 100 | 99 / 100 | yes |
-| Tensor Trust, second seeded draw (`tensortrust/results-strict-ext100.jsonl`) | 91 / 100 | 95 / 100 | yes, pooled with the first |
-| HackAPrompt, 100 per level | 928 / 1000 | no ordinary prompts in the set | yes |
-| BIPIA, email, table and code | 24 / 100 | 96 / 100 | ordinary side only |
-| deepset prompt-injections, full | 179 / 263 | 398 / 399 | ordinary side only |
-| NotInject, full | no attacks in the set | 311 / 339 | yes |
-| AgentDojo banking, attack runs stopped | 144 / 144 (undefended: 86 / 144) | see AgentDojo below | yes |
-| AgentDojo slack, attack runs stopped | 105 / 105 (undefended: 42 / 105) | see AgentDojo below | yes |
-| Lakera Gandalf (`gandalf_ignore_instructions`), pilot only | 82 / 100 | no ordinary prompts in the set | no |
-| deepset pilot (subset of the full run) | 39 / 50 | 50 / 50 | no |
-| NotInject pilot (subset of the full run) | no attacks in the set | 91 / 100 | no |
-| Our own safe suite v3, strict | no attacks in the set | 161 / 219 (73.5%) | no |
-| Our own safe suite v3, default (`balanced`) | no attacks in the set | 211 / 219 (96.3%) | no |
+| Set | Strict: attacks caught | Strict: ordinary passed | Default: attacks caught | Default: ordinary passed | On safeprompt.dev |
+|---|---|---|---|---|---|
+| Tensor Trust, seeded draw (`tensortrust/results-strict.jsonl`) | 91 / 100 | 99 / 100 | 70 / 100 | 99 / 100 | yes |
+| Tensor Trust, second seeded draw (`tensortrust/results-strict-ext100.jsonl`) | 91 / 100 | 95 / 100 | 73 / 100 | 99 / 100 | yes, pooled with the first |
+| HackAPrompt, 100 per level | 928 / 1000 | no ordinary prompts in the set | 510 / 1000 | no ordinary prompts in the set | yes |
+| BIPIA, email, table and code | 24 / 100 | 96 / 100 | 10 / 100 | 100 / 100 | ordinary side only |
+| deepset prompt-injections, full | 179 / 263 | 398 / 399 | 132 / 263 | 399 / 399 | ordinary side only |
+| NotInject, full | no attacks in the set | 311 / 339 | no attacks in the set | 327 / 339 | yes |
+| AgentDojo banking, attack runs stopped | 144 / 144 (undefended: 86 / 144) | see AgentDojo below | not re-run | not re-run | yes |
+| AgentDojo slack, attack runs stopped | 105 / 105 (undefended: 42 / 105) | see AgentDojo below | not re-run | not re-run | yes |
+| Lakera Gandalf (`gandalf_ignore_instructions`), pilot only | 82 / 100 | no ordinary prompts in the set | 80 / 100 | no ordinary prompts in the set | no |
+| deepset pilot (subset of the full run) | 39 / 50 | 50 / 50 | in the full re-run | in the full re-run | no |
+| NotInject pilot (subset of the full run) | no attacks in the set | 91 / 100 | no attacks in the set | in the full re-run | no |
+| Our own safe suite v3, strict | no attacks in the set | 161 / 219 (73.5%) | see next row | see next row | no |
+| Our own safe suite v3, default (`balanced`), September detector | see previous row | see previous row | no attacks in the set | 211 / 219 (96.3%) | no |
 
 **What strict costs.** On our own 219-prompt safe suite, strict passes 73.5% of ordinary
 prompts and default passes 96.3%. Strict blocks credential-, exfiltration- and
@@ -45,6 +48,33 @@ SafePrompt against 42.4% undefended, slack 16.2% against 53.3%.
 SafePrompt caught or stopped 1,562 of 1,812 (86.2%). safeprompt.dev quotes 1,359 of
 1,449 across four of them, leaving out BIPIA and deepset. Adding the Gandalf pilot
 gives 1,644 of 1,912 (86.0%).
+
+### Default mode re-run (8 October 2026)
+
+Every external set above except AgentDojo was re-run in default mode on 8 October 2026,
+on the identical case files (every case ID matches the strict run). 2,701 calls to the
+production API, 10 a minute, one in flight, 0 refusals, 0 errors. AgentDojo was not
+re-run, because it needs a paid agent model for every task.
+
+Detector: the production worker version deployed 6 October 2026 09:00 UTC. No deploy
+happened during the run. That deploy was made by hand, not from CI, so the exact commit
+is inferred, not recorded: `main` was at `c6404902` at that moment. It is not the
+`2a0c6638` freeze the strict columns used; ten detector files changed between the two,
+including one new guard. Treat strict versus default as two snapshots, not a controlled
+comparison.
+
+What default gives up, on these sets:
+
+* Attack side, the four sets with attacks scored in both modes (Tensor Trust both draws,
+  HackAPrompt, BIPIA, deepset): default caught 795 of 1,563 (50.9%); strict caught 1,313 of 1,563
+  (84.0%).
+* Ordinary side, the four sets with ordinary prompts (Tensor Trust both draws, BIPIA,
+  deepset, NotInject): default passed 1,024 of 1,038;
+  strict passed 999 of 1,038. On our own safe suite the gap is wider: 96.3% against
+  73.5%.
+
+Default is what a request gets when it names no sensitivity. Pick strict only if a
+missed attack costs you more than a blocked ordinary message.
 
 ### How the sets on safeprompt.dev were chosen
 
@@ -138,6 +168,8 @@ positive here means a legitimate password was read as an attack.
 |---|---|---|
 | strict, seeded set (`results-strict.jsonl`) | 91 / 100 | 1 / 100 |
 | strict, second seeded set (`results-strict-ext100.jsonl`) | 91 / 100 | 5 / 100 |
+| default, seeded set, 8 Oct detector (`results-default.jsonl`) | 70 / 100 | 1 / 100 |
+| default, second seeded set, 8 Oct detector (`results-default-ext100.jsonl`) | 73 / 100 | 1 / 100 |
 
 ### BIPIA
 
@@ -229,7 +261,8 @@ SAFEPROMPT_SENSITIVITY=strict   python3 run.py
 
 `run.py` appends to `results.jsonl` in its own directory and is resumable, so move or
 delete that file between modes or the second run will see the first as already scored.
-The committed results are named `results-strict.jsonl` and are not touched by a run.
+The committed results are named `results-strict*.jsonl` and `results-default*.jsonl`
+and are not touched by a run.
 
 BIPIA works the same way. HackAPrompt needs the gated parquet downloaded first, then
 `HACKAPROMPT_PARQUET=/path/to/hackaprompt.parquet python3 build_cases.py 5000`.
