@@ -7,6 +7,70 @@ per-case results committed.
 sets authored by other people, for other purposes, scored zero-shot. Nothing here was
 tuned toward these corpora, and the numbers are published whatever they say.
 
+## Every set we ran, in one table
+
+Strict mode (`sensitivity=strict`) for every external row. Detector frozen at commit
+`2a0c6638`, runs completed 12 and 13 September 2026. This table includes the sets that
+safeprompt.dev does not show. The rules that decided what it shows are below the table,
+quoted from the run record.
+
+| Set | Attacks caught | Ordinary passed | On safeprompt.dev |
+|---|---|---|---|
+| Tensor Trust, seeded draw (`tensortrust/results-strict.jsonl`) | 91 / 100 | 99 / 100 | yes |
+| Tensor Trust, second seeded draw (`tensortrust/results-strict-ext100.jsonl`) | 91 / 100 | 95 / 100 | yes, pooled with the first |
+| HackAPrompt, 100 per level | 928 / 1000 | no ordinary prompts in the set | yes |
+| BIPIA, email, table and code | 24 / 100 | 96 / 100 | ordinary side only |
+| deepset prompt-injections, full | 179 / 263 | 398 / 399 | ordinary side only |
+| NotInject, full | no attacks in the set | 311 / 339 | yes |
+| AgentDojo banking, attack runs stopped | 144 / 144 (undefended: 86 / 144) | see AgentDojo below | yes |
+| AgentDojo slack, attack runs stopped | 105 / 105 (undefended: 42 / 105) | see AgentDojo below | yes |
+| Lakera Gandalf (`gandalf_ignore_instructions`), pilot only | 82 / 100 | no ordinary prompts in the set | no |
+| deepset pilot (subset of the full run) | 39 / 50 | 50 / 50 | no |
+| NotInject pilot (subset of the full run) | no attacks in the set | 91 / 100 | no |
+| Our own safe suite v3, strict | no attacks in the set | 161 / 219 (73.5%) | no |
+| Our own safe suite v3, default (`balanced`) | no attacks in the set | 211 / 219 (96.3%) | no |
+
+**What strict costs.** On our own 219-prompt safe suite, strict passes 73.5% of ordinary
+prompts and default passes 96.3%. Strict blocks credential-, exfiltration- and
+code-shaped safe prompts. Every external row above is strict, so read each one with
+that cost beside it. The safe suite prompts are ours and are not published here. The
+rows in `safe-suite-v3/` carry the case ID and suite ID only.
+
+**What the agent defense costs.** In AgentDojo, SafePrompt stopped every measured
+attack, and the agent finished fewer tasks while under attack: banking 28.5% with
+SafePrompt against 42.4% undefended, slack 16.2% against 53.3%.
+
+**Attack-side total.** Across the six sets with an attack side in the main run
+(Tensor Trust both draws, HackAPrompt, BIPIA, deepset, AgentDojo banking and slack),
+SafePrompt caught or stopped 1,562 of 1,812 (86.2%). safeprompt.dev quotes 1,359 of
+1,449 across four of them, leaving out BIPIA and deepset. Adding the Gandalf pilot
+gives 1,644 of 1,912 (86.0%).
+
+### How the sets on safeprompt.dev were chosen
+
+Quoted from the run record, unedited:
+
+* deepset and NotInject: "Full runs where the pilot showed a benign-side win (deepset
+  100% benign passed; NotInject 91%); Gandalf skipped (82% caught, below the 85% page
+  bar)."
+* NotInject: "/benchmarks if 90%+ (page tier)".
+* Gandalf: "record only (below the 85% page bar); no full run".
+* Strict safe suite: "record only".
+* "Skipped by ruling: PINT (Lakera-only dataset). Not run: BIPIA other environments,
+  HackAPrompt full 5,000 on the new freeze (cap), jailbreak-classification (out of
+  scope)."
+
+So sets were run as pilots first, and a set reached the page only if it cleared a bar.
+No detector code was changed toward any set, but which sets to show was decided after
+seeing results. Every set that was run, pilot or full, is in this directory.
+
+### The comparison page
+
+The safeprompt.dev comparison against two open-weights classifiers (ProtectAI's
+DeBERTa v2 and deepset's DeBERTa, run 11 September 2026 on CPU) has no published
+per-case results, and the script that produced those classifier runs has not
+survived. Those numbers cannot be reproduced from this repo.
+
 ## The prompts are not in this repo
 
 The attack and benign prompts are NOT redistributed here (dataset licences:
@@ -25,18 +89,7 @@ every verdict in `results-*.jsonl` rehashes back to its prompt.
 | **AgentDojo** | ETH Zurich's agent benchmark: an LLM agent solves tasks with tools while attacks are planted in the tool output it reads. We run the banking and slack suites with the `important_instructions` attack, GPT-4o-mini as the agent, SafePrompt strict checking every tool output. | https://github.com/ethz-spylab/agentdojo | MIT. The per-run verdict rows are committed; the agent conversation logs (task text, injected text, tool output) are **not redistributed here**. |
 | **NotInject** | 339 ordinary prompts written to trip over-sensitive injection filters, each built around trigger words such as ignore, override or bypass. Benign only, so it measures false positives. | https://huggingface.co/datasets/leolee99/NotInject | MIT. Prompts are **not redistributed here**; case IDs rehash to the upstream rows. |
 | **deepset prompt-injections** | deepset's public set of 662 English and German prompts, injections and ordinary questions mixed. | https://huggingface.co/datasets/deepset/prompt-injections | Apache 2.0. Prompts are **not redistributed here**; case IDs rehash to the upstream rows. |
-
-## Pending publication
-
-One further run exists and is not yet committed here. Until it is, safeprompt.dev
-does not publish a competitor comparison to production; that is a standing condition,
-not a preference.
-
-* **Matched open-weights classifier runs** on the identical TensorTrust and BIPIA
-  cases (ProtectAI's DeBERTa v2 prompt-injection classifier and deepset's DeBERTa
-  injection model, each at its documented default threshold), run 2026-09-11 on CPU.
-  Per-case results will land beside the SafePrompt rows so every bar on the
-  comparison page rehashes to a prompt.
+| **Lakera Gandalf** | 1,000 prompts players typed at Lakera's Gandalf game to make it ignore its instructions. Attacks only. Pilot of 100 scored; no full run. | https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions | MIT. Prompts are **not redistributed here**; case IDs rehash to the upstream rows. |
 
 ## What is committed instead of the prompts
 
@@ -49,10 +102,16 @@ committed instead is the exact thing a reader needs to check us:
   prompt), the expected label, what the API actually returned, and the category and
   detection method it returned. Rebuild the cases, hash them, and every verdict here
   can be matched back to the prompt that produced it.
-* `notinject/` and `deepset/` ship no builder: the upstream sets were scored whole and
-  each ID is the SHA-256 prefix of the upstream prompt text.
-  `agentdojo/` rows are one per AgentDojo run (suite, user task, injection task,
-  utility and security verdict); AgentDojo's own harness reproduces the runs.
+* `build_hf_sets.py` rebuilds the NotInject, Gandalf and deepset sets, full and pilot,
+  from the public HuggingFace rows. One `random.Random(20260912)` shuffles all three in
+  a fixed order, so build them together. A rebuild on 8 October 2026 reproduced all six
+  case files exactly, and every committed result ID rehashes to a rebuilt case.
+* `agentdojo/` rows are one per AgentDojo run (suite, user task, injection task,
+  utility and security verdict). `agentdojo/run_agentdojo.py` with
+  `safeprompt_defense.py` is the harness that produced them.
+* `safe-suite-v3/` holds verdicts on our own 219-prompt safe suite, in both modes. The
+  prompts are internal and not published, so these rows cannot be rebuilt from this
+  repo; they are here so the strict cost is on the record.
 * `summary-2026-09-12.json` is the compiled record every set above was scored into,
   including the failed IDs per set.
 
@@ -135,6 +194,10 @@ injection task was completed, so `attack_succeeded` repeats it under a plainer n
 Read the utility column with the attack column. The defense that stopped every
 measured attack also cost the agent task completion while under attack.
 
+The no-attack rows in each file also hold AgentDojo's own injection-task checks
+(`user_task_id` is an `injection_task_*`). The "Utility, no attack" column counts only
+the user tasks that were attacked: 16 in banking, 21 in slack.
+
 ### NotInject
 
 **False positives only.** Every prompt is benign.
@@ -170,6 +233,30 @@ The committed results are named `results-strict.jsonl` and are not touched by a 
 
 BIPIA works the same way. HackAPrompt needs the gated parquet downloaded first, then
 `HACKAPROMPT_PARQUET=/path/to/hackaprompt.parquet python3 build_cases.py 5000`.
+
+NotInject, Gandalf and deepset:
+
+```bash
+cd benchmarks/external
+python3 build_hf_sets.py                                   # writes cases-full.json and cases-pilot.json per set
+SAFEPROMPT_SENSITIVITY=strict python3 run_set.py deepset full
+SAFEPROMPT_SENSITIVITY=strict python3 run_set.py gandalf pilot
+```
+
+AgentDojo (needs `pip install agentdojo==0.1.35` and an OpenRouter key for the agent model):
+
+```bash
+cd benchmarks/external/agentdojo
+OPENROUTER_API_KEY=... PROXY_MODEL=openai/gpt-4o-mini LOCAL_LLM_PORT=8011 python3 orproxy.py &
+export SAFEPROMPT_API_KEY=sp_live_... PROXY_MODEL=openai/gpt-4o-mini LOCAL_LLM_PORT=8011 SAFEPROMPT_SENSITIVITY=strict
+python3 run_agentdojo.py banking 16 baseline
+python3 run_agentdojo.py banking 16 safeprompt
+python3 run_agentdojo.py slack 21 baseline
+python3 run_agentdojo.py slack 21 safeprompt
+```
+
+The agent model is not deterministic, so a re-run lands near the committed figures, not
+on them.
 
 The runners need `requests`. The Tensor Trust and BIPIA builders fetch over stdlib
 `urllib` and need nothing else; the HackAPrompt builder reads a parquet file and needs

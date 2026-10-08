@@ -1,0 +1,135 @@
+"""
+SafePrompt as an AgentDojo defense.
+
+AgentDojo measures two things that matter and that a detection-only benchmark
+cannot: whether an attack succeeds against a real agent, AND whether the defense
+breaks the agent's legitimate work. A detector that blocks everything scores
+perfectly on security and destroys utility. Both numbers must be reported.
+
+Integration point: AgentDojo's PromptInjectionDetector is applied to TOOL OUTPUTS,
+which is exactly the untrusted-content boundary SafePrompt is meant to sit on.
+This is indirect injection, the category our own held-out probe flagged as our
+weakest (the H01 miss).
+
+Register with:
+    python -m agentdojo.scripts.benchmark \
+        --module-to-load safeprompt_defense --defense safeprompt ...
+"""
+import os
+import time
+
+import requests
+from agentdojo.agent_pipeline.agent_pipeline import DEFENSES
+from agentdojo.agent_pipeline.pi_detector import PromptInjectionDetector
+
+API_BASE = os.environ.get("SAFEPROMPT_API_BASE", "https://api.safeprompt.dev")
+API_KEY = os.environ.get("SAFEPROMPT_API_KEY")
+USER_IP = os.environ.get("SAFEPROMPT_USER_IP", "203.0.113.10")
+SENSITIVITY = os.environ.get("SAFEPROMPT_SENSITIVITY", "balanced")
+MIN_INTERVAL_S = float(os.environ.get("SAFEPROMPT_MIN_INTERVAL_S", "2.9"))
+
+_last = [0.0]
+
+
+class SafePromptDetector(PromptInjectionDetector):
+    """Calls the production SafePrompt API on each tool output."""
+
+    def __init__(self, mode="message", raise_on_injection=False):
+        super().__init__(mode=mode, raise_on_injection=raise_on_injection)
+        self.calls = 0
+        self.errors = 0
+
+    def detect(self, tool_output: str):
+        if not tool_output or not tool_output.strip():
+            return False, 0.0
+        if not API_KEY:
+            raise RuntimeError("SAFEPROMPT_API_KEY not set")
+
+        # Pace against the production origin's rate limit.
+        d = time.monotonic() - _last[0]
+        if d < MIN_INTERVAL_S:
+            time.sleep(MIN_INTERVAL_S - d)
+        _last[0] = time.monotonic()
+
+        for attempt in range(4):
+            try:
+                r = requests.post(
+                    f"{API_BASE}/api/v1/validate",
+                    headers={"x-api-key": API_KEY, "X-User-IP": USER_IP,
+                             "Content-Type": "application/json"},
+                    json={"prompt": tool_output[:20000], "sensitivity": SENSITIVITY},
+                    timeout=90,
+                )
+            except requests.RequestException:
+                time.sleep(2 ** attempt * 4)
+                continue
+            if r.status_code in (403, 429) or r.status_code >= 500:
+                time.sleep(2 ** attempt * 12)
+                continue
+            if not r.ok:
+                break
+            b = r.json()
+            self.calls += 1
+            if "safe" not in b:
+                break
+            return (not b["safe"]), float(b.get("confidence") or 0.0)
+
+        # Fail OPEN and record it. Failing closed here would silently inflate the
+        # security score by blocking tool outputs the detector never actually saw.
+        self.errors += 1
+        return False, 0.0
+
+
+DEFENSES.append("safeprompt")
+
+
+# ---------------------------------------------------------------------------
+# AgentDojo builds defenses through an if-chain in AgentPipeline.from_config
+# rather than a registry, so appending to DEFENSES only makes the CLI accept the
+# name. Wrap from_config to construct our detector, mirroring the structure of
+# the built-in transformers_pi_detector branch.
+# ---------------------------------------------------------------------------
+from functools import partial as _partial
+
+from agentdojo.agent_pipeline.agent_pipeline import AgentPipeline as _AP
+from agentdojo.agent_pipeline.agent_pipeline import MODEL_PROVIDERS as _MP
+from agentdojo.agent_pipeline.agent_pipeline import get_llm as _get_llm
+from agentdojo.agent_pipeline.basic_elements import InitQuery as _InitQuery
+from agentdojo.agent_pipeline.basic_elements import SystemMessage as _SystemMessage
+from agentdojo.agent_pipeline.tool_execution import ToolsExecutionLoop as _Loop
+from agentdojo.agent_pipeline.tool_execution import ToolsExecutor as _Executor
+from agentdojo.agent_pipeline.tool_execution import tool_result_to_str as _fmt
+from agentdojo.models import ModelsEnum as _ModelsEnum
+
+_orig_from_config = _AP.from_config.__func__
+
+# One detector instance per process so call/error counts aggregate across tasks.
+SHARED_DETECTOR = SafePromptDetector(mode="message", raise_on_injection=False)
+
+
+@classmethod
+def _from_config(cls, config):
+    if getattr(config, "defense", None) != "safeprompt":
+        return _orig_from_config(cls, config)
+
+    llm = (
+        _get_llm(_MP[_ModelsEnum(config.llm)], config.llm, config.model_id, config.tool_delimiter)
+        if isinstance(config.llm, str) else config.llm
+    )
+    llm_name = config.llm if isinstance(config.llm, str) else llm.name
+
+    import json as _json
+    formatter = _partial(_fmt, dump_fn=_json.dumps) if config.tool_output_format == "json" else _fmt
+
+    tools_loop = _Loop([_Executor(formatter), SHARED_DETECTOR, llm])
+    pipeline = cls([
+        _SystemMessage(config.system_message),
+        _InitQuery(),
+        llm,
+        tools_loop,
+    ])
+    pipeline.name = f"{llm_name}-safeprompt"
+    return pipeline
+
+
+_AP.from_config = _from_config
