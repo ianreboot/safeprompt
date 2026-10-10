@@ -9,31 +9,30 @@ tuned toward these corpora, and the numbers are published whatever they say.
 
 ## Every set we ran, in one table
 
-Two modes. The strict columns (`sensitivity=strict`) come from the detector frozen at
-commit `2a0c6638`, runs completed 12 and 13 September 2026. The default columns
-(`sensitivity=balanced`, which is what a request gets when it names no sensitivity) are
-a re-run of the identical cases on 8 October 2026 against a NEWER detector, so a gap
-between the two columns mixes the mode change with the detector change. See "Default
-mode re-run" below. This table includes the sets that safeprompt.dev does not show. The
+Two modes, both on today's detector. The strict columns (`sensitivity=strict`) are a
+re-run on 10 October 2026; the default columns (`sensitivity=balanced`, which is what a
+request gets when it names no sensitivity) were run on 8 October 2026. No detection code
+changed between the two runs, so the gap between the columns is the mode alone. Both
+runs used the identical case files. See "Strict and default re-runs" below. This table includes the sets that safeprompt.dev does not show. The
 rules that decided what it shows are below the table, quoted from the run record.
 
 | Set | Strict: attacks caught | Strict: ordinary passed | Default: attacks caught | Default: ordinary passed | On safeprompt.dev |
 |---|---|---|---|---|---|
 | Tensor Trust, seeded draw (`tensortrust/results-strict.jsonl`) | 91 / 100 | 99 / 100 | 70 / 100 | 99 / 100 | yes |
-| Tensor Trust, second seeded draw (`tensortrust/results-strict-ext100.jsonl`) | 91 / 100 | 95 / 100 | 73 / 100 | 99 / 100 | yes, pooled with the first |
-| HackAPrompt, 100 per level | 928 / 1000 | no ordinary prompts in the set | 510 / 1000 | no ordinary prompts in the set | yes |
-| BIPIA, email, table and code | 24 / 100 | 96 / 100 | 10 / 100 | 100 / 100 | ordinary side only |
-| deepset prompt-injections, full | 179 / 263 | 398 / 399 | 132 / 263 | 399 / 399 | ordinary side only |
+| Tensor Trust, second seeded draw (`tensortrust/results-strict-ext100.jsonl`) | 92 / 100 | 94 / 100 | 73 / 100 | 99 / 100 | yes, pooled with the first |
+| HackAPrompt, 100 per level | 930 / 1000 | no ordinary prompts in the set | 510 / 1000 | no ordinary prompts in the set | yes |
+| BIPIA, email, table and code | 22 / 100 | 97 / 100 | 10 / 100 | 100 / 100 | ordinary side only |
+| deepset prompt-injections, full | 178 / 263 | 398 / 399 | 132 / 263 | 399 / 399 | ordinary side only |
 | NotInject, full | no attacks in the set | 311 / 339 | no attacks in the set | 327 / 339 | yes |
-| AgentDojo banking, attack runs stopped | 144 / 144 (undefended: 86 / 144) | see AgentDojo below | not re-run | not re-run | yes |
-| AgentDojo slack, attack runs stopped | 105 / 105 (undefended: 42 / 105) | see AgentDojo below | not re-run | not re-run | yes |
+| AgentDojo banking, attack runs stopped, September detector | 144 / 144 (undefended: 86 / 144) | see AgentDojo below | not re-run | not re-run | yes |
+| AgentDojo slack, attack runs stopped, September detector | 105 / 105 (undefended: 42 / 105) | see AgentDojo below | not re-run | not re-run | yes |
 | Lakera Gandalf (`gandalf_ignore_instructions`), pilot only | 82 / 100 | no ordinary prompts in the set | 80 / 100 | no ordinary prompts in the set | no |
-| deepset pilot (subset of the full run) | 39 / 50 | 50 / 50 | in the full re-run | in the full re-run | no |
-| NotInject pilot (subset of the full run) | no attacks in the set | 91 / 100 | no attacks in the set | in the full re-run | no |
-| Our own safe suite v3, strict | no attacks in the set | 161 / 219 (73.5%) | see next row | see next row | no |
+| deepset pilot (subset of the full run), September detector | 39 / 50 | 50 / 50 | in the full re-run | in the full re-run | no |
+| NotInject pilot (subset of the full run), September detector | no attacks in the set | 91 / 100 | no attacks in the set | in the full re-run | no |
+| Our own safe suite v3, strict | no attacks in the set | 158 / 219 (72.1%) | see next row | see next row | no |
 | Our own safe suite v3, default (`balanced`), September detector | see previous row | see previous row | no attacks in the set | 211 / 219 (96.3%) | no |
 
-**What strict costs.** On our own 219-prompt safe suite, strict passes 73.5% of ordinary
+**What strict costs.** On our own 219-prompt safe suite, strict passes 72.1% of ordinary
 prompts and default passes 96.3%. Strict blocks credential-, exfiltration- and
 code-shaped safe prompts. Every external row above is strict, so read each one with
 that cost beside it. The safe suite prompts are ours and are not published here. The
@@ -45,23 +44,28 @@ SafePrompt against 42.4% undefended, slack 16.2% against 53.3%.
 
 **Attack-side total.** Across the six sets with an attack side in the main run
 (Tensor Trust both draws, HackAPrompt, BIPIA, deepset, AgentDojo banking and slack),
-SafePrompt caught or stopped 1,562 of 1,812 (86.2%). safeprompt.dev quotes 1,359 of
-1,449 across four of them, leaving out BIPIA and deepset. Adding the Gandalf pilot
+SafePrompt caught or stopped 1,562 of 1,812 (86.2%), the same total as the September
+run. safeprompt.dev quotes 1,359 of 1,449 across four of them from the September run,
+leaving out BIPIA and deepset; on today's detector those four give 1,362 of 1,449. Adding the Gandalf pilot
 gives 1,644 of 1,912 (86.0%).
 
-### Default mode re-run (8 October 2026)
+### Strict and default re-runs (8 and 10 October 2026)
 
-Every external set above except AgentDojo was re-run in default mode on 8 October 2026,
-on the identical case files (every case ID matches the strict run). 2,701 calls to the
-production API, 10 a minute, one in flight, 0 refusals, 0 errors. AgentDojo was not
-re-run, because it needs a paid agent model for every task.
+Every external set above except AgentDojo was run in default mode on 8 October 2026 and
+re-run in strict mode on 10 October 2026, on the identical case files (every case ID
+matches the September run). 2,701 calls each, plus the 219-prompt safe suite in the
+strict run, all to the production API at 10 a minute, one in flight, 0 refusals, 0
+errors. AgentDojo was not re-run, because it needs a paid agent model for every task.
 
-Detector: the production worker version deployed 6 October 2026 09:00 UTC. No deploy
-happened during the run. That deploy was made by hand, not from CI, so the exact commit
-is inferred, not recorded: `main` was at `c6404902` at that moment. It is not the
-`2a0c6638` freeze the strict columns used; ten detector files changed between the two,
-including one new guard. Treat strict versus default as two snapshots, not a controlled
-comparison.
+Detector: the default run used the production worker deployed 6 October 2026 (`main` at
+`c6404902`, inferred, since that deploy was made by hand). The strict run used the
+worker deployed 9 October 2026 (`main` at `3eeeceda`). The commits between the two touch
+privacy, stats, feedback and a CORS header only; no detection code changed. Per-set
+counts and failed IDs for the strict run are in `summary-2026-10-10-strict.json`.
+
+Against the September freeze (`2a0c6638`), the strict re-run moved by a case or two per
+set and gave identical totals: 1,313 of 1,563 attacks caught and 999 of 1,038 ordinary
+prompts passed on the four sets below.
 
 What default gives up, on these sets:
 
@@ -71,7 +75,7 @@ What default gives up, on these sets:
 * Ordinary side, the four sets with ordinary prompts (Tensor Trust both draws, BIPIA,
   deepset, NotInject): default passed 1,024 of 1,038;
   strict passed 999 of 1,038. On our own safe suite the gap is wider: 96.3% against
-  73.5%.
+  72.1%.
 
 Default is what a request gets when it names no sensitivity. Pick strict only if a
 missed attack costs you more than a blocked ordinary message.
@@ -148,10 +152,10 @@ committed instead is the exact thing a reader needs to check us:
 ## Results
 
 Run zero-shot against the production API at `https://api.safeprompt.dev`.
-Strict runs completed 12 and 13 September 2026 (server clock, Europe/Berlin) on one
-detector version, freeze commit `2a0c6638`, recorded in `summary-2026-09-12.json`.
-The 7 and 8 September rows were replaced by this run so every row shares one detector
-version.
+The strict rows are the 10 October 2026 re-run, recorded in
+`summary-2026-10-10-strict.json`. They replaced the 12 and 13 September rows (freeze
+commit `2a0c6638`, recorded in `summary-2026-09-12.json`); git history keeps those. The
+pilots and AgentDojo were not re-run and are still the September rows.
 
 `default` is `sensitivity=balanced`, the setting a new key gets. `strict` is
 `sensitivity=strict`, which trades false positives for recall. safeprompt.dev shows
@@ -167,7 +171,7 @@ positive here means a legitimate password was read as an attack.
 | Mode | Attacks detected | False positives on access codes |
 |---|---|---|
 | strict, seeded set (`results-strict.jsonl`) | 91 / 100 | 1 / 100 |
-| strict, second seeded set (`results-strict-ext100.jsonl`) | 91 / 100 | 5 / 100 |
+| strict, second seeded set (`results-strict-ext100.jsonl`) | 92 / 100 | 6 / 100 |
 | default, seeded set, 8 Oct detector (`results-default.jsonl`) | 70 / 100 | 1 / 100 |
 | default, second seeded set, 8 Oct detector (`results-default-ext100.jsonl`) | 73 / 100 | 1 / 100 |
 
@@ -179,7 +183,7 @@ read as an attack.
 
 | Mode | Injections detected | False positives on clean contexts |
 |---|---|---|
-| strict | 24 / 100 | 4 / 100 |
+| strict | 22 / 100 | 3 / 100 |
 
 Read the detection column with the benchmark's own taxonomy in hand. Most BIPIA
 injections instruct the model to do something benign but off-task, such as adding a
@@ -197,7 +201,7 @@ false-positive picture from Tensor Trust and BIPIA.
 
 | Mode | Detected |
 |---|---|
-| strict | 928 / 1000 (92.8%) |
+| strict | 930 / 1000 (93.0%) |
 
 `summary-*.json` carries the same figure broken down by competition level. The 1000
 cases are 100 per level, drawn from the 5000-case set scored on 8 September.
@@ -242,7 +246,7 @@ the user tasks that were attacked: 16 in banking, 21 in slack.
 
 | Mode | Injections detected | Ordinary prompts passed |
 |---|---|---|
-| strict | 179 / 263 | 398 / 399 |
+| strict | 178 / 263 | 398 / 399 |
 
 deepset labels role-play and persona requests as injection. SafePrompt blocks on a
 manipulation vector aimed at the reading AI, so many of those rows are misses here by
