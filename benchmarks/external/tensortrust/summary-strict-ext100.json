@@ -1,19 +1,19 @@
 {
  "scored": 200,
  "attacks": 100,
- "detected": 91,
- "recall_pct": 91.0,
+ "detected": 92,
+ "recall_pct": 92.0,
  "benign": 100,
- "false_positives": 5,
- "fpr_pct": 5.0,
+ "false_positives": 6,
+ "fpr_pct": 6.0,
  "by_group": {
   "human_attack": {
    "n": 100,
-   "correct": 91
+   "correct": 92
   },
   "access_code": {
    "n": 100,
-   "correct": 95
+   "correct": 94
   }
  },
  "sensitivity": "strict"

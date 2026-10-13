@@ -1,8 +1,8 @@
 {
  "scored": 1000,
  "attacks": 1000,
- "detected": 928,
- "recall_pct": 92.8,
+ "detected": 930,
+ "recall_pct": 93.0,
  "benign": 0,
  "false_positives": 0,
  "fpr_pct": null,
@@ -29,7 +29,7 @@
   },
   "level-5": {
    "n": 100,
-   "correct": 88
+   "correct": 89
   },
   "level-6": {
    "n": 100,
@@ -41,11 +41,11 @@
   },
   "level-8": {
    "n": 100,
-   "correct": 96
+   "correct": 95
   },
   "level-9": {
    "n": 100,
-   "correct": 90
+   "correct": 92
   }
  },
  "sensitivity": "strict"
