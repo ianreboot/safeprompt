@@ -1,0 +1,189 @@
+{
+ "sets": {
+  "bipia-200": {
+   "cases": 200,
+   "attacks": 100,
+   "attacks_caught": 1,
+   "ordinary": 100,
+   "ordinary_passed": 100,
+   "over_max_length": 18,
+   "latency_ms_single_case": {
+    "median": 732.0,
+    "p95": 3275.5,
+    "max": 5745.0
+   },
+   "batched_ms_per_case": 1430.1,
+   "batched_vs_single_verdict_disagreements": [],
+   "safeprompt_id_match": [
+    "default",
+    "strict"
+   ],
+   "results_file": "baselines/promptguard2/results-bipia-200.jsonl"
+  },
+  "deepset-full": {
+   "cases": 662,
+   "attacks": 263,
+   "attacks_caught": 61,
+   "ordinary": 399,
+   "ordinary_passed": 398,
+   "over_max_length": 2,
+   "latency_ms_single_case": {
+    "median": 229.4,
+    "p95": 395.3,
+    "max": 5292.4
+   },
+   "batched_ms_per_case": 122.1,
+   "batched_vs_single_verdict_disagreements": [],
+   "safeprompt_id_match": [
+    "default",
+    "strict"
+   ],
+   "results_file": "baselines/promptguard2/results-deepset-full.jsonl"
+  },
+  "gandalf-pilot": {
+   "cases": 100,
+   "attacks": 100,
+   "attacks_caught": 97,
+   "ordinary": 0,
+   "ordinary_passed": 0,
+   "over_max_length": 0,
+   "latency_ms_single_case": {
+    "median": 229.7,
+    "p95": 279.0,
+    "max": 332.0
+   },
+   "batched_ms_per_case": 62.1,
+   "batched_vs_single_verdict_disagreements": [],
+   "safeprompt_id_match": [
+    "default",
+    "strict"
+   ],
+   "results_file": "baselines/promptguard2/results-gandalf-pilot.jsonl"
+  },
+  "hackaprompt-1000": {
+   "cases": 1000,
+   "attacks": 1000,
+   "attacks_caught": 836,
+   "ordinary": 0,
+   "ordinary_passed": 0,
+   "over_max_length": 6,
+   "latency_ms_single_case": {
+    "median": 283.3,
+    "p95": 801.1,
+    "max": 11622.9
+   },
+   "batched_ms_per_case": 374.9,
+   "batched_vs_single_verdict_disagreements": [],
+   "safeprompt_id_match": [
+    "default",
+    "strict"
+   ],
+   "results_file": "baselines/promptguard2/results-hackaprompt-1000.jsonl"
+  },
+  "notinject-full": {
+   "cases": 339,
+   "attacks": 0,
+   "attacks_caught": 0,
+   "ordinary": 339,
+   "ordinary_passed": 324,
+   "over_max_length": 0,
+   "latency_ms_single_case": {
+    "median": 240.7,
+    "p95": 318.4,
+    "max": 636.3
+   },
+   "batched_ms_per_case": 78.0,
+   "batched_vs_single_verdict_disagreements": [],
+   "safeprompt_id_match": [
+    "default",
+    "strict"
+   ],
+   "results_file": "baselines/promptguard2/results-notinject-full.jsonl"
+  },
+  "suite-safe-219": {
+   "cases": 219,
+   "attacks": 0,
+   "attacks_caught": 0,
+   "ordinary": 219,
+   "ordinary_passed": 211,
+   "over_max_length": 1,
+   "latency_ms_single_case": {
+    "median": 265.2,
+    "p95": 545.9,
+    "max": 10368.5
+   },
+   "batched_ms_per_case": 231.4,
+   "batched_vs_single_verdict_disagreements": [],
+   "safeprompt_id_match": [
+    "default",
+    "strict"
+   ],
+   "results_file": "baselines/promptguard2/results-suite-safe-219.jsonl"
+  },
+  "tensortrust-200": {
+   "cases": 200,
+   "attacks": 100,
+   "attacks_caught": 81,
+   "ordinary": 100,
+   "ordinary_passed": 98,
+   "over_max_length": 37,
+   "latency_ms_single_case": {
+    "median": 322.0,
+    "p95": 4451.0,
+    "max": 6191.1
+   },
+   "batched_ms_per_case": 1213.5,
+   "batched_vs_single_verdict_disagreements": [],
+   "safeprompt_id_match": [
+    "default",
+    "strict"
+   ],
+   "results_file": "baselines/promptguard2/results-tensortrust-200.jsonl"
+  },
+  "tensortrust-ext100": {
+   "cases": 200,
+   "attacks": 100,
+   "attacks_caught": 78,
+   "ordinary": 100,
+   "ordinary_passed": 98,
+   "over_max_length": 28,
+   "latency_ms_single_case": {
+    "median": 384.0,
+    "p95": 4571.6,
+    "max": 10798.3
+   },
+   "batched_ms_per_case": 1013.3,
+   "batched_vs_single_verdict_disagreements": [],
+   "safeprompt_id_match": [
+    "default",
+    "strict"
+   ],
+   "results_file": "baselines/promptguard2/results-tensortrust-ext100.jsonl"
+  }
+ },
+ "model": {
+  "key": "promptguard2",
+  "hf_id": "meta-llama/Llama-Prompt-Guard-2-86M",
+  "revision": "a8ded8e697ce7c355e395a0df51f94adb4a2fd27",
+  "model_card": "https://huggingface.co/meta-llama/Llama-Prompt-Guard-2-86M",
+  "id2label": {
+   "0": "LABEL_0",
+   "1": "LABEL_1"
+  },
+  "attack_label": "LABEL_1",
+  "decision_rule": "argmax label (equivalently attack probability > 0.5); model-card default, untuned",
+  "max_length_tokens": 512,
+  "long_input_policy": "split into consecutive 512-token windows, flag if any window is flagged (model card: split longer inputs into segments and scan each)",
+  "confidence": "softmax probability of the attack label (max across windows when chunked)"
+ },
+ "runtime": {
+  "device": "cpu",
+  "torch_threads": 4,
+  "batch_size": 16,
+  "torch": "2.14.1+cpu",
+  "transformers": "5.19.0",
+  "cpu": "AMD EPYC Processor (with IBPB)",
+  "run_at_utc": "2026-10-13T17:47:09Z",
+  "latency_note": "latency_ms_single_case = one case per forward pass, wall clock, including tokenization, on a shared CPU host under nice 10"
+ }
+}
