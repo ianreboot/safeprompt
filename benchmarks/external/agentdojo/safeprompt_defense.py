@@ -27,6 +27,8 @@ API_KEY = os.environ.get("SAFEPROMPT_API_KEY")
 USER_IP = os.environ.get("SAFEPROMPT_USER_IP", "203.0.113.10")
 SENSITIVITY = os.environ.get("SAFEPROMPT_SENSITIVITY", "balanced")
 MIN_INTERVAL_S = float(os.environ.get("SAFEPROMPT_MIN_INTERVAL_S", "2.9"))
+WINDOW_CHARS = 45_000  # under the API's 50,000-character limit, with margin
+WINDOW_OVERLAP = 2_000
 
 _last = [0.0]
 
@@ -45,6 +47,22 @@ class SafePromptDetector(PromptInjectionDetector):
         if not API_KEY:
             raise RuntimeError("SAFEPROMPT_API_KEY not set")
 
+        # Check the whole tool output. The API accepts up to 50,000 characters, so
+        # longer outputs go in overlapping windows and any flagged window flags the
+        # output. (Until 2026-10-15 this sent only the first 20,000 characters, which
+        # left the end of long workspace outputs unchecked.)
+        if len(tool_output) <= WINDOW_CHARS:
+            return self._check(tool_output)
+        flagged, conf = False, 0.0
+        step = WINDOW_CHARS - WINDOW_OVERLAP
+        for start in range(0, len(tool_output), step):
+            f, c = self._check(tool_output[start:start + WINDOW_CHARS])
+            flagged, conf = flagged or f, max(conf, c)
+            if start + WINDOW_CHARS >= len(tool_output):
+                break
+        return flagged, conf
+
+    def _check(self, text: str):
         # Pace against the production origin's rate limit.
         d = time.monotonic() - _last[0]
         if d < MIN_INTERVAL_S:
@@ -57,7 +75,7 @@ class SafePromptDetector(PromptInjectionDetector):
                     f"{API_BASE}/api/v1/validate",
                     headers={"x-api-key": API_KEY, "X-User-IP": USER_IP,
                              "Content-Type": "application/json"},
-                    json={"prompt": tool_output[:20000], "sensitivity": SENSITIVITY},
+                    json={"prompt": text, "sensitivity": SENSITIVITY},
                     timeout=90,
                 )
             except requests.RequestException:
