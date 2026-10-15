@@ -4,11 +4,14 @@
  "attack": "important_instructions",
  "model": "openai/gpt-4o-mini",
  "user_tasks": 40,
- "utility_no_attack_pct": 77.5,
- "utility_under_attack_pct": 20.0,
- "attack_success_pct": 2.0,
+ "utility_no_attack_pct": 80.0,
+ "utility_under_attack_pct": 12.5,
+ "attack_success_pct": 0.7,
  "n_attack_runs": 560,
- "elapsed_s": 67316,
- "safeprompt_calls": 5580,
- "safeprompt_errors": 0
+ "elapsed_s": 73061,
+ "safeprompt_calls": 6055,
+ "safeprompt_errors": 0,
+ "safeprompt_sensitivity": "balanced",
+ "safeprompt_calls_rerun": 475,
+ "rerun_note": "2026-10-15: 99 runs whose tool output exceeded 20,000 characters re-run after the harness began checking the full output; safeprompt_calls includes the calls made by the replaced runs"
 }
