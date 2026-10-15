@@ -86,6 +86,7 @@ if ARM == "safeprompt":
     from safeprompt_defense import SHARED_DETECTOR
     out["safeprompt_calls"] = SHARED_DETECTOR.calls
     out["safeprompt_errors"] = SHARED_DETECTOR.errors
+    out["safeprompt_unavailable"] = SHARED_DETECTOR.unavailable
     out["safeprompt_sensitivity"] = os.environ.get("SAFEPROMPT_SENSITIVITY", "balanced")
 elif ARM == "safeprompt_v2":
     from safeprompt_defense_v2 import SHARED_DETECTOR_V2 as D

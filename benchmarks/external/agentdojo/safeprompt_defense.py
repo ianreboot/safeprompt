@@ -15,6 +15,8 @@ Register with:
     python -m agentdojo.scripts.benchmark \
         --module-to-load safeprompt_defense --defense safeprompt ...
 """
+import hashlib
+import json
 import os
 import time
 
@@ -29,6 +31,9 @@ SENSITIVITY = os.environ.get("SAFEPROMPT_SENSITIVITY", "balanced")
 MIN_INTERVAL_S = float(os.environ.get("SAFEPROMPT_MIN_INTERVAL_S", "2.9"))
 WINDOW_CHARS = 45_000  # under the API's 50,000-character limit, with margin
 WINDOW_OVERLAP = 2_000
+# Every API answer is appended here (no text, only a hash), keyed to the AgentDojo run.
+CALL_LOG = os.environ.get("SAFEPROMPT_CALL_LOG")
+UNAVAILABLE_RETRIES = 2  # the API marks validation_unavailable as retryable
 
 _last = [0.0]
 
@@ -40,6 +45,7 @@ class SafePromptDetector(PromptInjectionDetector):
         super().__init__(mode=mode, raise_on_injection=raise_on_injection)
         self.calls = 0
         self.errors = 0
+        self.unavailable = 0  # checks still validation_unavailable after retries
 
     def detect(self, tool_output: str):
         if not tool_output or not tool_output.strip():
@@ -63,6 +69,29 @@ class SafePromptDetector(PromptInjectionDetector):
         return flagged, conf
 
     def _check(self, text: str):
+        # A check the API could not finish comes back as safe:false with outcome
+        # validation_unavailable. That is a precautionary block, not a detection, so it is
+        # retried, logged, and counted apart from detections.
+        for retry in range(UNAVAILABLE_RETRIES + 1):
+            flagged, conf, outcome = self._send(text, retry)
+            if outcome != "validation_unavailable":
+                return flagged, conf
+        self.unavailable += 1
+        return flagged, conf
+
+    def _log(self, row):
+        if not CALL_LOG:
+            return
+        try:
+            from agentdojo.logging import Logger
+            ctx = getattr(Logger.get(), "context", {}) or {}
+        except Exception:
+            ctx = {}
+        row.update({k: ctx.get(k) for k in ("suite_name", "user_task_id", "injection_task_id")})
+        with open(CALL_LOG, "a") as f:
+            f.write(json.dumps(row) + "\n")
+
+    def _send(self, text: str, retry: int):
         # Pace against the production origin's rate limit.
         d = time.monotonic() - _last[0]
         if d < MIN_INTERVAL_S:
@@ -90,12 +119,19 @@ class SafePromptDetector(PromptInjectionDetector):
             self.calls += 1
             if "safe" not in b:
                 break
-            return (not b["safe"]), float(b.get("confidence") or 0.0)
+            outcome = b.get("outcome") or ("safe" if b["safe"] else "blocked")
+            self._log({"t": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "retry": retry,
+                       "chars": len(text), "sha16": hashlib.sha256(text.encode()).hexdigest()[:16],
+                       "safe": b["safe"], "outcome": outcome, "confidence": b.get("confidence"),
+                       "category": b.get("category"), "cached": b.get("cached")})
+            return (not b["safe"]), float(b.get("confidence") or 0.0), outcome
 
         # Fail OPEN and record it. Failing closed here would silently inflate the
         # security score by blocking tool outputs the detector never actually saw.
         self.errors += 1
-        return False, 0.0
+        self._log({"t": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "retry": retry,
+                   "chars": len(text), "outcome": "error"})
+        return False, 0.0, "error"
 
 
 DEFENSES.append("safeprompt")
