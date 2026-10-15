@@ -1,0 +1,14 @@
+{
+ "suite": "travel",
+ "arm": "safeprompt-default",
+ "attack": "important_instructions",
+ "model": "openai/gpt-4o-mini",
+ "user_tasks": 20,
+ "utility_no_attack_pct": 60.0,
+ "utility_under_attack_pct": 13.6,
+ "attack_success_pct": 0.0,
+ "n_attack_runs": 140,
+ "elapsed_s": 34066,
+ "safeprompt_calls": 2812,
+ "safeprompt_errors": 0
+}
