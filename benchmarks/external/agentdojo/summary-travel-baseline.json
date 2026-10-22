@@ -4,9 +4,9 @@
  "attack": "important_instructions",
  "model": "openai/gpt-4o-mini",
  "user_tasks": 20,
- "utility_no_attack_pct": 65.0,
- "utility_under_attack_pct": 38.6,
- "attack_success_pct": 21.4,
+ "utility_no_attack_pct": 60.0,
+ "utility_under_attack_pct": 40.7,
+ "attack_success_pct": 20.0,
  "n_attack_runs": 140,
- "elapsed_s": 2321
+ "elapsed_s": 1679
 }
