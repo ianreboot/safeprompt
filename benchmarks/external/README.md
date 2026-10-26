@@ -174,8 +174,8 @@ the API's production latency.
 ## No judgement mode
 
 No judgement mode (`sensitivity=no_judgement`, also accepted as `balanced`) blocks only
-clear attacks. Accounts created from 21 October 2026 get it only if they choose it;
-older accounts default to it. Its rows are in the files named `*default*` and the AgentDojo `safeprompt-default`
+clear attacks. An account gets it only if it chooses it: since 26 October 2026 every
+account defaults to strict. Its rows are in the files named `*default*` and the AgentDojo `safeprompt-default`
 arm, named before the rename.
 
 <!-- fig:no-judgement -->
