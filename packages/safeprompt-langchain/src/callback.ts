@@ -19,7 +19,9 @@ export class SafePromptCallbackHandler extends BaseCallbackHandler {
 
   // `mode` is omitted: it is the deprecated alias and is normalised into `sensitivity`
   // at construction, so it never needs to be carried on the resolved config.
-  private readonly config: Required<Omit<SafePromptCallbackConfig, 'onBlock' | 'onError' | 'mode'>> & {
+  // `sensitivity` stays optional: unset means "send nothing, use the account default".
+  private readonly config: Required<Omit<SafePromptCallbackConfig, 'onBlock' | 'onError' | 'mode' | 'sensitivity'>> & {
+    sensitivity?: SafePromptCallbackConfig['sensitivity'];
     onBlock?: SafePromptCallbackConfig['onBlock'];
     onError?: SafePromptCallbackConfig['onError'];
   };

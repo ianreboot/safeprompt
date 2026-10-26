@@ -1,15 +1,21 @@
 import type { ValidationResult, Sensitivity } from './types.js';
 
 /**
- * Map a caller-supplied sensitivity onto a value the API accepts.
+ * Map a caller-supplied sensitivity onto a value the API accepts, or `undefined`.
  * 'fast' was never a valid API sensitivity; the API ignored the field, so callers who set
  * it were actually receiving 'balanced' detection. It maps to 'balanced' to preserve exactly
  * the behaviour those callers observed. Detection must never silently decrease on upgrade.
+ *
+ * Nothing set (or an unrecognised value) returns `undefined` and the field is NOT sent, so
+ * the API applies the account default: strict for accounts created from 2026-10-21,
+ * balanced for older accounts. Sending 'balanced' here would silently opt every new account
+ * out of strict.
  */
-export function normaliseSensitivity(value?: string): Sensitivity {
-  if (value === 'strict' || value === 'balanced' || value === 'lenient') return value;
+export function normaliseSensitivity(value?: string): Sensitivity | undefined {
+  if (value === 'strict' || value === 'no_judgement' || value === 'balanced' || value === 'lenient') return value;
+  if (value === 'no_judgment') return 'no_judgement';
   if (value === 'fast') return 'balanced';
-  return 'balanced';
+  return undefined;
 }
 
 export const DEFAULT_PROVIDER = 'https://api.safeprompt.dev';
@@ -47,7 +53,8 @@ export async function validate(
       'X-User-IP': userIP,
       'User-Agent': '@safeprompt.dev/langchain/0.2.1',
     },
-    body: JSON.stringify({ prompt, sensitivity: detection }),
+    // Omitted when unset, so the API applies the account default.
+    body: JSON.stringify(detection ? { prompt, sensitivity: detection } : { prompt }),
   });
 
   if (!res.ok) {

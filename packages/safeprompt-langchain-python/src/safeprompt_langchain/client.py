@@ -10,7 +10,7 @@ import urllib.request
 from .types import ValidationResult
 
 DEFAULT_PROVIDER = "https://api.safeprompt.dev"
-_USER_AGENT = "safeprompt-langchain/0.2.1"
+_USER_AGENT = "safeprompt-langchain/0.2.2"
 
 
 class SafePromptAPIError(RuntimeError):
@@ -21,21 +21,29 @@ class SafePromptAPIError(RuntimeError):
         self.status = status
 
 
-SENSITIVITIES = ("lenient", "balanced", "strict")
+# "no_judgement" is no judgement mode; "balanced" is its earlier name and behaves the same.
+SENSITIVITIES = ("strict", "no_judgement", "balanced", "lenient")
 
 
 def normalise_sensitivity(value):
-    """Map a caller-supplied sensitivity onto a value the API accepts.
+    """Map a caller-supplied sensitivity onto a value the API accepts, or ``None``.
 
     'fast' was never a valid API sensitivity; the API ignored the field, so callers who set
     it were actually receiving 'balanced' detection. It maps to 'balanced' to preserve exactly
     the behaviour those callers observed. Detection must never silently decrease on upgrade.
+
+    Nothing set (or an unrecognised value) returns ``None`` and the field is NOT sent, so the
+    API applies the account default: strict for accounts created from 2026-10-21, balanced
+    for older accounts. Sending "balanced" here would silently opt every new account out of
+    strict.
     """
     if value in SENSITIVITIES:
         return value
+    if value == "no_judgment":
+        return "no_judgement"
     if value == "fast":
         return "balanced"
-    return "balanced"
+    return None
 
 
 def validate(
@@ -58,7 +66,10 @@ def validate(
     # deliberately not sent: mode="strict" set no detection level at all, so callers asking
     # for strict silently received balanced.
     detection = normalise_sensitivity(sensitivity if sensitivity is not None else mode)
-    body = json.dumps({"prompt": prompt, "sensitivity": detection}).encode("utf-8")
+    payload_out = {"prompt": prompt}
+    if detection is not None:  # omitted when unset, so the API applies the account default
+        payload_out["sensitivity"] = detection
+    body = json.dumps(payload_out).encode("utf-8")
     request = urllib.request.Request(
         url,
         data=body,

@@ -32,8 +32,22 @@ describe('detection sensitivity is sent as `sensitivity`', () => {
     assert.equal('mode' in lastBody, false, '`mode` is the API caching field and must not be sent');
   });
 
-  it('defaults to balanced', async () => {
+  it('sends no sensitivity when none is set, so the API applies the account default', async () => {
+    // Sending 'balanced' here would opt every account created from 2026-10-21 out of its
+    // strict default without the developer asking for that.
     await call({});
+    assert.equal('sensitivity' in lastBody, false);
+  });
+
+  it('sends no_judgement as given, and maps the US spelling onto it', async () => {
+    await call({ sensitivity: 'no_judgement' });
+    assert.equal(lastBody.sensitivity, 'no_judgement');
+    await call({ sensitivity: 'no_judgment' });
+    assert.equal(lastBody.sensitivity, 'no_judgement');
+  });
+
+  it('still sends balanced when the caller asks for it', async () => {
+    await call({ sensitivity: 'balanced' });
     assert.equal(lastBody.sensitivity, 'balanced');
   });
 
@@ -42,10 +56,10 @@ describe('detection sensitivity is sent as `sensitivity`', () => {
     assert.equal(lastBody.sensitivity, 'strict');
   });
 
-  it('never sends a value the API would reject', async () => {
+  it('never sends a value the API would reject (it omits the field instead)', async () => {
     for (const v of ['fast', 'nonsense', '', undefined]) {
       await call({ sensitivity: v });
-      assert.ok(['lenient', 'balanced', 'strict'].includes(lastBody.sensitivity),
+      assert.ok(!('sensitivity' in lastBody) || ['strict', 'no_judgement', 'balanced', 'lenient'].includes(lastBody.sensitivity),
         `sent ${JSON.stringify(lastBody.sensitivity)} for ${JSON.stringify(v)}`);
     }
   });
@@ -62,7 +76,8 @@ describe('normaliseSensitivity', () => {
     // exactly the behaviour those callers observed.
     assert.equal(normaliseSensitivity('fast'), 'balanced');
   });
-  it('falls back to balanced', () => {
-    assert.equal(normaliseSensitivity(undefined), 'balanced');
+  it('returns undefined when nothing usable is given (the account default applies)', () => {
+    assert.equal(normaliseSensitivity(undefined), undefined);
+    assert.equal(normaliseSensitivity('whatever'), undefined);
   });
 });
