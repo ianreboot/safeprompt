@@ -1,0 +1,33 @@
+{
+ "about": "Which production detector each committed run used. readme_figures.py checks every run window against the deployment list below and fails if another version went live inside it.",
+ "deployments": {
+  "source": "wrangler deployments list --env production, the Worker behind https://api.safeprompt.dev",
+  "read_at_utc": "2026-10-26T03:18:39Z",
+  "versions": [
+   {"created_utc": "2026-10-06T05:36:04Z", "version": "049a5195-3939-4098-bb62-6cc2cca4a169"},
+   {"created_utc": "2026-10-06T05:36:27Z", "version": "993a21a4-3e9d-4df0-96b5-5c2b1ca222b6"},
+   {"created_utc": "2026-10-06T09:00:31Z", "version": "18bb7da0-4c9e-4b19-b3e1-4d934fb75b1b"},
+   {"created_utc": "2026-10-09T06:27:24Z", "version": "a1d21a19-78ee-45d1-8bd7-f0465a530119"},
+   {"created_utc": "2026-10-09T06:37:40Z", "version": "64fb4530-f419-4fc1-b626-1bd9117c39cf"},
+   {"created_utc": "2026-10-22T16:10:36Z", "version": "654b648e-71d2-4f51-b774-718a1659f13a"}
+  ]
+ },
+ "runs": [
+  {"key": "public", "name": "Public sets and our own safe suite", "sensitivity": "strict",
+   "start_utc": "2026-10-10T05:29:24Z", "end_utc": "2026-10-10T10:22:48Z",
+   "main": "3eeeceda", "version": "64fb4530-f419-4fc1-b626-1bd9117c39cf",
+   "record": "summary-2026-10-10-strict.json"},
+  {"key": "agentdojo", "name": "AgentDojo, all four suites", "sensitivity": "strict",
+   "start_utc": "2026-10-21T03:55:53Z", "end_utc": "2026-10-22T15:58:30Z",
+   "version": "64fb4530-f419-4fc1-b626-1bd9117c39cf",
+   "record": "agentdojo/calls-*.jsonl (first and last check); version read from wrangler deployments status at launch, 2026-10-21T03:55:10Z"},
+  {"key": "nj-public", "name": "No judgement mode, public sets", "sensitivity": "balanced",
+   "start_utc": "2026-10-08T00:00:00Z", "end_utc": "2026-10-08T23:59:59Z",
+   "main": "c6404902 (inferred; that deploy was made by hand)", "version": "18bb7da0-4c9e-4b19-b3e1-4d934fb75b1b",
+   "record": "commit 10ef152; run date only, so the whole day is checked"},
+  {"key": "nj-safe-suite", "name": "No judgement mode, our own safe suite", "sensitivity": "balanced",
+   "start_utc": "2026-10-13T00:00:00Z", "end_utc": "2026-10-13T23:59:59Z",
+   "version": "64fb4530-f419-4fc1-b626-1bd9117c39cf",
+   "record": "commit 5d74aa5; run date only, so the whole day is checked"}
+ ]
+}

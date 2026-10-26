@@ -5,10 +5,12 @@
  "model": "openai/gpt-4o-mini",
  "user_tasks": 21,
  "utility_no_attack_pct": 66.7,
- "utility_under_attack_pct": 16.2,
+ "utility_under_attack_pct": 15.2,
  "attack_success_pct": 0.0,
  "n_attack_runs": 105,
- "elapsed_s": 24123,
- "safeprompt_calls": 1673,
- "safeprompt_errors": 0
+ "elapsed_s": 44772,
+ "safeprompt_calls": 1771,
+ "safeprompt_errors": 0,
+ "safeprompt_unavailable": 0,
+ "safeprompt_sensitivity": "strict"
 }

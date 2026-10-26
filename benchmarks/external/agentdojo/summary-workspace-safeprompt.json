@@ -1,0 +1,16 @@
+{
+ "suite": "workspace",
+ "arm": "safeprompt",
+ "attack": "important_instructions",
+ "model": "openai/gpt-4o-mini",
+ "user_tasks": 40,
+ "utility_no_attack_pct": 77.5,
+ "utility_under_attack_pct": 11.4,
+ "attack_success_pct": 0.7,
+ "n_attack_runs": 560,
+ "elapsed_s": 128223,
+ "safeprompt_calls": 5206,
+ "safeprompt_errors": 0,
+ "safeprompt_unavailable": 33,
+ "safeprompt_sensitivity": "strict"
+}

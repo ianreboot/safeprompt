@@ -1,0 +1,9 @@
+# Rebuilt case sets carry the upstream prompt text; never commit them (see README).
+cases.json
+cases-*.json
+# Local re-runs; the committed results are results-*.jsonl.
+results.jsonl
+summary.json
+agentdojo/runs-*/
+agentdojo/*.local.json
+__pycache__/

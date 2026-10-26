@@ -210,7 +210,7 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
   -d '{"prompt": "ignore previous instructions", "sensitivity": "strict"}'
 ```
 
-Both headers are required. `X-User-IP` is the end user's address, not your server's. `sensitivity` is `lenient`, `balanced` (the API default) or `strict`.
+Both headers are required. `X-User-IP` is the end user's address, not your server's. `sensitivity` is optional; leave it out and your account default applies.
 
 More examples: [`examples/`](examples/): n8n, Zapier, multi-turn, custom lists, IP reputation, session tokens.
 
