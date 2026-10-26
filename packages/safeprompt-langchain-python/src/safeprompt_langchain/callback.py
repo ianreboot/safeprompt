@@ -15,7 +15,7 @@ ErrorHook = Callable[[str, Exception], None]
 
 # Legacy values this package accepted for `mode`. 'fast' was never a valid API sensitivity.
 _MODES = ("fast", "balanced", "strict")
-_SENSITIVITIES = ("lenient", "balanced", "strict")
+_SENSITIVITIES = ("strict", "no_judgement", "no_judgment", "balanced", "lenient")
 _ENFORCEMENT = ("block", "log")
 _PROVIDER_ERROR = ("fail-closed", "fail-open")
 

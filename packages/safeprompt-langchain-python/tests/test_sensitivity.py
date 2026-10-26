@@ -48,8 +48,19 @@ def test_sends_sensitivity_never_mode(wire):
     assert "mode" not in body, "`mode` is the API caching field and must not be sent"
 
 
-def test_defaults_to_balanced(wire):
-    assert _call(wire)["sensitivity"] == "balanced"
+def test_sends_no_sensitivity_when_unset_so_account_default_applies(wire):
+    # Sending "balanced" here would opt every account created from 2026-10-21 out of its
+    # strict default without the developer asking for that.
+    assert "sensitivity" not in _call(wire)
+
+
+def test_sends_no_judgement_and_maps_us_spelling(wire):
+    assert _call(wire, sensitivity="no_judgement")["sensitivity"] == "no_judgement"
+    assert _call(wire, sensitivity="no_judgment")["sensitivity"] == "no_judgement"
+
+
+def test_still_sends_balanced_when_asked(wire):
+    assert _call(wire, sensitivity="balanced")["sensitivity"] == "balanced"
 
 
 def test_deprecated_mode_maps_onto_sensitivity(wire):
@@ -62,7 +73,8 @@ def test_sensitivity_wins_over_mode(wire):
 
 @pytest.mark.parametrize("value", ["fast", "nonsense", "", None])
 def test_never_sends_a_value_the_api_would_reject(wire, value):
-    assert _call(wire, sensitivity=value)["sensitivity"] in ("lenient", "balanced", "strict")
+    body = _call(wire, sensitivity=value)
+    assert "sensitivity" not in body or body["sensitivity"] in ("strict", "no_judgement", "balanced", "lenient")
 
 
 def test_normalise_passes_through_real_values():
@@ -77,9 +89,9 @@ def test_normalise_maps_legacy_fast_to_balanced():
     assert normalise_sensitivity("fast") == "balanced"
 
 
-def test_normalise_falls_back_to_balanced():
-    assert normalise_sensitivity(None) == "balanced"
-    assert normalise_sensitivity("whatever") == "balanced"
+def test_normalise_returns_none_when_nothing_usable():
+    assert normalise_sensitivity(None) is None
+    assert normalise_sensitivity("whatever") is None
 
 
 def test_handler_normalises_legacy_fast():
@@ -90,6 +102,16 @@ def test_handler_normalises_legacy_fast():
 def test_handler_accepts_lenient_sensitivity():
     h = SafePromptCallbackHandler(api_key="k", user_ip="1.2.3.4", sensitivity="lenient")
     assert h.sensitivity == "lenient"
+
+
+def test_handler_accepts_no_judgement():
+    h = SafePromptCallbackHandler(api_key="k", user_ip="1.2.3.4", sensitivity="no_judgement")
+    assert h.sensitivity == "no_judgement"
+
+
+def test_handler_leaves_sensitivity_unset_by_default():
+    h = SafePromptCallbackHandler(api_key="k", user_ip="1.2.3.4")
+    assert h.sensitivity is None
 
 
 def test_handler_rejects_bad_sensitivity():
