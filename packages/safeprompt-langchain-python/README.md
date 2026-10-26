@@ -75,8 +75,7 @@ hides malicious instructions).
 
 1. `on_llm_start` / `on_chat_model_start` fires before every LLM call. Each rendered prompt
    is POSTed to the SafePrompt API.
-2. The API runs a layered defense: pattern matching → external-reference detection → AI
-   validation. Most requests are classified in single-digit milliseconds.
+2. The API runs pattern checks, then AI analysis of every prompt they do not block.
 3. If the API returns `safe == False`, the handler either raises `SafePromptBlockedError`
    (in `block` mode) or fires your `on_block` hook (in `log` mode).
 4. `on_tool_end` applies the same check to agent tool outputs — the primary indirect
