@@ -18,7 +18,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "node --test dist/__tests__/",
+    "test": "node --test dist/__tests__/*.test.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
