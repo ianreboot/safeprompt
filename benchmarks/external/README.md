@@ -35,7 +35,7 @@ time, with 0 refusals and 0 errors. Every case ID matches the 12 September run, 
 these rows replace; that run is kept in `summary-2026-09-12.json` and in git history.
 
 <!-- fig:public -->
-| Set | Attacks caught | Blocked, check could not finish | Ordinary prompts passed | Set shown on safeprompt.dev (12 September run) | Rows |
+| Set | Attacks caught | Blocked, check could not finish | Ordinary prompts passed | Set shown on safeprompt.dev | Rows |
 |---|---|---|---|---|---|
 | Tensor Trust, seeded draw | 89 / 100 | 2 | 99 / 100 | yes | `tensortrust/results-strict.jsonl` |
 | Tensor Trust, second seeded draw | 87 / 100 | 5 | 94 / 100 | yes, pooled with the first | `tensortrust/results-strict-ext100.jsonl` |
@@ -191,7 +191,8 @@ database helper and one CORS header line; none of them is detection code.
 
 ## How the sets on safeprompt.dev were chosen
 
-safeprompt.dev still shows the 12 September run. From the run record:
+safeprompt.dev shows the runs in this file. Which sets it shows was decided for its 12 September
+run. From that run record:
 
 * deepset and NotInject: "Full runs where the pilot showed a benign-side win (deepset
   100% benign passed; NotInject 91%); Gandalf skipped (82% caught, below the 85% page
@@ -207,10 +208,10 @@ So sets were run as pilots first, and a set reached the page only if it cleared 
 No detector code was changed toward any set, but which sets to show was decided after
 seeing results. Every set that was run, pilot or full, is in this directory.
 
-The safeprompt.dev comparison against two open-weights classifiers (ProtectAI's DeBERTa
-v2 and deepset's DeBERTa, run 11 September 2026) has no published per-case results, and
-the script that produced it has not survived. The 13 October classifier rows above
-replace it and can be re-run from this repo.
+safeprompt.dev used to show a comparison against two open-weights classifiers (ProtectAI's
+DeBERTa v2 and deepset's DeBERTa, run 11 September 2026). It had no published per-case
+results and the script that produced it has not survived, so the site took it down on
+26 October 2026. The 13 October classifier rows above can be re-run from this repo.
 
 ## The prompts are not in this repo
 

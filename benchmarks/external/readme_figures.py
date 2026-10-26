@@ -230,7 +230,7 @@ def blocks(d):
         f"{pa_ord:,} ordinary prompts. Prompt Guard 2 caught {pg_att:,} and passed {pg_ord:,}.",
     ])
 
-    lines = ["| Set | Attacks caught | Blocked, check could not finish | Ordinary prompts passed | Set shown on safeprompt.dev (12 September run) | Rows |",
+    lines = ["| Set | Attacks caught | Blocked, check could not finish | Ordinary prompts passed | Set shown on safeprompt.dev | Rows |",
              "|---|---|---|---|---|---|"]
     for key, *_ in PUBLIC:
         c = P[key]

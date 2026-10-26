@@ -51,7 +51,6 @@ new SafePromptCallbackHandler({
   userIP: '203.0.113.1',              // REQUIRED — end-user IP
 
   provider: 'https://api.safeprompt.dev',  // default
-  sensitivity: 'balanced',                 // 'lenient' | 'balanced' | 'strict'
   enforcement: 'block',                    // 'block' | 'log' (log = don't throw, just fire onBlock)
   onProviderError: 'fail-closed',          // 'fail-closed' | 'fail-open'
   sampleRate: 1.0,                         // 0..1 — fraction of prompts to validate
@@ -125,4 +124,4 @@ From 0.2.0 the value is sent as `sensitivity` and applies as requested. `mode` s
 deprecated alias. If you set `mode: 'strict'`, expect detection to actually get stricter now, which
 may block prompts that previously passed.
 
-`'fast'` was never a valid API sensitivity. Callers who set it were receiving `balanced`, so it now maps to `balanced` to preserve exactly what they had. Use `'lenient'` explicitly if you want fewer blocks.
+`'fast'` was never a valid API sensitivity. Callers who set it were receiving `balanced`, so it now maps to `balanced` to preserve exactly what they had.
