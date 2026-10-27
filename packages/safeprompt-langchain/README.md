@@ -48,12 +48,12 @@ try {
 ```ts
 new SafePromptCallbackHandler({
   apiKey: 'sp_live_…',
-  userIP: '203.0.113.1',              // REQUIRED — end-user IP
+  userIP: '203.0.113.1',              // REQUIRED: end-user IP
 
   provider: 'https://api.safeprompt.dev',  // default
   enforcement: 'block',                    // 'block' | 'log' (log = don't throw, just fire onBlock)
   onProviderError: 'fail-closed',          // 'fail-closed' | 'fail-open'
-  sampleRate: 1.0,                         // 0..1 — fraction of prompts to validate
+  sampleRate: 1.0,                         // 0..1: fraction of prompts to validate
 
   onBlock: (prompt, result) => {
     console.warn('[safeprompt] blocked', result.threats, '→', prompt.slice(0, 80));
@@ -64,13 +64,13 @@ new SafePromptCallbackHandler({
 });
 ```
 
-### `enforcement: 'log'` — tune before enforcing
+### `enforcement: 'log'`: tune before enforcing
 
 Run the adapter in log mode in staging/production for a week. You get `onBlock` events
 without any chain aborts. Review the results in your logs (or SafePrompt dashboard), tune
 custom lists / confidence threshold, then flip `enforcement: 'block'`.
 
-### `sampleRate` — cost control for high-volume apps
+### `sampleRate`: cost control for high-volume apps
 
 Each validation call is a round-trip to the SafePrompt API (sub-second for most prompts,
 but still a network hop). For apps processing >10K prompts/day where latency matters more
@@ -78,7 +78,7 @@ than per-prompt coverage, set `sampleRate: 0.1` to validate 10% of prompts.
 
 ### Indirect-injection protection (agents)
 
-When you use this handler with a LangChain agent, it also fires on `handleToolEnd` — the
+When you use this handler with a LangChain agent, it also fires on `handleToolEnd`, the
 moment a tool returns content that will be fed back to the LLM. This is the key protection
 against *indirect* prompt injection (content fetched from the web, retrieved from RAG, etc.,
 that hides malicious instructions).
@@ -90,7 +90,7 @@ that hides malicious instructions).
 2. The API runs pattern checks, then AI analysis of every prompt they do not block.
 3. If the API returns `safe: false`, the handler either throws `SafePromptBlockedError`
    (in `block` mode) or fires your `onBlock` hook (in `log` mode).
-4. `handleToolEnd` applies the same check to agent tool outputs — the primary indirect
+4. `handleToolEnd` applies the same check to agent tool outputs, the main indirect
    injection surface.
 
 ## Troubleshooting

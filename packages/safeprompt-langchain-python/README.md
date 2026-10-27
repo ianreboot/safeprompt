@@ -30,7 +30,7 @@ try:
     result = chain.invoke({"input": user_input}, config={"callbacks": [handler]})
     print(result.content)
 except SafePromptBlockedError as err:
-    # The prompt was flagged — surface the threats, don't call the LLM.
+    # The prompt was flagged: surface the threats, don't call the LLM.
     return {"error": "Prompt blocked for safety", "threats": err.result.threats}
 ```
 
@@ -39,12 +39,12 @@ except SafePromptBlockedError as err:
 ```python
 SafePromptCallbackHandler(
     api_key="sp_live_...",
-    user_ip="203.0.113.1",            # REQUIRED — end-user IP
+    user_ip="203.0.113.1",            # REQUIRED: end-user IP
 
     provider="https://api.safeprompt.dev",  # default
     enforcement="block",              # "block" | "log" (log = don't raise, just fire on_block)
     on_provider_error="fail-closed",  # "fail-closed" | "fail-open"
-    sample_rate=1.0,                  # 0..1 — fraction of prompts to validate
+    sample_rate=1.0,                  # 0..1: fraction of prompts to validate
     timeout=30.0,                     # seconds per validation request
 
     on_block=lambda prompt, result: print("[safeprompt] blocked", result.threats),
@@ -52,13 +52,13 @@ SafePromptCallbackHandler(
 )
 ```
 
-### `enforcement="log"` — tune before enforcing
+### `enforcement="log"`: tune before enforcing
 
 Run the adapter in log mode in staging/production for a week. You get `on_block`
 callbacks without any chain aborts. Review the results, tune custom lists / confidence
 thresholds on your SafePrompt account, then flip to `enforcement="block"`.
 
-### `sample_rate` — cost control for high-volume apps
+### `sample_rate`: cost control for high-volume apps
 
 Each validation is a round-trip to the SafePrompt API (sub-second for most prompts, but
 still a network hop). For apps processing >10K prompts/day where latency matters more than
@@ -66,7 +66,7 @@ per-prompt coverage, set `sample_rate=0.1` to validate 10% of prompts.
 
 ### Indirect-injection protection (agents)
 
-Used with a LangChain agent, the handler also fires on `on_tool_end` — the moment a tool
+Used with a LangChain agent, the handler also fires on `on_tool_end`, the moment a tool
 returns content that will be fed back to the LLM. This is the key protection against
 *indirect* prompt injection (content fetched from the web, retrieved from RAG, etc., that
 hides malicious instructions).
@@ -78,7 +78,7 @@ hides malicious instructions).
 2. The API runs pattern checks, then AI analysis of every prompt they do not block.
 3. If the API returns `safe == False`, the handler either raises `SafePromptBlockedError`
    (in `block` mode) or fires your `on_block` hook (in `log` mode).
-4. `on_tool_end` applies the same check to agent tool outputs — the primary indirect
+4. `on_tool_end` applies the same check to agent tool outputs, the main indirect
    injection surface.
 
 > The handler sets `raise_error = True` so a blocked prompt actually aborts the run

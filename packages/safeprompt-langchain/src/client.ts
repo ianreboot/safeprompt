@@ -51,7 +51,7 @@ export async function validate(
       'Content-Type': 'application/json',
       'X-API-Key': apiKey,
       'X-User-IP': userIP,
-      'User-Agent': '@safeprompt.dev/langchain/0.2.2',
+      'User-Agent': '@safeprompt.dev/langchain/0.2.3',
     },
     // Omitted when unset, so the API applies the account default.
     body: JSON.stringify(detection ? { prompt, sensitivity: detection } : { prompt }),
