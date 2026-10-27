@@ -1,6 +1,6 @@
 # safeprompt-langchain
 
-LangChain callback handler that validates every prompt flowing through your chain via the [SafePrompt](https://safeprompt.dev) API before it reaches the LLM. Catches jailbreaks, data-extraction attempts, authority-signal impersonation, and indirect injection from tool outputs.
+LangChain callback handler that validates every prompt flowing through your chain via the [SafePrompt](https://safeprompt.dev) API before it reaches the LLM. Catches jailbreaks, data-extraction attempts, authority-signal impersonation, and indirect injection from tool outputs. In our AgentDojo run (21 to 22 October 2026), with SafePrompt checking every tool output, planted attacks reached their goal in 4 of 949 runs, against 239 with no defense. A blocked tool output also stops the step that needed it, so under attack the agent finished 131 of those runs, against 400 with no defense. [Per-run results and the runner](https://github.com/ianreboot/safeprompt/tree/main/benchmarks/external).
 
 This is the Python counterpart to the JavaScript package [`@safeprompt.dev/langchain`](https://www.npmjs.com/package/@safeprompt.dev/langchain).
 
