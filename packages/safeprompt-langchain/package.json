@@ -1,6 +1,6 @@
 {
   "name": "@safeprompt.dev/langchain",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "LangChain integration for SafePrompt: prompt-injection detection as a callback handler. Validates every prompt flowing through a chain before it reaches the LLM.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
