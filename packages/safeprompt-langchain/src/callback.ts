@@ -7,15 +7,18 @@ import { SafePromptBlockedError, type SafePromptCallbackConfig, type ValidationR
  * via the SafePrompt API before it reaches the LLM.
  *
  * Example:
- *   const chain = new LLMChain({
- *     llm, prompt,
- *     callbacks: [new SafePromptCallbackHandler({ apiKey: 'sp_live_…', userIP: req.ip })]
- *   });
- *   await chain.call({ input: userInput });
+ *   const handler = new SafePromptCallbackHandler({ apiKey: 'sp_live_…', userIP: req.ip });
+ *   await prompt.pipe(model).invoke({ input: userInput }, { callbacks: [handler] });
  *   // throws SafePromptBlockedError if input was flagged
  */
 export class SafePromptCallbackHandler extends BaseCallbackHandler {
   name = 'safeprompt_callback_handler';
+
+  // Without these LangChain JS runs the handler in the background and logs, then swallows,
+  // the SafePromptBlockedError it throws, so the model runs anyway. Python sets the
+  // equivalents (raise_error, run_inline) in callback.py.
+  raiseError = true;
+  awaitHandlers = true;
 
   // `mode` is omitted: it is the deprecated alias and is normalised into `sensitivity`
   // at construction, so it never needs to be carried on the resolved config.
