@@ -13,25 +13,22 @@ Peer dependency: `@langchain/core` (LangChain 1.x, `>=1.0.0`).
 ## Quick start
 
 ```ts
-import { LLMChain } from 'langchain/chains';
 import { ChatOpenAI } from '@langchain/openai';
-import { PromptTemplate } from '@langchain/core/prompts';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { SafePromptCallbackHandler, SafePromptBlockedError } from '@safeprompt.dev/langchain';
 
-const chain = new LLMChain({
-  llm: new ChatOpenAI({ model: 'gpt-4o-mini' }),
-  prompt: PromptTemplate.fromTemplate('Answer: {input}'),
-  callbacks: [
-    new SafePromptCallbackHandler({
-      apiKey: process.env.SAFEPROMPT_API_KEY!,
-      userIP: req.ip, // end-user IP from your web framework
-    }),
-  ],
+const handler = new SafePromptCallbackHandler({
+  apiKey: process.env.SAFEPROMPT_API_KEY!,
+  userIP: req.ip, // end-user IP from your web framework
 });
 
+const chain = ChatPromptTemplate.fromTemplate('Answer: {input}').pipe(
+  new ChatOpenAI({ model: 'gpt-4o-mini' }),
+);
+
 try {
-  const { text } = await chain.call({ input: userInput });
-  console.log(text);
+  const result = await chain.invoke({ input: userInput }, { callbacks: [handler] });
+  console.log(result.content);
 } catch (err) {
   if (err instanceof SafePromptBlockedError) {
     return res.status(400).json({
@@ -107,7 +104,7 @@ that hides malicious instructions).
 - [SafePrompt homepage](https://safeprompt.dev)
 - [API docs](https://safeprompt.dev/docs)
 - [Dashboard](https://dashboard.safeprompt.dev)
-- [Open NPM client](https://www.npmjs.com/package/@safeprompt/client)
+- [JavaScript SDK](https://www.npmjs.com/package/safeprompt)
 
 MIT.
 
