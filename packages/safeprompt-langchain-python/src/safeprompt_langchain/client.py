@@ -33,9 +33,8 @@ def normalise_sensitivity(value):
     the behaviour those callers observed. Detection must never silently decrease on upgrade.
 
     Nothing set (or an unrecognised value) returns ``None`` and the field is NOT sent, so the
-    API applies the account default: strict for accounts created from 2026-10-21, balanced
-    for older accounts. Sending "balanced" here would silently opt every new account out of
-    strict.
+    API applies the account default: balanced unless the account chose strict. Sending
+    "balanced" here would silently override an account that chose strict.
     """
     if value in SENSITIVITIES:
         return value

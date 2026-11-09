@@ -7,9 +7,8 @@ import type { ValidationResult, Sensitivity } from './types.js';
  * the behaviour those callers observed. Detection must never silently decrease on upgrade.
  *
  * Nothing set (or an unrecognised value) returns `undefined` and the field is NOT sent, so
- * the API applies the account default: strict for accounts created from 2026-10-21,
- * balanced for older accounts. Sending 'balanced' here would silently opt every new account
- * out of strict.
+ * the API applies the account default: balanced unless the account chose strict. Sending
+ * 'balanced' here would silently override an account that chose strict.
  */
 export function normaliseSensitivity(value?: string): Sensitivity | undefined {
   if (value === 'strict' || value === 'no_judgement' || value === 'balanced' || value === 'lenient') return value;

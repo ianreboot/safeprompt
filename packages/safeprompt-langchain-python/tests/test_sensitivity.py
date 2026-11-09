@@ -49,8 +49,8 @@ def test_sends_sensitivity_never_mode(wire):
 
 
 def test_sends_no_sensitivity_when_unset_so_account_default_applies(wire):
-    # Sending "balanced" here would opt every account created from 2026-10-21 out of its
-    # strict default without the developer asking for that.
+    # Sending "balanced" here would override an account that chose strict without the
+    # developer asking for that.
     assert "sensitivity" not in _call(wire)
 
 

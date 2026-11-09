@@ -14,8 +14,10 @@ fails if this README and the rows disagree.
 
 ## Results at a glance
 
-Every SafePrompt figure in this file, outside the "No judgement mode" section, ran with
-SafePrompt's default for new accounts, against the production API.
+Every SafePrompt figure in this file, outside the "No judgement mode" section, ran in
+strict mode (`sensitivity=strict`) against the production API. Strict is not the account
+default: since 9 November 2026 every account defaults to no judgement mode (section below)
+unless it chooses strict.
 
 <!-- fig:headline -->
 * **Attacks caught, four public sets:** 1,294 / 1,563 (82.8%). Another 19 were blocked only because the check could not finish. Those are not counted as catches.
@@ -174,8 +176,9 @@ the API's production latency.
 ## No judgement mode
 
 No judgement mode (`sensitivity=no_judgement`, also accepted as `balanced`) blocks only
-clear attacks. An account gets it only if it chooses it: since 26 October 2026 every
-account defaults to strict. Its rows are in the files named `*default*` and the AgentDojo `safeprompt-default`
+clear attacks. It is the default for every account since 9 November 2026 (it was the
+default before 21 October 2026 too; from 26 October to 9 November every account defaulted
+to strict). Its rows are in the files named `*default*` and the AgentDojo `safeprompt-default`
 arm, named before the rename.
 
 <!-- fig:no-judgement -->
@@ -300,8 +303,8 @@ misses here by design.
 ## Re-running
 
 The runners send `sensitivity=balanced` unless told otherwise. The published rows ran
-with `SAFEPROMPT_SENSITIVITY=strict`, the value that selects SafePrompt's default for new
-accounts, so set it as below to reproduce them.
+with `SAFEPROMPT_SENSITIVITY=strict`, which selects strict mode, so set it as below to
+reproduce them.
 
 ```bash
 export SAFEPROMPT_API_KEY=sp_live_...

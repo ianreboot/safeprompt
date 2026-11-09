@@ -33,8 +33,8 @@ describe('detection sensitivity is sent as `sensitivity`', () => {
   });
 
   it('sends no sensitivity when none is set, so the API applies the account default', async () => {
-    // Sending 'balanced' here would opt every account created from 2026-10-21 out of its
-    // strict default without the developer asking for that.
+    // Sending 'balanced' here would override an account that chose strict without the
+    // developer asking for that.
     await call({});
     assert.equal('sensitivity' in lastBody, false);
   });
