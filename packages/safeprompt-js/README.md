@@ -43,7 +43,7 @@ Validate a single prompt.
 **Parameters:**
 - `prompt` (string, required): The user input to validate
 - `options.userIP` (string): The end user's IP address. The API requires the `X-User-IP` header on every call; if you omit this option the SDK sends `127.0.0.1`, which makes the call succeed but attributes every attack to localhost in threat intelligence. Always pass the real address.
-- `options.sessionToken` (string): Multi-turn session token. Note: the API currently reads this field from the body as `session_token`; the SDK sends `sessionToken`, so multi-turn context through this option is not honoured until the SDK is updated (tracked). Use the raw HTTP call with `session_token` for multi-turn today.
+- `options.sessionToken` (string): accepted for older integrations and does not change the verdict. SafePrompt judges every check on its own; to have several turns judged together, send them together in one `prompt`.
 
 **Returns:**
 ```typescript

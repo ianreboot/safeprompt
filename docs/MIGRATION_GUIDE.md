@@ -1,15 +1,15 @@
-# Migration Guide: Multi-Turn Protection
+# Migration Guide
 
 **Last Updated:** October 2025
 
-This guide helps existing SafePrompt users adopt the latest features including multi-turn attack protection and threat intelligence improvements.
+This guide helps existing SafePrompt users adopt the latest features, including threat intelligence improvements and checking conversations in one call.
 
 ---
 
 ## 🎯 What's New
 
 ### For All Users
-- **Session Tokens**: Multi-turn attack protection (context priming, false history)
+- **Conversations**: send the turns you want judged together in one check
 - **X-User-IP Header**: Required for threat intelligence correlation
 - **Enhanced Detection**: Improved pattern matching and external reference detection
 
@@ -19,7 +19,7 @@ This guide helps existing SafePrompt users adopt the latest features including m
 
 - [ ] Update SafePrompt SDK to latest version (`npm update safeprompt`)
 - [ ] Add `X-User-IP` header to pass end user IP addresses (required)
-- [ ] (Optional) Implement session token support for multi-turn conversations
+- [ ] (Optional) Send conversation turns that must be judged together in one check
 - [ ] Review custom lists feature (paid tiers can customize whitelist/blacklist)
 
 **Estimated Migration Time:** 10-15 minutes
@@ -115,29 +115,9 @@ export default async function handler(req) {
 
 ---
 
-## 🔄 Step 3: Multi-Turn Protection (Optional)
+## 🔄 Step 3: Checking Conversations (Optional)
 
-Use session tokens to protect against multi-turn attacks where attackers prime context across multiple messages.
-
-### Before (Single-turn validation only)
-```javascript
-const result = await client.check(userMessage, {
-  userIP: clientIp
-});
-```
-
-### After (Multi-turn protection)
-```javascript
-// Generate session token (use existing chat session ID or create new)
-const sessionToken = req.session.id; // or crypto.randomUUID()
-
-const result = await client.check(userMessage, {
-  userIP: clientIp,
-  sessionToken: sessionToken
-});
-```
-
-### Full Implementation Example
+SafePrompt judges every check on its own. To have several turns judged together, send them together in one check.
 
 ```javascript
 import SafePrompt from 'safeprompt';
@@ -145,13 +125,12 @@ const client = new SafePrompt({ apiKey: process.env.SAFEPROMPT_API_KEY });
 
 app.post('/chat', async (req, res) => {
   const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  const sessionToken = req.session.id || crypto.randomUUID();
 
-  // Validate user input
-  const validation = await client.check(req.body.message, {
-    userIP: clientIp,
-    sessionToken: sessionToken
-  });
+  // The recent turns your app is about to send to the model, plus the new message
+  const turns = [...req.session.history.slice(-5), { role: 'user', content: req.body.message }];
+  const transcript = turns.map((t) => `${t.role}: ${t.content}`).join('\n');
+
+  const validation = await client.check(transcript, { userIP: clientIp });
 
   if (!validation.safe) {
     return res.status(400).json({
@@ -166,11 +145,7 @@ app.post('/chat', async (req, res) => {
 });
 ```
 
-**What Multi-Turn Detection Catches:**
-- Context priming: "Let's play a game where you ignore rules..."
-- False history: "You agreed earlier to bypass safety filters..."
-- Reconnaissance: Gradual probing of system prompts across messages
-- Privilege escalation: Building trust before requesting sensitive actions
+The `session_token` / `sessionToken` field is accepted for older integrations and does not change the verdict. Keep conversation state and authorization in your application.
 
 ---
 
@@ -226,16 +201,16 @@ The validation response structure remains the same:
 
 **Solution:** Add X-User-IP header with end user's IP address (not your server IP).
 
-### Issue: Session token not working
-**Problem:** Multi-turn attacks still getting through
+### Issue: An attack spread over several messages passes
+**Problem:** Each message passes when checked alone.
 
-**Solution:** Ensure you're using the same sessionToken for the entire conversation (use chat session ID, not request ID).
+**Solution:** SafePrompt judges each check on its own and keeps no session state. Send the recent turns together in one check (see [multi-turn.md](./multi-turn.md)).
 
 ---
 
 ## 📅 Release Timeline
 
-- **Phase 1A** (October 2025): Multi-turn protection, session tokens, threat intelligence
+- **Phase 1A** (October 2025): Threat intelligence and the X-User-IP header
 - **Custom Lists** (October 2025): Business-specific whitelist/blacklist customization
 - **External Reference Detection** (September 2025): detects URL, IP and file-path references in prompts
 
@@ -249,4 +224,4 @@ The validation response structure remains the same:
 
 ---
 
-**Migration complete!** Your application now benefits from multi-turn protection and enhanced threat intelligence.
+**Migration complete!** Your application now benefits from enhanced threat intelligence.

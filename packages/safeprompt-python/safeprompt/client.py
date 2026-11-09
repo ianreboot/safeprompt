@@ -69,7 +69,9 @@ class SafePrompt:
         Args:
             prompt: The user input to validate.
             user_ip: Optional IP address of the end user.
-            session_token: Optional session token for multi-turn tracking.
+            session_token: Accepted for older integrations; does not change the
+                verdict. Each check is judged on its own, so send turns that must
+                be judged together in one prompt.
 
         Returns:
             Validation result with keys: safe, threats, confidence,
@@ -113,7 +115,9 @@ class SafePrompt:
         Args:
             prompts: List of prompts to validate.
             user_ip: Optional IP address of the end user.
-            session_token: Optional session token for multi-turn tracking.
+            session_token: Accepted for older integrations; does not change the
+                verdict. Each check is judged on its own, so send turns that must
+                be judged together in one prompt.
 
         Returns:
             List of validation results.

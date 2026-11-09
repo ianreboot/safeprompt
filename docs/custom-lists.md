@@ -213,7 +213,6 @@ customRules: {
 - Remove unused rules to reduce noise
 
 ### 5. Combine with Other Features
-- Multi-turn detection (Starter/Business)
 - Threat intelligence network (all tiers)
 - Default lists (automatic)
 
@@ -259,5 +258,5 @@ See working examples in the repository:
 
 - [HTTP API Reference](./http-api.md) - Complete API documentation
 - [Best Practices](./BEST_PRACTICES.md) - Security recommendations
-- [Multi-Turn Protection](./multi-turn.md) - Session-based detection
+- [Checking Conversations](./multi-turn.md) - Send turns together in one check
 - [Quick Start Guide](./quickstart.md) - Getting started

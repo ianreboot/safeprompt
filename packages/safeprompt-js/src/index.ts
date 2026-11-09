@@ -10,6 +10,10 @@ export interface SafePromptConfig {
 
 export interface CheckOptions {
   userIP?: string;
+  /**
+   * Accepted for older integrations; does not change the verdict. Each check is judged
+   * on its own, so send turns that must be judged together in one prompt.
+   */
   sessionToken?: string;
 }
 

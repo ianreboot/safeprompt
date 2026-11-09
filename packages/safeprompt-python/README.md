@@ -27,6 +27,8 @@ if not result["safe"]:
 `check()` takes `prompt`, then keyword arguments `user_ip` and `session_token`. If you omit
 `user_ip` the SDK sends `127.0.0.1`, which makes the call succeed but attributes every attack to
 localhost in threat intelligence; always pass the real address. There is no `mode` argument.
+`session_token` is accepted for older integrations and does not change the verdict: each check is
+judged on its own, so send turns that must be judged together in one `prompt`.
 
 ## Async Support
 
