@@ -11,9 +11,10 @@ and checked against the matching summary file, so a summary that disagrees with 
 stops the script instead of reaching the README.
 
 The files named *strict* and the AgentDojo `safeprompt` arm hold rows run with
-sensitivity=strict, SafePrompt's default for new accounts since 21 October 2026. The
-files named *default* and the AgentDojo `safeprompt-default` arm hold no judgement mode
-(sensitivity=balanced), which was the API default when they were named.
+sensitivity=strict (strict mode; the account default from 21 October to 9 November 2026,
+opt-in otherwise). The files named *default* and the AgentDojo `safeprompt-default` arm hold
+no judgement mode (sensitivity=balanced), the API default when they were named and again
+since 9 November 2026.
 """
 import collections, datetime, json, os, re, sys
 

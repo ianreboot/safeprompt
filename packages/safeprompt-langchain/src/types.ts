@@ -24,8 +24,8 @@ export interface SafePromptCallbackConfig {
   provider?: string;
 
   /**
-   * Detection sensitivity. Leave unset to use your account default (strict for accounts
-   * created from 2026-10-21, balanced for older accounts).
+   * Detection sensitivity. Leave unset to use your account default (balanced unless the
+   * account chose strict).
    * - 'strict': checks the most; also enforces input that dictates the assistant's literal output
    * - 'no_judgement': no judgement mode; stops clear attacks and does not police content
    * - 'balanced': the earlier name for 'no_judgement'; still accepted
