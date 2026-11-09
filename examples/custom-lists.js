@@ -304,7 +304,6 @@ function showBestPractices() {
 
   console.log('5. Combine with Other Features:');
   console.log('   - IP reputation (Starter/Business)');
-  console.log('   - Multi-turn detection (Starter/Business)');
   console.log('   - Default lists (all tiers)\n');
 }
 

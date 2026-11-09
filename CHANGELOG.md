@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Docs, examples and SDK docstrings: SafePrompt judges every check on its own and keeps no
+  session state. `session_token` / `sessionToken` is accepted and does not change the verdict;
+  send turns that must be judged together in one check. `examples/session-tokens.js` removed,
+  `examples/multi-turn.js` now shows a conversation checked in one call.
+
 ### Added
 - Repository credibility uplift: GitHub Releases, reproducible benchmark harness,
   `@safeprompt.dev/langchain` source, conventional-commit enforcement, badges,

@@ -8,7 +8,7 @@ Best practices for using SafePrompt effectively, including performance optimizat
 
 ## 📋 Table of Contents
 
-1. [Session Token Management](#session-token-management)
+1. [Checking Conversations](#checking-conversations)
 2. [Performance Optimization](#performance-optimization)
 3. [Error Handling](#error-handling)
 4. [Privacy & Compliance](#privacy--compliance)
@@ -17,68 +17,15 @@ Best practices for using SafePrompt effectively, including performance optimizat
 
 ---
 
-## 🔄 Session Token Management
+## 🔄 Checking Conversations
 
-### Best Practices
+SafePrompt judges every check on its own and keeps no session state between calls.
 
-1. **Store per user, not globally**
-   ```javascript
-   // ✅ Good - per user
-   const userSession = sessions.get(userId);
+1. **Send the turns you want judged together in one check.** Join the recent turns, labelled by role, into one prompt.
+2. **Check untrusted text where it enters.** Each new user message, retrieved document and tool result gets its own check before the model reads it.
+3. **Keep conversation state in your app.** User identity, conversation history and authorization stay with your application. The `session_token` field is accepted and does not change the verdict.
 
-   // ❌ Bad - shared across users
-   let globalSessionToken;
-   ```
-
-2. **Expire tokens client-side**
-   ```javascript
-   // Store with timestamp
-   const sessionData = {
-     token: result.session_token,
-     createdAt: Date.now()
-   };
-
-   // Check expiry (2 hours)
-   const isExpired = Date.now() - sessionData.createdAt > 2 * 60 * 60 * 1000;
-   ```
-
-3. **Clear on logout**
-   ```javascript
-   app.post('/logout', (req, res) => {
-     sessions.delete(req.user.id);
-     res.clearCookie('safeprompt_session');
-   });
-   ```
-
-### Session Storage Options
-
-#### Development: In-Memory Map
-```javascript
-// Simple but not production-ready
-const sessions = new Map();
-sessions.set(userId, sessionToken);
-```
-
-#### Production: Redis
-```javascript
-// Scalable and persistent
-await redis.setex(
-  `session:${userId}`,
-  7200,  // 2 hours TTL
-  sessionToken
-);
-```
-
-#### Stateless: HTTP-Only Cookies
-```javascript
-// No server-side storage needed
-res.cookie('safeprompt_session', sessionToken, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'strict',
-  maxAge: 2 * 60 * 60 * 1000  // 2 hours
-});
-```
+See [multi-turn.md](./multi-turn.md) for code.
 
 ---
 
@@ -259,7 +206,7 @@ async function robustValidation(prompt, clientIp) {
 
 - ✅ **Always** pass end-user IP (not your server IP) for threat intelligence
 - ✅ **Never** log full prompts in your application
-- ✅ **Use** session tokens for multi-turn conversations
+- ✅ **Send** the turns you want judged together in one check
 - ✅ **Enable** automatic PII deletion (24-hour window)
 - ❌ **Don't** store SafePrompt responses long-term
 - ❌ **Don't** share IP addresses with third parties
@@ -384,7 +331,7 @@ Check [Admin Dashboard](https://dashboard.safeprompt.dev/admin) daily for:
 
 ### Production Checklist
 
-- [ ] Session tokens implemented for multi-turn conversations
+- [ ] Conversation turns that must be judged together are sent in one check
 - [ ] Proper error handling (fail-open or fail-closed strategy)
 - [ ] X-User-IP header passed for threat intelligence correlation
 - [ ] Monitoring and alerts configured
@@ -400,7 +347,7 @@ Check [Admin Dashboard](https://dashboard.safeprompt.dev/admin) daily for:
 - **Migration Guide**: [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md)
 - **HTTP API Reference**: [http-api.md](./http-api.md)
 - **Custom Lists**: [custom-lists.md](./custom-lists.md)
-- **Multi-Turn Protection**: [multi-turn.md](./multi-turn.md)
+- **Checking Conversations**: [multi-turn.md](./multi-turn.md)
 - **Code Examples**: [/examples](../examples/)
 - **Dashboard**: [dashboard.safeprompt.dev](https://dashboard.safeprompt.dev)
 
