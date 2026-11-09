@@ -8,7 +8,7 @@ perfectly on security and destroys utility. Both numbers must be reported.
 
 Integration point: AgentDojo's PromptInjectionDetector is applied to TOOL OUTPUTS,
 which is exactly the untrusted-content boundary SafePrompt is meant to sit on.
-This is indirect injection, the category our own held-out probe flagged as our
+This is indirect injection, the category our own engineering-written probe flagged as our
 weakest (the H01 miss).
 
 Register with:
