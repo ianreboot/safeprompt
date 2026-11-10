@@ -65,7 +65,7 @@ new SafePromptCallbackHandler({
 
 Run the adapter in log mode in staging/production for a week. You get `onBlock` events
 without any chain aborts. Review the results in your logs (or SafePrompt dashboard), tune
-custom lists / confidence threshold, then flip `enforcement: 'block'`.
+your `sensitivity` setting, then flip `enforcement: 'block'`.
 
 ### `sampleRate`: cost control for high-volume apps
 
@@ -97,7 +97,7 @@ that hides malicious instructions).
   requires this for threat-intelligence tracking. Use your web framework's IP helper
   (`req.ip` in Express, `req.socket.remoteAddress`, etc.).
 - **False positives:** switch to `enforcement: 'log'`, inspect the blocked prompts, and
-  use custom whitelist rules on your SafePrompt account to allow known-safe patterns.
+  adjust the `sensitivity` you send.
 
 ## Links
 
