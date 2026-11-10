@@ -55,8 +55,8 @@ SafePromptCallbackHandler(
 ### `enforcement="log"`: tune before enforcing
 
 Run the adapter in log mode in staging/production for a week. You get `on_block`
-callbacks without any chain aborts. Review the results, tune custom lists / confidence
-thresholds on your SafePrompt account, then flip to `enforcement="block"`.
+callbacks without any chain aborts. Review the results, tune your `sensitivity`
+setting, then flip to `enforcement="block"`.
 
 ### `sample_rate`: cost control for high-volume apps
 
@@ -100,8 +100,8 @@ print(result.safe, result.threats)  # False ['jailbreak_instruction_override']
 - **Every prompt 401s:** API key is invalid or revoked. Check your key.
 - **Every prompt 400s with "X-User-IP required":** you passed an empty `user_ip`. The API
   requires this for threat-intelligence tracking. Use your web framework's client-IP helper.
-- **False positives:** switch to `enforcement="log"`, inspect the blocked prompts, and use
-  custom whitelist rules on your SafePrompt account to allow known-safe patterns.
+- **False positives:** switch to `enforcement="log"`, inspect the blocked prompts, and adjust
+  the `sensitivity` you send.
 
 ## Links
 

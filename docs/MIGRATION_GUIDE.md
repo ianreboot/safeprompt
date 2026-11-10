@@ -20,7 +20,7 @@ This guide helps existing SafePrompt users adopt the latest features, including 
 - [ ] Update SafePrompt SDK to latest version (`npm update safeprompt`)
 - [ ] Add `X-User-IP` header to pass end user IP addresses (required)
 - [ ] (Optional) Send conversation turns that must be judged together in one check
-- [ ] Review custom lists feature (paid tiers can customize whitelist/blacklist)
+- [ ] Review block phrases (paid tiers can block their own phrases)
 
 **Estimated Migration Time:** 10-15 minutes
 
@@ -151,23 +151,21 @@ The `session_token` / `sessionToken` field is accepted for older integrations an
 
 ## 📚 Step 4: Review New Features
 
-### Custom Lists (Paid Tiers)
-Customize whitelist/blacklist for your business context:
+### Block Phrases (Paid Tiers)
+Block your own phrases: any message containing one is blocked. Save them in the dashboard, or send
+them with a request over HTTP:
 
-```javascript
-const result = await client.check(userPrompt, {
-  userIP: clientIp,
-  customRules: {
-    whitelist: ['shipping address', 'customer service'],
-    blacklist: ['admin override', 'system prompt']
-  }
-});
+```json
+{
+  "prompt": "...",
+  "customRules": { "blacklist": ["project falcon", "internal roadmap"] }
+}
 ```
 
 **Tier Limits:**
-- Free: 80+ default phrases (read-only)
-- Starter: 25 custom whitelist + 25 blacklist
-- Business: 100 custom whitelist + 100 blacklist
+- Free: none
+- Starter: 25 block phrases
+- Business: 100 block phrases
 
 See [Custom Lists documentation](./custom-lists.md) for details.
 
@@ -211,7 +209,7 @@ The validation response structure remains the same:
 ## 📅 Release Timeline
 
 - **Phase 1A** (October 2025): Threat intelligence and the X-User-IP header
-- **Custom Lists** (October 2025): Business-specific whitelist/blacklist customization
+- **Custom Lists** (October 2025): your own block phrases
 - **External Reference Detection** (September 2025): detects URL, IP and file-path references in prompts
 
 ---

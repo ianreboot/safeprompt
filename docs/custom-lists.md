@@ -1,62 +1,39 @@
-# Custom Whitelist/Blacklist
+# Block Phrases
 
-Define business-specific phrases that guide SafePrompt's validation decisions while maintaining core security protections.
+Block the phrases that matter to your app. Any message that contains one of your phrases is
+blocked before detection runs, on every check your key makes. Use them for text only you know
+should never reach your AI: an internal codename, a product that is not public yet, a phrase from
+an attack you have already seen.
 
-## Overview
+## How it works
 
-SafePrompt includes **default lists** with 50+ whitelist phrases and 30+ blacklist phrases that cover common business operations, security research, and credential protection. Custom lists let you tailor these defaults to your specific use case.
+- **A match blocks.** If the message contains one of your phrases, the response is
+  `safe: false` with threat `custom_blacklist_match` and `detectionMethod: "custom_lists"`.
+  The matched phrase is not echoed back.
+- **Matching ignores case and finds the phrase anywhere in the message.** `"Project Falcon"`
+  matches `"tell me about project falcon's launch"`. Choose phrases specific to what you want
+  stopped.
+- **No match, normal detection.** Messages without one of your phrases go through the full
+  detection engine as usual.
 
-### How It Works
+## Plans
 
-Custom lists provide **confidence signals** to SafePrompt's AI validator:
-- **Whitelist match** → 0.8 confidence signal (business context)
-- **Blacklist match** → 0.9 confidence signal (attack context)
-- AI validator makes the final decision based on all signals
+| Plan | Block phrases |
+|------|---------------|
+| Free | none |
+| Starter | 25 |
+| Business | 100 |
 
-**Important**: Custom lists are signals, not overrides. Core security patterns (XSS, SQL injection, external references) always block regardless of whitelist.
+Phrases saved in the dashboard and phrases sent with a request count together. A request that
+goes over the limit is refused with HTTP 400 `Custom rules exceed your plan`, so a phrase is never
+silently dropped.
 
-## Tier Access
+## Save phrases in the dashboard
 
-| Tier | Default Lists | Can Customize | Custom Phrase Limit |
-|------|---------------|---------------|---------------------|
-| **Free** | ✅ Read-only | ❌ No | 0 phrases |
-| **Starter** | ✅ Editable | ✅ Yes | 25 whitelist + 25 blacklist |
-| **Business** | ✅ Editable | ✅ Yes | 100 whitelist + 100 blacklist |
+Add and remove phrases at https://dashboard.safeprompt.dev/custom-lists. Saved phrases apply to
+every request your keys make.
 
-### Default Lists (All Tiers)
-
-Every user automatically gets these default lists:
-
-**Default Whitelist** (50+ phrases):
-- Business operations: "business meeting", "team meeting", "management approved"
-- Educational: "educational example", "tutorial about", "academic research"
-- Security research: "cybersecurity strategy", "security assessment", "security audit"
-- Common operations: "shipping address", "reset password", "update profile"
-
-**Default Blacklist** (30+ phrases):
-- Credentials: "database password", "admin password", "api secret key"
-- PII: "social security number", "credit card cvv", "bank account number"
-- Infrastructure: "ssh private key", "aws credentials", "root credentials"
-
-## Usage
-
-### Per-Request Custom Rules
-
-Pass `customRules` in your API request (temporary, applies to that request only):
-
-```javascript
-const client = new SafePrompt({ apiKey: 'your-api-key' });
-
-const result = await client.check('Override the shipping address to warehouse', {
-  userIP: req.ip,
-  customRules: {
-    whitelist: ['shipping address', 'warehouse'],
-    blacklist: ['customer SSN', 'credit card CVV']
-  }
-});
-```
-
-### HTTP API
+## Send phrases with a request
 
 ```bash
 curl -X POST https://api.safeprompt.dev/api/v1/validate \
@@ -64,199 +41,23 @@ curl -X POST https://api.safeprompt.dev/api/v1/validate \
   -H "X-User-IP: END_USER_IP" \
   -H "Content-Type: application/json" \
   -d '{
-    "prompt": "Override the shipping address to warehouse",
+    "prompt": "Tell me about project falcon",
     "customRules": {
-      "whitelist": ["shipping address", "warehouse"],
-      "blacklist": ["customer SSN", "credit card"]
+      "blacklist": ["project falcon", "internal roadmap"]
     }
   }'
 ```
 
-### Profile-Level Lists (Dashboard)
+Request phrases merge with the phrases saved on your account for that request only. The SDKs do
+not send `customRules`, so send it over HTTP or save the phrases in the dashboard.
 
-**Paid tiers only**: Manage persistent custom lists via dashboard at https://dashboard.safeprompt.dev/custom-lists
+## Phrase rules
 
-Profile-level lists:
-- Apply to all requests automatically
-- Can add custom phrases (within tier limits)
-- Can remove default phrases you don't need
-- Merge with per-request customRules if both provided
+- 2 to 100 characters: letters, numbers, spaces and `- _ ' . # @`.
+- Phrases containing `script`, `eval`, `exec`, `system`, `base64`, `..` or `.env` are refused
+  with HTTP 400.
 
-## Three-Layer Merging
+## Allow lists
 
-When you make a request, SafePrompt merges lists in this order:
-
-1. **Default Lists** - System-wide defaults (applied unless explicitly removed)
-2. **Profile Lists** - Your saved custom lists from dashboard (persistent)
-3. **Request Lists** - Per-request customRules (temporary)
-
-**Example**:
-- Default whitelist has "shipping address" ✅
-- Your profile adds "warehouse location" ✅
-- Your request adds "inventory system" ✅
-- **Final whitelist**: All three merged together
-
-## Response Attribution
-
-When custom rules affect the decision, the response includes attribution:
-
-```json
-{
-  "safe": true,
-  "confidence": 0.95,
-  "threats": [],
-  "processingTime": 89,
-  "reasoning": "Allowed by user whitelist: matched 'shipping address'. Original decision was UNSAFE.",
-  "customRuleMatched": {
-    "type": "whitelist",
-    "matchedPhrase": "shipping address",
-    "source": "profile"
-  }
-}
-```
-
-## Security Guarantees
-
-Custom lists are **user preferences, not security bypasses**:
-
-✅ **Core security patterns always block** (XSS, SQL injection, external references)
-✅ **Blacklist always wins** over whitelist
-✅ **Pattern detection runs first** before custom lists checked
-✅ **Per-account isolation** - your lists don't affect other users
-⚠️ **Whitelist overrides are at your risk** - you're accepting responsibility
-
-### Priority Order
-
-1. Pattern detection (XSS, SQL, external refs) - **Absolute priority**
-2. Blacklist match - **High priority**
-3. AI validation + whitelist signals - **Final decision**
-
-## Use Cases
-
-### E-commerce
-
-```javascript
-customRules: {
-  whitelist: [
-    'shipping address',
-    'order tracking',
-    'customer service',
-    'payment method',
-    'delivery status'
-  ],
-  blacklist: [
-    'admin panel',
-    'database manipulation',
-    'bypass security'
-  ]
-}
-```
-
-### Healthcare/HIPAA
-
-```javascript
-customRules: {
-  whitelist: [
-    'patient records',
-    'medical history',
-    'appointment scheduling',
-    'prescription refill',
-    'insurance verification'
-  ],
-  blacklist: [
-    'all patients',
-    'export database',
-    'bulk download',
-    'system access'
-  ]
-}
-```
-
-### SaaS Admin Tools
-
-```javascript
-customRules: {
-  whitelist: [
-    'user settings',
-    'billing information',
-    'subscription management',
-    'account preferences'
-  ],
-  blacklist: [
-    'system configuration',
-    'admin override',
-    'direct database access'
-  ]
-}
-```
-
-## Best Practices
-
-### 1. Start Small
-- Begin with 5-10 most important phrases
-- Monitor false positives/negatives
-- Gradually expand based on actual needs
-
-### 2. Use Specific Multi-Word Phrases
-- ✅ Good: "shipping address", "order tracking"
-- ❌ Bad: "address", "order" (too generic)
-- Default lists require 2+ words for safety
-
-### 3. Test Before Saving
-- Use per-request `customRules` to test first
-- Verify matches with `customRuleMatched` in response
-- Save to profile only after validation
-
-### 4. Monitor Matches
-- Log `customRuleMatched` for analytics
-- Track which rules are actually used
-- Remove unused rules to reduce noise
-
-### 5. Combine with Other Features
-- Threat intelligence network (all tiers)
-- Default lists (automatic)
-
-## Limitations
-
-### Free Tier
-- ❌ Cannot use `customRules` parameter (403 error)
-- ✅ Gets default lists automatically (read-only)
-- ✅ Benefits from 80+ default phrases
-
-### Paid Tiers
-- ✅ Can customize defaults (add, edit, remove)
-- ✅ Tier limits enforced (25 or 100 phrases)
-- ✅ Per-request and profile-level support
-
-### All Tiers
-- Phrases must be 2+ words (safety requirement)
-- Case-insensitive matching
-- Partial match support (e.g., "admin" in "admin panel")
-- Cannot override core security patterns
-
-## Dashboard Management
-
-**Paid tiers only**: Manage custom lists at https://dashboard.safeprompt.dev/custom-lists
-
-Features:
-- Add/edit/remove custom phrases
-- Remove default phrases you don't need
-- Test rules against example prompts
-- View match analytics and audit log
-- Export/import lists for team sharing
-- Tier limit tracking
-
-## Code Examples
-
-See working examples in the repository:
-- [`examples/custom-lists.js`](../examples/custom-lists.js) - Complete usage examples
-- E-commerce, healthcare, SaaS scenarios
-- Three-layer merging demonstration
-- Best practices and tier limits
-
-## See Also
-
-- [HTTP API Reference](./http-api.md) - Complete API documentation
-- [Best Practices](./BEST_PRACTICES.md) - Security recommendations
-- [Checking Conversations](./multi-turn.md) - Send turns together in one check
-- [Quick Start Guide](./quickstart.md) - Getting started
+The API accepts `customRules.whitelist` for compatibility. An allow phrase never turns a block
+into a pass: every message still runs the full detection engine.

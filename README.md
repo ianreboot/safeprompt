@@ -123,7 +123,7 @@ The runner POSTs every prompt in [`benchmarks/prompts.json`](benchmarks/prompts.
 - **Attack classes covered**: instruction override and jailbreaks, system-prompt extraction, exfiltration imperatives, indirect injection in retrieved content and tool output, encoded and multi-language variants
 - **Conversations in one check**: every request gets its own verdict with no session state; send the turns you want judged together in one check ([docs/multi-turn.md](docs/multi-turn.md))
 - **External Reference Detection**: flags URLs, IP addresses and file paths as exfiltration signals, not as blanket bans
-- **Custom Whitelists/Blacklists**: tune detection for your specific use case (paid tiers)
+- **Your own block phrases**: any message containing one is blocked before detection runs (paid tiers, [docs/custom-lists.md](docs/custom-lists.md))
 - **Network Intelligence**: every blocked attack feeds the shared engine
 - **Fast where it can be**: requests the pattern layers resolve return in tens of milliseconds; most run AI semantic analysis at about a second. Current medians and percentiles are published from continuous measurement.
 - **Privacy First**: prompt text and client IPs of blocked requests deleted within 24 hours; pseudonymous hashes deleted at 90 days; export from the dashboard
