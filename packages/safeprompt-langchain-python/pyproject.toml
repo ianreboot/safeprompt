@@ -9,7 +9,7 @@ description = "LangChain integration for SafePrompt: prompt-injection detection 
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Reboot Media, Inc", email = "support@safeprompt.dev" }]
+authors = [{ name = "SafePrompt", email = "support@safeprompt.dev" }]
 keywords = [
     "langchain",
     "safeprompt",
@@ -43,7 +43,7 @@ dev = ["pytest>=7.0"]
 
 [project.urls]
 Homepage = "https://safeprompt.dev"
-Documentation = "https://safeprompt.dev/docs"
+Documentation = "https://docs.safeprompt.dev"
 Repository = "https://github.com/ianreboot/safeprompt"
 Issues = "https://github.com/ianreboot/safeprompt/issues"
 
