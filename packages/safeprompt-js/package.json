@@ -20,7 +20,12 @@
     "ai",
     "chatbot",
     "prompt",
-    "validation"
+    "validation",
+    "safeprompt",
+    "jailbreak",
+    "llm-security",
+    "guardrails",
+    "owasp-llm"
   ],
   "author": "SafePrompt <support@safeprompt.dev>",
   "license": "MIT",

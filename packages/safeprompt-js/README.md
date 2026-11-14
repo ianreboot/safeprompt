@@ -94,6 +94,13 @@ Decide what happens on an error before you ship: fail closed (reject the message
 
 Full TypeScript support included with type definitions.
 
+## Links
+
+- Documentation: https://docs.safeprompt.dev
+- Source on GitHub: https://github.com/ianreboot/safeprompt
+- Python SDK on PyPI: https://pypi.org/project/safeprompt/
+- Benchmarks: https://safeprompt.dev/benchmarks
+
 ## License
 
 MIT

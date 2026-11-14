@@ -12,7 +12,7 @@ requires-python = ">=3.9"
 authors = [
     {name = "SafePrompt", email = "support@safeprompt.dev"}
 ]
-keywords = ["ai", "security", "prompt-injection", "llm", "safeguard"]
+keywords = ["ai", "security", "prompt-injection", "llm", "safeguard", "jailbreak", "llm-security", "owasp-llm", "safeprompt"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
