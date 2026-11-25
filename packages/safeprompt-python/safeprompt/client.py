@@ -20,7 +20,7 @@ class SafePrompt:
     """SafePrompt client for prompt injection protection."""
 
     DEFAULT_BASE_URL = "https://api.safeprompt.dev"
-    USER_AGENT = "safeprompt-python/1.0.0"
+    USER_AGENT = "safeprompt-python/1.4.1"
 
     def __init__(self, api_key: str, base_url: Optional[str] = None):
         if not api_key:
@@ -167,7 +167,7 @@ class AsyncSafePrompt:
     """Async SafePrompt client for prompt injection protection."""
 
     DEFAULT_BASE_URL = "https://api.safeprompt.dev"
-    USER_AGENT = "safeprompt-python/1.0.0"
+    USER_AGENT = "safeprompt-python/1.4.1"
 
     def __init__(self, api_key: str, base_url: Optional[str] = None):
         if not api_key:
